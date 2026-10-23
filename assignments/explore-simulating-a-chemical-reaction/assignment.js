@@ -11,19 +11,20 @@ window.ASSIGNMENT = {
   storageKey: 'explore-simulating-a-chemical-reaction-v1',
 
   /* the full video at the top. A captions file with the same name (.vtt) sits next to it.
-     TODO: add the video from Canvas Studio, set seconds, and cut one clip per trial with tools/video_tools.py. */
+     TODO: no captions yet. Re-cut with --captions once the teacher sends the Canvas Studio caption file. */
   video: {
     title: 'Simulating a Chemical Reaction',
     src: 'media/chemical-reaction-video.mp4',
-    seconds: 60
+    seconds: 345
   },
 
   /* short clips, one per trial. from/to are the times in the full video (they are shown to students). */
   clips: {
-    // baseline:  { src: 'media/clip-baseline.mp4',  from: 0, to: 0, seconds: 0, title: 'Trial 1: baseline (control group)' },
-    // denatured: { src: 'media/clip-denatured.mp4', from: 0, to: 0, seconds: 0, title: 'Trial 2: taped thumb (denatured enzyme)' },
-    // coenzyme:  { src: 'media/clip-coenzyme.mp4',  from: 0, to: 0, seconds: 0, title: 'Trial 3: a helper (coenzyme)' },
-    // inhibitor: { src: 'media/clip-inhibitor.mp4', from: 0, to: 0, seconds: 0, title: 'Trial 4: holding a tennis ball (competitive inhibitor)' }
+    model:     { src: 'media/clip-model.mp4',     from: 2.879,   to: 156.703, seconds: 154, title: 'What each part of the model represents' },
+    baseline:  { src: 'media/clip-baseline.mp4',  from: 156.703, to: 202.956, seconds: 47,  title: 'Trial 1: baseline data' },
+    denatured: { src: 'media/clip-denatured.mp4', from: 202.956, to: 249.832, seconds: 47,  title: 'Trial 2: denatured enzyme (thumb taped)' },
+    coenzyme:  { src: 'media/clip-coenzyme.mp4',  from: 249.832, to: 284.518, seconds: 35,  title: 'Trial 3: coenzyme (niece helping)' },
+    inhibitor: { src: 'media/clip-inhibitor.mp4', from: 284.518, to: 325.961, seconds: 42,  title: 'Trial 4: competitive inhibitor (tennis ball)' }
   },
 
   parts: [
@@ -72,18 +73,21 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 2 */
     {
       title: 'The model',
-      clips: [],                  // TODO: ['baseline']
+      clips: ['model', 'baseline'],
       read: '<p><b>Read:</b> An <b>enzyme</b> is a protein that speeds up a chemical reaction. The molecule an enzyme acts on is called the <b>substrate</b>. The substrate fits into a spot on the enzyme called the <b>active site</b>, the reaction happens, and the enzyme lets go of the product.</p>'
-        + '<p>An enzyme is not used up by the reaction. It can do the same job again and again with new substrate. The <b>rate</b> of a reaction is how fast it happens, for example how many pennies get flipped in a set amount of time.</p>',
+        + '<p>An enzyme is not used up by the reaction. It can do the same job again and again with new substrate. The <b>rate</b> of a reaction is how fast it happens, for example how many pennies get flipped in a set amount of time.</p>'
+        + '<p>Here is the baseline data from the video. Each number is how many pennies had been flipped by the end of that time period.</p>',
+      tableHtml: '<table><thead><tr><th>Time period (s)</th><th>Trial 1: Baseline Data</th></tr></thead><tbody>'
+        + '<tr><td>0 to 10</td><td>8</td></tr><tr><td>11 to 20</td><td>16</td></tr><tr><td>21 to 30</td><td>24</td></tr><tr><td>31 to 40</td><td>33</td></tr><tr><td>41 to 50</td><td>43</td></tr><tr><td>51 to 60</td><td>53</td></tr><tr><td>61 to 70</td><td>63</td></tr><tr><td>71 to 80</td><td>73</td></tr><tr><td>81 to 90</td><td>83</td></tr><tr><td>91 to 100</td><td>93</td></tr></tbody></table>',
       questions: [
         {
           type: 'selects',
           text: 'Match each part of the real reaction to what represented it in the model.',
-          options: ['Flipping a penny heads up onto the desk', 'Mrs. Kinzy’s hand', 'The pennies on the ground', 'The tennis ball'],
+          options: ['Flipping a penny heads up onto the desk', 'Mrs. Kinzy’s hand', 'The pennies', 'The tennis ball'],
           items: [
             { label: 'What represented the enzyme in the model?', answer: 'Mrs. Kinzy’s hand',
               hint: 'An enzyme is the part that does the work. Reread the Overview in Part 1.' },
-            { label: 'What represented the substrate in the model?', answer: 'The pennies on the ground',
+            { label: 'What represented the substrate in the model?', answer: 'The pennies',
               hint: 'The substrate is what the enzyme acts on. Reread the Overview in Part 1.' },
             { label: 'What represented the chemical reaction?', answer: 'Flipping a penny heads up onto the desk',
               hint: 'The reaction is the change that happens to the substrate. Reread the Overview in Part 1.' }
@@ -104,6 +108,13 @@ window.ASSIGNMENT = {
           answer: 0,
           explain: 'Rate means how fast. Counting how many pennies are flipped in a set time measures how fast the reaction goes.',
           tip: 'Rate is about speed. Which choice tells you how fast the pennies are being flipped?'
+        },
+        {
+          type: 'typed',
+          text: 'In the baseline trial, how many pennies had been flipped by the end of 100 seconds? Type the number.',
+          expected: '93',
+          aria: 'Pennies flipped in the baseline trial',
+          tip: 'Look at the last row of the baseline table, the 91 to 100 time period.'
         }
       ]
     },
@@ -111,9 +122,11 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 3 */
     {
       title: 'Denatured enzyme',
-      clips: [],                  // TODO: ['denatured']
+      clips: ['denatured'],
       read: '<p><b>Read:</b> An enzyme’s shape is what lets it work. The substrate has to fit into the active site. When an enzyme is <b>denatured</b>, its shape changes. Things like very high temperature or the wrong pH can denature an enzyme. The substrate no longer fits well, so the enzyme works more slowly or stops working.</p>'
-        + '<p>In the model, Mrs. Kinzy’s thumb was taped so it could not be used. The hand still exists, but it does not have its normal shape.</p>',
+        + '<p>In the model, Mrs. Kinzy’s thumb was taped so it could not be used. The video sums it up: “The enzyme has changed shape and doesn’t work properly.”</p>',
+      tableHtml: '<table><thead><tr><th>Time period (s)</th><th>Trial 2: Denatured Enzyme</th></tr></thead><tbody>'
+        + '<tr><td>0 to 10</td><td>3</td></tr><tr><td>11 to 20</td><td>6</td></tr><tr><td>21 to 30</td><td>11</td></tr><tr><td>31 to 40</td><td>15</td></tr><tr><td>41 to 50</td><td>19</td></tr><tr><td>51 to 60</td><td>24</td></tr><tr><td>61 to 70</td><td>28</td></tr><tr><td>71 to 80</td><td>30</td></tr><tr><td>81 to 90</td><td>33</td></tr><tr><td>91 to 100</td><td>42</td></tr></tbody></table>',
       questions: [
         {
           type: 'choice',
@@ -130,6 +143,13 @@ window.ASSIGNMENT = {
           answer: 1,
           explain: 'Very high temperature (and the wrong pH) can change an enzyme’s shape and denature it.',
           tip: 'The reading names two things that can denature an enzyme. Is one of them in this list?'
+        },
+        {
+          type: 'typed',
+          text: 'With her thumb taped, how many pennies had Mrs. Kinzy flipped by the end of 100 seconds? Type the number.',
+          expected: '42',
+          aria: 'Pennies flipped in the denatured enzyme trial',
+          tip: 'Look at the last row of the Trial 2 table, the 91 to 100 time period.'
         },
         {
           type: 'written',
@@ -155,9 +175,11 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 4 */
     {
       title: 'Coenzyme',
-      clips: [],                  // TODO: ['coenzyme']
+      clips: ['coenzyme'],
       read: '<p><b>Read:</b> A <b>coenzyme</b> is a helper molecule that works together with an enzyme so the enzyme can do its job. Many coenzymes come from the vitamins in the food you eat. With its helper, an enzyme can carry out the reaction more easily.</p>'
-        + '<p>In the model, Mrs. Kinzy’s niece helped flip the pennies with her.</p>',
+        + '<p>In the model, Mrs. Kinzy’s niece worked with Mrs. Kinzy to flip the pennies.</p>',
+      tableHtml: '<table><thead><tr><th>Time period (s)</th><th>Trial 3: Coenzyme</th></tr></thead><tbody>'
+        + '<tr><td>0 to 10</td><td>20</td></tr><tr><td>11 to 20</td><td>41</td></tr><tr><td>21 to 30</td><td>64</td></tr><tr><td>31 to 40</td><td>87</td></tr><tr><td>41 to 50</td><td>100</td></tr><tr><td>51 to 60</td><td>100</td></tr><tr><td>61 to 70</td><td>100</td></tr><tr><td>71 to 80</td><td>100</td></tr><tr><td>81 to 90</td><td>100</td></tr><tr><td>91 to 100</td><td>100</td></tr></tbody></table>',
       questions: [
         {
           type: 'choice',
@@ -174,6 +196,14 @@ window.ASSIGNMENT = {
           answer: 1,
           explain: 'Many coenzymes are made from vitamins, which is one reason vitamins are important.',
           tip: 'The reading names where many coenzymes come from.'
+        },
+        {
+          type: 'choice',
+          text: 'In the coenzyme trial, during which time period were all 100 pennies flipped?',
+          options: ['21 to 30 seconds', '41 to 50 seconds', '71 to 80 seconds', 'They never all got flipped'],
+          answer: 1,
+          explain: 'The table first reaches 100 in the 41 to 50 second row. That is less than half the time of the full trial.',
+          tip: 'Go down the Trial 3 table and find the first row where the number reaches 100.'
         },
         {
           type: 'written',
@@ -199,9 +229,11 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 5 */
     {
       title: 'Competitive inhibitor',
-      clips: [],                  // TODO: ['inhibitor']
+      clips: ['inhibitor'],
       read: '<p><b>Read:</b> A <b>competitive inhibitor</b> is a molecule that is shaped a lot like the substrate. It fits into the enzyme’s active site and takes up the spot where the substrate should go. While the inhibitor is in the active site, the substrate cannot get in. The inhibitor and the substrate “compete” for the same spot, so the reaction slows down.</p>'
-        + '<p>In the model, Mrs. Kinzy held a tennis ball while she tried to flip the pennies.</p>',
+        + '<p>In the model, Mrs. Kinzy held a tennis ball while she tried to flip the pennies. The video describes the tennis ball as “something occupying the space of the active site on the enzyme, making the enzyme not work properly.”</p>',
+      tableHtml: '<table><thead><tr><th>Time period (s)</th><th>Trial 4: Competitive Inhibitor</th></tr></thead><tbody>'
+        + '<tr><td>0 to 10</td><td>2</td></tr><tr><td>11 to 20</td><td>5</td></tr><tr><td>21 to 30</td><td>11</td></tr><tr><td>31 to 40</td><td>14</td></tr><tr><td>41 to 50</td><td>18</td></tr><tr><td>51 to 60</td><td>23</td></tr><tr><td>61 to 70</td><td>29</td></tr><tr><td>71 to 80</td><td>35</td></tr><tr><td>81 to 90</td><td>40</td></tr><tr><td>91 to 100</td><td>26</td></tr></tbody></table>',
       questions: [
         {
           type: 'choice',
@@ -218,6 +250,13 @@ window.ASSIGNMENT = {
           answer: 1,
           explain: 'While the inhibitor sits in the active site, the substrate cannot get in, so fewer reactions happen.',
           tip: 'Reread the reading. What can the substrate not do while the inhibitor is there?'
+        },
+        {
+          type: 'typed',
+          text: 'Holding the tennis ball, how many pennies had Mrs. Kinzy flipped by the end of the 81 to 90 second time period? Type the number.',
+          expected: '40',
+          aria: 'Pennies flipped in the competitive inhibitor trial',
+          tip: 'Find the 81 to 90 row in the Trial 4 table.'
         },
         {
           type: 'written',
@@ -243,32 +282,35 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 6 */
     {
       title: 'Real world connection',
-      intro: 'This part has no clip. Use the reading and what you learned in the earlier parts.',
-      read: '<p><b>Read:</b> Every enzyme has a temperature where it works best, called its <b>optimal temperature</b>. Most enzymes in the human body work best at 37℃ (98.6℉), which is normal body temperature.</p>'
-        + '<p>When the temperature moves away from the optimal temperature, an enzyme works more slowly. If the temperature gets high enough, the enzyme can change shape and become denatured. When you are sick, your body may run a fever, which raises your body temperature above normal. A fever is one of the ways the body fights an infection.</p>',
+      intro: 'This part has no clip. Use the reading, the data table, and what you learned in the earlier parts.',
+      read: '<p><b>Read:</b> Every enzyme has a temperature where it works best, called its <b>optimal temperature</b>. Most enzymes in the human body work best at 37°C (98.6°F), which is normal body temperature.</p>'
+        + '<p>When the temperature moves away from the optimal temperature, an enzyme works more slowly. If the temperature gets high enough, the enzyme can change shape and become denatured. When you are sick, your body may run a fever, which raises your body temperature above normal. A fever is one of the ways the body fights an infection.</p>'
+        + '<p>Here is the data from all four trials, side by side.</p>',
+      tableHtml: '<table><thead><tr><th>Time period (s)</th><th>Baseline Data</th><th>Denatured Enzyme</th><th>Coenzyme</th><th>Competitive Inhibitor</th></tr></thead><tbody>'
+        + '<tr><td>0 to 10</td><td>8</td><td>3</td><td>20</td><td>2</td></tr><tr><td>11 to 20</td><td>16</td><td>6</td><td>41</td><td>5</td></tr><tr><td>21 to 30</td><td>24</td><td>11</td><td>64</td><td>11</td></tr><tr><td>31 to 40</td><td>33</td><td>15</td><td>87</td><td>14</td></tr><tr><td>41 to 50</td><td>43</td><td>19</td><td>100</td><td>18</td></tr><tr><td>51 to 60</td><td>53</td><td>24</td><td>100</td><td>23</td></tr><tr><td>61 to 70</td><td>63</td><td>28</td><td>100</td><td>29</td></tr><tr><td>71 to 80</td><td>73</td><td>30</td><td>100</td><td>35</td></tr><tr><td>81 to 90</td><td>83</td><td>33</td><td>100</td><td>40</td></tr><tr><td>91 to 100</td><td>93</td><td>42</td><td>100</td><td>26</td></tr></tbody></table>',
       questions: [
         {
           type: 'selects',
-          text: 'Based on what you learned, how would each factor change the rate of the reaction compared to the baseline trial?',
+          text: 'Use the data table. Compared to the baseline trial, was each reaction faster or slower?',
           options: ['Faster', 'Slower'],
-          hint: 'Think about whether this factor helps the enzyme or gets in its way.',
+          hint: 'Compare each column to the Baseline column in the same rows.',
           items: [
-            { label: 'Denatured enzyme (taped thumb)', answer: 'Slower', hint: 'Can an enzyme with the wrong shape fit the substrate well? Look back at Part 3.' },
-            { label: 'Coenzyme (a helper)', answer: 'Faster', hint: 'Does a helper make the job easier or harder? Look back at Part 4.' },
-            { label: 'Competitive inhibitor (tennis ball)', answer: 'Slower', hint: 'What happens when something takes the substrate’s spot? Look back at Part 5.' }
+            { label: 'Denatured enzyme (taped thumb)', answer: 'Slower', hint: 'Compare the Denatured column to the Baseline column in the same rows.' },
+            { label: 'Coenzyme (a helper)', answer: 'Faster', hint: 'Compare the Coenzyme column to the Baseline column in the same rows.' },
+            { label: 'Competitive inhibitor (tennis ball)', answer: 'Slower', hint: 'Compare the Competitive Inhibitor column to the Baseline column in the same rows.' }
           ]
         },
         {
           type: 'choice',
           text: 'At what temperature do most enzymes in the human body work best?',
-          options: ['0℃ (32℉)', '25℃ (77℉)', '37℃ (98.6℉)', '100℃ (212℉)'],
+          options: ['0°C (32°F)', '25°C (77°F)', '37°C (98.6°F)', '100°C (212°F)'],
           answer: 2,
-          explain: 'Most human enzymes work best at 37℃ (98.6℉), normal body temperature.',
+          explain: 'Most human enzymes work best at 37°C (98.6°F), normal body temperature.',
           tip: 'Reread the first paragraph of the reading. It is the same as normal body temperature.'
         },
         {
           type: 'written',
-          text: 'Real World Connection: Most enzymes in the human body work best at 37℃ (98.6℉). What do you think this means then when you are sick? (2 to 4 sentences)',
+          text: 'Real World Connection: Most enzymes in the human body work best at 37°C (98.6°F). What do you think this means then when you are sick? (2 to 4 sentences)',
           min: 40,
           ideas: [
             { done: 'You described what happens to body temperature when you are sick.', q: 'Did you say what happens to your body temperature when you are sick?',
@@ -286,11 +328,11 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
-          text: 'In relation to your answer to the last question, pretend scientists discover an enzyme in the human body that works best at 39℃ (102.2℉). What processes do you think this enzyme is most likely involved in? (2 to 4 sentences)',
+          text: 'In relation to your answer to the last question, pretend scientists discover an enzyme in the human body that works best at 39°C (102.2°F). What processes do you think this enzyme is most likely involved in? (2 to 4 sentences)',
           min: 40,
           ideas: [
-            { done: 'You noticed that 39℃ is a fever temperature.', q: 'Did you notice when your body would be at 39℃?',
-              tip: 'Is 39℃ (102.2℉) a normal body temperature? When would your body be that warm?',
+            { done: 'You noticed that 39°C is a fever temperature.', q: 'Did you notice when your body would be at 39°C?',
+              tip: 'Is 39°C (102.2°F) a normal body temperature? When would your body be that warm?',
               re: /fever|sick|ill|higher than normal|above normal|hotter|warmer|infection/ },
             { done: 'You named a process the enzyme might be part of.', q: 'Did you name a process this enzyme might be involved in?',
               tip: 'Think about what your body is busy doing when it has a fever.',
