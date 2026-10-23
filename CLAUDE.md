@@ -36,6 +36,14 @@ one short question. If she is not there to answer, make the most reasonable choi
 7. **Publish:** run `python3 tools/build_index.py` (the scaffold already does), commit, and push to the main
    branch. Vercel redeploys on its own. The student link is `https://PROJECT.vercel.app/assignments/SLUG/`.
 
+## Game boards (tests and reviews)
+
+If the teacher gives a test or a set of questions and wants a Jeopardy-style board, use `board` instead of video and
+parts (see "Game board assignments" in `docs/ASSIGNMENT_FORMAT.md`, and `assignments/test-unit-4-transport/` as the
+example). Sort the questions into 5 to 7 categories of equal size, easier questions in the lower rows. Crop any
+diagrams from the test into `media/` and give them alt text that does not give the answer. Keep the test PDF and key in
+`source/`. Note that answers are in `assignment.js`, which anyone can read in the browser.
+
 ## House rules (the teacher decided these; keep them)
 
 **Page**
