@@ -41,7 +41,6 @@ function injectPage(){
 var A=window.ASSIGNMENT;
 if(!A||!A.video){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
 var TITLE=A.title, COURSE=A.course;
-var LINKS={ studio:A.video.altUrl||'' };
 injectPage();
 
 /* ------------------------------------------------------------------ */
@@ -149,14 +148,7 @@ function videoBlock(key){
     wrap.append(h('p','vidtitle','Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
     return wrap;
   }
-  var alt=h('p','vidalt');
-  if(LINKS.studio){
-    alt.append('Video not playing? ');
-    var a=h('a',null,'Open it in a new tab'); a.href=LINKS.studio; a.target='_blank'; a.rel='noopener noreferrer';
-    alt.append(a,'. Watching it here is what your teacher can track, so use this player if you can.');
-  } else {
-    alt.append('Captions are on. Use the CC button on the video to turn them off. Watching it here is what your teacher can track.');
-  }
+  var alt=h('p','vidalt','Captions are on. Use the CC button on the video to turn them off. Watching it here is what your teacher can track.');
   wrap.append(h('p','vidtitle','Video: '+info.title),vid,watchEl(v,key),alt);
   return wrap;
 }
