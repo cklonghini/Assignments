@@ -81,7 +81,8 @@ diagrams from the test into `media/` and give them alt text that does not give t
 
 **Accessibility**
 - Every question, reading, and the warning box has a Listen button (read aloud). The page picks the most natural
-  female English voice on the student’s device, and students can change the voice and speed. This is built into the engine.
+  female American English voice on the student’s device (never a British one). There is no voice menu; students can
+  change only the speed. This is built into the engine.
 - Do not remove or restyle these controls.
 
 ## Things to leave alone

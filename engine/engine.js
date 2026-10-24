@@ -22,7 +22,6 @@ function injectPage(){
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
-    +'<span class="pair" id="ttsVoicePair"><label for="ttsVoice">Voice</label><select id="ttsVoice"><option value="">Female</option><option value="male">Male</option></select></span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
     +'<p><strong>If you close this tab, refresh the page, or leave it for another website, your progress may be lost and you will have to start over.</strong></p>'
@@ -1861,8 +1860,7 @@ function ttsStop(){
 var MALE=/\b(david|mark|guy|alex|daniel|fred|tom|ryan|eric|davis|james|aaron|gordon|rishi|arthur|oliver|george|roger|steffan|christopher|brian|andrew|thomas|jason|tony|liam|noah|ralph|junior|lee|reed|rocko|grandpa|eddy|evan|nathan|male)\b/i;
 var FEMALE=/\b(aria|jenny|ava|allison|samantha|susan|zira|michelle|emma|ana|jane|sara|joanna|salli|kendra|kimberly|ivy|karen|moira|tessa|serena|kate|stephanie|nicky|libby|sonia|amy|olivia|natasha|clara|female|catherine|victoria|zoe|nora|siri)\b/i;
 var NOVELTY=/(bad news|good news|bahh|bells|boing|bubbles|cellos|deranged|hysterical|jester|organ|superstar|trinoids|whisper|wobble|zarvox|albert|kathy|princess|agnes|bruce|espeak|compact)/i;
-/* how natural a voice sounds. Gender is not part of the score; students choose that. */
-var NATURAL_MIN=100;
+/* how natural a voice sounds */
 function voiceScore(v){
   var n=v.name||'', sc=0;
   if(!/^en(-|_|$)/i.test(v.lang||'')) return -1000;
@@ -1889,15 +1887,12 @@ function voiceGender(v){
   if(FEMALE.test(n)||/^google us english$/i.test(n)) return 'female';
   return '';
 }
-/* students choose Female or Male; the most natural-sounding voice of that kind is used.
-   Voices whose names don't say (such as "Google US English") count as female. Male is offered only when the
-   device has a natural-sounding male voice, because the older built-in ones sound robotic. */
-function voiceFor(g){
+/* the most natural-sounding female American voice on the device. Voices whose names don't say
+   (such as "Google US English") count as female. */
+function pickVoice(){
   var vs=usVoices();
-  if(g==='male') return vs.filter(function(v){return voiceGender(v)==='male'&&voiceScore(v)>=NATURAL_MIN;})[0]||null;
   return vs.filter(function(v){return voiceGender(v)!=='male';})[0]||vs[0]||null;
 }
-function pickVoice(){ return (S.voice==='male'&&voiceFor('male'))||voiceFor('female'); }
 /* make the text easier to say: times, symbols, and stray punctuation */
 function ttsClean(t){
   return String(t)
@@ -1992,17 +1987,9 @@ function decorate(){
   if(!TTS) return;
   var warn=$('.warn');
   warn.querySelector('h2').after(listenBtn(function(){return warn.innerText;}));
-  var row=$('#ttsrow'), sel=$('#ttsRate'), vsel=$('#ttsVoice');
+  var row=$('#ttsrow'), sel=$('#ttsRate');
   row.hidden=false; sel.value=String(S.tts||0.95);
   sel.addEventListener('change',function(){S.tts=parseFloat(sel.value)||0.95; commit(); ttsStop();});
-  function fillVoices(){
-    var hasMale=!!voiceFor('male');
-    vsel.value=(S.voice==='male'&&hasMale)?'male':'';
-    $('#ttsVoicePair').hidden=!hasMale;
-  }
-  fillVoices();
-  try{window.speechSynthesis.addEventListener('voiceschanged',fillVoices);}catch(e){window.speechSynthesis.onvoiceschanged=fillVoices;}
-  vsel.addEventListener('change',function(){S.voice=vsel.value; commit(); ttsStop();});
   window.addEventListener('beforeunload',ttsStop);
 })();
 
