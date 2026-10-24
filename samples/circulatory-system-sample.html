@@ -171,7 +171,7 @@ svg .side{fill:var(--muted);font:700 13px var(--font-body);letter-spacing:.08em}
 <div class="wrap">
   <header class="top">
     <h1>Explore - Circulatory System</h1>
-    <p class="course">Biology B</p>
+    <p class="course">Anatomy and Physiology B</p>
   </header>
 
   <section class="sample" aria-labelledby="s-h">
@@ -245,49 +245,83 @@ svg .side{fill:var(--muted);font:700 13px var(--font-body);letter-spacing:.08em}
       <div class="bank" id="bank" aria-label="Labels"></div>
       <div class="heartlab">
         <div class="diagram">
-          <svg viewBox="0 0 480 480" role="img" aria-labelledby="heart-t">
-            <title id="heart-t">Diagram of the heart with 11 numbered parts. Blue shows oxygen-poor blood and red shows oxygen-rich blood.</title>
-            <!-- pulmonary artery branches (behind) -->
-            <rect x="25" y="128" width="220" height="27" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
-            <rect x="205" y="128" width="260" height="27" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
-            <!-- pulmonary veins -->
-            <rect x="395" y="198" width="78" height="20" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="3"/>
-            <rect x="395" y="238" width="78" height="20" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="3"/>
-            <!-- vena cavae -->
-            <rect x="115" y="8" width="45" height="180" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
-            <rect x="70" y="262" width="40" height="200" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
+          <svg viewBox="0 0 520 560" role="img" aria-labelledby="heart-t">
+            <title id="heart-t">Cutaway drawing of the human heart seen from the front, with 11 numbered parts. Blue shows oxygen-poor blood and red shows oxygen-rich blood.</title>
+            <defs>
+              <radialGradient id="g-muscle" cx="38%" cy="42%" r="70%"><stop offset="0" stop-color="#d9787c"/><stop offset=".55" stop-color="#b44c54"/><stop offset="1" stop-color="#7c2630"/></radialGradient>
+              <radialGradient id="g-blue" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#7d9be0"/><stop offset="1" stop-color="#3a55a0"/></radialGradient>
+              <radialGradient id="g-red" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#ef7a7f"/><stop offset="1" stop-color="#b3303b"/></radialGradient>
+              <radialGradient id="g-pap" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#c85c63"/><stop offset="1" stop-color="#8a3039"/></radialGradient>
+            </defs>
+            <g fill="none" stroke-linecap="butt">
+              <!-- descending aorta, behind -->
+              <path d="M385 120 L385 250" stroke="#6e1820" stroke-width="46"/><path d="M385 120 L385 250" stroke="#c0343f" stroke-width="38"/>
+              <!-- arch branches -->
+              <path d="M272 80 C268 50, 258 25, 252 4" stroke="#6e1820" stroke-width="26"/><path d="M272 80 C268 50, 258 25, 252 4" stroke="#d23f49" stroke-width="19"/>
+              <path d="M318 62 L318 4" stroke="#6e1820" stroke-width="22"/><path d="M318 62 L318 4" stroke="#d23f49" stroke-width="15"/>
+              <path d="M356 70 C362 45, 372 25, 380 4" stroke="#6e1820" stroke-width="24"/><path d="M356 70 C362 45, 372 25, 380 4" stroke="#d23f49" stroke-width="17"/>
+              <!-- pulmonary arteries -->
+              <path d="M300 182 C360 182, 420 192, 500 200" stroke="#233d78" stroke-width="34"/><path d="M300 182 C360 182, 420 192, 500 200" stroke="#4f72c2" stroke-width="26"/>
+              <path d="M300 182 C230 182, 120 188, 22 196" stroke="#233d78" stroke-width="34"/><path d="M300 182 C230 182, 120 188, 22 196" stroke="#4f72c2" stroke-width="26"/>
+            </g>
+            <!-- heart muscle -->
+            <path d="M118 240 C120 210, 170 200, 205 205 C235 210, 250 225, 280 225 C320 222, 340 205, 380 210 C420 215, 435 245, 432 275 C455 320, 462 400, 430 460 C405 505, 370 530, 350 528 C300 520, 230 490, 180 440 C135 395, 112 330, 118 240 Z" fill="url(#g-muscle)" stroke="#5a1a20" stroke-width="3"/>
+            <ellipse cx="200" cy="300" rx="70" ry="30" fill="#fff" opacity=".08" transform="rotate(-30 200 300)"/>
             <!-- chambers -->
-            <rect x="68" y="172" width="138" height="112" rx="40" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="4"/>
-            <rect x="292" y="182" width="114" height="102" rx="36" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="4"/>
-            <path d="M118 286 L250 286 L250 442 Q205 432 168 398 Q122 352 118 286 Z" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="4"/>
-            <path d="M250 286 L410 286 Q410 362 362 408 Q314 448 262 454 L250 442 Z" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="7"/>
-            <line x1="250" y1="286" x2="250" y2="446" stroke="var(--ink)" stroke-width="5"/>
-            <!-- pulmonary trunk -->
-            <rect x="205" y="140" width="40" height="148" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
-            <!-- aorta -->
-            <path d="M272 292 L272 86 Q272 36 330 36 Q388 36 388 86 L388 114" fill="none" stroke="var(--oxy-wall)" stroke-width="44"/>
-            <path d="M272 292 L272 86 Q272 36 330 36 Q388 36 388 86 L388 114" fill="none" stroke="var(--oxy)" stroke-width="36"/>
+            <path d="M145 326 L292 326 C300 380, 305 430, 322 472 C300 480, 262 470, 232 452 C185 425, 150 385, 145 326 Z" fill="url(#g-blue)" stroke="#5a1a20" stroke-width="2"/>
+            <path d="M140 250 C140 225, 175 218, 205 222 C235 226, 250 245, 250 275 C250 305, 240 325, 222 336 L160 336 C145 322, 140 285, 140 250 Z" fill="url(#g-blue)" stroke="#5a1a20" stroke-width="2"/>
+            <path d="M315 326 C345 320, 395 323, 415 338 C425 385, 415 440, 380 485 C365 500, 352 498, 345 485 C325 440, 312 385, 315 326 Z" fill="url(#g-red)" stroke="#5a1a20" stroke-width="2"/>
+            <path d="M300 255 C305 232, 345 222, 385 228 C412 233, 425 255, 420 280 C415 305, 400 318, 390 330 L330 330 C310 318, 298 290, 300 255 Z" fill="url(#g-red)" stroke="#5a1a20" stroke-width="2"/>
+            <!-- papillary muscles and cords -->
+            <g fill="url(#g-pap)" stroke="#5a1a20" stroke-width="1.5">
+              <path d="M186 446 C180 425, 186 410, 196 408 C206 410, 210 428, 204 452 Z"/>
+              <path d="M240 462 C236 440, 240 424, 250 422 C260 424, 262 444, 256 466 Z"/>
+              <path d="M340 470 C334 448, 338 432, 348 430 C358 432, 360 452, 354 476 Z"/>
+              <path d="M386 462 C384 440, 390 426, 399 426 C408 430, 406 450, 398 470 Z"/>
+            </g>
+            <g stroke="#f3e6d8" stroke-width="1.2" fill="none" opacity=".9">
+              <path d="M178 374 L192 410 M184 372 L198 410 M215 378 L246 424 M220 376 L252 424"/>
+              <path d="M336 368 L344 432 M342 366 L350 432 M380 370 L394 428 M386 368 L400 428"/>
+            </g>
+            <!-- aorta: root from the left ventricle, ascending, arch -->
+            <g fill="none">
+              <path d="M330 345 C300 300, 250 275, 250 220 L250 140 C250 75, 300 55, 335 58 C375 62, 385 95, 385 130" stroke="#6e1820" stroke-width="46"/>
+              <path d="M330 345 C300 300, 250 275, 250 220 L250 140 C250 75, 300 55, 335 58 C375 62, 385 95, 385 130" stroke="#d23f49" stroke-width="38"/>
+              <path d="M246 215 L246 140 C246 95, 270 72, 300 64" stroke="#fff" stroke-width="6" opacity=".18"/>
+            </g>
+            <!-- pulmonary trunk (in front of the aorta) -->
+            <g fill="none">
+              <path d="M262 352 C265 300, 290 260, 300 182" stroke="#233d78" stroke-width="44"/>
+              <path d="M262 352 C265 300, 290 260, 300 182" stroke="#4f72c2" stroke-width="36"/>
+            </g>
+            <!-- veins entering the atria -->
+            <g fill="none">
+              <path d="M182 18 L182 240" stroke="#233d78" stroke-width="48"/><path d="M182 18 L182 240" stroke="#4f72c2" stroke-width="40"/>
+              <path d="M120 548 L120 365 C120 335, 132 318, 152 306" stroke="#233d78" stroke-width="44"/><path d="M120 548 L120 365 C120 335, 132 318, 152 306" stroke="#4f72c2" stroke-width="36"/>
+              <path d="M505 250 C470 250, 440 252, 412 258" stroke="#6e1820" stroke-width="26"/><path d="M505 250 C470 250, 440 252, 412 258" stroke="#d23f49" stroke-width="19"/>
+              <path d="M505 296 C470 296, 440 292, 412 288" stroke="#6e1820" stroke-width="26"/><path d="M505 296 C470 296, 440 292, 412 288" stroke="#d23f49" stroke-width="19"/>
+            </g>
             <!-- valves -->
-            <g fill="var(--valve)" stroke="var(--ink)" stroke-width="1.5">
-              <path d="M135 283 L160 283 L152 300 Z"/><path d="M165 283 L190 283 L172 300 Z"/>
-              <path d="M310 283 L340 283 L330 302 Z"/><path d="M345 283 L375 283 L352 302 Z"/>
-              <path d="M209 286 L224 286 L220 274 Z"/><path d="M226 286 L241 286 L230 274 Z"/>
-              <path d="M256 289 L271 289 L267 277 Z"/><path d="M273 289 L288 289 L277 277 Z"/>
+            <g fill="#f3e6d8" stroke="#6b4a3a" stroke-width="1.5">
+              <path d="M160 334 L188 334 L181 377 Z"/><path d="M200 334 L232 334 L218 380 Z"/>
+              <path d="M326 328 L352 328 L339 370 Z"/><path d="M362 328 L392 330 L383 372 Z"/>
+              <path d="M246 340 Q252 326 262 334 Q270 324 279 340 Z"/>
+              <path d="M300 318 Q310 312 316 322 Q324 314 332 324 L326 330 L304 326 Z"/>
             </g>
             <!-- flow notes -->
-            <text class="flowtxt" x="25" y="122">to lungs</text>
-            <text class="flowtxt" x="412" y="122">to lungs</text>
-            <text class="flowtxt" x="410" y="276">from lungs</text>
-            <text class="flowtxt" x="166" y="22">from body</text>
-            <text class="flowtxt" x="20" y="474">from body</text>
-            <text class="flowtxt" x="414" y="92">to body</text>
-            <text class="side" x="96" y="474" text-anchor="start">← HEART’S RIGHT</text>
-            <text class="side" x="460" y="474" text-anchor="end">HEART’S LEFT →</text>
+            <text class="flowtxt" x="150" y="40" text-anchor="end">from body</text>
+            <text class="flowtxt" x="20" y="176">to lungs</text>
+            <text class="flowtxt" x="500" y="176" text-anchor="end">to lungs</text>
+            <text class="flowtxt" x="402" y="16">to body</text>
+            <text class="flowtxt" x="505" y="230" text-anchor="end">from lungs</text>
+            <text class="flowtxt" x="148" y="548">from body</text>
+            <text class="side" x="20" y="100">← HEART’S RIGHT</text>
+            <text class="side" x="505" y="552" text-anchor="end">HEART’S LEFT →</text>
             <!-- leader lines for valve markers -->
-            <line class="lead" x1="30" y1="330" x2="150" y2="290"/>
-            <line class="lead" x1="452" y1="318" x2="276" y2="286"/>
-            <circle cx="150" cy="290" r="3.5" fill="var(--ink)"/>
-            <circle cx="276" cy="286" r="3.5" fill="var(--ink)"/>
+            <line class="lead" x1="40" y1="395" x2="196" y2="350"/>
+            <line class="lead" x1="488" y1="372" x2="318" y2="322"/>
+            <circle cx="196" cy="350" r="4" fill="var(--ink)" stroke="var(--surface)" stroke-width="1.5"/>
+            <circle cx="318" cy="322" r="4" fill="var(--ink)" stroke="var(--surface)" stroke-width="1.5"/>
             <g id="markers"></g>
           </svg>
           <div class="legend"><span style="--sw:var(--deoxy)">Oxygen-poor blood</span><span style="--sw:var(--oxy)">Oxygen-rich blood</span><span class="vf" style="--sw:var(--valve)">Valve flaps</span></div>
@@ -488,17 +522,17 @@ svg .side{fill:var(--muted);font:700 13px var(--font-body);letter-spacing:.08em}
 
   /* ------------------------------------------------------------ heart labeling */
   const SLOTS = [
-    { n: 1, x: 120, y: 226, a: 'Right atrium', tip: 'This is an upper chamber. Which side of the heart is on your left in this drawing?' },
-    { n: 2, x: 190, y: 352, a: 'Right ventricle', tip: 'This is a lower chamber that holds oxygen-poor (blue) blood.' },
-    { n: 3, x: 336, y: 232, a: 'Left atrium', tip: 'This upper chamber gets blood coming back from the lungs.' },
-    { n: 4, x: 326, y: 360, a: 'Left ventricle', tip: 'Look at the thick wall. This lower chamber pumps oxygen-rich blood out to the body.' },
-    { n: 5, x: 330, y: 36, a: 'Aorta', tip: 'This vessel leaves the heart carrying oxygen-rich blood to the body.' },
-    { n: 6, x: 225, y: 205, a: 'Pulmonary artery', tip: 'This vessel carries blood away from the heart. Follow it. Where does it go?' },
-    { n: 7, x: 452, y: 228, a: 'Pulmonary veins', tip: 'These vessels bring blood back to the heart. Where is that blood coming from?' },
-    { n: 8, x: 137, y: 64, a: 'Superior vena cava', tip: 'This large vein brings oxygen-poor blood in from the body. Is it above or below the heart?' },
-    { n: 9, x: 90, y: 420, a: 'Inferior vena cava', tip: 'This large vein brings oxygen-poor blood in from the body. Is it above or below the heart?' },
-    { n: 10, x: 30, y: 330, a: 'Atrioventricular valve', tip: 'Look at where this valve sits: between which two chambers?' },
-    { n: 11, x: 452, y: 318, a: 'Semilunar valve', tip: 'Look at where this valve sits: between a ventricle and what?' }
+    { n: 1, x: 196, y: 280, a: 'Right atrium', tip: 'This is an upper chamber. Which side of the heart is on your left in this drawing?' },
+    { n: 2, x: 220, y: 380, a: 'Right ventricle', tip: 'This is a lower chamber that holds oxygen-poor (blue) blood.' },
+    { n: 3, x: 362, y: 270, a: 'Left atrium', tip: 'This upper chamber gets blood coming back from the lungs.' },
+    { n: 4, x: 366, y: 400, a: 'Left ventricle', tip: 'Look at the thick wall. This lower chamber pumps oxygen-rich blood out to the body.' },
+    { n: 5, x: 250, y: 150, a: 'Aorta', tip: 'This vessel leaves the heart carrying oxygen-rich blood to the body.' },
+    { n: 6, x: 290, y: 240, a: 'Pulmonary artery', tip: 'This vessel carries blood away from the heart. Follow it. Where does it go?' },
+    { n: 7, x: 472, y: 273, a: 'Pulmonary veins', tip: 'These vessels bring blood back to the heart. Where is that blood coming from?' },
+    { n: 8, x: 182, y: 90, a: 'Superior vena cava', tip: 'This large vein brings oxygen-poor blood in from the body. Is it above or below the heart?' },
+    { n: 9, x: 120, y: 470, a: 'Inferior vena cava', tip: 'This large vein brings oxygen-poor blood in from the body. Is it above or below the heart?' },
+    { n: 10, x: 40, y: 395, a: 'Atrioventricular valve', tip: 'Look at where this valve sits: between which two chambers?' },
+    { n: 11, x: 488, y: 372, a: 'Semilunar valve', tip: 'Look at where this valve sits: between a ventricle and what?' }
   ];
   const placed = {}, good = {};
   let picked = null, hTries = 0;
