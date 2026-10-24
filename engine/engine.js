@@ -22,7 +22,7 @@ function injectPage(){
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
-    +'<span class="pair"><label for="ttsVoice">Voice</label><select id="ttsVoice"><option value="">Best voice on this device</option></select></span>'
+    +'<span class="pair" id="ttsVoicePair"><label for="ttsVoice">Voice</label><select id="ttsVoice"><option value="">Female</option><option value="male">Male</option></select></span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
     +'<p><strong>If you close this tab, refresh the page, or leave it for another website, your progress may be lost and you will have to start over.</strong></p>'
@@ -65,7 +65,7 @@ function copyMeta(f,o){
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
-  f.voice=typeof o.voice==='string'?o.voice:'';
+  f.voice=o.voice==='male'?'male':'';
 }
 function load(){
   try{
@@ -1858,7 +1858,7 @@ function ttsStop(){
   if(ttsBtn){ttsBtn.setAttribute('aria-pressed','false'); ttsBtn=null;}
 }
 /* voices: pick the most natural-sounding English voice the device has, preferring a female one */
-var MALE=/\b(david|mark|guy|alex|daniel|fred|tom|ryan|eric|davis|james|aaron|gordon|rishi|arthur|oliver|george|roger|steffan|christopher|brian|andrew|thomas|jason|tony|liam|noah|ralph|junior|lee|reed|rocko|grandpa|eddy)\b/i;
+var MALE=/\b(david|mark|guy|alex|daniel|fred|tom|ryan|eric|davis|james|aaron|gordon|rishi|arthur|oliver|george|roger|steffan|christopher|brian|andrew|thomas|jason|tony|liam|noah|ralph|junior|lee|reed|rocko|grandpa|eddy|evan|nathan|male)\b/i;
 var FEMALE=/\b(aria|jenny|ava|allison|samantha|susan|zira|michelle|emma|ana|jane|sara|joanna|salli|kendra|kimberly|ivy|karen|moira|tessa|serena|kate|stephanie|nicky|libby|sonia|amy|olivia|natasha|clara|female|catherine|victoria|zoe|nora|siri)\b/i;
 var NOVELTY=/(bad news|good news|bahh|bells|boing|bubbles|cellos|deranged|hysterical|jester|organ|superstar|trinoids|whisper|wobble|zarvox|albert|kathy|princess|agnes|bruce|espeak|compact)/i;
 function voiceScore(v){
@@ -1879,11 +1879,25 @@ function englishVoices(){
   var vs=[]; try{vs=window.speechSynthesis.getVoices()||[];}catch(e){}
   return vs.filter(function(v){return voiceScore(v)>-500;}).sort(function(a,b){return voiceScore(b)-voiceScore(a);});
 }
-function pickVoice(){
-  var vs=englishVoices();
-  if(S.voice){ for(var i=0;i<vs.length;i++){ if(vs[i].voiceURI===S.voice) return vs[i]; } }
-  return vs[0]||null;
+/* American voices only; other English voices are used only on a device that has no American voice */
+function usVoices(){
+  var vs=englishVoices(), us=vs.filter(function(v){return /^en[-_]US$/i.test(v.lang||'');});
+  return us.length?us:vs;
 }
+function voiceGender(v){
+  var n=v.name||'';
+  if(MALE.test(n)) return 'male';
+  if(FEMALE.test(n)||/^google us english$/i.test(n)) return 'female';
+  return '';
+}
+/* students choose Female or Male; the most natural-sounding voice of that kind is used */
+function voiceFor(g){
+  var vs=usVoices(), m=vs.filter(function(v){return voiceGender(v)===g;});
+  if(m.length) return m[0];
+  if(g==='female') return vs.filter(function(v){return voiceGender(v)!=='male';})[0]||vs[0]||null;
+  return null;
+}
+function pickVoice(){ return (S.voice==='male'&&voiceFor('male'))||voiceFor('female'); }
 /* make the text easier to say: times, symbols, and stray punctuation */
 function ttsClean(t){
   return String(t)
@@ -1982,11 +1996,9 @@ function decorate(){
   row.hidden=false; sel.value=String(S.tts||0.95);
   sel.addEventListener('change',function(){S.tts=parseFloat(sel.value)||0.95; commit(); ttsStop();});
   function fillVoices(){
-    var vs=englishVoices().slice(0,12), best=vs[0];
-    vsel.textContent='';
-    vsel.append(new Option('Best voice on this device'+(best?' ('+best.name.replace(/^Microsoft\s+/,'').replace(/\s*-\s*English.*$/,'')+')':''),''));
-    vs.forEach(function(v){vsel.append(new Option(v.name.replace(/^Microsoft\s+/,'')+' ('+v.lang+')',v.voiceURI));});
-    vsel.value=S.voice&&vs.some(function(v){return v.voiceURI===S.voice;})?S.voice:'';
+    var hasMale=!!voiceFor('male');
+    vsel.value=(S.voice==='male'&&hasMale)?'male':'';
+    $('#ttsVoicePair').hidden=!hasMale;
   }
   fillVoices();
   try{window.speechSynthesis.addEventListener('voiceschanged',fillVoices);}catch(e){window.speechSynthesis.onvoiceschanged=fillVoices;}

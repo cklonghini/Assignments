@@ -9,7 +9,7 @@
 window.ASSIGNMENT = {
   title: 'Explore - Circulatory System',
   course: 'Anatomy and Physiology B',
-  storageKey: 'explore-circulatory-system-v1',
+  storageKey: 'explore-circulatory-system-v2',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
     + '<path d="M32 64 C10 48 4 36 4 25 C4 15 12 9 20 9 C26 9 30 13 32 17 C34 13 38 9 44 9 C52 9 60 15 60 25 C60 36 54 48 32 64 Z" fill="var(--ligand)"/>'
@@ -61,7 +61,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'speak',
-          text: 'Round 1: Read each card out loud. Say the word, then read its definition.',
+          text: 'Read each card out loud. Say the word, then read its definition.',
           cards: [
             { term: 'Artery', def: 'A blood vessel that carries blood away from the heart.',
               say: /\barter(y|ies)\b|\bart[ae]ry\b/, keys: [/\baway\b/, /\bhearts?\b/] },
@@ -93,43 +93,6 @@ window.ASSIGNMENT = {
               say: /\b(vein|veins|vain|vane|vains|vanes)\b/, keys: [/\b(to|toward|towards|back|into|returns?)\b/, /\bhearts?\b/], not: /\baway\b/ },
             { term: 'White blood cell', def: 'A blood cell that fights infection by destroying microscopic, disease-causing organisms.',
               say: /\bwhite blood cells?\b|\bwhite blood sells?\b/, keys: [/\b(infections?|disease|diseases|germs?|fights?|fighting|destroys?)\b/] }
-          ]
-        },
-        {
-          type: 'speak',
-          memory: true,
-          text: 'Round 2: Now say each word and its meaning from memory. The definition is hidden. If you get stuck, press Peek, but try first. Your own words are fine if they keep the key idea.',
-          cards: [
-            { term: 'Artery', def: 'A blood vessel that carries blood away from the heart.',
-              say: /\barter(y|ies)\b|\bart[ae]ry\b/, keys: [/\baway\b/, /\bhearts?\b/] },
-            { term: 'Atrium', def: 'Either of the two upper chambers of the heart that receives blood from veins.',
-              say: /\batri(um|a|al|ums)\b|\ba tree (um|am|em)\b|\bay tree um\b/, keys: [/\b(upper|top)\b/, /\bchambers?\b/] },
-            { term: 'Blood vessel', def: 'A tube in the body through which blood flows.',
-              say: /\bblood vessels?\b/, keys: [/\b(tube|tubes|pipe|pipes)\b/] },
-            { term: 'Capillary', def: 'A tiny blood vessel.',
-              say: /\bcapillar(y|ies)\b|\bcap[aei]l+ar(y|ies)\b|\bcapillary\b/, keys: [/\b(tiny|small|smallest|little)\b/] },
-            { term: 'Circulatory system', def: 'The body system that includes the heart, blood vessels, and blood.',
-              say: /\bcirculat(ory|ion|ary|ery)\b/, keys: [/\bhearts?\b/, /\b(vessels?|blood)\b/] },
-            { term: 'Heart', def: 'The muscular organ that pumps blood throughout the body.',
-              say: /\bhearts?\b|\bhart\b/, keys: [/\b(pump|pumps|pumping)\b/] },
-            { term: 'Heart valves', def: 'Structures that open and close to control blood flow through the heart.',
-              say: /\bvalves?\b/, keys: [/\b(open|opens|opening|close|closes|closed|closing|one way|one direction|backflow|back flow)\b/] },
-            { term: 'Platelet', def: 'A small blood cell that helps the blood to clot.',
-              say: /\bplatelets?\b|\bplate lets?\b|\bplaylets?\b/, keys: [/\b(clot|clots|clotting|clotted|clock|klott?)\b/] },
-            { term: 'Pulmonary artery', def: 'The artery that carries blood from the right ventricle to the lungs.',
-              say: /\bpulmonary arter(y|ies)\b|\bpulmonary art[ae]ry\b/, keys: [/\blungs?\b/] },
-            { term: 'Pulmonary vein', def: 'The vein that carries blood from the lungs to the left atrium.',
-              say: /\bpulmonary (vein|veins|vain|vane)\b/, keys: [/\blungs?\b/] },
-            { term: 'Red blood cell', def: 'A blood cell that carries oxygen throughout the body.',
-              say: /\bred blood cells?\b|\bred blood sells?\b/, keys: [/\boxygen\b/] },
-            { term: 'Urea', def: 'A waste product in the blood that comes from the breakdown of proteins.',
-              say: /\burea\b|\buria\b|\byuria\b|\byou ?r[ei]a\b|\byour ?[ei]a\b|\bu r e a\b|\bureah?\b/, keys: [/\bwastes?\b/] },
-            { term: 'Ventricle', def: 'Either of the two lower chambers of the heart that pumps blood through arteries.',
-              say: /\bventric(le|les|al|als)\b/, keys: [/\b(lower|bottom)\b/] },
-            { term: 'Vein', def: 'A blood vessel that carries blood to the heart.',
-              say: /\b(vein|veins|vain|vane|vains|vanes)\b/, keys: [/\b(to|toward|towards|back|into|returns?)\b/, /\bhearts?\b/], not: /\baway\b/ },
-            { term: 'White blood cell', def: 'A blood cell that fights infection by destroying microscopic, disease-causing organisms.',
-              say: /\bwhite blood cells?\b|\bwhite blood sells?\b/, keys: [/\b(infections?|disease|diseases|germs?|fights?|fighting|destroys?|sick|sickness)\b/] }
           ]
         },
         {
@@ -263,22 +226,6 @@ window.ASSIGNMENT = {
           options: ['The atria', 'The ventricles'], answer: 0,
           explain: 'The atria have thinner walls than the thicker-walled ventricles.',
           tip: 'Listen right after the A-before-V memory trick in the clip.'
-        },
-        {
-          type: 'choice',
-          text: 'What do the heart’s valves do?',
-          options: ['They are one-way structures that prevent backflow of blood', 'They add oxygen to the blood', 'They pump blood to the lungs', 'They make new red blood cells'],
-          answer: 0,
-          explain: 'Valves are one-way structures that help separate the chambers and prevent backflow of blood.',
-          tip: 'Listen to the very end of the first clip, just before “the adventure of a lifetime.”'
-        },
-        {
-          type: 'choice',
-          text: 'What can happen in an atrial septal defect?',
-          options: ['An opening in the septum lets oxygen-rich blood mix with oxygen-poor blood', 'A heart valve stops opening', 'The aorta becomes blocked', 'The heart grows a fifth chamber'],
-          answer: 0,
-          explain: 'The septum is the muscular wall between the right and left sides. A septal defect can mean an opening, so oxygen-rich and oxygen-poor blood can mix.',
-          tip: 'Watch the second clip. What does the septum normally keep apart?'
         }
       ]
     },
@@ -291,13 +238,6 @@ window.ASSIGNMENT = {
         + '<p>Each time a chamber contracts, it pushes blood through a valve into the next place. When you see the word “pulmonary,” it likely involves the lungs.</p>'
         + '<p>The heart muscle needs its own blood supply too. <b>Coronary arteries</b> branch off the aorta and deliver blood to capillaries that bring oxygen and glucose to the heart. <b>Coronary veins</b> take the deoxygenated blood back to the right atrium.</p>',
       questions: [
-        {
-          type: 'order',
-          text: 'Put the stops in order, starting with blood coming back from the body.',
-          items: ['Vena cava', 'Right atrium', 'Tricuspid valve', 'Right ventricle', 'Pulmonary valve', 'Pulmonary artery', 'Lungs', 'Pulmonary vein', 'Left atrium', 'Mitral (bicuspid) valve', 'Left ventricle', 'Aortic valve', 'Aorta'],
-          tip: 'Each chamber pushes blood through a valve before it moves on. The quiz-yourself part of the second clip says the stops in order.',
-          explain: 'Blood comes back from the body through the vena cava into the right side, goes to the lungs for oxygen, returns to the left side, and leaves through the aorta.'
-        },
         {
           type: 'selects',
           text: 'Is the blood in each place oxygen-rich or oxygen-poor?',
@@ -320,13 +260,8 @@ window.ASSIGNMENT = {
           tip: 'Watch the start of the second clip. The heart needs its own blood supply. Which vessels does the video name?'
         },
         {
-          type: 'mnemonic',
-          text: 'Make your own memory trick for the pathway of blood. Write a silly sentence with one word in each box. Each word must start with the same letter as its step.',
-          words: ['Right atrium', 'Tricuspid valve', 'Right ventricle', 'Pulmonary valve', 'Pulmonary artery', 'Lungs', 'Pulmonary vein', 'Left atrium', 'Mitral valve', 'Left ventricle', 'Aortic valve', 'Aorta']
-        },
-        {
           type: 'highlight',
-          text: 'Follow the blood from the video’s toe all the way through the heart and lungs and back out to the body. Name the vessels, chambers, and valves it passes through, and tell where it picks up oxygen. Use evidence from the video and highlight it in yellow. (3 to 5 sentences)',
+          text: 'Follow the blood from the video’s toe all the way through the heart and lungs and back out to the body. Name the vessels, chambers, and valves it passes through, and tell where it picks up oxygen. Use evidence from the video and highlight it in yellow. Remember to tell where your evidence comes from. For example: “According to the video, …” or “In the video, the narrator explains that …” (3 to 5 sentences)',
           min: 150,
           ideas: [
             { done: 'You told how the blood gets back to the heart.', q: 'Did you name the vein that brings blood from the toe to the heart?', tip: 'The video names a large vein, and says which one (superior or inferior) the toe blood uses.', re: /vena|cava/ },
@@ -361,9 +296,7 @@ window.ASSIGNMENT = {
             { name: 'Patient 1: Marcus', who: 'Age 17. Broke his leg playing soccer.', type: 'A+' },
             { name: 'Patient 2: Mrs. Lee', who: 'Age 64. Having knee surgery next week.', type: 'O−' },
             { name: 'Patient 3: Sam', who: 'Age 16. Giving blood for the first time at a school blood drive.', type: 'AB+' },
-            { name: 'Patient 4: Mr. Okafor', who: 'Age 45. Lost blood in a car accident.', type: 'B+' },
-            { name: 'Patient 5: Ana', who: 'Age 29. Expecting a baby next month.', type: 'A−' },
-            { name: 'Patient 6: Jordan', who: 'Age 18. Getting ready for surgery.', type: 'O+' }
+            { name: 'Patient 4: Mr. Okafor', who: 'Age 45. Lost blood in a car accident.', type: 'B+' }
           ]
         },
         {
