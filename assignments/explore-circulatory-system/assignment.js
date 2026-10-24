@@ -335,22 +335,6 @@ window.ASSIGNMENT = {
           explain: 'Mr. Chen’s cells have A and Rh. Any bag that only brings A, Rh, or no markers at all is safe: O−, O+, A−, and A+.'
         },
         {
-          type: 'multi',
-          text: 'Keisha is type AB+. Which donor bags are safe for her? Choose every safe bag.',
-          options: ['O−', 'A+', 'B−', 'AB+', 'O+', 'AB−'],
-          answers: ['O−', 'A+', 'B−', 'AB+', 'O+', 'AB−'],
-          tip: 'There are more safe bags. Keisha’s cells already have A, B, and Rh. Is there any marker a bag could bring that her body doesn’t already know?',
-          explain: 'Keisha has all three markers, so no bag brings a marker her body would attack. That is why AB+ is called the universal recipient.'
-        },
-        {
-          type: 'choice',
-          text: 'O− is called the “universal donor.” Why can almost anyone receive O− red blood cells?',
-          options: ['Its red blood cells have no A, B, or Rh markers for the patient’s body to attack', 'It carries more oxygen than other blood types', 'It is the most common blood type', 'It has extra platelets'],
-          answer: 0,
-          explain: 'O− red blood cells have none of the three markers, so they bring nothing for the patient’s immune system to attack.',
-          tip: 'Think about what makes a patient’s body attack donor blood. What does O− blood have, or not have?'
-        },
-        {
           type: 'written',
           text: 'Why does it matter that people have different blood types? Use what you learned from the blood types video and your lab. Explain how blood typing keeps patients safe, and how your blood type connects to the idea that each of us is unique. (3 to 5 sentences)',
           min: 150,
