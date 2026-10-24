@@ -8,7 +8,7 @@ Each one is a page on Vercel with the video and short clips, auto-checked practi
 
 | Assignment | Folder |
 | --- | --- |
-| Explore - Circulatory System (Anatomy and Physiology B) | `assignments/explore-circulatory-system/` |
+| Explore - The Circulatory System (Anatomy and Physiology B) | `assignments/explore-circulatory-system/` |
 | Explore - Species Classification (Marine Science A) | `assignments/explore-species-classification/` |
 | Test - Unit 4 Transport (Anatomy & Physiology), game board | `assignments/test-unit-4-transport/` |
 

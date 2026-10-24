@@ -1,5 +1,5 @@
 /*
-  Explore - Circulatory System (Anatomy and Physiology B)
+  Explore - The Circulatory System (Anatomy and Physiology B)
   Everything a student sees in this assignment is written here. The shared engine in /engine builds the page,
   the progress bars, the PDF, the Listen buttons, and the captions from this file.
   Video: Amoeba Sisters, "Circulatory System and Pathway of Blood Through the Heart". Captions come from the
@@ -7,7 +7,7 @@
   Text rules: *text* is shown in italics (use it for scientific names). Reading boxes (read) and tables use HTML.
 */
 window.ASSIGNMENT = {
-  title: 'Explore - Circulatory System',
+  title: 'Explore - The Circulatory System',
   course: 'Anatomy and Physiology B',
   storageKey: 'explore-circulatory-system-v2',
 
@@ -190,7 +190,7 @@ window.ASSIGNMENT = {
           text: 'Label the heart. Drag each label to the box with the matching number, then press “Check my labels.” The heart is drawn as if you are facing the person, so the heart’s right side is on your left.',
           viewBox: '-150 0 1092 1006',
           image: { src: 'media/heart-diagram.webp', width: 792, height: 1006 },
-          alt: 'Cutaway drawing of the human heart with 13 numbered parts',
+          alt: 'Cutaway drawing of the human heart with 11 numbered parts',
           legend: '<span><span class="sw" style="background:#1e8fd6"></span>Oxygen-poor blood</span><span><span class="sw" style="background:#d61f45"></span>Oxygen-rich blood</span><span>Diagram colors only. Real blood is always red.</span>',
           credit: 'Heart illustration: Shutterstock',
           spots: [
@@ -204,11 +204,9 @@ window.ASSIGNMENT = {
             { x: 190, y: 300, label: 'Superior vena cava', tip: 'This vein brings blood back from the body. Is it above or below the heart?' },
             { x: 155, y: 860, label: 'Inferior vena cava', tip: 'This vein brings blood back from the body. Is it above or below the heart?' },
             { x: -85, y: 720, label: 'Tricuspid valve', tip: 'Which two chambers does this valve sit between? Which side of the heart is it on?', to: [[205, 692]] },
-            { x: 880, y: 560, label: 'Mitral (bicuspid) valve', tip: 'Which two chambers does this valve sit between? Which side of the heart is it on?', to: [[540, 545]] },
-            { x: -85, y: 560, label: 'Aortic valve', tip: 'This valve sits where blood leaves a ventricle. Which vessel is on the other side of it?', to: [[322, 580]] },
-            { x: 488, y: 790, label: 'Septum', tip: 'This is the muscular wall between the two lower chambers.' }
+            { x: 880, y: 560, label: 'Mitral (bicuspid) valve', tip: 'Which two chambers does this valve sit between? Which side of the heart is it on?', to: [[540, 545]] }
           ],
-          explain: 'The right side (the person’s right) pumps deoxygenated blood, and the left side pumps oxygenated blood. The atria are on top and the ventricles are on the bottom. The valves are one-way and prevent backflow, and the septum separates the right and left sides.'
+          explain: 'The right side (the person’s right) pumps deoxygenated blood, and the left side pumps oxygenated blood. The atria are on top and the ventricles are on the bottom. The valves are one-way and prevent backflow.'
         },
         {
           type: 'selects',
