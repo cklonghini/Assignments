@@ -102,6 +102,71 @@ True/false is a choice question with two options.
 
 Each box is labeled with the word and must start with its first letter. One per assignment.
 
+### multi: choose every correct answer (check boxes, auto-checked)
+
+```js
+{ type: 'multi', text: 'Priya is type B−. Which donor bags are safe for her?',
+  options: ['O−', 'O+', 'A−', 'B−'], answers: ['O−', 'B−'],
+  rules: [{ any: ['O+'], tip: 'Priya is Rh negative. Look at the + or − on each bag.' }],  // first rule whose
+                                                       // "any" list matches a wrong pick gives its tip
+  tip: 'Shown when no rule matches (usually: there are more right answers).',
+  explain: 'Shown after a right answer.' }
+```
+
+### speak: say it out loud (auto-checked, one point per card)
+
+Students press **Say it** and say the word and its definition. In Chrome, Edge, and Safari the card listens for the
+word (`say`) and every pattern in `keys`. It turns green when it hears them all. In Firefox it can only check that the
+student spoke out loud for 3 seconds, and the PDF says so. `not` is an optional pattern that must *not* be heard
+(for example `/\baway\b/` on Vein). Patterns are tested on lowercase words with punctuation removed. Write them
+generously, because speech-to-text spells things in odd ways (`/\bvein|vain|vane\b/`).
+
+```js
+{ type: 'speak', text: 'Round 1: Read each card out loud.',
+  memory: false,                     // true hides the definition (a Peek button shows it, and the PDF records peeks)
+  cards: [ { term: 'Artery', def: 'A blood vessel that carries blood away from the heart.',
+             say: /\barter(y|ies)\b/, keys: [/\baway\b/, /\bheart\b/] } ] }
+```
+
+If a student's microphone is blocked or missing, the card shows `micHelp` (a top-level field; leave it out for the
+default message telling students to contact IT). `node tools/validate.js` warns when a card's patterns do not match
+its own word and definition.
+
+### label: label a diagram (auto-checked, one point per box)
+
+Numbered markers sit on a picture, and students drag (or tap) labels into the matching numbered boxes. Wrong labels go
+back to the bank with that box's tip. `viewBox` is the drawing area in the picture's own pixels, and it can be wider
+than the picture to leave room for markers at the sides. `to` draws pointer lines from a marker to the exact spot.
+
+```js
+{ type: 'label', text: 'Label the heart...',
+  viewBox: '-150 0 1092 1006', image: { src: 'media/heart-diagram.webp', width: 792, height: 1006 },
+  alt: 'Cutaway drawing of the heart with 13 numbered parts',
+  legend: 'optional HTML under the picture', credit: 'Heart illustration: Shutterstock',
+  spots: [ { x: 185, y: 500, label: 'Right atrium', tip: 'Point, do not tell.' },
+           { x: -85, y: 720, label: 'Tricuspid valve', tip: '...', to: [[205, 692]] } ],
+  explain: 'Shown when every label is right.' }
+```
+
+### order: put steps in order (auto-checked)
+
+Students drag the steps (or use the arrow buttons). After a wrong try the steps in the right spot turn green.
+
+```js
+{ type: 'order', text: 'Put the stops in order.', items: ['First', 'Second', 'Third'],   // the correct order
+  tip: 'Shown after a wrong try.', explain: 'Shown after a right answer.' }
+```
+
+### bloodlab: blood typing lab (auto-checked, one point per patient)
+
+Students add anti-A, anti-B, and anti-Rh serum to each patient's blood, read the clumping, and choose the type.
+Write types with the real minus sign: `'O−'`, not `'O-'`.
+
+```js
+{ type: 'bloodlab', text: 'Test each patient’s blood...',
+  patients: [ { name: 'Patient 1: Marcus', who: 'Age 17. Broke his leg playing soccer.', type: 'A+' } ] }
+```
+
 ### written: a short written response the teacher grades
 
 ```js

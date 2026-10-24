@@ -95,6 +95,51 @@ for (const dir of dirs) {
             if (!Array.isArray(q.words) || q.words.length < 2) E(w + ' needs words');
             nAuto++;
             break;
+          case 'speak':
+            if (!(q.cards || []).length) E(w + ' has no cards');
+            (q.cards || []).forEach((c, i) => {
+              const isRe = r => Object.prototype.toString.call(r) === '[object RegExp]';
+              if (!c.term || !c.def) E(w + ' card ' + (i + 1) + ' needs term and def');
+              if (!isRe(c.say)) E(w + ' card ' + (i + 1) + ' needs say (a pattern for the word)');
+              else if (!c.say.test(plain(c.term))) W(w + ' card ' + (i + 1) + ': the say pattern does not match its own word "' + c.term + '"');
+              if (!Array.isArray(c.keys) || !c.keys.every(isRe)) E(w + ' card ' + (i + 1) + ' needs keys (a list of patterns)');
+              else if (!c.keys.every(r => r.test(plain(c.def)))) W(w + ' card ' + (i + 1) + ' (' + c.term + '): a key pattern does not match the card\'s own definition');
+              nAuto++;
+            });
+            break;
+          case 'label':
+            if (!q.image || !q.image.src) E(w + ' needs image.src');
+            else if (!exists(q.image.src)) E(w + ': image not found: ' + q.image.src);
+            if (!q.viewBox) E(w + ' needs viewBox');
+            if (!(q.spots || []).length) E(w + ' has no spots');
+            (q.spots || []).forEach((sp, i) => {
+              if (!sp.label || typeof sp.x !== 'number' || typeof sp.y !== 'number') E(w + ' spot ' + (i + 1) + ' needs label, x and y');
+              needTip(sp.tip, [sp.label]);
+              nAuto++;
+            });
+            if (new Set((q.spots || []).map(sp => sp.label)).size !== (q.spots || []).length) E(w + ': two spots have the same label');
+            break;
+          case 'order':
+            if (!Array.isArray(q.items) || q.items.length < 3) E(w + ' needs at least 3 items');
+            if (!q.tip) E(w + ' needs a tip');
+            if (!q.explain) E(w + ' needs an explanation');
+            nAuto++;
+            break;
+          case 'bloodlab':
+            if (!(q.patients || []).length) E(w + ' has no patients');
+            (q.patients || []).forEach((pt, i) => {
+              if (!pt.name || !/^(A|B|AB|O)[+−]$/.test(pt.type || '')) E(w + ' patient ' + (i + 1) + ' needs a name and a type such as A+ or O\u2212 (use the real minus sign \u2212)');
+              nAuto++;
+            });
+            break;
+          case 'multi':
+            if (!Array.isArray(q.options) || q.options.length < 2) E(w + ' needs at least 2 options');
+            if (!Array.isArray(q.answers) || !q.answers.length) E(w + ' needs answers');
+            else q.answers.forEach(a => { if (!(q.options || []).includes(a)) E(w + ': the answer "' + a + '" is not one of the options'); });
+            if (!q.explain) E(w + ' needs an explanation (shown after a right answer)');
+            if (!q.tip) E(w + ' needs a tip');
+            nAuto++;
+            break;
           case 'written': case 'highlight':
             nWritten++;
             if (!(q.ideas || []).length) W(w + ' has no ideas, so students get no "Check my ideas" button');

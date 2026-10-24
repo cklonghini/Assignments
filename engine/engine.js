@@ -421,6 +421,515 @@ function mnWidget(MNW){
 }
 
 /* ------------------------------------------------------------------ */
+/* Builders: helpers shared by the activity types below                */
+/* ------------------------------------------------------------------ */
+/* a shuffle that comes out the same every time for the same seed, so the page does not reshuffle on reload */
+function rng(seed){
+  var x=0; seed=String(seed);
+  for(var i=0;i<seed.length;i++) x=(x*31+seed.charCodeAt(i))|0;
+  x=Math.abs(x)%2147483646+1;
+  return function(){x=(x*16807)%2147483647; return (x-1)/2147483646;};
+}
+function shuffled(arr,seed){
+  var r=rng(seed), a=arr.slice();
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t;}
+  return a;
+}
+function setAuto(id,v,ok,extra){
+  var prev=S.auto[id]||{}, o={v:v,ok:ok,miss:(prev.miss||0)};
+  if(extra) Object.keys(extra).forEach(function(k){o[k]=extra[k];});
+  S.auto[id]=o;
+  return o;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: say it out loud                                           */
+/* ------------------------------------------------------------------ */
+/* Students say a word and its definition. Where the browser can turn speech into words (Chrome, Edge, Safari),
+   the card checks that it heard the word and its key ideas. Elsewhere (Firefox) it checks that the student
+   spoke out loud for a few seconds, and the PDF says so. */
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
+var soundOnly=!SR, micStop=null;
+var MIC_HELP=A.micHelp||'If your microphone isn’t working, reach out to IT to get it working. It’s so important for us to hear from you in our online school, so you’ll need a working microphone to finish this activity.';
+function speechText(t){return String(t||'').toLowerCase().replace(/[^a-z0-9\s']/g,' ').replace(/\s+/g,' ').trim();}
+function speechMatch(c,t){
+  t=speechText(t);
+  var word=c.say.test(t), keys=c.keys||[], got=keys.filter(function(r){return r.test(t);}).length;
+  var wrongWay=c.not?c.not.test(t):false;
+  return {word:word,pass:word&&got===keys.length&&!wrongWay};
+}
+function speakQ(id,q){
+  var wrap=h('div','scards');
+  (q.cards||[]).forEach(function(c,i){
+    var cid=id+'_'+i;
+    AUTO[cid]={sum:c.term};
+    ORDER.push({kind:'auto',id:cid,label:c.term,q:CURQ,sub:c.term});
+    wrap.append(speakCard(cid,c,!!q.memory));
+  });
+  var box=h('div');
+  if(soundOnly) box.append(h('p','whint','This browser can’t turn speech into words, so each card checks that you spoke out loud for a few seconds. Chrome or Edge works best for this part.'));
+  box.append(wrap);
+  return box;
+}
+function speakCard(cid,c,memory){
+  var card=h('div','scard'); mark(card); card.dataset.s='idle';
+  var def=h('p','sdef');
+  var btn=h('button','btn mic'); btn.type='button'; btn.setAttribute('aria-pressed','false');
+  var row=h('div','row'); row.append(btn);
+  var peek=null, showing=false;
+  if(memory){ peek=h('button','btn ghost'); peek.type='button'; row.append(peek); }
+  else if(TTS) row.append(listenBtn(function(){return plain(c.term)+'. '+plain(c.def);}));
+  var lvl=h('div','level'); lvl.hidden=true; var lvlFill=h('i'); lvl.append(lvlFill);
+  var heard=h('p','heard'); heard.setAttribute('aria-live','polite');
+  var term=h('p','sterm'); term.append(itxt(c.term));
+  card.append(term,def,row,lvl,heard);
+  function rec(){return S.auto[cid]||null;}
+  function tell(t,bad){heard.textContent=t; if(bad) heard.dataset.s='bad'; else heard.removeAttribute('data-s');}
+  function paint(){
+    var r=rec(), done=!!(r&&r.ok);
+    card.dataset.s=done?'ok':(r&&r.v?'bad':'idle');
+    if(!micStop||micStop.card!==cid){ btn.setAttribute('aria-pressed','false'); btn.textContent=done?'Say it again':'Say it'; }
+    def.textContent='';
+    if(memory&&!done&&!showing){ def.className='sdef hidden'; def.textContent='Say the definition from memory.'; }
+    else { def.className='sdef'; def.append(itxt(c.def)); }
+    if(peek){ peek.hidden=done; peek.textContent=showing?'Hide the definition':'Peek'; }
+    if(done) tell('✓ '+(r.how==='sound'?'You said it out loud.':'I heard you say the word and its meaning.')+(r.peek?' (You peeked.)':''));
+  }
+  if(peek) peek.addEventListener('click',function(){
+    showing=!showing;
+    if(showing){ var r=rec(); if(!r||!r.peek){ setAuto(cid,r?r.v:'',r?!!r.ok:false,{peek:true,how:r&&r.how}); commit(); } }
+    paint();
+  });
+  function judge(text,how){
+    var r=rec(), extra={how:how,peek:!!(r&&r.peek)};
+    text=String(text||'').trim();
+    if(r&&r.ok){ tell(text?'Heard: “'+text+'”':''); return; }
+    if(!text){ tell('I didn’t hear anything. Check that your microphone is on, then press Say it again.',true); return; }
+    var m=speechMatch(c,text), v='Heard: “'+text+'”';
+    if(m.pass){ setAuto(cid,v,true,extra); paint(); commit(); return; }
+    var o=setAuto(cid,v,false,extra); o.miss++;
+    paint(); commit();
+    tell('Heard: “'+text+'”. '+(!m.word?'I didn’t catch the word '+plain(c.term)+'. Say the word first, then its meaning.'
+      :(memory?'I heard the word, but not all of its meaning. Try again, or press Peek.':'I heard the word, but not all of the definition. Read the whole definition out loud.')),true);
+  }
+  function listening(on){
+    btn.setAttribute('aria-pressed',on?'true':'false');
+    btn.textContent=on?'Done':(rec()&&rec().ok?'Say it again':'Say it');
+  }
+  function startWords(){
+    var r=new SR(), text='', alts='', quiet=null, err='';
+    r.lang='en-US'; r.continuous=true; r.interimResults=true; r.maxAlternatives=3;
+    function stop(){try{r.stop();}catch(e){}}
+    micStop=stop; micStop.card=cid; listening(true);
+    tell('Listening… Say the word, then its meaning.');
+    r.onresult=function(e){
+      text=''; alts='';
+      for(var i=0;i<e.results.length;i++){
+        text+=e.results[i][0].transcript+' ';
+        for(var j=0;j<e.results[i].length;j++) alts+=e.results[i][j].transcript+' ';
+      }
+      tell('Heard: “'+text.trim()+'”');
+      clearTimeout(quiet); quiet=setTimeout(stop,2500);
+      if(speechMatch(c,alts).pass) stop();
+    };
+    r.onerror=function(e){err=(e&&e.error)||'';};
+    r.onend=function(){
+      clearTimeout(quiet); micStop=null; listening(false);
+      if(err==='not-allowed'||err==='service-not-allowed'||err==='audio-capture'){ tell('I can’t hear your microphone. If your browser asks, choose Allow. '+MIC_HELP,true); return; }
+      if(err==='network'||err==='language-not-supported'){ soundOnly=true; tell('Word checking isn’t working right now. Press Say it and speak again. This time the card checks that you spoke out loud.',true); return; }
+      judge(speechMatch(c,alts).pass?alts:text,'words');
+    };
+    try{r.start();}catch(e){ micStop=null; listening(false); soundOnly=true; startSound(); }
+  }
+  function startSound(){
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ tell(MIC_HELP,true); return; }
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      var AC=window.AudioContext||window.webkitAudioContext, ctx=new AC(), an=ctx.createAnalyser();
+      an.fftSize=1024; ctx.createMediaStreamSource(stream).connect(an);
+      if(ctx.resume) ctx.resume();
+      var buf=new Float32Array(an.fftSize), voiced=0, t0=performance.now(), last=t0, raf=0, done=false;
+      function stop(){
+        if(done) return; done=true;
+        cancelAnimationFrame(raf); stream.getTracks().forEach(function(t){t.stop();}); try{ctx.close();}catch(e){}
+        micStop=null; listening(false); lvl.hidden=true;
+        if(voiced>=3){ var r=rec(); if(!(r&&r.ok)){ setAuto(cid,'Spoke out loud for '+Math.round(voiced)+' seconds',true,{how:'sound',peek:!!(r&&r.peek)}); paint(); commit(); } else tell('✓ You said it out loud again.'); }
+        else tell('That was short. Press Say it, say the word and its whole meaning, then press Done.',true);
+      }
+      micStop=stop; micStop.card=cid; listening(true); lvl.hidden=false;
+      tell('Listening… Say the word and its meaning, then press Done.');
+      function tick(now){
+        an.getFloatTimeDomainData(buf);
+        var sum=0; for(var i=0;i<buf.length;i++) sum+=buf[i]*buf[i];
+        var rms=Math.sqrt(sum/buf.length);
+        if(rms>0.02) voiced+=(now-last)/1000;
+        last=now; lvlFill.style.width=Math.min(100,rms*700)+'%';
+        if(now-t0>30000) return stop();
+        raf=requestAnimationFrame(tick);
+      }
+      raf=requestAnimationFrame(tick);
+    },function(){ tell('I can’t hear your microphone. If your browser asks, choose Allow. '+MIC_HELP,true); });
+  }
+  btn.addEventListener('click',function(){
+    if(micStop){ var mine=micStop.card===cid; micStop(); if(mine) return; }
+    ttsStop();
+    if(soundOnly) startSound(); else startWords();
+  });
+  paint();
+  return card;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: label a diagram                                           */
+/* ------------------------------------------------------------------ */
+/* Numbered markers on a picture, and one box per marker. Students drag (or tap) labels into the boxes. */
+var SVGNS='http://www.w3.org/2000/svg';
+function svgEl(tag,attrs){var e=document.createElementNS(SVGNS,tag); Object.keys(attrs||{}).forEach(function(k){e.setAttribute(k,attrs[k]);}); return e;}
+function labelQ(id,q){
+  var spots=q.spots||[], ids=spots.map(function(s,i){return id+'_'+i;});
+  spots.forEach(function(s,i){
+    AUTO[ids[i]]={sum:'Box '+(i+1)};
+    ORDER.push({kind:'auto',id:ids[i],label:'Box '+(i+1),q:CURQ,sub:'Box '+(i+1)});
+  });
+  var labels=shuffled(spots.map(function(s){return s.label;}).concat(q.extra||[]),KEY+id);
+  var picked=null, bad={};
+  var wrap=h('div','lbwrap');
+  wrap.append(h('p','whint','Drag each label to the box with the matching number. On a touch screen, tap a label and then tap a box. To take a label back out, tap its box.'));
+  var bank=h('div','lbank'); bank.setAttribute('role','group'); bank.setAttribute('aria-label','Labels to place');
+  var grid=h('div','lbgrid'), fig=h('div','lbfig'), list=h('ol','lbslots');
+  var vb=String(q.viewBox).split(/[\s,]+/).map(Number), R0=q.markerSize||30;
+  var svg=svgEl('svg',{viewBox:q.viewBox,role:'img','aria-label':q.alt||'Diagram with numbered parts'});
+  svg.append(svgEl('rect',{x:vb[0],y:vb[1],width:vb[2],height:vb[3],fill:'#ffffff'}));
+  svg.append(svgEl('image',{href:q.image.src,x:q.image.x||0,y:q.image.y||0,width:q.image.width,height:q.image.height}));
+  spots.forEach(function(s){
+    (s.to||[]).forEach(function(p){
+      svg.append(svgEl('line',{x1:s.x,y1:s.y,x2:p[0],y2:p[1],'class':'lbhalo'}));
+      svg.append(svgEl('line',{x1:s.x,y1:s.y,x2:p[0],y2:p[1],'class':'lblead'}));
+      svg.append(svgEl('circle',{cx:p[0],cy:p[1],r:Math.round(R0*0.27),'class':'lbdot'}));
+    });
+  });
+  var mks=spots.map(function(s,i){
+    var g=svgEl('g',{'class':'lbmk'});
+    g.append(svgEl('circle',{cx:s.x,cy:s.y,r:R0}));
+    var t=svgEl('text',{x:s.x,y:s.y,'font-size':R0}); t.textContent=String(i+1); g.append(t);
+    svg.append(g); return g;
+  });
+  fig.append(svg);
+  if(q.legend) fig.append(hh('div','lblegend',q.legend));
+  if(q.credit) fig.append(h('p','lbcredit',q.credit));
+  grid.append(fig,list);
+  var row=h('div','row gap'), chk=h('button','btn','Check my labels'); chk.type='button'; row.append(chk);
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  var exp=h('p','msg');
+  wrap.append(bank,grid,row,msg,exp);
+  function val(i){var r=S.auto[ids[i]]; return r&&r.v?r.v:'';}
+  function locked(i){var r=S.auto[ids[i]]; return !!(r&&r.ok);}
+  function setV(i,v){var prev=S.auto[ids[i]]||{}; S.auto[ids[i]]={v:v,ok:false,miss:prev.miss||0,pend:!!v};}
+  function place(i,label){
+    if(locked(i)) return;
+    spots.forEach(function(s,j){ if(j!==i&&!locked(j)&&val(j)===label) setV(j,''); });
+    setV(i,label); picked=null; delete bad[i]; msg.textContent='';
+    paint(); commit();
+    var b=list.querySelector('[data-i="'+i+'"]'); if(b) b.focus();
+  }
+  function clearOver(){[].forEach.call(list.querySelectorAll('.lbdrop.over'),function(d){d.classList.remove('over');});}
+  function dropAt(x,y){var t=document.elementFromPoint(x,y); return t&&t.closest?t.closest('.lbdrop'):null;}
+  function chipEl(l){
+    var b=h('button','lchip',l); b.type='button'; b.dataset.l=l; b.setAttribute('aria-pressed',picked===l?'true':'false');
+    var sx=null, sy=0, moved=false, ghost=null;
+    function move(e){
+      if(sx===null) return;
+      if(!moved&&Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)<8) return;
+      if(!moved){ moved=true; ghost=h('span','lchip lghost',l); document.body.append(ghost); }
+      ghost.style.left=(e.clientX-24)+'px'; ghost.style.top=(e.clientY-20)+'px';
+      clearOver(); var t=dropAt(e.clientX,e.clientY); if(t) t.classList.add('over');
+    }
+    function up(e){
+      document.removeEventListener('pointermove',move); document.removeEventListener('pointerup',up); document.removeEventListener('pointercancel',up);
+      if(sx===null) return; sx=null;
+      if(ghost){ghost.remove(); ghost=null;}
+      clearOver();
+      if(moved&&e.type==='pointerup'){ var t=dropAt(e.clientX,e.clientY); if(t) place(+t.dataset.i,l); }
+    }
+    b.addEventListener('pointerdown',function(e){
+      if(e.button) return;
+      sx=e.clientX; sy=e.clientY; moved=false;
+      document.addEventListener('pointermove',move); document.addEventListener('pointerup',up); document.addEventListener('pointercancel',up);
+    });
+    b.addEventListener('click',function(){
+      if(moved){moved=false; return;}
+      picked=(picked===l)?null:l; paint();
+      var nb=[].filter.call(bank.querySelectorAll('.lchip'),function(x){return x.dataset.l===l;})[0]; if(nb) nb.focus();
+    });
+    return b;
+  }
+  function paint(){
+    var used={}; spots.forEach(function(s,i){ if(val(i)) used[val(i)]=true; });
+    var left=labels.filter(function(l){return !used[l];});
+    bank.textContent='';
+    left.forEach(function(l){bank.append(chipEl(l));});
+    if(!left.length) bank.append(h('span','whint','All the labels are placed.'));
+    list.textContent='';
+    var all=true;
+    spots.forEach(function(s,i){
+      var li=h('li','lbslot'); mark(li);
+      li.dataset.s=locked(i)?'ok':(bad[i]?'bad':'idle');
+      if(!locked(i)) all=false;
+      var b=h('button','lbdrop'+(val(i)?' filled':'')); b.type='button'; b.dataset.i=String(i);
+      b.textContent=val(i)?val(i)+(locked(i)?' ✓':''):(picked?'Tap to place “'+picked+'” here':'Drop a label here');
+      b.setAttribute('aria-label','Box '+(i+1)+': '+(val(i)||'empty')+(locked(i)?', correct':''));
+      b.addEventListener('click',function(){ if(locked(i)) return; if(picked) place(i,picked); else if(val(i)){ setV(i,''); paint(); commit(); } });
+      b.addEventListener('mouseenter',function(){mks[i].classList.add('hot');}); b.addEventListener('mouseleave',function(){mks[i].classList.remove('hot');});
+      b.addEventListener('focus',function(){mks[i].classList.add('hot');}); b.addEventListener('blur',function(){mks[i].classList.remove('hot');});
+      li.append(h('span','qnum',String(i+1)),b);
+      if(bad[i]&&!val(i)){ var tp=h('p','msg lbtip'); tp.dataset.s='bad'; tp.append('Tip: ',itxt(s.tip)); li.append(tp); }
+      list.append(li);
+      mks[i].classList.toggle('done',locked(i));
+    });
+    chk.hidden=all;
+    exp.textContent='';
+    if(all){ msg.dataset.s='ok'; msg.textContent='Correct. All '+spots.length+' labels are in the right place.'; if(q.explain){exp.dataset.s='ok'; exp.append(itxt(q.explain));} }
+  }
+  chk.addEventListener('click',function(){
+    var empty=spots.filter(function(s,i){return !val(i);}).length;
+    if(empty){ msg.dataset.s='bad'; msg.textContent='Place all '+spots.length+' labels first. '+empty+(empty===1?' box is':' boxes are')+' still empty.'; return; }
+    var wrong=0;
+    spots.forEach(function(s,i){
+      if(locked(i)) return;
+      var r=S.auto[ids[i]];
+      if(r.v===s.label){ S.auto[ids[i]]={v:r.v,ok:true,miss:r.miss||0}; delete bad[i]; }
+      else { wrong++; S.auto[ids[i]]={v:'',ok:false,miss:(r.miss||0)+1,last:r.v}; bad[i]=true; }
+    });
+    paint(); commit();
+    if(wrong){ msg.dataset.s='bad'; msg.textContent=wrong+(wrong===1?' label goes':' labels go')+' somewhere else. '+(wrong===1?'It is':'They are')+' back with the other labels. Read the tip under each red box, then try again.'; }
+  });
+  paint();
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: put steps in order                                        */
+/* ------------------------------------------------------------------ */
+function orderQ(id,q){
+  var items=q.items, n=items.length;
+  AUTO[id]={sum:'Order'};
+  ORDER.push({kind:'auto',id:id,label:'Order',q:CURQ,sub:''});
+  var wrap=h('div','ctl ordwrap'); mark(wrap); wrap.dataset.s='idle';
+  function start(){
+    var r=S.auto[id];
+    if(r&&Array.isArray(r.ord)&&r.ord.length===n) return r.ord.slice();
+    var o=shuffled(items.map(function(x,i){return i;}),KEY+id);
+    if(o.every(function(x,i){return x===i;})) o.reverse();
+    return o;
+  }
+  var ord=start(), right=null;
+  wrap.append(h('p','whint','Drag the steps into order using the handle on the left, or use the arrow buttons. Then press “Check my order.”'));
+  var list=h('ol','ordlist');
+  var row=h('div','row gap'), chk=h('button','btn','Check my order'); chk.type='button'; row.append(chk);
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  wrap.append(list,row,msg);
+  function done(){var r=S.auto[id]; return !!(r&&r.ok);}
+  function store(){
+    if(done()) return;
+    var prev=S.auto[id]||{};
+    S.auto[id]={v:ord.map(function(i){return items[i];}).join(' → '),ok:false,miss:prev.miss||0,pend:true,ord:ord.slice()};
+    right=null; msg.textContent=''; commit();
+  }
+  function moveTo(from,to){
+    if(to<0||to>=n||from===to) return;
+    var x=ord.splice(from,1)[0]; ord.splice(to,0,x);
+  }
+  function paint(focusPos,focusDir){
+    var fin=done();
+    wrap.dataset.s=fin?'ok':(right?'bad':'idle');
+    list.textContent='';
+    ord.forEach(function(k,pos){
+      var li=h('li','ordrow'); li.dataset.pos=String(pos);
+      if(fin||(right&&right[pos])) li.dataset.s='ok';
+      var grip=h('span','ordgrip'); grip.setAttribute('aria-hidden','true'); grip.textContent='⠿';
+      var txt=h('span','ordtxt'); txt.append(itxt(items[k]));
+      var up=h('button','ordbtn','↑'); up.type='button'; up.setAttribute('aria-label','Move “'+plain(items[k])+'” up'); up.disabled=fin||pos===0;
+      var dn=h('button','ordbtn','↓'); dn.type='button'; dn.setAttribute('aria-label','Move “'+plain(items[k])+'” down'); dn.disabled=fin||pos===n-1;
+      up.addEventListener('click',function(){moveTo(pos,pos-1); store(); paint(pos-1,'up');});
+      dn.addEventListener('click',function(){moveTo(pos,pos+1); store(); paint(pos+1,'dn');});
+      li.append(grip,h('span','ordnum',String(pos+1)),txt,up,dn);
+      if(!fin) grip.addEventListener('pointerdown',function(e){ if(e.button) return; e.preventDefault(); drag(li,pos); });
+      list.append(li);
+    });
+    chk.hidden=fin;
+    if(focusPos!=null){ var r0=list.children[focusPos]; if(r0){ var bs=r0.querySelectorAll('.ordbtn'); var b=focusDir==='up'?(bs[0].disabled?bs[1]:bs[0]):(bs[1].disabled?bs[0]:bs[1]); b.focus(); } }
+    if(fin){ msg.dataset.s='ok'; msg.textContent=''; msg.append('Correct. ',itxt(q.explain||'')); }
+  }
+  function drag(li,pos){
+    var cur=pos;
+    li.classList.add('dragging');
+    function move(e){
+      var t=document.elementFromPoint(e.clientX,e.clientY), other=t&&t.closest?t.closest('.ordrow'):null;
+      if(!other||other===li||other.parentNode!==list) return;
+      var p=+other.dataset.pos;
+      if(p>cur) list.insertBefore(li,other.nextSibling); else list.insertBefore(li,other);
+      moveTo(cur,p); cur=p;
+      [].forEach.call(list.children,function(c,i){c.dataset.pos=String(i);});
+    }
+    function up(){
+      document.removeEventListener('pointermove',move); document.removeEventListener('pointerup',up); document.removeEventListener('pointercancel',up);
+      li.classList.remove('dragging');
+      if(cur!==pos) store();
+      paint();
+    }
+    document.addEventListener('pointermove',move); document.addEventListener('pointerup',up); document.addEventListener('pointercancel',up);
+  }
+  chk.addEventListener('click',function(){
+    var ok=ord.every(function(k,i){return k===i;});
+    var prev=S.auto[id]||{}, v=ord.map(function(i){return items[i];}).join(' → ');
+    if(ok){ S.auto[id]={v:v,ok:true,miss:prev.miss||0,ord:ord.slice()}; paint(); commit(); return; }
+    right=ord.map(function(k,i){return k===i;});
+    S.auto[id]={v:v,ok:false,miss:(prev.miss||0)+1,ord:ord.slice()};
+    paint(); commit();
+    var nr=right.filter(Boolean).length;
+    msg.dataset.s='bad'; msg.textContent='';
+    msg.append(nr+' of '+n+' steps are in the right spot (they are green). Tip: ',itxt(q.tip||'Rewatch the clip and follow the blood one step at a time.'));
+  });
+  paint();
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: blood typing lab                                          */
+/* ------------------------------------------------------------------ */
+var BLOOD_TYPES=['A+','A−','B+','B−','AB+','AB−','O+','O−'];
+var SERA=[{k:'A',label:'Anti-A'},{k:'B',label:'Anti-B'},{k:'Rh',label:'Anti-Rh'}];
+function hasMarker(type,k){ return k==='Rh'?/\+$/.test(type):type.replace(/[+−-]/,'').indexOf(k)>=0; }
+function wellSvg(state,seed){
+  var r=rng(seed), inner;
+  if(state==='empty') inner='<circle cx="50" cy="50" r="40" fill="var(--blood)" opacity=".8"/>';
+  else if(state==='smooth') inner='<circle cx="50" cy="50" r="40" fill="var(--blood)"/>';
+  else {
+    inner='<circle cx="50" cy="50" r="40" fill="var(--plasma)"/>';
+    for(var j=0;j<16;j++){
+      var a=r()*Math.PI*2, d=Math.sqrt(r())*30;
+      inner+='<circle cx="'+(50+Math.cos(a)*d).toFixed(1)+'" cy="'+(50+Math.sin(a)*d).toFixed(1)+'" r="'+(3+r()*5).toFixed(1)+'" fill="var(--clump)"/>';
+    }
+  }
+  return '<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46" fill="var(--surface)" stroke="var(--muted)" stroke-width="3"/>'+inner+'</svg>';
+}
+function labQ(id,q){
+  var wrap=h('div','patients'), types=q.types||BLOOD_TYPES;
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (q.patients||[]).forEach(function(p,pi){
+    var pid=id+'_'+pi;
+    AUTO[pid]={sum:p.name};
+    ORDER.push({kind:'auto',id:pid,label:p.name,q:CURQ,sub:p.name});
+    var card=h('div','patient'); mark(card); card.dataset.s='idle';
+    var nm=h('h3','pname'); nm.append(itxt(p.name));
+    card.append(nm);
+    if(p.who) card.append(h('p','pwho',p.who));
+    var tray=h('div','tray');
+    var sel=h('select'); sel.id='f-'+pid; sel.append(new Option('Choose the blood type…',''));
+    types.forEach(function(t){sel.append(new Option(t,t));});
+    var lab=h('label',null,'Blood type: '); lab.htmlFor=sel.id;
+    var srow=h('div','row typerow'); srow.append(lab,sel);
+    var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+    var wells=[];
+    function rec(){return S.auto[pid]||{v:'',ok:false,miss:0,w:''};}
+    SERA.forEach(function(s,si){
+      var pic=h('div','wpic'), res=h('span','wres'), b=h('button','btn small','Add '+s.label+' serum'); b.type='button';
+      b.addEventListener('click',function(){
+        var r=rec(); if(r.w.indexOf(s.k)>=0) return;
+        b.disabled=true; res.textContent='Mixing…';
+        setTimeout(function(){
+          var r2=rec(); S.auto[pid]={v:r2.v,ok:r2.ok,miss:r2.miss||0,w:r2.w+s.k+','};
+          paint(); commit();
+        },still?0:700);
+      });
+      var cell=h('div','well'); cell.append(h('span','wlbl',s.label),pic,res,b); tray.append(cell);
+      wells.push({k:s.k,pic:pic,res:res,b:b,seed:KEY+pid+s.k});
+    });
+    card.append(tray,srow,msg);
+    sel.addEventListener('change',function(){
+      var r=rec(), v=sel.value; if(!v) return;
+      var ok=v===p.type;
+      S.auto[pid]={v:v,ok:ok,miss:(r.miss||0)+(ok?0:1),w:r.w};
+      paint(); commit();
+    });
+    function paint(){
+      var r=rec(), all=true;
+      wells.forEach(function(w){
+        var added=r.w.indexOf(w.k)>=0, clump=hasMarker(p.type,w.k);
+        if(!added) all=false;
+        w.pic.innerHTML=wellSvg(added?(clump?'clump':'smooth'):'empty',w.seed);
+        w.res.textContent=added?(clump?'Clumped':'Smooth'):'No serum yet';
+        w.b.disabled=added;
+      });
+      sel.disabled=!all||r.ok;
+      sel.value=r.v||'';
+      card.dataset.s=r.ok?'ok':(r.v?'bad':'idle');
+      msg.textContent='';
+      if(!r.v){ msg.removeAttribute('data-s'); if(!all) msg.textContent='Add all three serums to unlock the blood type menu.'; return; }
+      if(r.ok){
+        var on=SERA.filter(function(x){return hasMarker(p.type,x.k);}).map(function(x){return x.k;});
+        msg.dataset.s='ok';
+        msg.textContent='Correct. '+(on.length
+          ?'The '+on.join(' and ')+' well'+(on.length>1?'s':'')+' clumped, so these red blood cells carry the '+on.join(' and ')+' marker'+(on.length>1?'s':'')+'. That makes this blood '+p.type+'.'
+          :'No well clumped, so these red blood cells carry no A, B, or Rh marker. That makes this blood O−.');
+        return;
+      }
+      var letters=r.v.replace(/[+−-]/,''), rhPick=/\+$/.test(r.v);
+      msg.dataset.s='bad';
+      msg.textContent='Not yet. Tip: '+(letters===p.type.replace(/[+−-]/,'')
+        ?'The letter part is right. Look again at the anti-Rh well to decide + or −.'
+        :(rhPick===/\+$/.test(p.type)
+          ?'The + or − part is right. Look again at the anti-A and anti-B wells. Each clumped well means that marker is there.'
+          :'Look at each well. A clumped well means that marker is on the red blood cells. A smooth well means it is not.'));
+    }
+    paint();
+    wrap.append(card);
+  });
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: choose every correct answer (check boxes)                 */
+/* ------------------------------------------------------------------ */
+function multiQ(id,q){
+  AUTO[id]={sum:'Choose all'};
+  ORDER.push({kind:'auto',id:id,label:'Choose all',q:CURQ,sub:''});
+  var wrap=h('div','ctl'); mark(wrap); wrap.dataset.s='idle';
+  var box=h('div','bags'), inputs=[];
+  q.options.forEach(function(t,i){
+    var lab=h('label','bag'), inp=document.createElement('input'); inp.type='checkbox'; inp.value=t; inp.id='f-'+id+'_'+i;
+    var sp=h('span'); sp.append(itxt(t)); lab.append(inp,sp); box.append(lab); inputs.push(inp);
+    inp.addEventListener('change',function(){ msg.textContent=''; wrap.dataset.s='idle'; });
+  });
+  var row=h('div','row gap'), btn=h('button','btn','Check'); btn.type='button'; row.append(btn);
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  wrap.append(box,row,msg);
+  function picks(){return inputs.filter(function(x){return x.checked;}).map(function(x){return x.value;});}
+  function paint(){
+    var r=S.auto[id];
+    if(r&&Array.isArray(r.picks)) inputs.forEach(function(x){x.checked=r.picks.indexOf(x.value)>=0;});
+    inputs.forEach(function(x){ x.disabled=!!(r&&r.ok); if(r&&r.ok&&x.checked) x.parentNode.dataset.s='ok'; else x.parentNode.removeAttribute('data-s'); });
+    btn.hidden=!!(r&&r.ok);
+    if(!r||!r.v){wrap.dataset.s='idle'; msg.textContent=''; return;}
+    wrap.dataset.s=r.ok?'ok':'bad';
+    msg.textContent='';
+    if(r.ok){ msg.append('Correct. ',itxt(q.explain||'')); return; }
+    var tip=q.tip;
+    (q.rules||[]).some(function(rule){ if(r.picks.some(function(p){return rule.any.indexOf(p)>=0;})){ tip=rule.tip; return true; } return false; });
+    msg.append('Not yet. Tip: ',itxt(tip||'Look back at the reading and try again.'));
+  }
+  btn.addEventListener('click',function(){
+    var p=picks();
+    if(!p.length){ wrap.dataset.s='bad'; msg.textContent='Choose at least one.'; return; }
+    var ok=p.length===q.answers.length&&q.answers.every(function(a){return p.indexOf(a)>=0;});
+    var prev=S.auto[id]||{};
+    S.auto[id]={v:p.join(', '),ok:ok,miss:(prev.miss||0)+(ok?0:1),picks:p};
+    paint(); commit();
+  });
+  paint();
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
 /* Builders: written answers                                           */
 /* ------------------------------------------------------------------ */
 function writtenField(id,placeholder){
@@ -685,6 +1194,16 @@ function buildQuestion(q,s){
     },q.aria||'Your answer'));
   } else if(t==='mnemonic'){
     o.body.append(mnWidget(q.words));
+  } else if(t==='speak'){
+    o.body.append(speakQ(id,q));
+  } else if(t==='label'){
+    o.body.append(labelQ(id,q));
+  } else if(t==='order'){
+    o.body.append(orderQ(id,q));
+  } else if(t==='bloodlab'){
+    o.body.append(labQ(id,q));
+  } else if(t==='multi'){
+    o.body.append(multiQ(id,q));
   } else if(t==='written'){
     W[id]={min:q.min||40};
     o.body.append(writtenField(id,q.placeholder));
@@ -744,8 +1263,11 @@ function answerGroups(){
         var sv=(S.mn||[]).map(function(x){return (x||'').trim();}).join(' ').trim();
         it.resp=[sv||'(no answer)'];
         if(r&&r.v) it.tag=(r.ok?'correct':'incorrect')+(r.miss?' • '+r.miss+(r.miss===1?' wrong try':' wrong tries'):'');
-      } else if(!r||!r.v){it.resp=['(no answer)'];}
+      } else if(!r||!r.v){it.resp=['(no answer)']; if(r&&r.miss) it.tag=r.miss+(r.miss===1?' wrong try':' wrong tries');}
+      else if(r.pend){ it.resp=[plain(r.v)]; it.tag='not checked yet'+(r.miss?' • '+r.miss+(r.miss===1?' wrong try':' wrong tries'):''); }
       else{ it.resp=[plain(r.v)]; it.tag=(r.ok?'correct':'incorrect')+(r.miss?' • '+r.miss+(r.miss===1?' wrong try':' wrong tries'):''); }
+      if(r&&r.how==='sound') it.tag+=(it.tag?' • ':'')+'sound check only (this browser could not recognize words)';
+      if(r&&r.peek) it.tag+=(it.tag?' • ':'')+'peeked at the definition';
     } else if(o.kind==='rich'){
       var st=S.rich[o.id]||{segs:[]}, ptxt=segsPlain(st.segs).trim();
       it.resp=[ptxt||'(no answer)'];
@@ -1218,7 +1740,7 @@ function decorate(){
     var hd=q.querySelector('.qhead');
     hd.append(listenBtn(function(){
       var t=q.querySelector('.qtext').innerText;
-      var opts=[].map.call(q.querySelectorAll('.opt'),function(o){return o.innerText;});
+      var opts=[].map.call(q.querySelectorAll('.opt,.bag'),function(o){return o.innerText;});
       if(opts.length) t+=(/[.?!:]\s*$/.test(t)?' ':'. ')+'The choices are: '+opts.join('. ')+'.';
       return t;
     }));
