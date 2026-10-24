@@ -12,10 +12,10 @@ function injectPage(){
    ['stylesheet','https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:wght@600;800&family=Cabin:wght@700&display=swap',false]
   ].forEach(function(l){var e=document.createElement('link'); e.rel=l[0]; e.href=l[1]; if(l[2]) e.crossOrigin=''; head.appendChild(e);});
   var icon=A2.icon||'<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M26 24 L46 36 L26 48 Z" fill="var(--primary-ink)"/></svg>';
-  var tracks='';
-  (A2.parts||[]).forEach(function(p,i){
-    var n=i+1;
-    tracks+='<div class="track" id="trk'+n+'"><span class="tl">Part '+n+'</span><div class="tt" role="progressbar" aria-label="Part '+n+' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>';
+  var tracks='', groups=A2.board?(A2.board.categories||[]):(A2.parts||[]);
+  groups.forEach(function(p,i){
+    var n=i+1, lab=A2.board?String(p.title||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'):'Part '+n;
+    tracks+='<div class="track" id="trk'+n+'"><span class="tl">'+lab+'</span><div class="tt" role="progressbar" aria-label="'+lab+' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>';
   });
   document.body.insertAdjacentHTML('afterbegin',
     '<div class="wrap"><header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
@@ -39,9 +39,11 @@ function injectPage(){
 
 
 var A=window.ASSIGNMENT;
-if(!A||!A.video){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
-var TITLE=A.title, COURSE=A.course;
-var LINKS={ studio:A.video.altUrl||'' };
+if(!A||!(A.video||A.board)){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
+var TITLE=A.title, COURSE=A.course, BOARD=A.board||null;
+var LINKS={ studio:(A.video&&A.video.altUrl)||'' };
+/* game board: tries per answer, and the share of the points earned on try 1, 2, 3 */
+var MAXT=BOARD?(BOARD.tries||3):0, CREDIT=(BOARD&&BOARD.credit)||[1,0.5,0.25];
 injectPage();
 
 /* ------------------------------------------------------------------ */
@@ -110,9 +112,11 @@ function words(t){var m=String(t||'').trim().match(/\S+/g); return m?m.length:0;
 var VID_DONE=95;
 /* Videos: the full video plus one short clip per part, all from assignment.js */
 var VIDS={}, VID_ORDER=[];
-VIDS.main={n:A.video.seconds,title:A.video.title,label:'Video: '+A.video.title+' (full video)',src:A.video.src};
-VID_ORDER.push('main');
-(A.parts||[]).forEach(function(p,pi){
+if(A.video){
+  VIDS.main={n:A.video.seconds,title:A.video.title,label:'Video: '+A.video.title+' (full video)',src:A.video.src};
+  VID_ORDER.push('main');
+}
+(BOARD?[]:A.parts||[]).forEach(function(p,pi){
   (p.clips||[]).forEach(function(k){
     var c=(A.clips||{})[k];
     if(!c){ if(window.console) console.error('Unknown clip: '+k); return; }
@@ -270,13 +274,22 @@ function updateBar(){
     q.dataset.s= ok===c.length?'done':(bad?'bad':(ok>0?'partial':'idle'));
   });
   var sc=score();
-  $('#sAuto').innerHTML='Auto-checked: <strong>'+sc.a+' / '+TOTAL_A+'</strong> correct';
+  if(BOARD){ paintBoard(); var T=boardTotals(); $('#sAuto').innerHTML='Score: <strong>'+T.earned+'</strong> of '+T.auto+' points'; }
+  else $('#sAuto').innerHTML='Auto-checked: <strong>'+sc.a+' / '+TOTAL_A+'</strong> correct';
   $('#sWritten').innerHTML='Written: <strong>'+sc.w+' / '+TOTAL_W+'</strong> done';
   var sv=$('#sSaved');
   if(!storageOK) sv.textContent='This browser can’t keep a backup. Stay on this page.';
   else if(lastSaved) sv.textContent='Backup saved at '+lastSaved.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 }
 function commit(){save();updateBar();}
+
+/* On a game board a right answer, or the last wrong try, locks the answer */
+function isLocked(r){return !!(BOARD&&r&&r.v&&(r.ok||(r.miss||0)>=MAXT));}
+function triesMsg(r,tip){
+  var left=MAXT-((r&&r.miss)||0);
+  if(left<=0) return 'Not quite. You are out of tries, so this answer is locked.';
+  return 'Not quite. '+(tip?'Tip: '+tip+' ':'')+'You have '+left+(left===1?' try':' tries')+' left.';
+}
 
 /* ------------------------------------------------------------------ */
 /* Builders: auto-checked dropdown                                     */
@@ -296,11 +309,13 @@ function autoSelect(id,sum,options,answer,o){
   var msg=h('p','msg'); msg.setAttribute('aria-live','polite'); msg.id='m-'+id; sel.setAttribute('aria-describedby','m-'+id); wrap.append(msg);
   function text(r){
     if(r.ok) return 'Correct.'+(o.ok?' '+o.ok:'');
+    if(BOARD) return triesMsg(r,o.hint);
     return 'Not yet. Tip: '+(o.hint||'Look back at the reading and try again.');
   }
   function paint(){
     var r=S.auto[id];
     sel.value=(r&&r.v)?r.v:'';
+    sel.disabled=isLocked(r);
     if(!r||!r.v){wrap.dataset.s='idle'; st.textContent=''; msg.textContent=''; return;}
     wrap.dataset.s=r.ok?'ok':'bad';
     st.textContent=r.ok?'✓':'✗';
@@ -336,13 +351,14 @@ function choiceQ(id,sum,options,ansIdx,explain,tip){
   function paint(){
     var r=S.auto[id];
     opts.forEach(function(o){
-      var on=!!r&&r.v===o.t; o.inp.checked=on;
+      var on=!!r&&r.v===o.t; o.inp.checked=on; o.inp.disabled=isLocked(r);
       if(on) o.lab.dataset.s=r.ok?'ok':'bad'; else o.lab.removeAttribute('data-s');
     });
     if(!r||!r.v){wrap.dataset.s='idle'; msg.textContent=''; return;}
     wrap.dataset.s=r.ok?'ok':'bad';
     msg.textContent='';
-    if(r.ok) msg.append('Correct. ',itxt(explain));
+    if(r.ok) msg.append('Correct.',explain?' ':'',itxt(explain||''));
+    else if(BOARD) msg.append(itxt(triesMsg(r,tip)));
     else msg.append('Not quite. Tip: ',itxt(tip||'Look back at the reading and try another choice.'));
   }
   paint();
@@ -365,6 +381,7 @@ function typedCheck(id,sum,expected,okMsg,badMsg,aria){
   function paint(){
     var r=S.auto[id];
     inp.value=r?r.v:'';
+    inp.disabled=btn.disabled=isLocked(r);
     if(!r||!r.v){wrap.dataset.s='idle';st.textContent='';msg.textContent='';return;}
     wrap.dataset.s=r.ok?'ok':'bad';
     st.textContent=r.ok?'✓':'✗';
@@ -373,7 +390,7 @@ function typedCheck(id,sum,expected,okMsg,badMsg,aria){
   function check(){
     var v=inp.value.trim().replace(/\s+/g,' '), prev=S.auto[id]||{miss:0};
     if(!v) return;
-    var ok=(v===expected);
+    var ok=typeof expected==='function'?expected(v):(v===expected);
     S.auto[id]={v:v,ok:ok,miss:(prev.miss||0)+(ok?0:1)};
     paint(); commit();
   }
@@ -1131,6 +1148,11 @@ var NUMWORD=['zero','one','two','three','four','five','six','seven','eight','nin
 
 function allQuestions(){
   var out=[];
+  if(BOARD){
+    (BOARD.categories||[]).forEach(function(c){(c.tiles||[]).forEach(function(q){out.push(q);});});
+    if(BOARD.final) out.push(BOARD.final);
+    return out;
+  }
   (A.parts||[]).forEach(function(p){(p.questions||[]).forEach(function(q){out.push(q);});});
   return out;
 }
@@ -1175,9 +1197,17 @@ function ideasFrom(list){
   });
 }
 
-function buildQuestion(q,s){
-  var num=++QN, id='q'+num, o=qEl(num,q.text), t=q.type;
+function buildQuestion(q,s,tile){
+  var num=++QN, id='q'+num, o=qEl(num,q.text), t=q.type, ids=[id];
+  if(tile) CURQ.tile=tile;
+  if(q.img){
+    var fig=h('figure','qimg'), im=document.createElement('img');
+    im.src=q.img.src; im.alt=q.img.alt||''; im.loading='lazy'; fig.append(im);
+    if(q.img.caption) fig.append(h('figcaption',null,q.img.caption));
+    o.body.append(fig);
+  }
   if(t==='selects'){
+    ids=q.items.map(function(it,i){return id+'_'+i;});
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
     var grid=h('div','sigs');
     q.items.forEach(function(it,i){
@@ -1190,11 +1220,15 @@ function buildQuestion(q,s){
     o.body.append(choiceQ(id,'Q'+num,q.options,q.answer,q.explain,q.tip));
   } else if(t==='typed'){
     var exp=q.expected;
+    /* accept: a list of right answers, ignoring capital letters and an end period */
+    if(q.accept){ var ok1=q.accept.map(function(x){return String(x).toLowerCase();}); exp=function(v){return ok1.indexOf(v.toLowerCase().replace(/[.!]+$/,''))>=0;}; }
     o.body.append(typedCheck(id,'Q'+num+' typed answer',exp,q.okMsg||'Correct.',function(v){
+      if(BOARD) return triesMsg(S.auto[id],q.tip);
       if(q.caseTip&&String(v).toLowerCase()===String(exp).toLowerCase()) return 'Not yet. Tip: '+q.caseTip;
       return 'Not yet. Tip: '+(q.tip||'Look back at the reading and try again.');
     },q.aria||'Your answer'));
   } else if(t==='mnemonic'){
+    ids=['mn'];
     o.body.append(mnWidget(q.words));
   } else if(t==='speak'){
     o.body.append(speakQ(id,q));
@@ -1207,10 +1241,12 @@ function buildQuestion(q,s){
   } else if(t==='multi'){
     o.body.append(multiQ(id,q));
   } else if(t==='written'){
+    ids=[];
     W[id]={min:q.min||40};
     o.body.append(writtenField(id,q.placeholder));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return (S.written[id]||{}).text;},null,ideasFrom(q.ideas)));
   } else if(t==='highlight'){
+    ids=[];
     R[id]={min:q.min||40};
     o.body.append(
       h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
@@ -1221,6 +1257,7 @@ function buildQuestion(q,s){
     o.body.append(h('p','msg','Unknown question type: '+t));
   }
   s.append(o.q);
+  return {num:num,id:id,auto:ids,written:(t==='written'||t==='highlight')?id:null,el:o.q};
 }
 
 function buildPart(p,n){
@@ -1231,6 +1268,170 @@ function buildPart(p,n){
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
   (p.questions||[]).forEach(function(q){ buildQuestion(q,s); });
   return s;
+}
+
+/* ------------------------------------------------------------------ */
+/* Game board: category columns of point tiles. A tile opens its       */
+/* question in a window. Questions live in a hidden store on the page  */
+/* so saving, Listen buttons, and the PDF work the same as in parts.   */
+/* ------------------------------------------------------------------ */
+var TILES=[], DLG=null, OPEN=null;
+var SHARE={1:'all of the points',0.5:'half',0.25:'a quarter',0.75:'three quarters'};
+function shareWord(x){return SHARE[x]||Math.round(x*100)+'%';}
+function tileCredit(r){ if(!r||!r.ok) return 0; return CREDIT[Math.min(r.miss||0,CREDIT.length-1)]||0; }
+function tileState(t){
+  if(t.written){
+    var txt=W[t.written]?(S.written[t.written]||{}).text:segsPlain((S.rich[t.written]||{}).segs);
+    return {done:W[t.written]?isWrittenDone(t.written):isRichDone(t.written),started:!!String(txt||'').trim(),earned:null};
+  }
+  var rs=t.auto.map(function(id){return S.auto[id];});
+  var sum=rs.reduce(function(n,r){return n+tileCredit(r);},0);
+  return {
+    done:rs.every(function(r){return r&&(r.ok||isLocked(r));}),
+    started:rs.some(function(r){return r&&r.v;}),
+    earned:Math.round(t.value*sum/Math.max(1,rs.length))
+  };
+}
+function tileNote(t){
+  var st=tileState(t);
+  return t.cat+' for '+t.value+' points'
+    +(t.written?', graded by your teacher':', earned '+st.earned)
+    +(t.ref?' (test question '+t.ref+')':'');
+}
+function boardTotals(){
+  var o={earned:0,auto:0,written:0,wdone:0,done:0,n:TILES.length};
+  TILES.forEach(function(t){
+    var st=tileState(t);
+    if(st.done) o.done++;
+    if(t.written){ o.written+=t.value; if(st.done) o.wdone++; }
+    else { o.auto+=t.value; o.earned+=st.earned; }
+  });
+  return o;
+}
+function boardIntro(){
+  var c=CREDIT.slice(0,MAXT), parts=c.map(function(x,i){return (['the first','the second','the third','the fourth'][i]||'try '+(i+1))+' try earns '+shareWord(x);});
+  var hasW=allQuestions().some(function(q){return q.type==='written'||q.type==='highlight';});
+  return 'Pick any tile to open its question. Bigger numbers are worth more points. You get '+(NUMWORD[MAXT]||MAXT)
+    +' tries on each answer that checks itself: a right answer on '+parts.join(', ').replace(/, ([^,]*)$/,', and $1')
+    +'. After '+(NUMWORD[MAXT]||MAXT)+' wrong tries the answer locks.'
+    +(hasW?' Tiles with a written answer are graded by your teacher.':'')
+    +(BOARD.final?' When every tile is finished, the Final round opens.':'')
+    +' You can close a question and come back to it later. When you are done, scroll to the bottom to download your PDF.';
+}
+function boardSection(){
+  var s=h('section','task boardsec'); s.id='board';
+  s.append(h('h2','display',BOARD.heading||'Game board'));
+  s.append(h('p','intro',BOARD.intro||boardIntro()));
+  var sc=h('p','bscore'); sc.id='bScore'; sc.setAttribute('aria-live','polite'); s.append(sc);
+  var store=h('div'); store.hidden=true;
+  var grid=h('div','board'); grid.style.setProperty('--cols',String((BOARD.categories||[]).length));
+  var vals=BOARD.values||[100,200,300,400,500];
+  (BOARD.categories||[]).forEach(function(c,ci){
+    var col=h('div','bcol'); col.setAttribute('role','group'); col.setAttribute('aria-label',c.title);
+    col.append(h('h3','bcat display',c.title));
+    var tl=h('div','btiles');
+    (c.tiles||[]).forEach(function(q,i){ tl.append(makeTile(q,c.title,ci,q.points||vals[i]||(i+1)*100,store)); });
+    col.append(tl); grid.append(col);
+  });
+  s.append(grid);
+  if(BOARD.final){
+    var fin=h('div','bfinal');
+    fin.append(h('h3','display',BOARD.final.title||'Final round'));
+    fin.append(makeTile(BOARD.final,BOARD.final.title||'Final round',-1,BOARD.final.points||1000,store));
+    s.append(fin);
+  }
+  s.append(store);
+  return s;
+}
+function makeTile(q,cat,ci,val,store){
+  var home=h('div'); store.append(home);
+  var t={cat:cat,ci:ci,value:val,ref:q.ref||'',home:home};
+  var info=buildQuestion(q,home,t);
+  t.num=info.num; t.el=info.el; t.auto=info.auto; t.written=info.written;
+  var b=h('button','tile'); b.type='button'; t.btn=b;
+  b.addEventListener('click',function(){openTile(t);});
+  TILES.push(t);
+  return b;
+}
+function dialogEl(){
+  if(DLG) return DLG;
+  var d=document.createElement('dialog'); d.className='tiledlg'; d.setAttribute('aria-labelledby','dlgh');
+  var inn=h('div','dlgin'), hd=h('div','dlghead');
+  var t=h('h2','display'); t.id='dlgh';
+  var pts=h('p','dlgpts'); pts.setAttribute('aria-live','polite');
+  hd.append(t,pts);
+  var body=h('div','dlgbody');
+  var foot=h('div','dlgfoot'), back=h('button','btn','Back to the board'); back.type='button';
+  foot.append(back); inn.append(hd,body,foot); d.append(inn);
+  back.addEventListener('click',function(){d.close();});
+  d.addEventListener('click',function(e){ if(e.target===d) d.close(); });
+  inn.tabIndex=-1;
+  d.addEventListener('close',function(){
+    ttsStop();
+    var t0=OPEN; OPEN=null;
+    if(t0){ t0.home.append(t0.el); if(t0.btn.isConnected) t0.btn.focus(); }
+  });
+  document.body.append(d);
+  DLG={d:d,inn:inn,title:t,pts:pts,body:body};
+  return DLG;
+}
+function openTile(t){
+  if(t.btn.getAttribute('aria-disabled')==='true') return;
+  var D=dialogEl();
+  if(D.d.open) D.d.close();
+  OPEN=t;
+  D.title.textContent=t.cat+' for '+t.value;
+  D.body.append(t.el);
+  paintDialog();
+  D.d.showModal();
+  D.body.querySelectorAll('textarea').forEach(function(ta){ta.style.height='auto'; ta.style.height=Math.max(ta.scrollHeight+2,100)+'px';});
+  D.d.scrollTop=0;
+}
+function paintDialog(){
+  if(!OPEN||!DLG) return;
+  /* a locked answer disables the control that had focus; keep focus in the window so Tab and Escape still work */
+  var ae=document.activeElement;
+  if(DLG.d.open&&(!DLG.d.contains(ae)||ae.disabled)) DLG.inn.focus({preventScroll:true});
+  var t=OPEN, st=tileState(t);
+  if(t.written) DLG.pts.textContent='Worth '+t.value+' points. Your teacher grades this one.'+(st.done?' Your answer is saved.':'');
+  else if(st.done) DLG.pts.textContent='Finished. You earned '+st.earned+' of '+t.value+' points.';
+  else DLG.pts.textContent='Worth '+t.value+' points.'+(t.auto.length>1?' Each menu is checked on its own.':'');
+}
+function paintBoard(){
+  var per={}, finalTile=null, others=0, othersDone=0;
+  TILES.forEach(function(t){
+    var st=tileState(t), b=t.btn;
+    if(t.ci<0) finalTile=t;
+    else{
+      var p=per[t.ci]||(per[t.ci]={n:0,d:0}); p.n++; if(st.done) p.d++;
+      others++; if(st.done) othersDone++;
+    }
+    b.dataset.s=st.done?'done':(st.started?'started':'');
+    b.textContent='';
+    var big=h('span','tv',String(t.value)), small=h('small');
+    if(st.done) small.textContent=t.written?'Answered':st.earned+' earned';
+    else if(st.started) small.textContent='In progress';
+    b.append(big,small);
+    b.setAttribute('aria-label',t.cat+' for '+t.value+' points. '+(st.done?(t.written?'Answered.':'Finished, '+st.earned+' points earned.'):(st.started?'In progress.':'Not started.')));
+  });
+  if(finalTile){
+    var lockedF=othersDone<others&&!tileState(finalTile).started;
+    finalTile.btn.setAttribute('aria-disabled',lockedF?'true':'false');
+    if(lockedF){
+      finalTile.btn.dataset.s='locked';
+      finalTile.btn.querySelector('small').textContent='Opens when every tile is finished ('+othersDone+' of '+others+' done)';
+      finalTile.btn.setAttribute('aria-label','Final round. Opens when every tile is finished. '+othersDone+' of '+others+' done.');
+    }
+  }
+  (BOARD.categories||[]).forEach(function(c,i){
+    var p=per[i]||{n:0,d:0}, pct=p.n?Math.round(100*p.d/p.n):0, trk=$('#trk'+(i+1));
+    if(!trk) return;
+    $('.tf',trk).style.width=pct+'%'; $('.tt',trk).setAttribute('aria-valuenow',String(pct));
+  });
+  var T=boardTotals();
+  $('#bScore').innerHTML='Your score: <strong>'+T.earned+'</strong> of '+T.auto+' points. Tiles finished: <strong>'+T.done+' of '+T.n+'</strong>.'
+    +(T.written?' Written tiles ('+T.written+' points) are graded by your teacher.':'');
+  paintDialog();
 }
 
 /* ------------------------------------------------------------------ */
@@ -1257,7 +1458,7 @@ function answerGroups(){
   var groups=[], last=null;
   ORDER.forEach(function(o){
     var q=o.q||{num:'',text:o.label};
-    if(!last||last.q!==q){ last={q:q,num:q.num,text:q.text,items:[]}; groups.push(last); }
+    if(!last||last.q!==q){ last={q:q,num:q.num,text:q.text,note:q.tile?tileNote(q.tile):'',items:[]}; groups.push(last); }
     var it={sub:o.sub||'',resp:[],tag:'',rich:null};
     if(o.kind==='auto'){
       var r=S.auto[o.id];
@@ -1283,8 +1484,14 @@ function answerGroups(){
   return groups;
 }
 function summaryParts(){
-  var sc=score();
-  var res=videoRows().concat([
+  var sc=score(), board=[];
+  if(BOARD){
+    var T=boardTotals();
+    board.push(['Game score (tiles that check themselves)',T.earned+' of '+T.auto+' points'+(T.auto?' ('+Math.round(100*T.earned/T.auto)+'%)':'')]);
+    if(T.written) board.push(['Written tiles (graded by teacher)',T.wdone+' answered, worth '+T.written+' points']);
+    board.push(['Tiles finished',T.done+' of '+T.n]);
+  }
+  var res=videoRows().concat(board,[
     ['Auto-checked items',sc.a+' / '+TOTAL_A+' correct'],
     ['Written responses',sc.w+' / '+TOTAL_W+' completed']
   ]);
@@ -1298,6 +1505,7 @@ function buildSummary(){
   L.push('');
   p.groups.forEach(function(g){
     L.push((g.num!==''?g.num+'. ':'')+plain(g.text));
+    if(g.note) L.push('   ['+g.note+']');
     g.items.forEach(function(it){
       var pre=it.sub?'   '+plain(it.sub)+': ':'   ';
       if(it.rich){ if(it.sub) L.push('   '+plain(it.sub)+':'); String(segsText(it.rich)).split('\n').forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
@@ -1482,6 +1690,7 @@ async function buildPdf(){
     y+=6;
     room(40);
     mixed((g.num!==''?g.num+'. ':'')+g.text,10.5,FB,FBI,0);
+    if(g.note) text(g.note,9,F,0,MUTED);
     g.items.forEach(function(it){
       y+=2;
       var ind=16;
@@ -1526,7 +1735,9 @@ function finishEl(){
    'Select “Download my PDF.” If your browser asks, choose to save the file.',
    'Go to the Canvas assignment, select File Upload, upload the PDF, and submit.'].forEach(function(t){ol.append(h('li',null,t));});
   s.append(ol);
-  s.append(h('p','intro','Your PDF shows your name, the date you finished, how much of the video you watched, and all of your answers, including the yellow highlights on your evidence.'));
+  s.append(h('p','intro',BOARD
+    ?'Your PDF shows your name, the date you finished, your score, and all of your answers.'
+    :'Your PDF shows your name, the date you finished, how much of the video you watched, and all of your answers, including the yellow highlights on your evidence.'));
   var row=h('div','row');
   var make=h('button','btn','Download my PDF'); make.type='button';
   var cmsg=h('span','msg'); cmsg.setAttribute('aria-live','polite');
@@ -1684,7 +1895,7 @@ function ttsClean(t){
       return out.join(' ')||'0 seconds';
     })
     .replace(/\b(seconds?|minutes?)\s+(?=[A-Z])/g,'$1. ')
-    .replace(/\[\[|\]\]/g,'').replace(/\u2026/g,'.').replace(/\s[-\u2013\u2014]\s/g,', ')
+    .replace(/_{3,}/g,' blank ').replace(/\[\[|\]\]/g,'').replace(/\u2026/g,'.').replace(/\s[-\u2013\u2014]\s/g,', ')
     .replace(/(\d)-kingdom/g,'$1 kingdom').replace(/\bQ(\d+)/g,'Question $1')
     .replace(/\s+/g,' ').trim();
 }
@@ -1748,7 +1959,7 @@ function decorate(){
     }));
   });
   /* video and finish instructions */
-  [['#video','p.intro'],['#finish','ol,p.intro']].forEach(function(pair){
+  [['#video','p.intro'],['#board','p.intro'],['#finish','ol,p.intro']].forEach(function(pair){
     var sec=$(pair[0],app); if(!sec) return;
     var b=listenBtn(function(){return [].map.call(sec.querySelectorAll(pair[1]),function(e){return e.innerText;}).join('. ');});
     var wrap=h('div','lrow'); wrap.append(b); sec.querySelector('h2').after(wrap);
@@ -1792,8 +2003,11 @@ function render(){
   var app=$('#app'); app.textContent='';
   Object.keys(W).forEach(function(k){delete W[k];}); Object.keys(R).forEach(function(k){delete R[k];});
   QN=0;
-  app.append(videoSection());
-  (A.parts||[]).forEach(function(p,i){app.append(buildPart(p,i+1));});
+  if(DLG&&DLG.d.open) DLG.d.close();
+  TILES.length=0;
+  if(A.video) app.append(videoSection());
+  if(BOARD) app.append(boardSection());
+  else (A.parts||[]).forEach(function(p,i){app.append(buildPart(p,i+1));});
   app.append(finishEl());
   TOTAL_W=Object.keys(W).length+Object.keys(R).length;
   TOTAL_A=Object.keys(AUTO).length;

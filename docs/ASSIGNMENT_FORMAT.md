@@ -203,3 +203,39 @@ Instead of `re`, an idea can use `sentences: 2` (found when the answer has at le
 
 The PDF lists every answer, how much of each video was watched, auto-check results with wrong-try counts, and the
 highlighted evidence. A small symbol next to "Results" shows time on task. The teacher grades the written responses.
+
+## Game board assignments (Jeopardy style)
+
+Use `board` instead of `video`, `clips`, and `parts` to make a game board. Students pick a tile, answer its
+question in a pop-up window, and earn points. The name boxes, warning box, Listen buttons, backup code, Canvas
+text fallback, and PDF all work the same. Example: `assignments/test-unit-4-transport/assignment.js`.
+
+```js
+board: {
+  heading: 'Unit 4 Transport game board',   // optional
+  intro: '...',                              // optional: replaces the automatic how-to-play paragraph
+  tries: 3,                                  // tries on each answer that checks itself (default 3)
+  credit: [1, 0.5, 0.25],                    // share of the points for a right answer on try 1, 2, 3
+  values: [100, 200, 300, 400, 500],         // points for row 1, 2, 3...; a tile can set its own `points`
+  categories: [
+    { title: 'Blood Basics', tiles: [ question, question, ... ] }   // one column per category
+  ],
+  final: { title: 'Final round', points: 1000, ...question }        // optional; opens when every tile is finished
+}
+```
+
+- Tiles are ordinary questions (`choice`, `selects`, `typed`, `written`, `highlight`). Give every category the same
+  number of tiles so the board is a full rectangle.
+- A right answer, or the last wrong try, locks the answer. Wrong answers say "Not quite" and how many tries are left.
+  On a board `tip` and `explain` are optional; a tip, if given, is shown after a wrong try. The answer is never shown.
+- For a `selects` tile each menu is checked and scored on its own; the tile earns the average.
+- Written tiles are graded by the teacher and show their point value on the PDF.
+- `ref: 12` (optional) is printed on the PDF as "test question 12" so the teacher can match the key.
+
+## Extra question fields (any assignment)
+
+- `img: { src: 'media/heart.png', alt: 'Description that does not give the answer', caption: 'optional' }` shows a
+  picture under the question. `alt` is required.
+- `typed` questions can use `accept: ['cellular respiration', 'cell respiration']` instead of `expected`. Capital
+  letters and an end period are ignored.
+- In question text, `_____` (3 or more underscores) is read aloud as "blank".
