@@ -1861,18 +1861,17 @@ function ttsStop(){
 var MALE=/\b(david|mark|guy|alex|daniel|fred|tom|ryan|eric|davis|james|aaron|gordon|rishi|arthur|oliver|george|roger|steffan|christopher|brian|andrew|thomas|jason|tony|liam|noah|ralph|junior|lee|reed|rocko|grandpa|eddy|evan|nathan|male)\b/i;
 var FEMALE=/\b(aria|jenny|ava|allison|samantha|susan|zira|michelle|emma|ana|jane|sara|joanna|salli|kendra|kimberly|ivy|karen|moira|tessa|serena|kate|stephanie|nicky|libby|sonia|amy|olivia|natasha|clara|female|catherine|victoria|zoe|nora|siri)\b/i;
 var NOVELTY=/(bad news|good news|bahh|bells|boing|bubbles|cellos|deranged|hysterical|jester|organ|superstar|trinoids|whisper|wobble|zarvox|albert|kathy|princess|agnes|bruce|espeak|compact)/i;
+/* how natural a voice sounds. Gender is not part of the score; students choose that. */
+var NATURAL_MIN=100;
 function voiceScore(v){
   var n=v.name||'', sc=0;
   if(!/^en(-|_|$)/i.test(v.lang||'')) return -1000;
   if(NOVELTY.test(n)) sc-=300;
-  if(/natural|neural/i.test(n)) sc+=200;
-  if(/premium|enhanced/i.test(n)) sc+=140;
-  if(/google/i.test(n)) sc+=90;
-  if(/microsoft/i.test(n)) sc+=40;
+  if(/natural|neural|online/i.test(n)) sc+=300;          /* Edge: "Microsoft Aria Online (Natural)" */
+  if(/premium|enhanced/i.test(n)) sc+=250;               /* Apple downloaded voices */
+  if(/google/i.test(n)) sc+=150;                         /* Chrome: "Google US English" */
+  if(/^(samantha|alex|ava|allison|tom|evan|nathan|zoe|joelle|susan)\b/i.test(n)) sc+=100;  /* better built-in Apple voices */
   if(v.localService===false) sc+=10;
-  if(FEMALE.test(n)) sc+=70;
-  if(MALE.test(n)) sc-=120;
-  if(/en[-_]US/i.test(v.lang)) sc+=25; else if(/en[-_]GB/i.test(v.lang)) sc+=10;
   return sc;
 }
 function englishVoices(){
@@ -1890,12 +1889,13 @@ function voiceGender(v){
   if(FEMALE.test(n)||/^google us english$/i.test(n)) return 'female';
   return '';
 }
-/* students choose Female or Male; the most natural-sounding voice of that kind is used */
+/* students choose Female or Male; the most natural-sounding voice of that kind is used.
+   Voices whose names don't say (such as "Google US English") count as female. Male is offered only when the
+   device has a natural-sounding male voice, because the older built-in ones sound robotic. */
 function voiceFor(g){
-  var vs=usVoices(), m=vs.filter(function(v){return voiceGender(v)===g;});
-  if(m.length) return m[0];
-  if(g==='female') return vs.filter(function(v){return voiceGender(v)!=='male';})[0]||vs[0]||null;
-  return null;
+  var vs=usVoices();
+  if(g==='male') return vs.filter(function(v){return voiceGender(v)==='male'&&voiceScore(v)>=NATURAL_MIN;})[0]||null;
+  return vs.filter(function(v){return voiceGender(v)!=='male';})[0]||vs[0]||null;
 }
 function pickVoice(){ return (S.voice==='male'&&voiceFor('male'))||voiceFor('female'); }
 /* make the text easier to say: times, symbols, and stray punctuation */

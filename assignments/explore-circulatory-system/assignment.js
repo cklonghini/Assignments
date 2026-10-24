@@ -26,7 +26,6 @@ window.ASSIGNMENT = {
     vessels: { src: 'media/clip-vessels.mp4', from: 174.0, to: 203.0, seconds: 29, title: 'Arteries, veins, and capillaries' },
     blood:   { src: 'media/clip-blood.mp4',   from: 54.0,  to: 154.0, seconds: 100, title: 'What blood is and what it does' },
     heart:   { src: 'media/clip-heart.mp4',   from: 154.0, to: 249.0, seconds: 95, title: 'The heart: sides, chambers, vessels, and valves' },
-    septal:  { src: 'media/clip-septal.mp4',  from: 421.0, to: 463.0, seconds: 42, title: 'Atrial septal defect' },
     pathway: { src: 'media/clip-pathway.mp4', from: 249.0, to: 330.0, seconds: 81, title: 'Tracing the pathway of blood from a toe' },
     recap:   { src: 'media/clip-recap.mp4',   from: 330.0, to: 389.0, seconds: 59, title: 'Coronary arteries and the quiz-yourself recap' },
     /* from a second Amoeba Sisters video (captions from the teacher's transcript, source/blood-types-transcript.txt) */
@@ -179,11 +178,10 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 3 */
     {
       title: 'The heart',
-      clips: ['heart', 'septal'],
+      clips: ['heart'],
       read: '<p><b>Read:</b> The heart has two sides that are kept separate. The <b>right side</b> pumps deoxygenated (oxygen-poor) blood, and the <b>left side</b> pumps oxygenated (oxygen-rich) blood. In a drawing, the heart’s right side is on <i>your</i> left, because you are facing the person.</p>'
         + '<p>The heart has four chambers. A comes before V in the alphabet, so the <b>atria</b> are at the top and the <b>ventricles</b> are at the bottom. Atria have thinner walls than ventricles.</p>'
-        + '<p><b>Arteries</b> carry blood away from the heart (think “A” for away). <b>Veins</b> carry blood to the heart. <b>Capillaries</b> are small vessels where oxygen is delivered to organs and tissues and carbon dioxide is picked up. <b>Valves</b> are one-way structures that separate the chambers and prevent backflow of blood.</p>'
-        + '<p>The <b>septum</b> is the muscular wall that separates the right and left sides of the heart. In an <b>atrial septal defect</b>, there is an opening in the septum, so oxygen-rich blood can mix with oxygen-poor blood.</p>',
+        + '<p><b>Arteries</b> carry blood away from the heart (think “A” for away). <b>Veins</b> carry blood to the heart. <b>Capillaries</b> are small vessels where oxygen is delivered to organs and tissues and carbon dioxide is picked up. <b>Valves</b> are one-way structures that separate the chambers and prevent backflow of blood.</p>',
       questions: [
         {
           type: 'label',
