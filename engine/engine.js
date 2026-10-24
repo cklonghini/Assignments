@@ -116,11 +116,13 @@ VID_ORDER.push('main');
   (p.clips||[]).forEach(function(k){
     var c=(A.clips||{})[k];
     if(!c){ if(window.console) console.error('Unknown clip: '+k); return; }
-    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src};
+    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src,of:c.of||''};
     VID_ORDER.push(k);
   });
 });
-function clipLabel(k){var v=VIDS[k]; return v.label||('Clip (Part '+v.part+'): '+v.title+' ('+fmt(v.from)+' to '+fmt(v.to)+')');}
+/* a clip normally comes from the full video at the top; "of" names a different video it was cut from */
+function clipWhere(v){return fmt(v.from)+' to '+fmt(v.to)+(v.of?' of the video “'+v.of+'”':'');}
+function clipLabel(k){var v=VIDS[k]; return v.label||('Clip (Part '+v.part+'): '+v.title+' ('+clipWhere(v)+')');}
 function fmt(sec){sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
 function vidState(key){
   if(!S.vids) S.vids={};
@@ -146,7 +148,7 @@ function videoBlock(key){
   tr.src=String(info.src).replace(/\.mp4$/i,'.vtt'); tr.default=true; v.append(tr);
   vid.append(v);
   if(info.from!=null){
-    wrap.append(h('p','vidtitle','Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
+    wrap.append(h('p','vidtitle',info.of?'Watch this clip: '+info.title+' ('+clipWhere(info)+')':'Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
     return wrap;
   }
   var alt=h('p','vidalt');

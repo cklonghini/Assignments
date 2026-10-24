@@ -51,7 +51,7 @@ for (const dir of dirs) {
       if (!(c.to > c.from)) E('Clip ' + k + ': "to" must be larger than "from"');
       if (!(c.seconds > 0)) E('Clip ' + k + ': seconds must be a number');
       if (!c.title || c.title === 'TODO') E('Clip ' + k + ' needs a title');
-      if (A.video && c.to > A.video.seconds + 2) E('Clip ' + k + ' ends after the full video does');
+      if (A.video && !c.of && c.to > A.video.seconds + 2) E('Clip ' + k + ' ends after the full video does');
     });
     if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
     let qn = 0, nAuto = 0, nWritten = 0;

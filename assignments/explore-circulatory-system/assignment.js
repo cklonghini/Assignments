@@ -28,7 +28,10 @@ window.ASSIGNMENT = {
     heart:   { src: 'media/clip-heart.mp4',   from: 154.0, to: 249.0, seconds: 95, title: 'The heart: sides, chambers, vessels, and valves' },
     septal:  { src: 'media/clip-septal.mp4',  from: 421.0, to: 463.0, seconds: 42, title: 'Atrial septal defect' },
     pathway: { src: 'media/clip-pathway.mp4', from: 249.0, to: 330.0, seconds: 81, title: 'Tracing the pathway of blood from a toe' },
-    recap:   { src: 'media/clip-recap.mp4',   from: 330.0, to: 389.0, seconds: 59, title: 'Coronary arteries and the quiz-yourself recap' }
+    recap:   { src: 'media/clip-recap.mp4',   from: 330.0, to: 389.0, seconds: 59, title: 'Coronary arteries and the quiz-yourself recap' },
+    /* from a second Amoeba Sisters video (captions from the teacher's transcript, source/blood-types-transcript.txt) */
+    bloodtypes: { src: 'media/clip-bloodtypes.mp4', from: 0, to: 206.6, seconds: 207, title: 'Blood types and donating blood',
+                  of: 'Multiple Alleles, ABO Blood Types, and Punnett Squares' }
   },
 
   parts: [
@@ -340,7 +343,8 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 5 */
     {
       title: 'Blood typing lab',
-      intro: 'The video showed that all human blood does the same jobs. But not all blood is the same. In this lab, you will find out how blood types differ and why matching them can save a life.',
+      intro: 'The first video showed that all human blood does the same jobs. But not all blood is the same. Watch this clip from another Amoeba Sisters video first. Then you will test patients’ blood types and find out why matching blood can save a life.',
+      clips: ['bloodtypes'],
       read: '<p><b>Read:</b> Your red blood cells carry markers on their surface called <b>antigens</b>. The two main markers are <b>A</b> and <b>B</b>. Your cells may have A, B, both (type AB), or neither (type O). A third marker, <b>Rh</b>, makes your blood type positive (+) if you have it and negative (−) if you don’t. So there are 8 main blood types: A+, A−, B+, B−, AB+, AB−, O+, and O−.</p>'
         + '<p>Your immune system knows your own markers. If you get blood with a marker your cells don’t have, your body treats it as an invader. Antibodies grab onto those red blood cells and make them <b>clump</b> together and break apart. That can be very dangerous. So before a transfusion, hospitals test blood types and match them.</p>'
         + '<p>To test blood, scientists add drops of <b>anti-serum</b>. Anti-A serum makes blood clump if the cells have the A marker. Anti-B clumps cells with the B marker. Anti-Rh clumps cells with the Rh marker. If the blood stays smooth, that marker is not there.</p>'
@@ -415,7 +419,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
-          text: 'Why does it matter that people have different blood types? Explain how blood typing keeps patients safe, and how your blood type connects to the idea that each of us is unique. (3 to 5 sentences)',
+          text: 'Why does it matter that people have different blood types? Use what you learned from the blood types video and your lab. Explain how blood typing keeps patients safe, and how your blood type connects to the idea that each of us is unique. (3 to 5 sentences)',
           min: 150,
           ideas: [
             { done: 'You explained what makes blood types different.', q: 'Did you say what makes one blood type different from another?', tip: 'Think about what sits on the surface of red blood cells.', re: /marker|antigen|\btype (a|b|ab|o)\b|\brh\b|surface/ },

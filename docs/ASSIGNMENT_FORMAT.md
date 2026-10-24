@@ -42,6 +42,14 @@ clips: {
 }
 ```
 
+A clip can also come from a second video. Add `of` with that video's title, and `from`/`to` are then times in that
+video. Students see "Watch this clip: TITLE (0:00 to 3:27 of the video “OF”)" in place of "Rewatch just this part".
+
+```js
+  bloodtypes: { src: 'media/clip-bloodtypes.mp4', from: 0, to: 206.6, seconds: 207, title: 'Blood types and donating blood',
+                of: 'Multiple Alleles, ABO Blood Types, and Punnett Squares' }
+```
+
 ## parts
 
 ```js
