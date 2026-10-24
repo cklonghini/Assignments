@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+</head>
+<body>
+<title>Circulatory System Sample</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:wght@600;800&display=swap">
+<style>
+/* Layout: the assignment engine's single 860px column, with the three new activity types shown as working demos. */
+:root{
+  --bg:#f3f6fa; --surface:#ffffff; --ink:#16213a; --muted:#52607a; --line:#d3dbe8;
+  --primary:#0b5f7a; --primary-ink:#ffffff;
+  --ok:#17703f; --ok-bg:#e3f4ea; --bad:#a8321f; --bad-bg:#fbe9e5;
+  --warn-bg:#fff0c2; --warn-ink:#4a3000; --warn-line:#d99a00;
+  --learn:#eaf4e4; --learn-line:#a9c99a;
+  --oxy:#c8323f; --oxy-wall:#7d1620; --deoxy:#3b6fc4; --deoxy-wall:#1d3f7d;
+  --valve:#ffffff; --plasma:#f2c7cb; --clump:#8e1220; --blood:#b3202f; --tray:#e9edf3;
+  --sample-bg:#efe9ff; --sample-ink:#3b2a7a; --sample-line:#8c74d9;
+  --font-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-display:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1626; --surface:#17203a; --ink:#e8edf7; --muted:#a3afc8; --line:#2c3857;
+    --primary:#6ccbe6; --primary-ink:#06222c;
+    --ok:#7bdca6; --ok-bg:#12301f; --bad:#ff9a85; --bad-bg:#3a1a14;
+    --warn-bg:#3b2f0a; --warn-ink:#ffe08a; --warn-line:#c99a00;
+    --learn:#16322d; --learn-line:#3f6e5f;
+    --oxy:#d84a56; --oxy-wall:#ff9aa3; --deoxy:#5b8de0; --deoxy-wall:#a9c4f5;
+    --valve:#f4f6fb; --plasma:#5a2a30; --clump:#ff5a6a; --blood:#c2303e; --tray:#222c47;
+    --sample-bg:#251d45; --sample-ink:#d6ccff; --sample-line:#7a64c9;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1626; --surface:#17203a; --ink:#e8edf7; --muted:#a3afc8; --line:#2c3857;
+  --primary:#6ccbe6; --primary-ink:#06222c;
+  --ok:#7bdca6; --ok-bg:#12301f; --bad:#ff9a85; --bad-bg:#3a1a14;
+  --warn-bg:#3b2f0a; --warn-ink:#ffe08a; --warn-line:#c99a00;
+  --learn:#16322d; --learn-line:#3f6e5f;
+  --oxy:#d84a56; --oxy-wall:#ff9aa3; --deoxy:#5b8de0; --deoxy-wall:#a9c4f5;
+  --valve:#f4f6fb; --plasma:#5a2a30; --clump:#ff5a6a; --blood:#c2303e; --tray:#222c47;
+  --sample-bg:#251d45; --sample-ink:#d6ccff; --sample-line:#7a64c9;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--font-body)}
+.wrap{max-width:860px;margin:0 auto;padding-block:0 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance}
+h1{margin:0;font-weight:800;font-size:clamp(2rem,6vw,3.1rem);line-height:1.04;letter-spacing:-.02em}
+.top{padding:30px 0 6px}
+.course{margin:4px 0 0;color:var(--muted);font-weight:700}
+p,li{max-width:68ch}
+
+.sample{background:var(--sample-bg);color:var(--sample-ink);border:2px dashed var(--sample-line);border-radius:10px;padding:14px 18px;margin:18px 0}
+.sample h2{margin:0 0 6px;font-size:1.25rem}
+.sample p{margin:6px 0}
+.sample ul{margin:6px 0 0;padding-left:1.2em}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid currentColor;border-radius:99px;padding:1px 8px;vertical-align:middle;margin-left:6px}
+
+.plan{width:100%;border-collapse:collapse;background:var(--surface);font-size:.95rem}
+.planwrap{overflow-x:auto;margin:14px 0}
+.plan th,.plan td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.plan th{background:var(--bg)}
+.plan td:first-child{font-weight:700;white-space:nowrap}
+.plan ul{margin:0;padding-left:1.1em}
+.new{color:var(--primary);font-weight:700}
+
+.task{margin-top:64px;padding-top:28px;border-top:5px solid var(--primary)}
+.task h2{font-weight:800;font-size:1.5rem;line-height:1.15;margin:0 0 14px;background:var(--primary);color:var(--primary-ink);padding:12px 16px;border-radius:10px}
+.learn{background:var(--learn);border:1px solid var(--learn-line);border-radius:8px;padding:12px 16px;margin:12px 0 16px;max-width:68ch}
+.learn p{margin:0 0 8px}.learn p:last-child{margin:0}
+.q{border-left:5px solid var(--line);padding:4px 0 4px 16px;margin:26px 0}
+.q[data-s="done"]{border-color:var(--ok)}
+.qtext{margin:0;font-weight:700;max-width:68ch}
+.qsub{margin:6px 0 0;color:var(--muted);font-size:.95rem}
+
+.btn{font:inherit;font-weight:700;background:var(--primary);color:var(--primary-ink);border:2px solid var(--primary);border-radius:8px;padding:8px 16px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--primary)}
+.btn.small{padding:4px 10px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+select{font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:6px 10px;max-width:100%}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.msg{font-size:.95rem;margin:8px 0 0}
+.msg[data-s="ok"]{color:var(--ok)}
+.msg[data-s="bad"]{color:var(--bad)}
+.msg[data-s="info"]{color:var(--muted)}
+
+/* say it out loud */
+.modes{display:flex;gap:0;border:2px solid var(--primary);border-radius:99px;width:max-content;max-width:100%;overflow:hidden;margin:12px 0}
+.modes button{font:inherit;font-weight:700;font-size:.92rem;border:0;background:transparent;color:var(--primary);padding:6px 14px;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--primary);color:var(--primary-ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,370px),1fr));gap:14px;margin-top:6px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card[data-s="ok"]{border-color:var(--ok)}
+.card .term{font-family:var(--font-display);font-weight:800;font-size:1.35rem;margin:0}
+.card .def{margin:0}
+.card .def.hidden{color:var(--muted);font-style:italic}
+.card .heard{font-size:.9rem;color:var(--muted);margin:0;min-height:1.4em;overflow-wrap:anywhere}
+.card .heard b{color:var(--ink)}
+.stamps{display:flex;gap:8px;flex-wrap:wrap}
+.stamp{font-size:.8rem;font-weight:700;border-radius:99px;padding:2px 10px;border:1.5px solid var(--line);color:var(--muted)}
+.stamp[data-on="1"]{border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
+.mic{display:inline-flex;align-items:center;gap:8px}
+.mic::before{content:"";width:1em;height:1em;background:currentColor;
+  -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z'/></svg>") center/contain no-repeat;
+  mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z'/></svg>") center/contain no-repeat}
+.mic[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:var(--primary-ink)}
+.level{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.level i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}
+.simrow{font-size:.85rem;color:var(--sample-ink);background:var(--sample-bg);border:1px dashed var(--sample-line);border-radius:8px;padding:6px 10px}
+.simrow button{font:inherit;font-weight:700;background:none;border:0;color:inherit;text-decoration:underline;cursor:pointer;padding:0}
+
+/* heart labeling */
+.bank{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:10px;min-height:56px;margin:12px 0;background:var(--surface)}
+.chip{font:inherit;font-size:.95rem;font-weight:700;background:var(--bg);color:var(--ink);border:2px solid var(--ink);border-radius:8px;padding:5px 11px;cursor:grab;touch-action:none;user-select:none}
+.chip[aria-pressed="true"]{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.chip.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.92;box-shadow:0 6px 18px rgb(0 0 0 / .25);cursor:grabbing}
+.bank .empty{color:var(--muted);font-size:.9rem;align-self:center}
+.heartlab{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:720px){.heartlab{grid-template-columns:minmax(0,1fr)}}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px}
+.diagram svg{display:block;width:100%;height:auto}
+.slots{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+.slot{display:flex;align-items:center;gap:10px}
+.num{flex:none;width:1.9em;height:1.9em;border-radius:99px;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+.drop{flex:1;min-width:0;min-height:40px;font:inherit;font-size:.95rem;text-align:left;border:2px dashed var(--line);border-radius:8px;background:var(--surface);color:var(--muted);padding:5px 10px;cursor:pointer}
+.drop.filled{border-style:solid;border-color:var(--ink);color:var(--ink);font-weight:700}
+.drop.over{border-color:var(--primary);background:var(--learn)}
+.slot[data-s="ok"] .drop{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);cursor:default}
+.slot[data-s="bad"] .drop{border-color:var(--bad);background:var(--bad-bg)}
+.slot .tip{flex-basis:100%;font-size:.88rem;color:var(--bad);margin:0 0 4px calc(1.9em + 10px)}
+.slot{flex-wrap:wrap}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.88rem;color:var(--muted);margin:8px 4px 2px}
+.legend .vf::before{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.legend span::before{content:"";display:inline-block;width:.9em;height:.9em;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--sw)}
+svg .mk circle{fill:var(--ink)}
+svg .mk text{fill:var(--bg);font:700 15px var(--font-body);text-anchor:middle;dominant-baseline:central}
+svg .mk.hot circle{fill:var(--primary)}
+svg .mk.done circle{fill:var(--ok)}
+svg .lead{stroke:var(--ink);stroke-width:2}
+svg .flowtxt{fill:var(--muted);font:700 12px var(--font-body)}
+svg .side{fill:var(--muted);font:700 13px var(--font-body);letter-spacing:.08em}
+
+/* blood typing */
+.patients{display:grid;gap:16px;margin-top:12px}
+.patient{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:14px 16px}
+.patient[data-s="ok"]{border-color:var(--ok)}
+.patient h3{margin:0;font-size:1.15rem}
+.patient .who{margin:2px 0 10px;color:var(--muted);font-size:.95rem}
+.tray{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;background:var(--tray);border-radius:12px;padding:12px;max-width:520px}
+.well{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.well svg{width:100%;max-width:110px;height:auto}
+.well .lbl{font-weight:700;font-size:.9rem;text-align:center}
+.well .res{font-size:.82rem;color:var(--muted);min-height:1.3em;text-align:center}
+.typerow{margin-top:12px}
+.bags{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.bag{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:10px;padding:6px 12px;background:var(--surface);cursor:pointer;font-weight:700}
+.bag input{width:1.1em;height:1.1em}
+.bag[data-s="ok"]{border-color:var(--ok);background:var(--ok-bg)}
+.explain{background:var(--ok-bg);color:var(--ok);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:.95rem}
+.explain[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Explore - Circulatory System</h1>
+    <p class="course">Biology B</p>
+  </header>
+
+  <section class="sample" aria-labelledby="s-h">
+    <h2 id="s-h">Sample for your approval <span class="tag">Teacher only</span></h2>
+    <p>This page shows the plan and working versions of the three new activities. Try them. Nothing here is saved.</p>
+    <ul>
+      <li>The finished assignment uses the same page as your other Explore assignments: name boxes, the yellow “Stay on this page” box, progress bars, Listen buttons, captions, the backup code, and the PDF printout.</li>
+      <li>Video questions are left as outlines until I have the captions for the Amoeba Sisters video. I won’t write what the video says without them.</li>
+      <li>The microphone is blocked inside this preview, so each speaking card has a purple “preview” link that acts out a student speaking. On the real page, students allow the microphone.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="plan-h">
+    <h2 id="plan-h" style="font-size:1.4rem;margin:26px 0 4px">The plan: 5 parts</h2>
+    <p style="margin:0;color:var(--muted)">The full video sits at the top, with captions on. <span class="new">Blue bold</span> marks a new activity type.</p>
+    <div class="planwrap">
+      <table class="plan">
+        <thead><tr><th>Part</th><th>What students do</th></tr></thead>
+        <tbody>
+          <tr><td>1. Vocabulary</td><td><ul>
+            <li>Reading box with all 17 words from your vocab sheet</li>
+            <li><span class="new">Say it out loud, round 1:</span> read each word and its definition aloud. The card checks that it heard the word and the key idea.</li>
+            <li><span class="new">Say it out loud, round 2:</span> the definition is hidden, so they say it from memory. They can peek, and the PDF records any peeks.</li>
+            <li>Drop-down matching for all 17 words, in two groups (heart and vessels, blood parts)</li></ul></td></tr>
+          <tr><td>2. Parts of the heart</td><td><ul>
+            <li>Clip from the video</li>
+            <li><span class="new">Label the heart:</span> drag 11 labels onto the diagram</li>
+            <li>2 or 3 multiple-choice questions on the chambers and valves (written once I have captions)</li></ul></td></tr>
+          <tr><td>3. Pathway of blood</td><td><ul>
+            <li>Clip from the video</li>
+            <li><span class="new">Put it in order:</span> drag the stops of one trip through the heart into order (body → right atrium → … → aorta)</li>
+            <li>Oxygen-rich or oxygen-poor drop-downs, including the pulmonary artery and vein exceptions</li>
+            <li>The memory-trick question for the order of the chambers</li>
+            <li><b>Written 1 (highlight):</b> trace one red blood cell through the heart and lungs, using evidence from the video highlighted in yellow</li></ul></td></tr>
+          <tr><td>4. Blood and vessels</td><td><ul>
+            <li>Clip from the video (if it covers these parts; captions will tell)</li>
+            <li>Arteries, veins, and capillaries; red blood cells, white blood cells, platelets</li>
+            <li>A short scenario: where would urea and carbon dioxide be picked up?</li></ul></td></tr>
+          <tr><td>5. Blood typing lab</td><td><ul>
+            <li>Reading on A, B, and Rh markers and why the body attacks blood that doesn’t match</li>
+            <li><span class="new">Virtual lab:</span> 6 patients. Add anti-A, anti-B, and anti-Rh serum and read the clumping.</li>
+            <li>Pick safe donor bags for 3 patients who need blood</li>
+            <li>A table of how common each blood type is</li>
+            <li><b>Written 2:</b> why it matters that people have different blood types, and how that connects to each of us being unique</li></ul></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ DEMO 1 -->
+  <section class="task" aria-labelledby="d1">
+    <h2 id="d1">Part 1: Vocabulary</h2>
+    <div class="learn">
+      <p><b>Say it out loud.</b> Saying a word and its meaning out loud helps your brain remember it. Press <b>Say it</b>, then say the word and its definition. When you are done, the card shows a green check.</p>
+      <p>Round 1: read the card aloud. Round 2: the definition is hidden. Say it from memory.</p>
+    </div>
+    <div class="modes" role="group" aria-label="Round">
+      <button type="button" id="m-read" aria-pressed="true">Round 1: Read it</button>
+      <button type="button" id="m-mem" aria-pressed="false">Round 2: From memory</button>
+    </div>
+    <div class="cards" id="cards"></div>
+    <p class="msg" data-s="info" id="mic-note"></p>
+  </section>
+
+  <!-- ============================================================ DEMO 2 -->
+  <section class="task" aria-labelledby="d2">
+    <h2 id="d2">Part 2: Label the heart</h2>
+    <div class="q" id="hq">
+      <p class="qtext">Drag each label to the box with the matching number. Then press Check.</p>
+      <p class="qsub">On a phone, tap a label and then tap a box. The heart is drawn as if you are facing the person, so the heart’s right side is on your left.</p>
+      <div class="bank" id="bank" aria-label="Labels"></div>
+      <div class="heartlab">
+        <div class="diagram">
+          <svg viewBox="0 0 480 480" role="img" aria-labelledby="heart-t">
+            <title id="heart-t">Diagram of the heart with 11 numbered parts. Blue shows oxygen-poor blood and red shows oxygen-rich blood.</title>
+            <!-- pulmonary artery branches (behind) -->
+            <rect x="25" y="128" width="220" height="27" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
+            <rect x="205" y="128" width="260" height="27" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
+            <!-- pulmonary veins -->
+            <rect x="395" y="198" width="78" height="20" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="3"/>
+            <rect x="395" y="238" width="78" height="20" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="3"/>
+            <!-- vena cavae -->
+            <rect x="115" y="8" width="45" height="180" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
+            <rect x="70" y="262" width="40" height="200" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
+            <!-- chambers -->
+            <rect x="68" y="172" width="138" height="112" rx="40" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="4"/>
+            <rect x="292" y="182" width="114" height="102" rx="36" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="4"/>
+            <path d="M118 286 L250 286 L250 442 Q205 432 168 398 Q122 352 118 286 Z" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="4"/>
+            <path d="M250 286 L410 286 Q410 362 362 408 Q314 448 262 454 L250 442 Z" fill="var(--oxy)" stroke="var(--oxy-wall)" stroke-width="7"/>
+            <line x1="250" y1="286" x2="250" y2="446" stroke="var(--ink)" stroke-width="5"/>
+            <!-- pulmonary trunk -->
+            <rect x="205" y="140" width="40" height="148" fill="var(--deoxy)" stroke="var(--deoxy-wall)" stroke-width="3"/>
+            <!-- aorta -->
+            <path d="M272 292 L272 86 Q272 36 330 36 Q388 36 388 86 L388 114" fill="none" stroke="var(--oxy-wall)" stroke-width="44"/>
+            <path d="M272 292 L272 86 Q272 36 330 36 Q388 36 388 86 L388 114" fill="none" stroke="var(--oxy)" stroke-width="36"/>
+            <!-- valves -->
+            <g fill="var(--valve)" stroke="var(--ink)" stroke-width="1.5">
+              <path d="M135 283 L160 283 L152 300 Z"/><path d="M165 283 L190 283 L172 300 Z"/>
+              <path d="M310 283 L340 283 L330 302 Z"/><path d="M345 283 L375 283 L352 302 Z"/>
+              <path d="M209 286 L224 286 L220 274 Z"/><path d="M226 286 L241 286 L230 274 Z"/>
+              <path d="M256 289 L271 289 L267 277 Z"/><path d="M273 289 L288 289 L277 277 Z"/>
+            </g>
+            <!-- flow notes -->
+            <text class="flowtxt" x="25" y="122">to lungs</text>
+            <text class="flowtxt" x="412" y="122">to lungs</text>
+            <text class="flowtxt" x="410" y="276">from lungs</text>
+            <text class="flowtxt" x="166" y="22">from body</text>
+            <text class="flowtxt" x="20" y="474">from body</text>
+            <text class="flowtxt" x="414" y="92">to body</text>
+            <text class="side" x="96" y="474" text-anchor="start">← HEART’S RIGHT</text>
+            <text class="side" x="460" y="474" text-anchor="end">HEART’S LEFT →</text>
+            <!-- leader lines for valve markers -->
+            <line class="lead" x1="30" y1="330" x2="150" y2="290"/>
+            <line class="lead" x1="452" y1="318" x2="276" y2="286"/>
+            <circle cx="150" cy="290" r="3.5" fill="var(--ink)"/>
+            <circle cx="276" cy="286" r="3.5" fill="var(--ink)"/>
+            <g id="markers"></g>
+          </svg>
+          <div class="legend"><span style="--sw:var(--deoxy)">Oxygen-poor blood</span><span style="--sw:var(--oxy)">Oxygen-rich blood</span><span class="vf" style="--sw:var(--valve)">Valve flaps</span></div>
+        </div>
+        <ol class="slots" id="slots"></ol>
+      </div>
+      <div class="row" style="margin-top:14px"><button class="btn" id="hcheck" type="button">Check</button><button class="btn ghost" id="hreset" type="button">Start over</button></div>
+      <p class="msg" id="hmsg" role="status"></p>
+      <div class="explain" id="hexp" hidden>All 11 labels are right. Blue blood comes back from the body through the venae cavae, goes through the right side, and leaves for the lungs in the pulmonary artery. Red blood comes back from the lungs through the pulmonary veins, goes through the left side, and leaves for the body through the aorta. The left ventricle has the thickest wall because it pumps blood to the whole body.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ DEMO 3 -->
+  <section class="task" aria-labelledby="d3">
+    <h2 id="d3">Part 5: Blood typing lab</h2>
+    <div class="learn">
+      <p><b>Read:</b> Your red blood cells carry markers on their surface called <b>antigens</b>. The two main markers are <b>A</b> and <b>B</b>. You may have A, B, both (AB), or neither (O). A third marker, <b>Rh</b>, makes your type positive (+) if you have it and negative (−) if you don’t.</p>
+      <p>To find a blood type, scientists add drops of <b>anti-serum</b> to a blood sample. Anti-A serum makes blood <b>clump</b> if the cells have the A marker. Anti-B clumps cells with the B marker. Anti-Rh clumps cells with the Rh marker. Smooth blood means that marker is not there.</p>
+    </div>
+    <div class="q">
+      <p class="qtext">Test each patient’s blood. Add all three serums, then choose the blood type.</p>
+      <div class="patients" id="patients"></div>
+    </div>
+    <div class="q" id="tq">
+      <p class="qtext">Priya is type B−. She needs blood after a car accident. Which donor bags are safe for her? Choose every safe bag.</p>
+      <p class="qsub">Her immune system attacks any marker that her own red blood cells don’t have.</p>
+      <div class="bags" id="bags"></div>
+      <button class="btn" id="tcheck" type="button">Check</button>
+      <p class="msg" id="tmsg" role="status"></p>
+      <div class="explain" id="texp" hidden>Right. Priya’s cells have the B marker and no Rh marker. O− blood has no markers at all, and B− has only B, so neither one brings a marker her body would attack. That is why O− is called the universal donor.</div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const h = (tag, attrs = {}, ...kids) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') el.className = v; else if (k === 'text') el.textContent = v;
+      else if (k.startsWith('on')) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v);
+    }
+    kids.flat().forEach(c => c != null && el.append(c));
+    return el;
+  };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ------------------------------------------------------------ say it out loud */
+  const CARDS = [
+    { term: 'Artery', def: 'A blood vessel that carries blood away from the heart.',
+      say: /\barter(y|ies)\b|\bart[ae]ry\b/, keys: [/\baway\b/, /\bheart\b/] },
+    { term: 'Vein', def: 'A blood vessel that carries blood to the heart.',
+      say: /\bveins?\b|\bvain\b|\bvane\b/, keys: [/\b(to|toward|towards|back|into)\b/, /\bheart\b/], not: /\baway\b/ },
+    { term: 'Capillary', def: 'A tiny blood vessel.',
+      say: /\bcapillar(y|ies)\b|\bcap[ai]l+ary\b/, keys: [/\b(tiny|small|smallest|little)\b/, /\b(vessel|vessels|tube)\b/] },
+    { term: 'Platelet', def: 'A small blood cell that helps the blood to clot.',
+      say: /\bplatelets?\b|\bplate let\b/, keys: [/\bclot|clots|clotting|scab\b/] }
+  ];
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let memory = false, active = null;
+  const state = CARDS.map(() => ({ read: false, mem: false, peek: false }));
+  const norm = t => t.toLowerCase().replace(/[^a-z\s']/g, ' ').replace(/\s+/g, ' ').trim();
+
+  function judge(card, text) {
+    const t = norm(text);
+    const word = card.say.test(t);
+    const got = card.keys.filter(r => r.test(t)).length;
+    const wrongWay = card.not ? card.not.test(t) : false;
+    return { word, pass: word && got === card.keys.length && !wrongWay, partial: word && (got < card.keys.length || wrongWay) };
+  }
+
+  const cardsEl = $('#cards');
+  function renderCards() {
+    cardsEl.replaceChildren(...CARDS.map((c, i) => {
+      const s = state[i], done = memory ? s.mem : s.read;
+      const hidden = memory && !s.peek && !s.mem;
+      const heard = h('p', { class: 'heard', 'aria-live': 'polite' });
+      const lvl = h('div', { class: 'level', hidden: '' }, h('i'));
+      const btn = h('button', { class: 'btn small mic', type: 'button', 'aria-pressed': 'false', text: done ? 'Say it again' : 'Say it' });
+      btn.addEventListener('click', () => toggleListen(i, btn, heard, lvl));
+      const peek = memory && !s.mem ? h('button', { class: 'btn ghost small', type: 'button', text: s.peek ? 'Hide' : 'Peek',
+        onclick: () => { s.peek = !s.peek; renderCards(); } }) : null;
+      const sim = h('p', { class: 'simrow' }, 'Preview: ',
+        h('button', { type: 'button', text: 'act out a student saying it', onclick: () => fakeSay(i, heard) }));
+      return h('article', { class: 'card', 'data-s': done ? 'ok' : '' },
+        h('p', { class: 'term', text: c.term }),
+        h('p', { class: 'def' + (hidden ? ' hidden' : ''), text: hidden ? 'Say the definition from memory.' : c.def }),
+        h('div', { class: 'row' }, btn, peek),
+        lvl, heard,
+        h('div', { class: 'stamps' },
+          h('span', { class: 'stamp', 'data-on': s.read ? '1' : '0', text: (s.read ? '✓ ' : '') + 'Read aloud' }),
+          h('span', { class: 'stamp', 'data-on': s.mem ? '1' : '0', text: (s.mem ? '✓ ' : '') + 'From memory' + (s.peek && s.mem ? ' (peeked)' : '') })),
+        sim);
+    }));
+  }
+
+  function result(i, text, heard) {
+    const r = judge(CARDS[i], text), s = state[i];
+    heard.replaceChildren('I heard: ', h('b', { text: '“' + (text.trim() || '…') + '”' }));
+    if (r.pass) {
+      if (memory) s.mem = true; else s.read = true;
+      renderCards();
+      return;
+    }
+    const tip = !text.trim() ? 'I didn’t hear anything. Check that your microphone is on, then try again.'
+      : !r.word ? 'I didn’t catch the word ' + CARDS[i].term + '. Say the word first, then the definition.'
+      : memory ? 'I heard the word, but not all of its meaning. Try again, or press Peek.'
+      : 'I heard the word, but not all of the definition. Read the whole definition aloud.';
+    heard.append(h('br'), h('span', { style: 'color:var(--bad)', text: tip }));
+  }
+
+  function fakeSay(i, heard) {
+    const c = CARDS[i];
+    result(i, c.term + ' ' + c.def.replace(/^A /, 'a '), heard);
+  }
+
+  function toggleListen(i, btn, heard, lvl) {
+    if (active) { active.stop(); return; }
+    if (SR) return listenWords(i, btn, heard);
+    listenLoudness(i, btn, heard, lvl);
+  }
+
+  function setMicNote(text) { $('#mic-note').textContent = text; }
+
+  function listenWords(i, btn, heard) {
+    const r = new SR();
+    r.lang = 'en-US'; r.continuous = true; r.interimResults = true; r.maxAlternatives = 3;
+    let text = '', alts = '', quiet;
+    const stop = () => { try { r.stop(); } catch (e) {} };
+    active = { stop };
+    btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Done';
+    heard.textContent = 'Listening…';
+    r.onresult = e => {
+      text = ''; alts = '';
+      for (const res of e.results) {
+        text += res[0].transcript + ' ';
+        for (const a of res) alts += a.transcript + ' ';
+      }
+      heard.replaceChildren('I heard: ', h('b', { text: '“' + text.trim() + '”' }));
+      clearTimeout(quiet); quiet = setTimeout(stop, 2500);
+      if (judge(CARDS[i], alts).pass) stop();
+    };
+    r.onerror = e => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'audio-capture')
+        setMicNote('The microphone is blocked here. On the real page, press Allow when the browser asks to use the microphone.');
+    };
+    r.onend = () => {
+      clearTimeout(quiet); active = null;
+      btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Say it';
+      const best = judge(CARDS[i], alts).pass ? alts : text;
+      if (heard.textContent !== 'Listening…' || text) result(i, best, heard);
+      else heard.textContent = '';
+    };
+    try { r.start(); } catch (e) { r.onend(); }
+  }
+
+  /* Browsers without word recognition (Firefox): confirm the student spoke for a few seconds. */
+  async function listenLoudness(i, btn, heard, lvl) {
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch (e) { setMicNote('The microphone is blocked here. On the real page, press Allow when the browser asks to use the microphone.'); return; }
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const an = ctx.createAnalyser(); an.fftSize = 1024;
+    ctx.createMediaStreamSource(stream).connect(an);
+    const buf = new Float32Array(an.fftSize);
+    let voiced = 0, last = performance.now(), raf, stopped = false;
+    const start = last;
+    const finish = () => {
+      if (stopped) return; stopped = true;
+      cancelAnimationFrame(raf); stream.getTracks().forEach(t => t.stop()); ctx.close();
+      active = null; lvl.hidden = true;
+      btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Say it';
+      if (voiced >= 3) { if (memory) state[i].mem = true; else state[i].read = true; renderCards(); }
+      else heard.textContent = 'That was short. Say the word and the whole definition, then press Done.';
+    };
+    active = { stop: finish };
+    btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Done';
+    lvl.hidden = false;
+    heard.textContent = 'Listening… (this browser checks that you spoke, not the words)';
+    const tick = now => {
+      an.getFloatTimeDomainData(buf);
+      let sum = 0; for (const v of buf) sum += v * v;
+      const rms = Math.sqrt(sum / buf.length);
+      if (rms > 0.03) voiced += (now - last) / 1000;
+      last = now;
+      lvl.firstChild.style.width = Math.min(100, rms * 600) + '%';
+      if (now - start > 20000) return finish();
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  }
+
+  $('#m-read').onclick = () => { memory = false; $('#m-read').setAttribute('aria-pressed', 'true'); $('#m-mem').setAttribute('aria-pressed', 'false'); renderCards(); };
+  $('#m-mem').onclick = () => { memory = true; $('#m-mem').setAttribute('aria-pressed', 'true'); $('#m-read').setAttribute('aria-pressed', 'false'); renderCards(); };
+  if (!SR) setMicNote('This browser can’t recognize words, so the cards check that you spoke out loud for a few seconds.');
+  renderCards();
+
+  /* ------------------------------------------------------------ heart labeling */
+  const SLOTS = [
+    { n: 1, x: 120, y: 226, a: 'Right atrium', tip: 'This is an upper chamber. Which side of the heart is on your left in this drawing?' },
+    { n: 2, x: 190, y: 352, a: 'Right ventricle', tip: 'This is a lower chamber that holds oxygen-poor (blue) blood.' },
+    { n: 3, x: 336, y: 232, a: 'Left atrium', tip: 'This upper chamber gets blood coming back from the lungs.' },
+    { n: 4, x: 326, y: 360, a: 'Left ventricle', tip: 'Look at the thick wall. This lower chamber pumps oxygen-rich blood out to the body.' },
+    { n: 5, x: 330, y: 36, a: 'Aorta', tip: 'This vessel leaves the heart carrying oxygen-rich blood to the body.' },
+    { n: 6, x: 225, y: 205, a: 'Pulmonary artery', tip: 'This vessel carries blood away from the heart. Follow it. Where does it go?' },
+    { n: 7, x: 452, y: 228, a: 'Pulmonary veins', tip: 'These vessels bring blood back to the heart. Where is that blood coming from?' },
+    { n: 8, x: 137, y: 64, a: 'Superior vena cava', tip: 'This large vein brings oxygen-poor blood in from the body. Is it above or below the heart?' },
+    { n: 9, x: 90, y: 420, a: 'Inferior vena cava', tip: 'This large vein brings oxygen-poor blood in from the body. Is it above or below the heart?' },
+    { n: 10, x: 30, y: 330, a: 'Atrioventricular valve', tip: 'Look at where this valve sits: between which two chambers?' },
+    { n: 11, x: 452, y: 318, a: 'Semilunar valve', tip: 'Look at where this valve sits: between a ventricle and what?' }
+  ];
+  const placed = {}, good = {};
+  let picked = null, hTries = 0;
+  const bank = $('#bank'), slotsEl = $('#slots'), mks = $('#markers');
+  const NS = 'http://www.w3.org/2000/svg';
+  const order = SLOTS.map(s => s.a).sort(() => Math.random() - .5);
+
+  SLOTS.forEach(s => {
+    const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'mk'); g.id = 'mk' + s.n;
+    const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 14);
+    const t = document.createElementNS(NS, 'text'); t.setAttribute('x', s.x); t.setAttribute('y', s.y + 1); t.textContent = s.n;
+    g.append(c, t); mks.append(g);
+  });
+
+  function renderHeart() {
+    const inBank = order.filter(a => !Object.values(placed).includes(a));
+    bank.replaceChildren(...(inBank.length ? inBank.map(a => chip(a)) : [h('span', { class: 'empty', text: 'All labels are placed. Press Check.' })]));
+    slotsEl.replaceChildren(...SLOTS.map(s => {
+      const v = placed[s.n];
+      const li = h('li', { class: 'slot', 'data-s': good[s.n] === true ? 'ok' : good[s.n] === false ? 'bad' : '' },
+        h('span', { class: 'num', text: s.n }),
+        h('button', { class: 'drop' + (v ? ' filled' : ''), type: 'button', 'data-n': s.n,
+          'aria-label': 'Box ' + s.n + (v ? ': ' + v : ': empty'),
+          text: v ? v + (good[s.n] ? ' ✓' : '') : (picked ? 'Tap to place here' : 'Drop a label here'),
+          onclick: () => tapSlot(s.n),
+          onmouseenter: () => hot(s.n, true), onmouseleave: () => hot(s.n, false),
+          onfocus: () => hot(s.n, true), onblur: () => hot(s.n, false) }));
+      if (good[s.n] === false) li.append(h('p', { class: 'tip', text: s.tip }));
+      return li;
+    }));
+    SLOTS.forEach(s => $('#mk' + s.n).classList.toggle('done', good[s.n] === true));
+  }
+  const hot = (n, on) => $('#mk' + n).classList.toggle('hot', on);
+
+  function chip(a) {
+    const b = h('button', { class: 'chip', type: 'button', 'aria-pressed': picked === a ? 'true' : 'false', text: a });
+    let sx, sy, ghost = null, moved = false;
+    b.addEventListener('pointerdown', e => {
+      sx = e.clientX; sy = e.clientY; moved = false; b.setPointerCapture(e.pointerId);
+    });
+    b.addEventListener('pointermove', e => {
+      if (sx == null) return;
+      if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 6) return;
+      if (!moved) { moved = true; ghost = h('span', { class: 'chip ghost', text: a }); document.body.append(ghost); }
+      ghost.style.left = e.clientX - 20 + 'px'; ghost.style.top = e.clientY - 18 + 'px';
+      document.querySelectorAll('.drop.over').forEach(d => d.classList.remove('over'));
+      const tgt = document.elementFromPoint(e.clientX, e.clientY)?.closest('.drop');
+      if (tgt) tgt.classList.add('over');
+    });
+    const end = e => {
+      if (sx == null) return; sx = null;
+      if (!moved) return;
+      ghost?.remove(); ghost = null;
+      document.querySelectorAll('.drop.over').forEach(d => d.classList.remove('over'));
+      const tgt = document.elementFromPoint(e.clientX, e.clientY)?.closest('.drop');
+      if (tgt) place(+tgt.dataset.n, a);
+    };
+    b.addEventListener('pointerup', end);
+    b.addEventListener('pointercancel', () => { sx = null; ghost?.remove(); ghost = null; });
+    b.addEventListener('click', e => { if (moved) { moved = false; return; } picked = picked === a ? null : a; renderHeart(); });
+    return b;
+  }
+
+  function place(n, a) {
+    if (good[n] === true) return;
+    for (const k in placed) if (placed[k] === a) { delete placed[k]; delete good[k]; }
+    placed[n] = a; delete good[n]; picked = null; renderHeart();
+    $('[data-n="' + n + '"]')?.focus();
+  }
+  function tapSlot(n) {
+    if (good[n] === true) return;
+    if (picked) return place(n, picked);
+    if (placed[n]) { delete placed[n]; delete good[n]; renderHeart(); }
+  }
+
+  $('#hcheck').onclick = () => {
+    const msg = $('#hmsg');
+    if (Object.keys(placed).length < SLOTS.length) { msg.dataset.s = 'bad'; msg.textContent = 'Place all 11 labels first.'; return; }
+    let wrong = 0;
+    SLOTS.forEach(s => { good[s.n] = placed[s.n] === s.a; if (!good[s.n]) { wrong++; delete placed[s.n]; } });
+    if (wrong) hTries++;
+    renderHeart();
+    if (wrong) { msg.dataset.s = 'bad'; msg.textContent = wrong + ' label' + (wrong > 1 ? 's go' : ' goes') + ' somewhere else. Read the tip next to each red box, then try again.'; }
+    else { msg.dataset.s = 'ok'; msg.textContent = 'Great work!' + (hTries ? ' (Wrong tries: ' + hTries + ')' : ''); $('#hexp').hidden = false; $('#hq').dataset.s = 'done'; }
+  };
+  $('#hreset').onclick = () => {
+    for (const k in placed) delete placed[k]; for (const k in good) delete good[k];
+    picked = null; hTries = 0; $('#hmsg').textContent = ''; $('#hexp').hidden = true; $('#hq').dataset.s = ''; renderHeart();
+  };
+  renderHeart();
+
+  /* ------------------------------------------------------------ blood typing */
+  const TYPES = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'];
+  const PATIENTS = [
+    { name: 'Patient 1: Marcus', who: 'Age 17. Broke his leg playing soccer.', type: 'A+' },
+    { name: 'Patient 2: Mrs. Lee', who: 'Age 64. Having knee surgery next week.', type: 'O−' },
+    { name: 'Patient 3: Sam', who: 'Age 15. Giving blood for the first time at a school drive.', type: 'AB+' }
+  ];
+  const SERA = [{ k: 'A', label: 'Anti-A' }, { k: 'B', label: 'Anti-B' }, { k: 'Rh', label: 'Anti-Rh' }];
+  const has = (type, k) => k === 'Rh' ? type.endsWith('+') : type.replace(/[+−]/, '').includes(k);
+
+  function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+  function wellSVG(state, seed) {
+    const r = rng(seed);
+    let inner = '';
+    if (state === 'empty') inner = '<circle cx="50" cy="50" r="40" fill="var(--blood)" opacity=".85"/>';
+    else if (state === 'smooth') inner = '<circle cx="50" cy="50" r="40" fill="var(--blood)"/>';
+    else {
+      inner = '<circle cx="50" cy="50" r="40" fill="var(--plasma)"/>';
+      for (let j = 0; j < 16; j++) {
+        const a = r() * Math.PI * 2, d = Math.sqrt(r()) * 30;
+        inner += '<circle cx="' + (50 + Math.cos(a) * d).toFixed(1) + '" cy="' + (50 + Math.sin(a) * d).toFixed(1) + '" r="' + (3 + r() * 5).toFixed(1) + '" fill="var(--clump)"/>';
+      }
+    }
+    return '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="var(--surface)" stroke="var(--muted)" stroke-width="3"/>' + inner + '</svg>';
+  }
+
+  $('#patients').replaceChildren(...PATIENTS.map((p, pi) => {
+    const added = {}; let tries = 0;
+    const card = h('article', { class: 'patient' });
+    const tray = h('div', { class: 'tray' });
+    const sel = h('select', { id: 'bt' + pi, disabled: '' }, h('option', { value: '', text: 'Choose…' }), TYPES.map(t => h('option', { value: t, text: t })));
+    const msg = h('p', { class: 'msg', role: 'status' });
+    const exp = h('div', { class: 'explain', hidden: '' });
+    SERA.forEach((s, si) => {
+      const pic = h('div'); pic.innerHTML = wellSVG('empty', 7 + pi * 31 + si * 7);
+      const res = h('span', { class: 'res', text: 'No serum yet' });
+      const btn = h('button', { class: 'btn small', type: 'button', text: 'Add ' + s.label });
+      btn.onclick = () => {
+        btn.disabled = true; added[s.k] = true;
+        const clump = has(p.type, s.k);
+        res.textContent = 'Mixing…';
+        setTimeout(() => {
+          pic.innerHTML = wellSVG(clump ? 'clump' : 'smooth', 7 + pi * 31 + si * 7);
+          res.textContent = clump ? 'Clumped' : 'Smooth';
+          if (SERA.every(x => added[x.k])) { sel.disabled = false; }
+        }, reduced ? 0 : 700);
+      };
+      tray.append(h('div', { class: 'well' }, h('span', { class: 'lbl', text: s.label }), pic, res, btn));
+    });
+    sel.onchange = () => {
+      if (!sel.value) return;
+      if (sel.value === p.type) {
+        msg.dataset.s = 'ok'; msg.textContent = 'Correct!' + (tries ? ' (Wrong tries: ' + tries + ')' : '');
+        card.dataset.s = 'ok'; sel.disabled = true; exp.hidden = false;
+        const on = SERA.filter(x => has(p.type, x.k)).map(x => x.k);
+        exp.textContent = on.length ? 'The ' + on.join(' and ') + ' well' + (on.length > 1 ? 's' : '') + ' clumped, so these cells carry the ' + on.join(' and ') + ' marker' + (on.length > 1 ? 's' : '') + '. That makes this blood ' + p.type + '.'
+          : 'No well clumped, so these cells carry no A, B, or Rh marker. That makes this blood O−.';
+      } else {
+        tries++; msg.dataset.s = 'bad';
+        const letters = sel.value.replace(/[+−]/, ''), rhPick = sel.value.endsWith('+');
+        const letterOk = letters === p.type.replace(/[+−]/, '');
+        msg.textContent = letterOk ? 'The letter part is right. Look again at the anti-Rh well to decide + or −.'
+          : rhPick === p.type.endsWith('+') ? 'The + or − part is right. Look again at the anti-A and anti-B wells. Each clumped well means that marker is there.'
+          : 'Look at each well. A clumped well means that marker is on the red blood cells. A smooth well means it is not.';
+      }
+    };
+    card.append(h('h3', { text: p.name }), h('p', { class: 'who', text: p.who }), tray,
+      h('div', { class: 'row typerow' }, h('label', { for: 'bt' + pi, text: 'Blood type:' }), sel), msg, exp);
+    return card;
+  }));
+
+  const BAGS = ['O−', 'O+', 'A−', 'B−', 'B+', 'AB−'];
+  const SAFE = ['O−', 'B−'];
+  let tTries = 0;
+  $('#bags').replaceChildren(...BAGS.map((b, i) => h('label', { class: 'bag', for: 'bag' + i }, h('input', { type: 'checkbox', id: 'bag' + i, value: b }), 'Donor ' + b)));
+  $('#tcheck').onclick = () => {
+    const picks = [...document.querySelectorAll('#bags input:checked')].map(x => x.value);
+    const msg = $('#tmsg');
+    if (!picks.length) { msg.dataset.s = 'bad'; msg.textContent = 'Choose at least one bag.'; return; }
+    const ok = picks.length === SAFE.length && SAFE.every(s => picks.includes(s));
+    if (ok) {
+      msg.dataset.s = 'ok'; msg.textContent = 'Correct!' + (tTries ? ' (Wrong tries: ' + tTries + ')' : '');
+      $('#texp').hidden = false; $('#tq').dataset.s = 'done';
+      document.querySelectorAll('#bags input').forEach(x => { x.disabled = true; if (x.checked) x.parentElement.dataset.s = 'ok'; });
+      return;
+    }
+    tTries++; msg.dataset.s = 'bad';
+    msg.textContent = picks.some(p => p.endsWith('+')) ? 'Priya is Rh negative. Look at the + or − on each bag you chose.'
+      : picks.some(p => p.includes('A')) ? 'Check each bag for the A marker. Does Priya’s own blood have it?'
+      : 'Every bag you chose is safe, but there is another safe bag. Which bag has no markers at all?';
+  };
+})();
+</script>
+
+</body>
+</html>
