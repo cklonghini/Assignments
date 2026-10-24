@@ -155,7 +155,7 @@ function videoBlock(key){
     var a=h('a',null,'Open it in a new tab'); a.href=LINKS.studio; a.target='_blank'; a.rel='noopener noreferrer';
     alt.append(a,'. Watching it here is what your teacher can track, so use this player if you can.');
   } else {
-    alt.append('Captions are on. Use the CC button on the video to turn them off. Video not playing? Refresh the page or try a different browser. Watching it here is what your teacher can track.');
+    alt.append('Captions are on. Use the CC button on the video to turn them off. Watching it here is what your teacher can track.');
   }
   wrap.append(h('p','vidtitle','Video: '+info.title),vid,watchEl(v,key),alt);
   return wrap;
