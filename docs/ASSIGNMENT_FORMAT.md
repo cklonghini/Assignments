@@ -86,6 +86,10 @@ video. Students see "Watch this clip: TITLE (0:00 to 3:27 of the video “OF”)
 
 Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
 
+`gate: true` (optional, one part only): every later part stays hidden until everything in this part is done (every
+question answered right, every written or photo box filled in). A note under the part says which parts are locked.
+Once the later parts open, they stay open. Use it for a lab's safety and setup step.
+
 `images` (optional): pictures such as station cards. Selecting one opens it full size in a new tab. `alt` is
 required for screen readers. `text` (HTML) is the words on the picture: students can open it as text, and a
 Listen button under the picture reads it aloud. Give `text` to any picture that has words students need.
@@ -223,7 +227,8 @@ For hands-on labs done at home, such as a dissection. Example: `assignments/expl
 
 ```js
 { type: 'photo', text: 'Take a photo of your heart with the anterior side facing up.',
-  caption: 'What does your photo show? Tell where the apex and the base are.' }   // optional label for the caption box
+  caption: 'What does your photo show? Tell where the apex and the base are.',   // optional label for the caption box
+  placeholder: 'For example: ...' }                                               // optional example in the caption box
 ```
 
 Students press **Add a photo** (on a phone they can take a picture or choose one they already took) or **Take a
@@ -233,6 +238,17 @@ reload. A photo box counts as done when it has a photo; students can still finis
 photo with its caption, or "no photo added", and a "Photos added" line in the results. Photos are not in the backup
 code or the Canvas text fallback (the text says a photo was added). Keep it to about 5 photo boxes; each photo adds
 about 100 KB to the PDF. Photo boxes do not work on a game board.
+
+### agree: a lab agreement students check and sign
+
+```js
+{ type: 'agree', text: 'Lab agreement. Read each statement, and check the box to show you agree. Then sign with your name.',
+  sign: true,                                       // optional: students type their first and last name to sign
+  items: [ 'I will follow safe lab procedures.', 'I will treat the specimen with respect.' ] }
+```
+
+It is done when every box is checked (and the name is typed, with `sign`). It is not scored. The PDF lists each
+statement with [x] or [ ], the signature, and the date the student agreed.
 
 ### ideas (the "Check my ideas" list)
 

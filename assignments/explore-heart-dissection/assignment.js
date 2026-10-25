@@ -13,7 +13,7 @@
 window.ASSIGNMENT = {
   title: 'Explore - Heart Dissection',
   course: 'Anatomy & Physiology B',
-  storageKey: 'explore-heart-dissection-v2',
+  storageKey: 'explore-heart-dissection-v3',
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
@@ -41,14 +41,28 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Step 1 */
     {
       title: 'Set up and suit up',
-      intro: 'Do all of this before you open the heart. Once you are ready, you will take a selfie to show your teacher you are set up safely.',
-      read: '<p><b>Do it:</b> Follow these steps in order.</p><ol>'
+      gate: true,                 // Steps 2 to 8 stay hidden until everything in this step is done
+      intro: 'Do all of this before you open the heart. The rest of the lab opens when you finish this step: agree to the lab rules, answer the two setup questions, and take a selfie to show you are set up safely.',
+      read: '<p><b>This is a real science lab.</b> You will be working with a real animal heart and tools that can cut. Scientists treat every lab with care and respect, and you will too. Take it seriously, work carefully, and give it your full attention.</p>'
+        + '<p><b>Do it:</b> Follow these steps in order.</p><ol>'
         + '<li><b>Set up your space.</b> Clear a table and put down a tray or cutting board you can clean. Lay out your lab kit: the heart, the plastic knife, the scissors, the probe (the wooden stick), and a few straws or old colored pencils for marking vessels.</li>'
         + '<li><b>Cover your keyboard.</b> Put the plastic keyboard cover from your kit over your keyboard. If your kit doesn’t have one, wrap the top of your keyboard in plastic wrap from the kitchen. That way you can type your answers without getting heart on your keyboard.</li>'
         + '<li><b>Suit up.</b> Put on your goggles, your apron, and your gloves.</li>'
         + '<li><b>Take your ready selfie</b> at the bottom of this step. Show your goggles, apron, and gloves, and your covered keyboard if you can.</li></ol>'
         + '<p><b>Stay safe:</b> Cut slowly with the plastic knife or the scissors, and always cut away from your body and your fingers. Keep your tools on the tray. Keep your gloves on until you finish cleaning up.</p>',
       questions: [
+        {
+          type: 'agree',
+          text: 'Lab agreement. Read each statement, and check the box to show you agree. Then sign with your name.',
+          sign: true,
+          items: [
+            'I will follow safe lab procedures. My goggles, apron, and gloves stay on the whole time, and I will cut slowly and away from my body.',
+            'I will treat the specimen with respect. This heart came from a real animal, and it was given so I can learn.',
+            'I will not have younger brothers, sisters, or other young children around me while I do this lab.',
+            'I will keep the heart and my tools on my tray, and I will clean up completely when I finish.',
+            'I understand this is a real lab, and I will take it seriously.'
+          ]
+        },
         {
           type: 'order',
           text: 'Put the setup steps in order.',
@@ -66,7 +80,8 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a selfie that shows you are ready: goggles, apron, and gloves on, and your keyboard covered.',
-          caption: 'List the safety gear you have on.'
+          caption: 'List the safety gear you have on.',
+          placeholder: 'For example: I have on my goggles, ...'
         }
       ]
     },
@@ -173,7 +188,8 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Mark each blood vessel you found with a colored straw or pencil. Take a photo of your heart with your color key next to it.',
-          caption: 'Write your color key. Which color is in which vessel?'
+          caption: 'Write your color key. Which color is in which vessel?',
+          placeholder: 'For example: The yellow straw is in the pulmonary trunk.'
         }
       ]
     },

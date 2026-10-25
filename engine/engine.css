@@ -195,6 +195,10 @@ th{background:var(--bg)}
 .photo [hidden]{display:none}
 .photo .qimg img{max-height:360px}
 .photo>label{margin-top:12px}
+.task[hidden],.gate[hidden]{display:none}
+.gate{margin:48px 0 0;padding:16px 18px;border:2px dashed var(--muted);border-radius:10px;font-weight:700;font-size:1.05rem}
+.gate[data-s="ok"]{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
+.signlab{margin-top:14px}
 .campanel video{display:block;width:100%;max-width:480px;margin:12px 0 8px;border-radius:8px;background:#000}
 
 /* game board */

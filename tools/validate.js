@@ -176,6 +176,9 @@ for (const dir of dirs) {
               if (it.highlight && q.type !== 'highlight') W(w + ' idea ' + (i + 1) + ' checks for highlighting but this is not a highlight question');
             });
             break;
+          case 'agree':
+            if (!(q.items || []).length) E(w + ' needs items (the statements to agree to)');
+            break;
           case 'photo':
             nPhoto++;
             break;
@@ -185,6 +188,11 @@ for (const dir of dirs) {
       });
     });
     if (board && nPhoto) E('Photo questions do not work on a game board');
+    if (!board) {
+      const gates = (A.parts || []).filter(p => p.gate);
+      if (gates.length > 1) E('Only one part can have gate: true');
+      if (gates.length && (A.parts || []).indexOf(gates[0]) === (A.parts || []).length - 1) W('gate: true on the last part does nothing');
+    }
     if (nPhoto > 10) W(nPhoto + ' photo questions is a lot. Each photo makes the PDF bigger; aim for 10 or fewer');
     if (groups.reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
     Object.keys(clips).forEach(k => { if (!used.has(k)) W('Clip ' + k + ' is defined but not used in any part'); });

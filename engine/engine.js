@@ -48,7 +48,7 @@ injectPage();
 /* State and saving                                                    */
 /* ------------------------------------------------------------------ */
 var KEY=A.storageKey||('assignment-'+TITLE), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},mn:[],mnRes:[],vids:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},agree:{},open:false,mn:[],mnRes:[],vids:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -61,6 +61,8 @@ function copyMeta(f,o){
   f.written=(o.written&&typeof o.written==='object')?o.written:{};
   f.rich=(o.rich&&typeof o.rich==='object')?o.rich:{};
   f.photos=(o.photos&&typeof o.photos==='object')?o.photos:{};
+  f.agree=(o.agree&&typeof o.agree==='object')?o.agree:{};
+  f.open=!!o.open;
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
@@ -250,10 +252,12 @@ function hasProgress(){
   if(Object.keys(S.auto).some(function(k){return S.auto[k]&&S.auto[k].v;})) return true;
   if(Object.keys(S.written).some(function(k){return S.written[k]&&S.written[k].text;})) return true;
   if(Object.keys(S.rich).some(function(k){return S.rich[k]&&segsPlain(S.rich[k].segs).trim();})) return true;
+  if(Object.keys(S.agree).some(function(k){return S.agree[k]&&((S.agree[k].on||[]).some(Boolean)||S.agree[k].sign);})) return true;
   if(Object.keys(S.photos).some(function(k){return S.photos[k]&&(S.photos[k].has||S.photos[k].cap);})) return true;
   return (S.mn||[]).some(function(x){return x;});
 }
 function updateBar(){
+  gateCheck();
   document.querySelectorAll('section.task[data-task]').forEach(function(sec){
     var n=sec.dataset.task, c=[].slice.call(sec.querySelectorAll('[data-c]'));
     var ok=c.filter(function(e){return e.dataset.s==='ok';}).length;
@@ -1076,7 +1080,7 @@ function photoField(id,q){
   var stream=null;
   var lab=h('label',null,q.caption||'What does your photo show? Name the parts you can see.'); lab.htmlFor='c-'+id;
   var ta=h('textarea'); ta.id='c-'+id; ta.rows=2; ta.value=st.cap||'';
-  ta.setAttribute('placeholder','For example: The yellow straw is in the pulmonary trunk.');
+  ta.setAttribute('placeholder',q.placeholder||'Type your caption here');
   wrap.append(input,fig,row,camBox,lab,ta);
   function say(t,bad){msg.textContent=t; if(bad) msg.dataset.s='bad'; else msg.removeAttribute('data-s');}
   function show(buf){
@@ -1143,6 +1147,66 @@ function photoField(id,q){
     say('Your photo isn’t saved in this browser anymore. Please add it again.',true);
   });
   return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: agreement (a safety pledge: check every statement, then   */
+/* sign with your name). Saved in S.agree[id] = {on:[...], sign, at}.  */
+/* ------------------------------------------------------------------ */
+function agreeField(id,q){
+  var items=q.items||[];
+  ORDER.push({kind:'agree',id:id,q:CURQ,sub:'',items:items,sign:!!q.sign});
+  var st=S.agree[id]||(S.agree[id]={on:[],sign:'',at:''});
+  var wrap=h('div','ctl'); mark(wrap);
+  var boxes=items.map(function(t,i){
+    var lab=h('label','opt'), inp=document.createElement('input'); inp.type='checkbox'; inp.checked=!!st.on[i];
+    var sp=h('span'); sp.append(itxt(t)); lab.append(inp,sp); wrap.append(lab);
+    inp.addEventListener('change',function(){st.on[i]=inp.checked; changed();});
+    return lab;
+  });
+  if(q.sign){
+    var sl=h('label','signlab','Type your first and last name to sign'); sl.htmlFor='f-'+id;
+    var sig=h('input'); sig.type='text'; sig.id='f-'+id; sig.autocomplete='name'; sig.value=st.sign||'';
+    wrap.append(sl,sig);
+    sig.addEventListener('input',function(){st.sign=sig.value; changed();});
+  }
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite'); wrap.append(msg);
+  function done(){ return items.every(function(t,i){return !!st.on[i];})&&(!q.sign||words(st.sign)>=2); }
+  function changed(){ st.at=done()?(st.at||new Date().toISOString()):''; paint(); commit(); }
+  function paint(){
+    boxes.forEach(function(lab,i){ if(st.on[i]) lab.dataset.s='ok'; else lab.removeAttribute('data-s'); });
+    var d=done(), left=items.some(function(t,i){return !st.on[i];});
+    wrap.dataset.s=d?'ok':'idle';
+    msg.textContent=d?'Thank you. You agreed to every statement.':(left?'Check every box to agree.'+(q.sign?' Then type your first and last name to sign.':''):'Type your first and last name to sign.');
+  }
+  paint();
+  return wrap;
+}
+
+/* A part with gate: true hides every later part until everything in it is done. Once open it stays open. */
+var GATE=null;
+function gateSetup(app){
+  GATE=null;
+  var gi=-1;
+  (A.parts||[]).some(function(p,i){ if(p.gate){gi=i; return true;} return false; });
+  if(BOARD||gi<0||gi>=(A.parts||[]).length-1) return;
+  var n=gi+1, word=A.partWord||'Part', last=(A.parts||[]).length;
+  var later=[]; for(var k=n+1;k<=last;k++) later.push($('#part'+k,app));
+  var note=h('div','gate'); note.setAttribute('aria-live','polite');
+  $('#part'+n,app).after(note);
+  GATE={n:n,later:later,note:note,
+    locked:word+'s '+(n+1)+' to '+last+' are locked. They open when you finish everything in '+word+' '+n+'.',
+    open:word+' '+(n+1)+' is open. Keep going!'};
+}
+function gateCheck(){
+  if(!GATE) return;
+  var c=[].slice.call($('#part'+GATE.n).querySelectorAll('[data-c]'));
+  var now=false;
+  if(!S.open&&c.length&&c.every(function(e){return e.dataset.s==='ok';})){ S.open=true; save(); now=true; }
+  GATE.later.forEach(function(s){s.hidden=!S.open;});
+  if(!S.open){ GATE.note.hidden=false; GATE.note.removeAttribute('data-s'); GATE.note.textContent=GATE.locked; }
+  else if(now){ GATE.note.hidden=false; GATE.note.dataset.s='ok'; GATE.note.textContent=GATE.open; }
+  else if(!GATE.note.dataset.s) GATE.note.hidden=true;
 }
 
 /* written answer with a yellow highlighter for the transition words that point to evidence */
@@ -1467,6 +1531,9 @@ function buildQuestion(q,s,tile){
       hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.'),
       richField(id));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return segsHlWords((S.rich[id]||{}).segs);},ideasFrom(q.ideas)));
+  } else if(t==='agree'){
+    ids=[];
+    o.body.append(agreeField(id,q));
   } else if(t==='photo'){
     ids=[];
     o.body.append(photoField(id,q));
@@ -1693,6 +1760,11 @@ function answerGroups(){
       var st=S.rich[o.id]||{segs:[]}, ptxt=segsPlain(st.segs).trim();
       it.resp=[ptxt||'(no answer)'];
       if(ptxt){ it.rich=st.segs; it.tag=words(ptxt)+' words, '+segsHlWords(st.segs)+' highlighted as transition words'; }
+    } else if(o.kind==='agree'){
+      var ag=S.agree[o.id]||{};
+      it.resp=o.items.map(function(x,i){return ((ag.on||[])[i]?'[x] ':'[ ] ')+plain(x);});
+      if(o.sign) it.resp.push('Signed: '+((ag.sign||'').trim()||'(not signed)'));
+      it.tag=ag.at?'agreed on '+fmtDate(new Date(ag.at)):'not finished';
     } else if(o.kind==='photo'){
       var ph=S.photos[o.id]||{}, cap=(ph.cap||'').trim();
       it.photo=ph.has?o.id:null; it.cap=!!cap;
@@ -2258,6 +2330,7 @@ function render(){
   else if(!BOARD) app.append(startSection());
   if(BOARD) app.append(boardSection());
   else (A.parts||[]).forEach(function(p,i){app.append(buildPart(p,i+1));});
+  gateSetup(app);
   app.append(finishEl());
   TOTAL_W=Object.keys(W).length+Object.keys(R).length;
   TOTAL_P=Object.keys(P).length;
