@@ -1,5 +1,5 @@
 /*
-  Explore - The Circulatory System (Anatomy and Physiology B)
+  Explore - The Cardiovascular System (Anatomy and Physiology B)
   Everything a student sees in this assignment is written here. The shared engine in /engine builds the page,
   the progress bars, the PDF, the Listen buttons, and the captions from this file.
   Video: Amoeba Sisters, "Circulatory System and Pathway of Blood Through the Heart". Captions come from the
@@ -7,7 +7,7 @@
   Text rules: *text* is shown in italics (use it for scientific names). Reading boxes (read) and tables use HTML.
 */
 window.ASSIGNMENT = {
-  title: 'Explore - The Circulatory System',
+  title: 'Explore - The Cardiovascular System',
   course: 'Anatomy and Physiology B',
   storageKey: 'explore-circulatory-system-v2',
 
