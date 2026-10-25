@@ -37,7 +37,14 @@ for (const dir of dirs) {
       keys[A.storageKey] = dir;
     }
     const exists = f => fs.existsSync(path.join(base, dir, f));
-    if (!A.video || !A.video.src) E('Missing video.src');
+    const checkImage = (im, where) => {
+      if (!im || !im.src) { E(where + ': an image needs src'); return; }
+      if (!exists(im.src)) E(where + ': image file not found: ' + im.src);
+      if (!im.alt) W(where + ': image ' + im.src + ' has no alt text (screen readers read it)');
+    };
+    if (!A.video) {
+      if (!(A.parts || []).some(p => (p.images || []).length)) W('No video and no images. Is that on purpose?');
+    } else if (!A.video.src) E('Missing video.src');
     else {
       if (!exists(A.video.src)) E('Video file not found: ' + A.video.src);
       if (!exists(A.video.src.replace(/\.mp4$/i, '.vtt'))) W('No captions file next to ' + A.video.src + ' (expected a .vtt file)');
@@ -59,11 +66,13 @@ for (const dir of dirs) {
       const where = 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : '');
       if (!p.title) E(where + ' needs a title');
       (p.clips || []).forEach(k => { if (!clips[k]) E(where + ' uses a clip that is not defined: ' + k); used.add(k); });
+      (p.images || []).forEach(im => checkImage(im, where));
       if (!(p.questions || []).length) W(where + ' has no questions');
       (p.questions || []).forEach(q => {
         qn++;
         const w = 'Q' + qn;
         if (!q.text) E(w + ' needs text');
+        if (q.image) checkImage(q.image, w);
         const needTip = (tip, answers) => {
           if (!tip) { E(w + ' needs a tip'); return; }
           answers.forEach(a => { if (a && String(a).length > 3 && plain(tip).includes(plain(a))) W(w + ': the tip contains the answer "' + plain(a) + '". Tips should point, not tell.'); });

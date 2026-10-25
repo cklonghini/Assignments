@@ -14,7 +14,9 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `course` | yes | Shown under the title and on the PDF, for example `'Biology A'` |
 | `storageKey` | yes | Unique key for saved progress. Change it (`-v2`) if you change the questions after students started |
 | `icon` | no | Inline SVG for the header. Leave out for a play-button icon. May use `var(--primary)`, `var(--receptor)`, `var(--ligand)`, `var(--ink)` |
-| `video` | yes | The full video (below) |
+| `video` | usually | The full video (below). Leave it out for an assignment with no video, such as station cards |
+| `start` | no | Only when there is no video: the box at the top of the page (below) |
+| `partWord` | no | The word before each part number, for example `'Station'` so headings read "Station 1: Overview". Default `'Part'` |
 | `clips` | no | The short clips (below) |
 | `parts` | yes | The parts, in order (below) |
 
@@ -30,6 +32,24 @@ video: {
   after: '...'                       // optional: replaces the default "Work from top to bottom..." paragraph
 }
 ```
+
+## No video: start and images
+
+An assignment can work from pictures instead of a video, for example classroom station cards turned into a
+virtual activity (see `assignments/explore-the-cardiovascular-system`). Leave out `video` and `clips`, and give
+each part `images`. The top of the page then shows the `start` box instead of a video:
+
+```js
+start: {
+  heading: 'Discovery stations',     // optional, default "How this assignment works"
+  intro: '...',                      // optional; the default includes the "Remember, Eagles!" line
+  after: '...'                       // optional: the second paragraph
+}
+```
+
+Make the images with `tools/station_images.py`: `cards` saves every page of a PDF as a JPEG, and `numbered`
+covers chosen labels on a diagram with numbered circles for "label the diagram" questions (see the notes at the
+top of the script).
 
 ## clips
 
@@ -49,13 +69,21 @@ clips: {
   title: 'Domains and kingdoms',
   intro: 'Optional plain-text paragraph at the top of the part.',
   clips: ['domains', 'kingdoms'],           // clip names, shown in this order
+  images: [ { src: 'media/station-card-1.jpg', alt: '...', caption: 'Station 1 card.', text: '<p>...</p>' } ],
   read: '<p><b>Read:</b> ...</p>',          // optional green reading box (HTML)
   tableHtml: '<table>...</table>',          // optional table shown after the reading (HTML)
   questions: [ ... ]
 }
 ```
 
-Order on the page: `intro`, clips, `read`, `tableHtml`, questions.
+Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
+
+`images` (optional): pictures such as station cards. Selecting one opens it full size in a new tab. `alt` is
+required for screen readers. `text` (HTML) is the words on the picture: students can open it as text, and a
+Listen button under the picture reads it aloud. Give `text` to any picture that has words students need.
+
+Any question can also have one `image: { src, alt, caption }`, shown under the question text (for example a
+numbered diagram to label).
 
 ## Question types
 

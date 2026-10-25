@@ -110,6 +110,13 @@ h1{margin:0;font-weight:800;font-size:clamp(2rem,6vw,3.1rem);line-height:1.04;le
 .learn p{margin:0 0 8px}
 .learn p:last-child{margin:0}
 .learn ul{margin:6px 0 8px;padding-left:20px}
+.card{margin:18px 0 14px}
+.card img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.card figcaption{margin:6px 0 0;font-size:.9rem;color:var(--muted)}
+.card figcaption a{color:var(--primary);font-weight:700}
+.qbody>.card{max-width:640px}
+details.cardtext{margin:4px 0 0}
+details.cardtext summary{cursor:pointer;font-weight:700;color:var(--primary)}
 .credit{margin-top:22px;font-size:.85rem;color:var(--muted)}
 .q{border-left:5px solid var(--line);padding:4px 0 4px 16px;margin:26px 0}
 .q[data-s="done"]{border-color:var(--ok)}

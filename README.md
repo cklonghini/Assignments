@@ -9,6 +9,7 @@ Each one is a page on Vercel with the video and short clips, auto-checked practi
 | Assignment | Folder |
 | --- | --- |
 | Explore - Species Classification (Marine Science A) | `assignments/explore-species-classification/` |
+| Explore - The Cardiovascular System (Anatomy & Physiology A) | `assignments/explore-the-cardiovascular-system/` |
 
 The home page (`index.html`) lists every assignment. Students get the direct link, for example
 `https://YOUR-PROJECT.vercel.app/assignments/explore-species-classification/`.
@@ -38,6 +39,7 @@ assignments/
 tools/
   new_assignment.py         create a new assignment folder
   video_tools.py            read a video's captions and cut clips (needs ffmpeg)
+  station_images.py         turn a PDF of station cards into images and numbered diagrams
   validate.js               check an assignment for mistakes (needs Node)
   build_index.py            refresh the home page list
 docs/ASSIGNMENT_FORMAT.md   every field in assignment.js

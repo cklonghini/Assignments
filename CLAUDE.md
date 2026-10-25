@@ -12,7 +12,9 @@ assignment is in `assignments/<slug>/assignment.js`.** Building a new assignment
 ## What the teacher gives you
 
 A video (and ideally its captions as an .srt or .vtt), the questions or ideas she wants students to do, the
-course label (for example "Marine Science A"), and a title. If something that changes the build is missing, ask
+course label (for example "Marine Science A"), and a title. Sometimes there is no video, only printed classroom material
+(for example station cards). Then each station becomes a part with its card image; see "No video" in
+`docs/ASSIGNMENT_FORMAT.md` and `tools/station_images.py`. If something that changes the build is missing, ask
 one short question. If she is not there to answer, make the most reasonable choice and say which one you made.
 
 ## Steps

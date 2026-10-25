@@ -12,10 +12,10 @@ function injectPage(){
    ['stylesheet','https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:wght@600;800&family=Cabin:wght@700&display=swap',false]
   ].forEach(function(l){var e=document.createElement('link'); e.rel=l[0]; e.href=l[1]; if(l[2]) e.crossOrigin=''; head.appendChild(e);});
   var icon=A2.icon||'<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M26 24 L46 36 L26 48 Z" fill="var(--primary-ink)"/></svg>';
-  var tracks='';
+  var tracks='', PW=A2.partWord||'Part';
   (A2.parts||[]).forEach(function(p,i){
     var n=i+1;
-    tracks+='<div class="track" id="trk'+n+'"><span class="tl">Part '+n+'</span><div class="tt" role="progressbar" aria-label="Part '+n+' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>';
+    tracks+='<div class="track" id="trk'+n+'"><span class="tl">'+PW+' '+n+'</span><div class="tt" role="progressbar" aria-label="'+PW+' '+n+' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>';
   });
   document.body.insertAdjacentHTML('afterbegin',
     '<div class="wrap"><header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
@@ -39,9 +39,9 @@ function injectPage(){
 
 
 var A=window.ASSIGNMENT;
-if(!A||!A.video){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
+if(!A||!A.parts){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
 var TITLE=A.title, COURSE=A.course;
-var LINKS={ studio:A.video.altUrl||'' };
+var LINKS={ studio:(A.video&&A.video.altUrl)||'' };
 injectPage();
 
 /* ------------------------------------------------------------------ */
@@ -108,10 +108,13 @@ function words(t){var m=String(t||'').trim().match(/\S+/g); return m?m.length:0;
 
 /* Video watch tracking: records each second actually played at normal flow */
 var VID_DONE=95;
-/* Videos: the full video plus one short clip per part, all from assignment.js */
+/* Videos: the full video plus one short clip per part, all from assignment.js. An assignment may have no video
+   (for example station cards): then the top section is the start box and the parts show images instead. */
 var VIDS={}, VID_ORDER=[];
-VIDS.main={n:A.video.seconds,title:A.video.title,label:'Video: '+A.video.title+' (full video)',src:A.video.src};
-VID_ORDER.push('main');
+if(A.video){
+  VIDS.main={n:A.video.seconds,title:A.video.title,label:'Video: '+A.video.title+' (full video)',src:A.video.src};
+  VID_ORDER.push('main');
+}
 (A.parts||[]).forEach(function(p,pi){
   (p.clips||[]).forEach(function(k){
     var c=(A.clips||{})[k];
@@ -120,7 +123,7 @@ VID_ORDER.push('main');
     VID_ORDER.push(k);
   });
 });
-function clipLabel(k){var v=VIDS[k]; return v.label||('Clip (Part '+v.part+'): '+v.title+' ('+fmt(v.from)+' to '+fmt(v.to)+')');}
+function clipLabel(k){var v=VIDS[k]; return v.label||('Clip ('+(A.partWord||'Part')+' '+v.part+'): '+v.title+' ('+fmt(v.from)+' to '+fmt(v.to)+')');}
 function fmt(sec){sec=Math.round(sec);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
 function vidState(key){
   if(!S.vids) S.vids={};
@@ -600,7 +603,7 @@ function qEl(num,text){
 }
 function part(n,title){
   var s=h('section','task'); s.dataset.task=String(n); s.id='part'+n;
-  s.append(h('h2','display','Part '+n+': '+title));
+  s.append(h('h2','display',(A.partWord||'Part')+' '+n+': '+title));
   return s;
 }
 function watchFor(markup){return hh('div','wfor','<b>Watch for:</b> '+markup);}
@@ -624,7 +627,42 @@ function allQuestions(){
   return out;
 }
 
+/* top section when there is no video: start (heading, intro, after) from assignment.js */
+function startSection(){
+  var V=A.start||{}, qs=allQuestions();
+  var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
+  var s=h('section','task vidsec'); s.id='video';
+  s.append(h('h2','display',V.heading||'How this assignment works'));
+  s.append(h('p','intro',V.intro||'Work through each part in order. Remember, Eagles! Quality matters more than quantity, but don’t leave out anything you think is worth noting.'));
+  var after=V.after;
+  if(after==null){
+    after='Each part gives you something to read and then lets you practice and check your work. Select a picture to open it full size in a new tab.';
+    if(nW) after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s')+'.';
+  }
+  s.append(h('p','intro',after));
+  return s;
+}
+
+/* a picture (station card, diagram). Selecting it opens the full-size image in a new tab.
+   text: optional HTML with the words on the picture, shown on request and read by the Listen button */
+function figureEl(im){
+  var f=h('figure','card');
+  var a=h('a'); a.href=im.src; a.target='_blank'; a.rel='noopener noreferrer';
+  var img=document.createElement('img'); img.src=im.src; img.alt=im.alt||''; img.loading='lazy';
+  a.append(img); f.append(a);
+  var cap=h('figcaption');
+  if(im.caption) cap.append(itxt(im.caption),' ');
+  var open=h('a',null,'Open full size'); open.href=im.src; open.target='_blank'; open.rel='noopener noreferrer';
+  cap.append(open); f.append(cap);
+  if(im.text){
+    var d=h('details','cardtext'); d.append(h('summary',null,'Show the words on this card as text'));
+    d.append(learn(im.text)); f.append(d);
+  }
+  return f;
+}
+
 function videoSection(){
+  if(!A.video) return startSection();
   var V=A.video, qs=allQuestions();
   var nHl=qs.filter(function(q){return q.type==='highlight';}).length;
   var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
@@ -666,6 +704,7 @@ function ideasFrom(list){
 
 function buildQuestion(q,s){
   var num=++QN, id='q'+num, o=qEl(num,q.text), t=q.type;
+  if(q.image) o.body.append(figureEl(q.image));
   if(t==='selects'){
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
     var grid=h('div','sigs');
@@ -706,6 +745,7 @@ function buildPart(p,n){
   var s=part(n,p.title);
   if(p.intro) s.append(h('p','intro',p.intro));
   (p.clips||[]).forEach(function(k){ if(VIDS[k]) s.append(videoBlock(k)); });
+  (p.images||[]).forEach(function(im){ s.append(figureEl(im)); });
   if(p.read) s.append(learn(p.read));
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
   (p.questions||[]).forEach(function(q){ buildQuestion(q,s); });
@@ -790,7 +830,7 @@ function pdfSafe(t){
   return String(t)
     .replace(/[‘’‛′]/g,"'").replace(/[“”‟″]/g,'"')
     .replace(/[–—−]/g,'-').replace(/…/g,'...').replace(/ /g,' ').replace(/•/g,'·')
-    .replace(/[←-⇿]/g,'->').replace(/[^\x09\x0A\x0D\x20-\x7E¡-ÿ]/g,'');
+    .replace(/[←-⇿]/g,'->').replace(/Δ/g,'Delta ').replace(/[^\x09\x0A\x0D\x20-\x7E¡-ÿ]/g,'');
 }
 /* Heading lines in Cabin Bold, drawn to an image so the PDF matches the font exactly */
 async function headingPng(lines,pt){
@@ -1002,7 +1042,7 @@ function finishEl(){
    'Select “Download my PDF.” If your browser asks, choose to save the file.',
    'Go to the Canvas assignment, select File Upload, upload the PDF, and submit.'].forEach(function(t){ol.append(h('li',null,t));});
   s.append(ol);
-  s.append(h('p','intro','Your PDF shows your name, the date you finished, how much of the video you watched, and all of your answers, including the yellow highlights on your evidence.'));
+  s.append(h('p','intro','Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers'+(Object.keys(R).length?', including the yellow highlights on your evidence':'')+'.'));
   var row=h('div','row');
   var make=h('button','btn','Download my PDF'); make.type='button';
   var cmsg=h('span','msg'); cmsg.setAttribute('aria-live','polite');
@@ -1212,6 +1252,12 @@ function decorate(){
   /* instructions and readings */
   app.querySelectorAll('.wfor,.learn').forEach(function(el){
     el.prepend(listenBtn(function(){return el.innerText;}));
+  });
+  /* pictures with their words: a Listen button right under the picture */
+  app.querySelectorAll('figure.card').forEach(function(f){
+    var t=f.querySelector('.cardtext .learn'); if(!t) return;
+    var wrap=h('div','lrow'); wrap.append(listenBtn(function(){return t.textContent;}));
+    f.querySelector('figcaption').after(wrap);
   });
   /* questions: the question and its answer choices */
   app.querySelectorAll('.q').forEach(function(q){
