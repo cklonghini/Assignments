@@ -1184,7 +1184,8 @@ function agreeField(id,q){
   return wrap;
 }
 
-/* A part with gate: true hides every later part until everything in it is done. Once open it stays open. */
+/* A part with gate: true hides every later part, and the Finish section, until everything in that part and in every
+   part before it is done. Once open it stays open. */
 var GATE=null;
 function gateSetup(app){
   GATE=null;
@@ -1193,18 +1194,21 @@ function gateSetup(app){
   if(BOARD||gi<0||gi>=(A.parts||[]).length-1) return;
   var n=gi+1, word=A.partWord||'Part', last=(A.parts||[]).length;
   var later=[]; for(var k=n+1;k<=last;k++) later.push($('#part'+k,app));
+  var before=[]; for(var j=1;j<=n;j++) before.push($('#part'+j,app));
+  var need=n===1?word+' 1':n===2?word+'s 1 and 2':word+'s 1 to '+n;
   var note=h('div','gate'); note.setAttribute('aria-live','polite');
   $('#part'+n,app).after(note);
-  GATE={n:n,later:later,note:note,
-    locked:word+'s '+(n+1)+' to '+last+' are locked. They open when you finish everything in '+word+' '+n+'.',
+  GATE={n:n,later:later,before:before,note:note,
+    locked:word+'s '+(n+1)+' to '+last+' and the Finish section are locked. They open when you finish everything in '+need+'.',
     open:word+' '+(n+1)+' is open. Keep going!'};
 }
 function gateCheck(){
   if(!GATE) return;
-  var c=[].slice.call($('#part'+GATE.n).querySelectorAll('[data-c]'));
+  var c=[]; GATE.before.forEach(function(sec){ c=c.concat([].slice.call(sec.querySelectorAll('[data-c]'))); });
   var now=false;
   if(!S.open&&c.length&&c.every(function(e){return e.dataset.s==='ok';})){ S.open=true; save(); now=true; }
   GATE.later.forEach(function(s){s.hidden=!S.open;});
+  var fin=$('#finish'); if(fin) fin.hidden=!S.open;
   if(!S.open){ GATE.note.hidden=false; GATE.note.removeAttribute('data-s'); GATE.note.textContent=GATE.locked; }
   else if(now){ GATE.note.hidden=false; GATE.note.dataset.s='ok'; GATE.note.textContent=GATE.open; }
   else if(!GATE.note.dataset.s) GATE.note.hidden=true;

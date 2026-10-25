@@ -106,8 +106,9 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 
 Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
 
-`gate: true` (optional, one part only): every later part stays hidden until everything in this part is done (every
-question answered right, every written or photo box filled in). A note under the part says which parts are locked.
+`gate: true` (optional, one part only): every later part, and the Finish section with the PDF download, stays hidden
+until everything in this part and every part before it is done (every question answered right, every written or
+photo box filled in). A note under the part says which parts are locked.
 Once the later parts open, they stay open. Use it for a lab's safety and setup step.
 
 `images` (optional): pictures such as station cards. Selecting one opens it full size in a new tab. `alt` is

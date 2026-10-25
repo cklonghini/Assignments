@@ -113,7 +113,7 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Step 2 */
     {
       title: 'Set up and suit up',
-      gate: true,                 // Steps 3 to 10 stay hidden until everything in this step is done
+      gate: true,                 // Steps 3 to 10 and the Finish section stay hidden until Steps 1 and 2 are done
       intro: 'Do all of this before you take the brain out of its package. The rest of the lab opens when you finish this step: agree to the lab rules, answer the setup questions, and take a selfie to show you are set up safely.',
       read: '<p><b>This is a real science lab.</b> You will be working with a real sheep brain and a tool that can cut. Scientists treat every lab with care and respect, and you will too. Take it seriously, work carefully, and give it your full attention.</p>'
         + '<p><b>Check your kit.</b> Your at-home dissection lab kit should have:</p><ul>'
