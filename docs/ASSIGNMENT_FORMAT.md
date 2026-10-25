@@ -42,7 +42,7 @@ each part `images`. The top of the page then shows the `start` box instead of a 
 ```js
 start: {
   heading: 'Discovery stations',     // optional, default "How this assignment works"
-  intro: '...',                      // optional; the default includes the "Remember, Eagles!" line
+  intro: '...',                      // optional: the first paragraph
   after: '...'                       // optional: the second paragraph
 }
 ```

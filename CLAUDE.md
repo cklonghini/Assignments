@@ -55,8 +55,7 @@ diagrams from the test into `media/` and give them alt text that does not give t
   are part of the engine. Keep them.
 - Each part starts with a thick colored line and a banner title so students can see they are moving to a new section.
 - No "watch for" timestamp boxes. Each clip is titled "Rewatch just this part", with its times in the full video.
-- The full video goes at the top, with the line "Remember, Eagles! Quality matters more than quantity, but don’t leave
-  out anything you think is worth noting." (This is the default intro text.)
+- The full video goes at the top. Do not add the old "Remember, Eagles!" line; the teacher removed it.
 
 **Videos**
 - One main video at the top, and one or two short clips per part, cut from it. Students should not have to hunt

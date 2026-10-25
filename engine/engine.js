@@ -1155,7 +1155,7 @@ function startSection(){
   var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
   var s=h('section','task vidsec'); s.id='video';
   s.append(h('h2','display',V.heading||'How this assignment works'));
-  s.append(h('p','intro',V.intro||'Work through each part in order. Remember, Eagles! Quality matters more than quantity, but don’t leave out anything you think is worth noting.'));
+  s.append(h('p','intro',V.intro||'Work through each part in order.'));
   var after=V.after;
   if(after==null){
     after='Each part gives you something to read and then lets you practice and check your work. Select a picture to open it full size in a new tab.';
@@ -1191,7 +1191,7 @@ function videoSection(){
   var hasClips=(A.parts||[]).some(function(p){return (p.clips||[]).length;});
   var s=h('section','task vidsec'); s.id='video';
   s.append(h('h2','display',V.heading||'Watch the video'));
-  s.append(h('p','intro',V.intro||('Please watch the video '+V.title+' and then respond to the prompts below. Remember, Eagles! Quality matters more than quantity, but don’t leave out anything you think is worth noting.')));
+  s.append(h('p','intro',V.intro||('Please watch the video '+V.title+' and then respond to the prompts below.')));
   s.append(videoBlock('main'));
   var after=V.after;
   if(after==null){
