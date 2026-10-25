@@ -64,13 +64,14 @@ window.ASSIGNMENT = {
           ]
         },
         {
-          type: 'highlight',      // written response where students highlight their evidence in yellow
+          type: 'highlight',      // written response: students give evidence with transition words, then highlight those words in yellow
           text: 'Use evidence from the video to support your answer.',
           min: 40,
           ideas: [
             { done: 'You used an example from the video.', q: 'Did you give an example from the video?', tip: 'What example did the video use?', re: /example|for instance/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 full sentences?', tip: 'Add another sentence.', sentences: 2 },
-            { done: 'You highlighted your evidence in yellow.', q: 'Did you highlight your evidence in yellow?', tip: 'Select the words where you used evidence, then press the yellow button.', highlight: true }
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” or “This shows that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?/ },
+            { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         }
       ]

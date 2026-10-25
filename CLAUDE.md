@@ -38,6 +38,14 @@ one short question. If she is not there to answer, make the most reasonable choi
 7. **Publish:** run `python3 tools/build_index.py` (the scaffold already does), commit, and push to the main
    branch. Vercel redeploys on its own. The student link is `https://PROJECT.vercel.app/assignments/SLUG/`.
 
+## Game boards (tests and reviews)
+
+If the teacher gives a test or a set of questions and wants a Jeopardy-style board, use `board` instead of video and
+parts (see "Game board assignments" in `docs/ASSIGNMENT_FORMAT.md`, and `assignments/test-unit-4-transport/` as the
+example). Sort the questions into 5 to 7 categories of equal size, easier questions in the lower rows. Crop any
+diagrams from the test into `media/` and give them alt text that does not give the answer. Keep the test PDF and key in
+`source/`. Note that answers are in `assignment.js`, which anyone can read in the browser.
+
 ## House rules (the teacher decided these; keep them)
 
 **Page**
@@ -64,10 +72,11 @@ one short question. If she is not there to answer, make the most reasonable choi
   explanation appears only after a right answer. `node tools/validate.js` warns when a tip contains the answer.
 - **Every written question has a "Check my ideas" list** of 3 to 5 key ideas. Each is a short pattern match that
   lights up when the student mentions the idea, plus a tip when they have not. It is not a grade and never shows
-  the answer. Add a "wrote at least 2 sentences" idea, and for highlight questions an "highlighted evidence" idea.
+  the answer. Add a "wrote at least 2 sentences" idea, and for highlight questions a "used transition words" idea and a "highlighted transition words" idea.
   Write the patterns generously (include word forms and plain-language ways to say the idea).
-- Highlight questions ask students to highlight their evidence in yellow. The teacher wants this on the main
-  written prompt that asks for evidence from the video.
+- Highlight questions tell students to provide evidence in their response, along with transition words that bring
+  attention to that evidence. Once they finish, they go back and highlight those transition words in yellow to show
+  where their evidence is. The teacher wants this on the main written prompt that asks for evidence from the video.
 - Write scientific names between asterisks (`*Homo sapiens*`) so they show in italics everywhere, including the PDF.
 - Use the words the video uses (for example "single-celled" if the video says that), so students can match the
   question to what they heard.
@@ -75,7 +84,8 @@ one short question. If she is not there to answer, make the most reasonable choi
 
 **Accessibility**
 - Every question, reading, and the warning box has a Listen button (read aloud). The page picks the most natural
-  female English voice on the student’s device, and students can change the voice and speed. This is built into the engine.
+  female American English voice on the student’s device (never a British one). There is no voice menu; students can
+  change only the speed. This is built into the engine.
 - Do not remove or restyle these controls.
 
 ## Things to leave alone

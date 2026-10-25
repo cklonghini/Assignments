@@ -42,8 +42,9 @@ for (const dir of dirs) {
       if (!exists(im.src)) E(where + ': image file not found: ' + im.src);
       if (!im.alt) W(where + ': image ' + im.src + ' has no alt text (screen readers read it)');
     };
+    const board = A.board;
     if (!A.video) {
-      if (!(A.parts || []).some(p => (p.images || []).length)) W('No video and no images. Is that on purpose?');
+      if (!board && !(A.parts || []).some(p => (p.images || []).length)) E('Missing video (an assignment with no video needs images in its parts)');
     } else if (!A.video.src) E('Missing video.src');
     else {
       if (!exists(A.video.src)) E('Video file not found: ' + A.video.src);
@@ -58,12 +59,25 @@ for (const dir of dirs) {
       if (!(c.to > c.from)) E('Clip ' + k + ': "to" must be larger than "from"');
       if (!(c.seconds > 0)) E('Clip ' + k + ': seconds must be a number');
       if (!c.title || c.title === 'TODO') E('Clip ' + k + ' needs a title');
-      if (A.video && c.to > A.video.seconds + 2) E('Clip ' + k + ' ends after the full video does');
+      if (A.video && !c.of && c.to > A.video.seconds + 2) E('Clip ' + k + ' ends after the full video does');
     });
-    if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
+    /* a game board has categories of tiles (and maybe a final tile) instead of parts */
+    let groups;
+    if (board) {
+      const cats = board.categories || [];
+      if (!cats.length) E('The board needs at least one category');
+      const lens = new Set(cats.map(c => (c.tiles || []).length));
+      if (lens.size > 1) W('Board categories have different numbers of tiles, so the board will not be a full rectangle');
+      if (!(board.tries >= 1)) W('board.tries is not set, so students get 3 tries');
+      groups = cats.map((c, ci) => ({ where: 'Category ' + (ci + 1) + (c.title ? ' (' + c.title + ')' : ''), title: c.title, questions: c.tiles || [] }));
+      if (board.final) groups.push({ where: 'Final round', title: 'Final', questions: [board.final] });
+    } else {
+      if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
+      groups = (A.parts || []).map((p, pi) => ({ where: 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : ''), title: p.title, clips: p.clips, questions: p.questions || [] }));
+    }
     let qn = 0, nAuto = 0, nWritten = 0;
-    (A.parts || []).forEach((p, pi) => {
-      const where = 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : '');
+    groups.forEach(p => {
+      const where = p.where;
       if (!p.title) E(where + ' needs a title');
       (p.clips || []).forEach(k => { if (!clips[k]) E(where + ' uses a clip that is not defined: ' + k); used.add(k); });
       (p.images || []).forEach(im => checkImage(im, where));
@@ -72,9 +86,13 @@ for (const dir of dirs) {
         qn++;
         const w = 'Q' + qn;
         if (!q.text) E(w + ' needs text');
-        if (q.image) checkImage(q.image, w);
+        if (q.img) {
+          if (!q.img.src || !exists(q.img.src)) E(w + ' picture not found: ' + (q.img.src || '(no src)'));
+          if (!q.img.alt) E(w + ' picture needs alt text (a description for students who cannot see it)');
+        }
+        /* on a game board tips are optional: a wrong answer can just say "not quite" and count the tries */
         const needTip = (tip, answers) => {
-          if (!tip) { E(w + ' needs a tip'); return; }
+          if (!tip) { if (!board) E(w + ' needs a tip'); return; }
           answers.forEach(a => { if (a && String(a).length > 3 && plain(tip).includes(plain(a))) W(w + ': the tip contains the answer "' + plain(a) + '". Tips should point, not tell.'); });
         };
         switch (q.type) {
@@ -91,17 +109,62 @@ for (const dir of dirs) {
           case 'choice':
             if (!Array.isArray(q.options) || q.options.length < 2) E(w + ' needs at least 2 options');
             else if (!(q.answer >= 0 && q.answer < q.options.length)) E(w + ': answer must be the number of the correct option, starting at 0');
-            if (!q.explain) E(w + ' needs an explanation (shown after a right answer)');
+            if (!q.explain && !board) E(w + ' needs an explanation (shown after a right answer)');
             needTip(q.tip, [q.options && q.options[q.answer]]);
             nAuto++;
             break;
           case 'typed':
-            if (!q.expected) E(w + ' needs expected');
-            needTip(q.tip, [q.expected]);
+            if (!q.expected && !(q.accept || []).length) E(w + ' needs expected (or an accept list)');
+            needTip(q.tip, [q.expected].concat(q.accept || []));
             nAuto++;
             break;
           case 'mnemonic':
             if (!Array.isArray(q.words) || q.words.length < 2) E(w + ' needs words');
+            nAuto++;
+            break;
+          case 'speak':
+            if (!(q.cards || []).length) E(w + ' has no cards');
+            (q.cards || []).forEach((c, i) => {
+              const isRe = r => Object.prototype.toString.call(r) === '[object RegExp]';
+              if (!c.term || !c.def) E(w + ' card ' + (i + 1) + ' needs term and def');
+              if (!isRe(c.say)) E(w + ' card ' + (i + 1) + ' needs say (a pattern for the word)');
+              else if (!c.say.test(plain(c.term))) W(w + ' card ' + (i + 1) + ': the say pattern does not match its own word "' + c.term + '"');
+              if (!Array.isArray(c.keys) || !c.keys.every(isRe)) E(w + ' card ' + (i + 1) + ' needs keys (a list of patterns)');
+              else if (!c.keys.every(r => r.test(plain(c.def)))) W(w + ' card ' + (i + 1) + ' (' + c.term + '): a key pattern does not match the card\'s own definition');
+              nAuto++;
+            });
+            break;
+          case 'label':
+            if (!q.image || !q.image.src) E(w + ' needs image.src');
+            else if (!exists(q.image.src)) E(w + ': image not found: ' + q.image.src);
+            if (!q.viewBox) E(w + ' needs viewBox');
+            if (!(q.spots || []).length) E(w + ' has no spots');
+            (q.spots || []).forEach((sp, i) => {
+              if (!sp.label || typeof sp.x !== 'number' || typeof sp.y !== 'number') E(w + ' spot ' + (i + 1) + ' needs label, x and y');
+              needTip(sp.tip, [sp.label]);
+              nAuto++;
+            });
+            if (new Set((q.spots || []).map(sp => sp.label)).size !== (q.spots || []).length) E(w + ': two spots have the same label');
+            break;
+          case 'order':
+            if (!Array.isArray(q.items) || q.items.length < 3) E(w + ' needs at least 3 items');
+            if (!q.tip) E(w + ' needs a tip');
+            if (!q.explain) E(w + ' needs an explanation');
+            nAuto++;
+            break;
+          case 'bloodlab':
+            if (!(q.patients || []).length) E(w + ' has no patients');
+            (q.patients || []).forEach((pt, i) => {
+              if (!pt.name || !/^(A|B|AB|O)[+−]$/.test(pt.type || '')) E(w + ' patient ' + (i + 1) + ' needs a name and a type such as A+ or O\u2212 (use the real minus sign \u2212)');
+              nAuto++;
+            });
+            break;
+          case 'multi':
+            if (!Array.isArray(q.options) || q.options.length < 2) E(w + ' needs at least 2 options');
+            if (!Array.isArray(q.answers) || !q.answers.length) E(w + ' needs answers');
+            else q.answers.forEach(a => { if (!(q.options || []).includes(a)) E(w + ': the answer "' + a + '" is not one of the options'); });
+            if (!q.explain) E(w + ' needs an explanation (shown after a right answer)');
+            if (!q.tip) E(w + ' needs a tip');
             nAuto++;
             break;
           case 'written': case 'highlight':
@@ -118,9 +181,9 @@ for (const dir of dirs) {
         }
       });
     });
-    if ((A.parts || []).reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
+    if (groups.reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
     Object.keys(clips).forEach(k => { if (!used.has(k)) W('Clip ' + k + ' is defined but not used in any part'); });
-    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written), ' + (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips');
+    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
   }
   errors.forEach(m => console.log('  ERROR   ' + m));
   warnings.forEach(m => console.log('  warning ' + m));

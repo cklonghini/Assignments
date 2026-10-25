@@ -142,7 +142,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Big Body Diagram: label the blood vessels in this picture. (On your Big Body Diagram, this is the picture in the bottom left corner.)',
-          image: { src: 'media/label-vessels.png', alt: 'A capillary bed diagram with three numbered blood vessels. Number 1 is the tube at the top where blood flows in. Number 2 is the network of tiny vessels in the middle. Number 3 is the tube at the bottom where blood flows out.', caption: 'Use the Station 2 card to name each numbered vessel.' },
+          img: { src: 'media/label-vessels.png', alt: 'A capillary bed diagram with three numbered blood vessels. Number 1 is the tube at the top where blood flows in. Number 2 is the network of tiny vessels in the middle. Number 3 is the tube at the bottom where blood flows out.', caption: 'Use the Station 2 card to name each numbered vessel.' },
           options: ['Artery', 'Capillary', 'Vein'],
           items: [
             { label: 'Number 1', answer: 'Artery', hint: 'Follow the white arrow. Blood flows into the bed here, coming from the heart.' },
@@ -217,7 +217,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Big Body Diagram: label each structure on the outside (external view) of the heart.',
-          image: { src: 'media/label-heart-outside.png', alt: 'The outside view of the heart from the Station 3 card, with its 13 labels replaced by the numbers 1 to 13, going clockwise from the top left.', caption: 'Find the same spot on the Station 3 card and read its label.' },
+          img: { src: 'media/label-heart-outside.png', alt: 'The outside view of the heart from the Station 3 card, with its 13 labels replaced by the numbers 1 to 13, going clockwise from the top left.', caption: 'Find the same spot on the Station 3 card and read its label.' },
           options: ['Aorta (aortic arch)', 'Aorta (descending)', 'Apex', 'Auricle of left atrium', 'Auricle of right atrium', 'Inferior vena cava', 'Left coronary artery and great cardiac vein', 'Left pulmonary artery', 'Left pulmonary veins', 'Right coronary artery and anterior cardiac vein', 'Right pulmonary artery', 'Right pulmonary veins', 'Superior vena cava'],
           hint: 'Find the same arrow on the Station 3 card and read its label. Right and left mean the heart’s own right and left, so they are flipped from your view.',
           items: [
@@ -325,7 +325,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Big Body Diagram: label each structure on the inside (internal view) of the heart. The blood vessels are already labeled for you.',
-          image: { src: 'media/label-heart-inside.png', alt: 'The inside view of the heart from the Station 4 card. The blood vessels keep their labels. The chambers, valves, chordae tendineae, septum, and pulmonary trunk are numbered 1 to 11: numbers 1 to 6 down the right side, and 7 to 11 going up the left side.', caption: 'Find the same spot on the Station 4 card and read its label.' },
+          img: { src: 'media/label-heart-inside.png', alt: 'The inside view of the heart from the Station 4 card. The blood vessels keep their labels. The chambers, valves, chordae tendineae, septum, and pulmonary trunk are numbered 1 to 11: numbers 1 to 6 down the right side, and 7 to 11 going up the left side.', caption: 'Find the same spot on the Station 4 card and read its label.' },
           options: ['Aortic valve', 'Chordae tendineae', 'Interventricular septum', 'Left atrium', 'Left ventricle', 'Mitral (bicuspid) valve', 'Pulmonary trunk', 'Pulmonary valve', 'Right atrium', 'Right ventricle', 'Tricuspid valve'],
           hint: 'Find the same arrow on the Station 4 card and read its label. Right and left mean the heart’s own right and left, so they are flipped from your view.',
           items: [
@@ -527,7 +527,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Take a peek back at Station 5 (shown again here). Which pathway, green or blue, was describing the systemic circuit? Which was describing the pulmonary circuit?',
-          image: { src: 'media/station-card-5.jpg', alt: 'The Station 5 card again, with its green and blue dotted arrows.', caption: 'Station 5 card. Read the green words and the blue words in the text, too.' },
+          img: { src: 'media/station-card-5.jpg', alt: 'The Station 5 card again, with its green and blue dotted arrows.', caption: 'Station 5 card. Read the green words and the blue words in the text, too.' },
           options: ['Green pathway', 'Blue pathway'],
           hint: 'On Station 5, the green words and arrows describe blood going to one place, and the blue ones describe blood going somewhere else. Which circuit goes to the lungs, and which goes to the rest of the body?',
           items: [
