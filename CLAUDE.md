@@ -62,10 +62,11 @@ one short question. If she is not there to answer, make the most reasonable choi
   explanation appears only after a right answer. `node tools/validate.js` warns when a tip contains the answer.
 - **Every written question has a "Check my ideas" list** of 3 to 5 key ideas. Each is a short pattern match that
   lights up when the student mentions the idea, plus a tip when they have not. It is not a grade and never shows
-  the answer. Add a "wrote at least 2 sentences" idea, and for highlight questions an "highlighted evidence" idea.
+  the answer. Add a "wrote at least 2 sentences" idea, and for highlight questions a "used transition words" idea and a "highlighted transition words" idea.
   Write the patterns generously (include word forms and plain-language ways to say the idea).
-- Highlight questions ask students to highlight their evidence in yellow. The teacher wants this on the main
-  written prompt that asks for evidence from the video.
+- Highlight questions tell students to provide evidence in their response, along with transition words that bring
+  attention to that evidence. Once they finish, they go back and highlight those transition words in yellow to show
+  where their evidence is. The teacher wants this on the main written prompt that asks for evidence from the video.
 - Write scientific names between asterisks (`*Homo sapiens*`) so they show in italics everywhere, including the PDF.
 - Use the words the video uses (for example "single-celled" if the video says that), so students can match the
   question to what they heard.

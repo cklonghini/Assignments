@@ -109,9 +109,12 @@ Each box is labeled with the word and must start with its first letter. One per 
   ideas: [ ...ideas ] }
 ```
 
-### highlight: a written response where students highlight evidence in yellow
+### highlight: a written response where students point to their evidence with transition words and highlight those words in yellow
 
 Same fields as `written` (`text`, `min`, `ideas`). The engine adds the instructions and the yellow highlight buttons.
+The instructions tell students to provide evidence along with transition words that bring attention to it (for example
+"According to the video," "This shows that"), then go back and highlight those transition words in yellow.
+Give these questions a "used transition words" idea (a pattern for common evidence transitions) and a "highlighted" idea.
 The highlighted words are marked with `[[double brackets]]` in the Canvas text-entry fallback and in yellow on the PDF.
 
 ### ideas (the "Check my ideas" list)
@@ -129,4 +132,4 @@ Instead of `re`, an idea can use `sentences: 2` (found when the answer has at le
 ## What the teacher sees
 
 The PDF lists every answer, how much of each video was watched, auto-check results with wrong-try counts, and the
-highlighted evidence. A small symbol next to "Results" shows time on task. The teacher grades the written responses.
+highlighted transition words. A small symbol next to "Results" shows time on task. The teacher grades the written responses.
