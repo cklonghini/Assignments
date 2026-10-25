@@ -9,7 +9,7 @@ Each one is a page on Vercel with the video and short clips, auto-checked practi
 | Assignment | Folder |
 | --- | --- |
 | Explore - Species Classification (Marine Science A) | `assignments/explore-species-classification/` |
-| Explore - The Cardiovascular System (Anatomy & Physiology A) | `assignments/explore-the-cardiovascular-system/` |
+| Practice - The Cardiovascular System (Anatomy & Physiology B) | `assignments/practice-the-cardiovascular-system/` |
 
 The home page (`index.html`) lists every assignment. Students get the direct link, for example
 `https://YOUR-PROJECT.vercel.app/assignments/explore-species-classification/`.

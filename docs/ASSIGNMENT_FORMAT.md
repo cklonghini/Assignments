@@ -36,7 +36,7 @@ video: {
 ## No video: start and images
 
 An assignment can work from pictures instead of a video, for example classroom station cards turned into a
-virtual activity (see `assignments/explore-the-cardiovascular-system`). Leave out `video` and `clips`, and give
+virtual activity (see `assignments/practice-the-cardiovascular-system`). Leave out `video` and `clips`, and give
 each part `images`. The top of the page then shows the `start` box instead of a video:
 
 ```js

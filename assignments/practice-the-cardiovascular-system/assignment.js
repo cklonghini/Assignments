@@ -1,5 +1,5 @@
 /*
-  Explore - The Cardiovascular System (Anatomy & Physiology A)
+  Practice - The Cardiovascular System (Anatomy & Physiology B)
   A virtual version of the classroom Discovery Stations. There is no video: each part is one station card
   (an image, with its words as text for the Listen button), and the Big Body Diagram labeling is done on
   numbered pictures. Card images and numbered diagrams are made with tools/station_images.py
@@ -9,9 +9,9 @@
   Full guide: docs/ASSIGNMENT_FORMAT.md
 */
 window.ASSIGNMENT = {
-  title: 'Explore - The Cardiovascular System',
-  course: 'Anatomy & Physiology A',
-  storageKey: 'explore-the-cardiovascular-system-v1',
+  title: 'Practice - The Cardiovascular System',
+  course: 'Anatomy & Physiology B',
+  storageKey: 'practice-the-cardiovascular-system-v1',
   partWord: 'Station',            // headings and progress bars say "Station 1" instead of "Part 1"
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 52 C16 41 13 33 13 27 a9.5 9.5 0 0 1 19 -3 a9.5 9.5 0 0 1 19 3 c0 6 -3 14 -19 25 z" fill="var(--primary-ink)"/></svg>',
 
@@ -434,11 +434,6 @@ window.ASSIGNMENT = {
             + '<ul><li>Blood enters via the superior vena cava and the inferior vena cava veins into the right atrium.</li>'
             + '<li>The right atrium contracts so that blood can pass through the tricuspid valve into the right ventricle, and we are back where we started!</li></ul>'
             + '<p>Picture labels: lungs, where blood is oxygenated (top); aorta, pulmonary trunk, right atrium, left atrium, right ventricle, left ventricle (heart); capillary beds in tissues throughout the entire body (bottom).</p>'
-        },
-        {
-          src: 'media/station-card-6.jpg',
-          alt: 'The same Station 5 card without the arrows. The vessels are labeled: superior vena cava, inferior vena cava, and the pulmonary veins on each side.',
-          caption: 'Station 5 card again, with the vessels labeled instead of arrows.'
         }
       ],
       questions: [
