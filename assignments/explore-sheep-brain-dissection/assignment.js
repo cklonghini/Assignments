@@ -3,11 +3,12 @@
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, and Listen buttons from it.
   Students dissect a sheep brain at home and follow along here, one step at a time. Most steps end with a photo of
-  their own work, which prints in their PDF. Built like explore-heart-dissection, but with no video: each step uses
-  the sheep brain photo slides instead. The kit has no keyboard cover, so Step 1 tells students to use plastic wrap.
+  their own work, which prints in their PDF. Built like explore-heart-dissection. The kit has no keyboard cover, so
+  Step 1 tells students to use plastic wrap.
   Sources (in source/, not saved to GitHub): the "Sheep Brain Dissection" at-home handout (with the Function
-  Reference Guide), the "Dissection: Sheep Brain" handout, and the sheep brain photo slides (It's Not Rocket
-  Science). media/slide-N.jpg are slides 2 to 8. media/label-*.jpg are the labeled slides 10, 12, and 14 with the
+  Reference Guide), the "Dissection: Sheep Brain" handout, the sheep brain photo slides (It's Not Rocket
+  Science), and "Carolina Quick Tip: Sheep Brain Dissection". Captions come from the teacher's pasted transcript
+  (source/sheep-brain.vtt), with auto-caption mistakes fixed. media/slide-N.jpg are slides 2 to 8. media/label-*.jpg are the labeled slides 10, 12, and 14 with the
   labels covered by numbers (tools/station_images.py numbered, spec in source/label-spec.json).
   Write *scientific names* between asterisks to show them in italics. Reading boxes and tables use HTML.
   Full guide: docs/ASSIGNMENT_FORMAT.md
@@ -15,7 +16,7 @@
 window.ASSIGNMENT = {
   title: 'Explore - Sheep Brain Dissection',
   course: 'Anatomy & Physiology A',
-  storageKey: 'explore-sheep-brain-dissection-v1',
+  storageKey: 'explore-sheep-brain-dissection-v2',
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
@@ -24,11 +25,18 @@ window.ASSIGNMENT = {
     + '<path d="M14 25 C18 22 22 26 25 23 M11 36 C16 33 20 38 25 34 M16 45 C20 42 24 46 27 43 M50 25 C46 22 42 26 39 23 M53 36 C48 33 44 38 39 34 M48 45 C44 42 40 46 37 43" fill="none" stroke="var(--primary-ink)" stroke-width="3" stroke-linecap="round"/>'
     + '<path d="M30 55 L30 66 M34 55 L34 66" stroke="var(--primary-ink)" stroke-width="4" stroke-linecap="round"/></svg>',
 
-  /* no video: this is the box at the top of the page */
-  start: {
-    heading: 'How this lab works',
-    intro: 'You will dissect a real sheep brain at home. Keep this page open next to you and follow along, one step at a time, while you work. Before you start, do Step 1 to set up and suit up. The rest of the lab opens when you finish Step 1.',
-    after: 'Each step has photos of a real sheep brain to help you find each structure. Select a photo to open it full size in a new tab. At the end of most steps, you take a photo of your own brain. Your photos print in your PDF. In the last step you answer the reflection questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.'
+  video: {
+    title: 'Carolina Quick Tip: Sheep Brain Dissection',
+    src: 'media/sheep-brain-video.mp4',
+    seconds: 99,
+    intro: 'Watch the video Carolina Quick Tip: Sheep Brain Dissection before you start cutting. Then keep this page open next to you and follow along, one step at a time, while you dissect your own sheep brain. Before you start, do Step 1 to set up and suit up. The rest of the lab opens when you finish Step 1.'
+  },
+
+  /* one clip per step that the video covers. from/to are times in the full video. */
+  clips: {
+    outside: { src: 'media/clip-outside.mp4', from: 22.0, to: 55.5, seconds: 34, title: 'Dorsal surface up: the parts on the outside' },
+    bisect:  { src: 'media/clip-bisect.mp4',  from: 46.0, to: 75.5, seconds: 30, title: 'Bisecting the brain: arbor vitae, brain stem, and ventricles' },
+    matter:  { src: 'media/clip-matter.mp4',  from: 75.5, to: 86.0, seconds: 11, title: 'Cutting across the frontal lobe: white and gray matter' }
   },
 
   parts: [
@@ -136,6 +144,7 @@ window.ASSIGNMENT = {
     {
       title: 'The outside of the brain',
       intro: 'Look at the brain from several angles: first from the top, then turn it over and look at the bottom.',
+      clips: ['outside'],
       images: [
         { src: 'media/slide-2.jpg', caption: 'Dorsal (top) external view: a drawing of a human brain and a photo of a sheep brain.',
           alt: 'Left: a drawing of a human brain seen from the top. Right: a photo of a sheep brain seen from the top, with pins in it. A deep groove runs down the middle of the large front part.',
@@ -149,6 +158,7 @@ window.ASSIGNMENT = {
         + '<li>Turn the brain over. Notice the <b>transverse fissure</b> between the cerebrum and the cerebellum.</li></ol>'
         + '<p><b>Read:</b> <b>Dorsal</b> means the top, and <b>ventral</b> means the bottom. The <b>cerebrum</b> is the largest part of the brain. It is divided into left and right halves called <b>hemispheres</b>. The deep cleft between the two hemispheres is the <b>longitudinal fissure</b>. Deep inside, the nerve fibers that connect the two hemispheres are the <b>corpus callosum</b>.</p>'
         + '<p>Behind the cerebrum is the <b>cerebellum</b>. The cleft between the cerebrum and the cerebellum is the <b>transverse fissure</b>. The <b>spinal cord</b> comes off the end of the brain. On the ventral side you can see the <b>brain stem</b>, which connects the brain to the spinal cord.</p>'
+        + '<p>The video also names two structures you can find on the ventral side, near the front: the <b>olfactory bulb</b>, which carries the sense of smell, and the <b>optic nerve</b>, which carries signals from the eyes. The video calls the longitudinal fissure the <b>medial longitudinal fissure</b>, because it runs down the middle.</p>'
         + '<p>The surface of the cerebrum is covered in folds and grooves. Each fold is called a <b>gyrus</b> (plural: gyri), and each groove is called a <b>sulcus</b> (plural: sulci).</p>',
       questions: [
         {
@@ -165,6 +175,22 @@ window.ASSIGNMENT = {
             { label: 'Number 6', answer: 'Longitudinal fissure', hint: 'This cleft runs the long way, between the left and right halves.' },
             { label: 'Number 7', answer: 'Transverse fissure', hint: 'This cleft runs across the brain. Which two parts does it separate?' }
           ]
+        },
+        {
+          type: 'choice',
+          text: 'In the video, which way does the sheep brain face when it is first placed in the dissecting tray?',
+          options: ['Dorsal surface up', 'Ventral surface up', 'Cut side up', 'Standing on the spinal cord'], answer: 0,
+          explain: 'Right. The brain starts dorsal surface up, so you see the top of the cerebrum and the longitudinal fissure first.',
+          tip: 'Rewatch the start of the clip. Listen to how the brain is placed in the tray.'
+        },
+        {
+          type: 'multi',
+          text: 'The video lists the parts to find on the outside of the brain. Which of these does it name? Choose all that are correct.',
+          options: ['Cerebrum', 'Cerebellum', 'Spinal cord', 'Olfactory bulb', 'Optic nerve', 'Arbor vitae', 'Gray matter'],
+          answers: ['Cerebrum', 'Cerebellum', 'Spinal cord', 'Olfactory bulb', 'Optic nerve'],
+          rules: [{ any: ['Arbor vitae', 'Gray matter'], tip: 'That one is inside the brain. You can only see it after you cut. Listen to the list in the clip again.' }],
+          tip: 'There are more. Rewatch the clip and listen to the whole list, all the way to the end.',
+          explain: 'Right. The video names the cerebrum, cerebellum, spinal cord, medial longitudinal fissure, right and left hemispheres, olfactory bulb, and optic nerve.'
         },
         {
           type: 'selects',
@@ -246,6 +272,7 @@ window.ASSIGNMENT = {
     {
       title: 'The midsagittal cut: arbor vitae and ventricles',
       intro: 'Time to cut. Go slowly with your plastic knife and cut away from your fingers.',
+      clips: ['bisect'],
       images: [
         { src: 'media/slide-5.jpg', caption: 'Internal (sagittal) view: a sheep brain cut down the middle and opened.',
           alt: 'A sheep brain cut down the middle and laid open like a book, so the two halves mirror each other on a blue tray.',
@@ -258,7 +285,7 @@ window.ASSIGNMENT = {
         + '<li>Carefully make a sagittal cut along the midline of the brain. With the two halves open, find the same parts you found on the outside.</li>'
         + '<li>Look closely at the cerebellum. The branching pattern is the arbor vitae.</li>'
         + '<li>Find the ventricles (cavities) inside the brain.</li></ol>'
-        + '<p><b>Read:</b> A <b>sagittal cut</b> goes along the midline, right down the longitudinal fissure. It splits the brain into left and right halves that mirror each other. This is also called a <b>midsagittal cut</b>.</p>'
+        + '<p><b>Read:</b> A <b>sagittal cut</b> goes along the midline, right down the longitudinal fissure. It splits the brain into left and right halves that mirror each other. This is also called a <b>midsagittal cut</b>. The video says to <b>bisect</b> the brain, which means to cut it into two halves.</p>'
         + '<p>Inside the cerebellum is a branching pattern called the <b>arbor vitae</b>, which means “tree of life.” It is white matter that carries sensory and motor information to and from the cerebellum.</p>'
         + '<p>The brain has cavities inside it called <b>ventricles</b>. They contain the <b>choroid plexus</b>, which makes <b>cerebrospinal fluid</b> (CSF). Cerebrospinal fluid surrounds the brain and spinal cord.</p>',
       questions: [
@@ -268,6 +295,15 @@ window.ASSIGNMENT = {
           options: ['Along the midline, down the longitudinal fissure', 'Across the frontal lobe', 'Along the transverse fissure', 'Around the edge of the cerebellum'], answer: 0,
           explain: 'Right. The cut goes down the middle, between the two hemispheres, so the two halves mirror each other.',
           tip: 'Read the first sentence of the reading again. Which cleft runs down the middle?'
+        },
+        {
+          type: 'multi',
+          text: 'After the brain is bisected, which structures does the video say to identify inside? Choose all that are correct.',
+          options: ['Arbor vitae', 'Brain stem', 'Ventricles', 'Olfactory bulb', 'Optic nerve'],
+          answers: ['Arbor vitae', 'Brain stem', 'Ventricles'],
+          rules: [{ any: ['Olfactory bulb', 'Optic nerve'], tip: 'That one was on the outside list, before the cut. Listen to the list after “Once bisected.”' }],
+          tip: 'There are more. Rewatch the clip from about 0:10 and listen to the whole list.',
+          explain: 'Right. Inside, the video names the arbor vitae, the brain stem, and the ventricles.'
         },
         {
           type: 'selects',
@@ -365,6 +401,7 @@ window.ASSIGNMENT = {
     {
       title: 'Gray matter, white matter, and clean up',
       intro: 'Make one last cut to compare the gray matter and the white matter. Then clean up.',
+      clips: ['matter'],
       images: [
         { src: 'media/slide-8.jpg', caption: 'Cross-section of the frontal lobe of a sheep brain.',
           alt: 'Two photos of a slice of sheep brain held in gloved hands. The slice has a wavy darker edge along the folds and lighter streaks inside.',
@@ -380,6 +417,13 @@ window.ASSIGNMENT = {
         + '<li>Wash your hands well with soap and water.</li>'
         + '<li>Take the plastic wrap off your keyboard last, once your hands are clean, and throw it away.</li></ol>',
       questions: [
+        {
+          type: 'choice',
+          text: 'In the video, where do you cut to see the white and gray matter?',
+          options: ['Across the frontal lobe', 'Down the medial longitudinal fissure', 'Through the cerebellum', 'Along the spinal cord'], answer: 0,
+          explain: 'Right. The last cut goes across the frontal lobe.',
+          tip: 'Rewatch the short clip. It names the lobe you cut across.'
+        },
         {
           type: 'selects',
           text: 'Choose gray matter or white matter for each description.',
@@ -517,12 +561,12 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
-          text: 'How did doing this dissection help you understand the brain’s structure better than only looking at diagrams or photos? Use evidence from your own dissection.',
+          text: 'How did doing this dissection help you understand the brain’s structure better than only looking at diagrams or photos? Use evidence from your own dissection and the video.',
           min: 60,
           ideas: [
             { done: 'You wrote about the brain’s structure (what a part looks like, feels like, or where it is).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like the folds, the arbor vitae, or the gray and white matter.', re: /structur|shape|fold|groove|gyr|sulc|lobe|layer|inside|outside|size|look(s|ed)?|saw|see|seeing|felt|feel|texture|colou?r|where|located|location|position|arbor|matter|half|halves/ },
             { done: 'You compared the dissection to diagrams or photos.', q: 'Did you compare your dissection to diagrams or photos?', tip: 'Tell what was different about seeing and touching a real brain, compared to a picture.', re: /diagram|photo|picture|drawing|image|textbook|screen|real|in person|hands.?on|3.?d|three.?dimension|touch|hold|held|compar|instead|than|different/ },
-            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “When I cut,” or “This shows that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened|held|touched|removed|found)|in my dissection/ },
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” “When I cut,” or “This shows that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened|held|touched|removed|found)|in my dissection/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
