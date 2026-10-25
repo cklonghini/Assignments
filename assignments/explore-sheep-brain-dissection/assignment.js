@@ -4,7 +4,7 @@
   progress bars, PDF printout, and Listen buttons from it.
   Students dissect a sheep brain at home and follow along here, one step at a time. Most steps end with a photo of
   their own work, which prints in their PDF. Built like explore-heart-dissection. The kit has no keyboard cover, so
-  Step 1 tells students to use plastic wrap.
+  Step 1 tells students to use plastic wrap or the bag the supplies came in.
   Sources (in source/, not saved to GitHub): the "Sheep Brain Dissection" at-home handout (with the Function
   Reference Guide), the "Dissection: Sheep Brain" handout, the sheep brain photo slides (It's Not Rocket
   Science), and "Carolina Quick Tip: Sheep Brain Dissection". Captions come from the teacher's pasted transcript
@@ -55,7 +55,7 @@ window.ASSIGNMENT = {
         + '<p>If you did not get all of these supplies, contact your TOR right away so a kit can be mailed to you before you start this assignment.</p>'
         + '<p><b>Do it:</b> Follow these steps in order.</p><ol>'
         + '<li><b>Set up your space.</b> Work on a clean, flat surface covered by your dissection tray. Lay out your lab kit.</li>'
-        + '<li><b>Cover your keyboard with plastic wrap.</b> Your kit does not come with a keyboard cover. Grab some plastic wrap from the kitchen and wrap it over the top of your keyboard before you start. That way you can type your answers without getting brain on your keyboard.</li>'
+        + '<li><b>Cover your keyboard with plastic wrap.</b> Your kit does not come with a keyboard cover. Grab some plastic wrap from the kitchen and wrap it over the top of your keyboard before you start. You may even be able to use the plastic bag your supplies came in: slip it over your keyboard instead. That way you can type your answers without getting brain on your keyboard.</li>'
         + '<li><b>Suit up.</b> Put on your apron before you take the sheep brain out of its package. Then put on your goggles and your gloves.</li>'
         + '<li><b>Take your ready selfie</b> at the bottom of this step. Show your apron, goggles, and gloves, and your covered keyboard if you can.</li></ol>'
         + '<p><b>Stay safe:</b> Wear your safety goggles for the whole dissection so nothing splashes into your eyes. Wear gloves any time you handle the brain or your dissection tools. Cut slowly with the plastic knife, and always cut away from your body and your fingers. When you finish and everything is cleaned up, wash your hands well.</p>',
@@ -82,9 +82,9 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Your kit does not come with a keyboard cover. What should you do before you start?',
-          options: ['Wrap the top of your keyboard in plastic wrap from the kitchen', 'Skip it and type carefully', 'Type with your gloves on and wipe the keys later', 'Do the lab without answering on the page'], answer: 0,
-          explain: 'Right. Plastic wrap keeps your keyboard clean so you can type while you work.',
-          tip: 'Read step 2 of the setup list again. It says what to grab from the kitchen.'
+          options: ['Cover it with plastic wrap from the kitchen, or slip the bag your supplies came in over it', 'Skip it and type carefully', 'Type with your gloves on and wipe the keys later', 'Do the lab without answering on the page'], answer: 0,
+          explain: 'Right. Plastic wrap, or the bag your supplies came in, keeps your keyboard clean so you can type while you work.',
+          tip: 'Read step 2 of the setup list again. It says what you can use instead.'
         },
         {
           type: 'choice',
@@ -95,7 +95,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'photo',
-          text: 'Take a selfie that shows you are ready: apron, goggles, and gloves on, and your keyboard covered with plastic wrap.',
+          text: 'Take a selfie that shows you are ready: apron, goggles, and gloves on, and your keyboard covered with plastic wrap or the supply bag.',
           caption: 'List the safety gear you have on.',
           placeholder: 'For example: I have on my apron, ...'
         }
@@ -415,7 +415,7 @@ window.ASSIGNMENT = {
         + '<li>Throw away your specimen, your tools, your gloves, and your apron. You may keep your goggles if you like.</li>'
         + '<li>Wipe down your work space.</li>'
         + '<li>Wash your hands well with soap and water.</li>'
-        + '<li>Take the plastic wrap off your keyboard last, once your hands are clean, and throw it away.</li></ol>',
+        + '<li>Take the plastic wrap (or bag) off your keyboard last, once your hands are clean, and throw it away.</li></ol>',
       questions: [
         {
           type: 'choice',
