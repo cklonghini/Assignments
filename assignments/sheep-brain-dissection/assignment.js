@@ -29,7 +29,9 @@ window.ASSIGNMENT = {
     title: 'Carolina Quick Tip: Sheep Brain Dissection',
     src: 'media/sheep-brain-video.mp4',
     seconds: 99,
-    intro: 'Watch the video Carolina Quick Tip: Sheep Brain Dissection before you start cutting. Then keep this page open next to you and follow along, one step at a time, while you dissect your own sheep brain. Before you start the lab, do Step 1: watch the Nervous System video and answer the questions that pop up in it. Then do Step 2 to set up and suit up. The rest of the lab opens when you finish Step 2.'
+    intro: 'Next, watch the video Carolina Quick Tip: Sheep Brain Dissection before you start cutting. Then keep this page open next to you and follow along, one step at a time, while you dissect your own sheep brain. Do Step 2 to set up and suit up. The rest of the lab opens when you finish Step 2.',
+    heading: 'Before you cut: watch the Carolina video',
+    afterPart: 1                 // this video comes after Step 1 (the Nervous System video)
   },
 
   /* one clip per step that the video covers. from/to are times in the full video. */

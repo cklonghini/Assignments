@@ -50,6 +50,7 @@ for (const dir of dirs) {
       if (!exists(A.video.src)) E('Video file not found: ' + A.video.src);
       if (!exists(A.video.src.replace(/\.mp4$/i, '.vtt'))) W('No captions file next to ' + A.video.src + ' (expected a .vtt file)');
       if (!(A.video.seconds > 0)) E('video.seconds must be a number of seconds');
+      if (A.video.afterPart != null && !(Number.isInteger(A.video.afterPart) && A.video.afterPart >= 1 && A.video.afterPart <= (A.parts || []).length)) E('video.afterPart must be a part number');
     }
     const clips = A.clips || {}, used = new Set();
     Object.keys(clips).forEach(k => {

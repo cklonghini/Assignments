@@ -1566,22 +1566,18 @@ function buildPart(p,n){
 function videoStops(block,qs){
   var v=block.querySelector('video'), vid=block.querySelector('.vid');
   var list=h('div','vqs');
-  list.append(h('p','vidtitle','Questions in this video'));
-  list.append(h('p','vidalt','The video stops on its own for '+(qs.length===1?'this question':'each question')+'. Answer it to keep watching.'));
   if(!S.vstop) S.vstop={};
   var stops=qs.slice().sort(function(a,b){return a.at-b.at;}).map(function(q){
     var holder=h('div','vqslot');
     var r=buildQuestion(q,holder);
-    var note=h('p','vqnote','Question '+r.num+' pops up in the video at '+fmt(q.at)+'.');
-    holder.prepend(note);
     list.append(holder);
-    return {at:q.at,num:r.num,id:r.id,ids:r.auto,el:r.el,slot:holder,note:note};
+    return {at:q.at,num:r.num,id:r.id,ids:r.auto,el:r.el,slot:holder};
   });
   function done(st){return st.ids.length>0&&st.ids.every(function(k){var x=S.auto[k];return !!(x&&x.ok);});}
   function paintSlots(){
     stops.forEach(function(st){
       var seen=!!S.vstop[st.id]||done(st);
-      st.el.hidden=!seen; st.note.hidden=seen;
+      st.el.hidden=!seen;
     });
   }
   paintSlots();
@@ -1598,7 +1594,7 @@ function videoStops(block,qs){
     v.pause();
     try{ if(document.fullscreenElement) document.exitFullscreen(); else if(v.webkitDisplayingFullscreen) v.webkitExitFullscreen(); }catch(e){}
     cur=st; S.vstop[st.id]=1; save();
-    st.el.hidden=false; st.note.hidden=true;
+    st.el.hidden=false;
     pop=h('div','vpop'+(vid.clientWidth>=560?' over':''));
     pop.setAttribute('role','dialog'); pop.setAttribute('aria-label','Question '+st.num+' in the video');
     pop.append(h('p','vpophead','The video paused at '+fmt(st.at)+'. Answer this question to keep watching.'));
@@ -2407,10 +2403,12 @@ function render(){
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;
-  if(A.video) app.append(videoSection());
-  else if(!BOARD) app.append(startSection());
+  /* video.afterPart: N puts the full video section after part N instead of at the top */
+  var vAfter=A.video&&A.video.afterPart||0;
+  if(A.video&&!vAfter) app.append(videoSection());
+  else if(!A.video&&!BOARD) app.append(startSection());
   if(BOARD) app.append(boardSection());
-  else (A.parts||[]).forEach(function(p,i){app.append(buildPart(p,i+1));});
+  else (A.parts||[]).forEach(function(p,i){ app.append(buildPart(p,i+1)); if(vAfter===i+1) app.append(videoSection()); });
   gateSetup(app);
   app.append(finishEl());
   TOTAL_W=Object.keys(W).length+Object.keys(R).length;

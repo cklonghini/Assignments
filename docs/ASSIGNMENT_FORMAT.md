@@ -29,7 +29,8 @@ video: {
   seconds: 324,                      // length, rounded up
   heading: 'Watch the video',        // optional
   intro: '...',                      // optional: replaces the default "Please watch the video..." sentence
-  after: '...'                       // optional: replaces the default "Work from top to bottom..." paragraph
+  after: '...',                      // optional: replaces the default "Work from top to bottom..." paragraph
+  afterPart: 1                       // optional: show this video section after part 1 instead of at the top
 }
 ```
 
@@ -78,7 +79,7 @@ A whole second video can go in a part as a clip: give it `from: 0`, `to` its len
 A question with `at` (seconds into the part's first clip) pops up inside that video. At that time the video pauses and
 the question covers the player (on a narrow screen it shows right under the player). Students must answer it right to
 keep watching, and they cannot skip ahead past a question they have not answered. A "Rewatch this section" button
-goes back to the previous question's time. Answered questions stay in a list under the video, and they print in the
+goes back to the previous question's time. Answered questions stay under the video, and they print in the
 PDF like any other question. Only `choice`, `multi`, `selects`, `typed`, and `order` questions can go inside a video.
 Put each `at` at the end of a caption line, right after the video says the answer. Keep it to about 5 per video.
 Example: Step 1 of `assignments/sheep-brain-dissection/`.
