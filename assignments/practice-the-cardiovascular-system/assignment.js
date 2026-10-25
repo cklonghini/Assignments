@@ -18,8 +18,8 @@ window.ASSIGNMENT = {
   /* no video: this is the box at the top of the page */
   start: {
     heading: 'Discovery stations',
-    intro: 'In class, these six station cards would be posted around the room. Here, each part of this page is one station. Read the station card, then answer the questions under it. Do not leave a station until you have answered all of its questions. Remember, Eagles! Quality matters more than quantity, but don’t leave out anything you think is worth noting.',
-    after: 'Select a card to open it full size in a new tab. If the card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” In class you would label a Big Body Diagram. Here you label numbered pictures instead. You will also answer three written questions, and in one of them you will highlight your evidence in yellow.'
+    intro: 'Read each station card, then answer the questions under it.',
+    after: 'Select a card to open it full size in a new tab. If the card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” You will also answer three written questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.'
   },
 
   parts: [
@@ -141,7 +141,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
-          text: 'Big Body Diagram: label the blood vessels in this picture. (On your Big Body Diagram, this is the picture in the bottom left corner.)',
+          text: 'Label the blood vessels in this picture.',
           img: { src: 'media/label-vessels.png', alt: 'A capillary bed diagram with three numbered blood vessels. Number 1 is the tube at the top where blood flows in. Number 2 is the network of tiny vessels in the middle. Number 3 is the tube at the bottom where blood flows out.', caption: 'Use the Station 2 card to name each numbered vessel.' },
           options: ['Artery', 'Capillary', 'Vein'],
           items: [
@@ -216,7 +216,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'selects',
-          text: 'Big Body Diagram: label each structure on the outside (external view) of the heart.',
+          text: 'Label each structure on the outside (external view) of the heart.',
           img: { src: 'media/label-heart-outside.png', alt: 'The outside view of the heart from the Station 3 card, with its 13 labels replaced by the numbers 1 to 13, going clockwise from the top left.', caption: 'Find the same spot on the Station 3 card and read its label.' },
           options: ['Aorta (aortic arch)', 'Aorta (descending)', 'Apex', 'Auricle of left atrium', 'Auricle of right atrium', 'Inferior vena cava', 'Left coronary artery and great cardiac vein', 'Left pulmonary artery', 'Left pulmonary veins', 'Right coronary artery and anterior cardiac vein', 'Right pulmonary artery', 'Right pulmonary veins', 'Superior vena cava'],
           hint: 'Find the same arrow on the Station 3 card and read its label. Right and left mean the heart’s own right and left, so they are flipped from your view.',
@@ -257,7 +257,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
-          text: 'When the national anthem is sung or the pledge of allegiance is said, it is customary to place a hand over the heart. What is not completely anatomically accurate about where we are taught to place our hand? Where should we place our hand, based on where the heart is actually located? Use evidence from Station 3. (3 to 5 sentences)',
+          text: 'When the national anthem is sung or the pledge of allegiance is said, it is customary to place a hand over the heart. What is not completely anatomically accurate about where we are taught to place our hand? Where should we place our hand, based on where the heart is actually located? Use evidence from Station 3, along with transition words that tell where your evidence comes from. For example: “According to Station 3, …” or “The card explains that …” (3 to 5 sentences)',
           min: 80,
           ideas: [
             { done: 'You said the heart is closer to the middle of the chest.', q: 'Did you say where the heart really sits?',
@@ -270,7 +270,9 @@ window.ASSIGNMENT = {
               tip: 'Finish your answer by telling exactly where a hand should go to be over the heart.',
               re: /should (place|put|go|be)|place (our|your|my|a|the) hands?|put (our|your|my|a|the) hands?|hands? (should|would|needs to)/ },
             { done: 'You wrote at least 3 sentences.', q: 'Did you write 3 to 5 full sentences?', tip: 'Add a sentence that explains your reasoning.', sentences: 3 },
-            { done: 'You highlighted your evidence in yellow.', q: 'Did you highlight your evidence in yellow?', tip: 'Select the words where you used facts from Station 3, then press the yellow button.', highlight: true }
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to Station 3,” or “The card explains that.”',
+              re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|station 3|the card (says|said|shows|explains|states|mentions)|because|such as|proves?|this means|supports?|based on/ },
+            { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         },
         {
@@ -324,7 +326,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'selects',
-          text: 'Big Body Diagram: label each structure on the inside (internal view) of the heart. The blood vessels are already labeled for you.',
+          text: 'Label each structure on the inside (internal view) of the heart. The blood vessels are already labeled for you.',
           img: { src: 'media/label-heart-inside.png', alt: 'The inside view of the heart from the Station 4 card. The blood vessels keep their labels. The chambers, valves, chordae tendineae, septum, and pulmonary trunk are numbered 1 to 11: numbers 1 to 6 down the right side, and 7 to 11 going up the left side.', caption: 'Find the same spot on the Station 4 card and read its label.' },
           options: ['Aortic valve', 'Chordae tendineae', 'Interventricular septum', 'Left atrium', 'Left ventricle', 'Mitral (bicuspid) valve', 'Pulmonary trunk', 'Pulmonary valve', 'Right atrium', 'Right ventricle', 'Tricuspid valve'],
           hint: 'Find the same arrow on the Station 4 card and read its label. Right and left mean the heart’s own right and left, so they are flipped from your view.',
@@ -439,7 +441,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'selects',
-          text: 'Big Body Diagram: trace the path that blood flows. Choose the next stop for each step.',
+          text: 'Trace the path that blood flows. Choose the next stop for each step.',
           note: '<b>Start:</b> oxygen-poor blood comes back from the body in the superior and inferior vena cava. <b>End:</b> after step 14, the blood goes back into the vena cava and starts again.',
           options: ['Aorta', 'Aortic semilunar valve', 'Body tissues (capillary beds)', 'Left atrium', 'Left ventricle', 'Lungs', 'Mitral valve', 'Pulmonary arteries', 'Pulmonary semilunar valve', 'Pulmonary trunk', 'Pulmonary veins', 'Right atrium', 'Right ventricle', 'Tricuspid valve'],
           hint: 'Follow the bullets on Station 5 in order. Each step goes through one chamber, valve, or vessel. Make sure the step before this one is right first.',
@@ -550,7 +552,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
-          text: 'Match each part of coronary circulation to its job. (On your Big Body Diagram, you labeled these on the outside of the heart. Look back at numbers 7 and 11 in Question 13.)',
+          text: 'Match each part of coronary circulation to its job. (You labeled these on the outside of the heart. Look back at numbers 7 and 11 in Question 13.)',
           options: [
             'Supply oxygenated blood and nutrients to the atria and ventricles',
             'Drain away the deoxygenated blood',
