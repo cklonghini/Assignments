@@ -70,6 +70,25 @@ video. Students see "Watch this clip: TITLE (0:00 to 3:27 of the video “OF”)
                 of: 'Multiple Alleles, ABO Blood Types, and Punnett Squares' }
 ```
 
+A whole second video can go in a part as a clip: give it `from: 0`, `to` its length, `of` its title, and
+`whole: true`. Students then see "Watch the video: TITLE", and the PDF lists it as a full video.
+
+### Questions inside a video
+
+A question with `at` (seconds into the part's first clip) pops up inside that video. At that time the video pauses and
+the question covers the player (on a narrow screen it shows right under the player). Students must answer it right to
+keep watching, and they cannot skip ahead past a question they have not answered. A "Rewatch this section" button
+goes back to the previous question's time. Answered questions stay in a list under the video, and they print in the
+PDF like any other question. Only `choice`, `multi`, `selects`, `typed`, and `order` questions can go inside a video.
+Put each `at` at the end of a caption line, right after the video says the answer. Keep it to about 5 per video.
+Example: Step 1 of `assignments/sheep-brain-dissection/`.
+
+```js
+{ at: 93, type: 'choice', text: 'The video says the central nervous system (CNS) consists of which parts?',
+  options: ['The brain and spinal cord', 'The nerves throughout the body'], answer: 0,
+  tip: 'Rewind to about 1:05 and listen for what the CNS “consists of.”', explain: '...' }
+```
+
 ## parts
 
 ```js

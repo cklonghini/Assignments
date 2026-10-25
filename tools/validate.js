@@ -95,6 +95,12 @@ for (const dir of dirs) {
           if (!tip) { if (!board) E(w + ' needs a tip'); return; }
           answers.forEach(a => { if (a && String(a).length > 3 && plain(tip).includes(plain(a))) W(w + ': the tip contains the answer "' + plain(a) + '". Tips should point, not tell.'); });
         };
+        if (q.at != null) {
+          const ck = (p.clips || [])[0], c = ck && clips[ck];
+          if (!c) E(w + ': "at" (a question inside the video) needs a clip in its part');
+          else if (!(q.at > 0 && q.at < c.seconds)) E(w + ': "at" must be between 0 and the length of clip ' + ck + ' (' + c.seconds + ' seconds)');
+          if (!['choice', 'multi', 'selects', 'typed', 'order'].includes(q.type)) E(w + ': only choice, multi, selects, typed, and order questions can go inside a video');
+        }
         switch (q.type) {
           case 'selects':
             if (!(q.items || []).length) E(w + ' has no items');

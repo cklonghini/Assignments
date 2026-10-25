@@ -122,7 +122,8 @@ if(A.video){
   (p.clips||[]).forEach(function(k){
     var c=(A.clips||{})[k];
     if(!c){ if(window.console) console.error('Unknown clip: '+k); return; }
-    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src,of:c.of||''};
+    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src,of:c.of||'',whole:!!c.whole};
+    if(c.whole) VIDS[k].label='Video ('+(A.partWord||'Part')+' '+(pi+1)+'): '+c.title+' (full video)';
     VID_ORDER.push(k);
   });
 });
@@ -154,7 +155,7 @@ function videoBlock(key){
   tr.src=String(info.src).replace(/\.mp4$/i,'.vtt'); tr.default=true; v.append(tr);
   vid.append(v);
   if(info.from!=null){
-    wrap.append(h('p','vidtitle',info.of?'Watch this clip: '+info.title+' ('+clipWhere(info)+')':'Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
+    wrap.append(h('p','vidtitle',info.whole?'Watch the video: '+info.title:info.of?'Watch this clip: '+info.title+' ('+clipWhere(info)+')':'Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
     return wrap;
   }
   var alt=h('p','vidalt','Captions are on. Use the CC button on the video to turn them off. Watching it here is what your teacher can track.');
@@ -1454,7 +1455,7 @@ function videoSection(){
     }
     after+=photoSentence(qs);
     if(hasClips){
-      var first=VIDS[VID_ORDER[1]];
+      var first=null; VID_ORDER.some(function(k){var c=VIDS[k]; if(c.from!=null&&!c.of){first=c;return true;} return false;});
       if(first) after+=' The times on each clip (like '+fmt(first.from)+' to '+fmt(first.to)+') are times in the full video above.';
     }
   }
@@ -1547,12 +1548,92 @@ function buildQuestion(q,s,tile){
 function buildPart(p,n){
   var s=part(n,p.title);
   if(p.intro) s.append(h('p','intro',p.intro));
-  (p.clips||[]).forEach(function(k){ if(VIDS[k]) s.append(videoBlock(k)); });
+  var first=null;
+  (p.clips||[]).forEach(function(k){ if(VIDS[k]){ var b=videoBlock(k); s.append(b); if(!first) first=b; } });
+  /* questions with "at" pop up inside the part's first video at that time (seconds into that video) */
+  var inVid=(p.questions||[]).filter(function(q){return q.at!=null;});
+  if(inVid.length&&first) s.append(videoStops(first,inVid));
   (p.images||[]).forEach(function(im){ s.append(figureEl(im)); });
   if(p.read) s.append(learn(p.read));
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
-  (p.questions||[]).forEach(function(q){ buildQuestion(q,s); });
+  (p.questions||[]).forEach(function(q){ if(!(q.at!=null&&first)) buildQuestion(q,s); });
   return s;
+}
+
+/* Questions inside a video. At each question's time the video pauses and the question pops up over the player
+   (under it on a narrow screen). The student must answer it right to keep watching, and cannot skip ahead past a
+   question that is not answered yet. Answered questions stay in a list under the video. */
+function videoStops(block,qs){
+  var v=block.querySelector('video'), vid=block.querySelector('.vid');
+  var list=h('div','vqs');
+  list.append(h('p','vidtitle','Questions in this video'));
+  list.append(h('p','vidalt','The video stops on its own for '+(qs.length===1?'this question':'each question')+'. Answer it to keep watching.'));
+  if(!S.vstop) S.vstop={};
+  var stops=qs.slice().sort(function(a,b){return a.at-b.at;}).map(function(q){
+    var holder=h('div','vqslot');
+    var r=buildQuestion(q,holder);
+    var note=h('p','vqnote','Question '+r.num+' pops up in the video at '+fmt(q.at)+'.');
+    holder.prepend(note);
+    list.append(holder);
+    return {at:q.at,num:r.num,id:r.id,ids:r.auto,el:r.el,slot:holder,note:note};
+  });
+  function done(st){return st.ids.length>0&&st.ids.every(function(k){var x=S.auto[k];return !!(x&&x.ok);});}
+  function paintSlots(){
+    stops.forEach(function(st){
+      var seen=!!S.vstop[st.id]||done(st);
+      st.el.hidden=!seen; st.note.hidden=seen;
+    });
+  }
+  paintSlots();
+  var cur=null, pop=null, poll=null, msg=null, go=null;
+  function close(play){
+    if(!cur) return;
+    cur.slot.append(cur.el);
+    if(pop) pop.remove();
+    clearInterval(poll); cur=null; pop=null;
+    paintSlots();
+    if(play) v.play();
+  }
+  function open(st){
+    v.pause();
+    try{ if(document.fullscreenElement) document.exitFullscreen(); else if(v.webkitDisplayingFullscreen) v.webkitExitFullscreen(); }catch(e){}
+    cur=st; S.vstop[st.id]=1; save();
+    st.el.hidden=false; st.note.hidden=true;
+    pop=h('div','vpop'+(vid.clientWidth>=560?' over':''));
+    pop.setAttribute('role','dialog'); pop.setAttribute('aria-label','Question '+st.num+' in the video');
+    pop.append(h('p','vpophead','The video paused at '+fmt(st.at)+'. Answer this question to keep watching.'));
+    pop.append(st.el);
+    msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+    go=h('button','btn','Keep watching'); go.type='button'; go.hidden=true;
+    go.addEventListener('click',function(){close(true);});
+    /* the question covers the player's controls, so this is how students go back and listen again */
+    var i=stops.indexOf(st), from=i>0?stops[i-1].at:0;
+    var back=h('button','btn ghost','Rewatch this section (from '+fmt(from)+')'); back.type='button';
+    back.addEventListener('click',function(){ close(false); v.currentTime=from; v.play(); });
+    var row=h('div','row'); row.append(go,back,msg); pop.append(row);
+    if(pop.classList.contains('over')) vid.append(pop); else vid.after(pop);
+    pop.scrollIntoView({block:'nearest'});
+    var hd=st.el.querySelector('.qtext'); if(hd){ hd.tabIndex=-1; hd.focus({preventScroll:true}); }
+    poll=setInterval(function(){
+      if(!document.contains(v)){ clearInterval(poll); return; }
+      if(cur&&done(cur)&&go.hidden){ go.hidden=false; msg.dataset.s='ok'; msg.textContent='Right! Press Keep watching.'; }
+    },300);
+  }
+  function next(){ for(var i=0;i<stops.length;i++) if(!done(stops[i])) return stops[i]; return null; }
+  v.addEventListener('timeupdate',function(){
+    if(cur||v.seeking) return;
+    var st=next(); if(st&&v.currentTime>=st.at-0.25) open(st);
+  });
+  v.addEventListener('seeking',function(){
+    var st=next();
+    if(st&&v.currentTime>st.at+0.5){ v.currentTime=st.at; if(!cur) open(st); }
+  });
+  v.addEventListener('play',function(){
+    if(!cur) return;
+    if(done(cur)) close(false);
+    else { v.pause(); msg.removeAttribute('data-s'); msg.textContent='Answer the question first. Then the video can keep going.'; }
+  });
+  return list;
 }
 
 /* ------------------------------------------------------------------ */

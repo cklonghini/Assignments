@@ -4,7 +4,7 @@
   progress bars, PDF printout, and Listen buttons from it.
   Students dissect a sheep brain at home and follow along here, one step at a time. Most steps end with a photo of
   their own work, which prints in their PDF. Built like heart-dissection. The kit has no keyboard cover, so
-  Step 1 tells students to use plastic wrap or the bag the supplies came in.
+  Step 2 tells students to use plastic wrap or the bag the supplies came in.
   Sources (in source/, not saved to GitHub): the "Sheep Brain Dissection" at-home handout (with the Function
   Reference Guide), the "Dissection: Sheep Brain" handout, the sheep brain photo slides (It's Not Rocket
   Science), and "Carolina Quick Tip: Sheep Brain Dissection". Captions come from the teacher's pasted transcript
@@ -16,7 +16,7 @@
 window.ASSIGNMENT = {
   title: 'Sheep Brain Dissection',
   course: 'Anatomy & Physiology A',
-  storageKey: 'sheep-brain-dissection-v2',
+  storageKey: 'sheep-brain-dissection-v3',
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
@@ -29,21 +29,89 @@ window.ASSIGNMENT = {
     title: 'Carolina Quick Tip: Sheep Brain Dissection',
     src: 'media/sheep-brain-video.mp4',
     seconds: 99,
-    intro: 'Watch the video Carolina Quick Tip: Sheep Brain Dissection before you start cutting. Then keep this page open next to you and follow along, one step at a time, while you dissect your own sheep brain. Before you start, do Step 1 to set up and suit up. The rest of the lab opens when you finish Step 1.'
+    intro: 'Watch the video Carolina Quick Tip: Sheep Brain Dissection before you start cutting. Then keep this page open next to you and follow along, one step at a time, while you dissect your own sheep brain. Before you start the lab, do Step 1: watch the Nervous System video and answer the questions that pop up in it. Then do Step 2 to set up and suit up. The rest of the lab opens when you finish Step 2.'
   },
 
   /* one clip per step that the video covers. from/to are times in the full video. */
   clips: {
     outside: { src: 'media/clip-outside.mp4', from: 22.0, to: 55.5, seconds: 34, title: 'Dorsal surface up: the parts on the outside' },
     bisect:  { src: 'media/clip-bisect.mp4',  from: 46.0, to: 75.5, seconds: 30, title: 'Bisecting the brain: arbor vitae, brain stem, and ventricles' },
-    matter:  { src: 'media/clip-matter.mp4',  from: 75.5, to: 86.0, seconds: 11, title: 'Cutting across the frontal lobe: white and gray matter' }
+    matter:  { src: 'media/clip-matter.mp4',  from: 75.5, to: 86.0, seconds: 11, title: 'Cutting across the frontal lobe: white and gray matter' },
+    /* a second, whole video for Step 1, with questions inside it (the "at" questions) */
+    nervous: { src: 'media/nervous-system-video.mp4', from: 0, to: 691.5, seconds: 692, title: 'Nervous System (Amoeba Sisters)',
+               of: 'Nervous System', whole: true }
   },
 
   parts: [
     /* ---------------------------------------------------------------- Step 1 */
     {
+      title: 'Before the lab: the nervous system',
+      intro: 'Before you start the lab, watch this video about the nervous system. The video stops on its own 5 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again.',
+      clips: ['nervous'],
+      questions: [
+        {
+          at: 93,
+          type: 'choice',
+          text: 'The video says the central nervous system (CNS) consists of which parts?',
+          options: ['The brain and spinal cord', 'The nerves throughout the body', 'The heart and blood vessels', 'The skin and the muscles'], answer: 0,
+          explain: 'Right. The CNS is the brain and spinal cord. Everything else, such as the nerves throughout the body, is the peripheral nervous system (PNS).',
+          tip: 'Rewind to about 1:05 and listen for what the CNS “consists of.”'
+        },
+        {
+          at: 141,
+          type: 'multi',
+          text: 'The video talks about the term “brainstem.” Which structures does it say the brainstem includes? Choose all that are correct.',
+          options: ['Medulla', 'Pons', 'Midbrain', 'Cerebellum', 'Cerebrum'],
+          answers: ['Medulla', 'Pons', 'Midbrain'],
+          rules: [{ any: ['Cerebellum', 'Cerebrum'], tip: 'Not that one. Rewind to about 2:12 and listen to the exact list of structures the brainstem includes.' }],
+          tip: 'There are more. Rewind to about 2:12 and listen to the whole list.',
+          explain: 'Right. The brainstem includes the medulla, pons, and midbrain. You will find all three in your sheep brain.'
+        },
+        {
+          at: 171,
+          type: 'selects',
+          text: 'Match each part of the brain to what the video says it does.',
+          options: ['Medulla', 'Cerebellum', 'Midbrain', 'Thalamus', 'Hypothalamus'],
+          items: [
+            { label: 'Regulates breathing, blood pressure, and heart rate', answer: 'Medulla', hint: 'Rewind to about 1:46. This part of the hindbrain is named first.' },
+            { label: 'Balance and movement coordination', answer: 'Cerebellum', hint: 'Rewind to about 2:03.' },
+            { label: 'Alertness and the sleep/wake cycle', answer: 'Midbrain', hint: 'Rewind to about 2:07. This area is deep in the brain.' },
+            { label: 'Involved with sensory and motor information', answer: 'Thalamus', hint: 'Rewind to about 2:38. Listen to the structures in the forebrain.' },
+            { label: 'Major control of the endocrine system', answer: 'Hypothalamus', hint: 'Rewind to about 2:43. The video mentions its endocrine system video.' }
+          ]
+        },
+        {
+          at: 282,
+          type: 'selects',
+          text: 'The autonomic nervous system (ANS) is divided into the sympathetic and parasympathetic systems. Which system matches each description?',
+          options: ['Sympathetic', 'Parasympathetic'],
+          items: [
+            { label: 'Fight or flight', answer: 'Sympathetic', hint: 'The video says the shorter word of the two helps it remember this one.' },
+            { label: 'Rest and digest', answer: 'Parasympathetic', hint: 'Rewind to about 4:28. Is it the longer word or the shorter word?' },
+            { label: 'Your heart races and your breathing rate increases', answer: 'Sympathetic', hint: 'Think about running from a bear, or the copy machine. Which response is that?' },
+            { label: 'Your heart rate decreases and digestion occurs', answer: 'Parasympathetic', hint: 'Rewind to about 4:33.' }
+          ]
+        },
+        {
+          at: 377,
+          type: 'selects',
+          text: 'Match each part to its description from the video.',
+          options: ['Cell body', 'Dendrites', 'Axon', 'Synapse', 'Myelin sheath'],
+          items: [
+            { label: 'Has the nucleus and most other organelles', answer: 'Cell body', hint: 'Rewind to about 4:57.' },
+            { label: 'Branched structures where signals are received', answer: 'Dendrites', hint: 'Rewind to about 5:02.' },
+            { label: 'The fiber that carries a signal away to another cell', answer: 'Axon', hint: 'The video says, “I like to think away _____.”' },
+            { label: 'The junction where a neuron communicates with another cell', answer: 'Synapse', hint: 'Rewind to about 5:10.' },
+            { label: 'Made by glial cells; goes around the axon and insulates it', answer: 'Myelin sheath', hint: 'Rewind to about 5:54.' }
+          ]
+        }
+      ]
+    },
+
+    /* ---------------------------------------------------------------- Step 2 */
+    {
       title: 'Set up and suit up',
-      gate: true,                 // Steps 2 to 9 stay hidden until everything in this step is done
+      gate: true,                 // Steps 3 to 10 stay hidden until everything in this step is done
       intro: 'Do all of this before you take the brain out of its package. The rest of the lab opens when you finish this step: agree to the lab rules, answer the setup questions, and take a selfie to show you are set up safely.',
       read: '<p><b>This is a real science lab.</b> You will be working with a real sheep brain and a tool that can cut. Scientists treat every lab with care and respect, and you will too. Take it seriously, work carefully, and give it your full attention.</p>'
         + '<p><b>Check your kit.</b> Your at-home dissection lab kit should have:</p><ul>'
@@ -102,7 +170,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 2 */
+    /* ---------------------------------------------------------------- Step 3 */
     {
       title: 'Remove the meninges',
       intro: 'Take the sheep brain out of its package and get it ready to look at.',
@@ -140,7 +208,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 3 */
+    /* ---------------------------------------------------------------- Step 4 */
     {
       title: 'The outside of the brain',
       intro: 'Look at the brain from several angles: first from the top, then turn it over and look at the bottom.',
@@ -212,7 +280,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 4 */
+    /* ---------------------------------------------------------------- Step 5 */
     {
       title: 'Lobes, gyri, and sulci',
       intro: 'Now look at the brain from the side to find the four lobes of the cerebrum.',
@@ -256,8 +324,8 @@ window.ASSIGNMENT = {
           text: 'Choose the word for each part of the brain’s surface.',
           options: ['Gyrus', 'Sulcus'],
           items: [
-            { label: 'A fold (a raised bump) on the surface', answer: 'Gyrus', hint: 'Look back at the last paragraph of the reading in Step 3.' },
-            { label: 'A groove (a dip) between the folds', answer: 'Sulcus', hint: 'Look back at the last paragraph of the reading in Step 3.' }
+            { label: 'A fold (a raised bump) on the surface', answer: 'Gyrus', hint: 'Look back at the last paragraph of the reading in Step 4.' },
+            { label: 'A groove (a dip) between the folds', answer: 'Sulcus', hint: 'Look back at the last paragraph of the reading in Step 4.' }
           ]
         },
         {
@@ -268,7 +336,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 5 */
+    /* ---------------------------------------------------------------- Step 6 */
     {
       title: 'The midsagittal cut: arbor vitae and ventricles',
       intro: 'Time to cut. Go slowly with your plastic knife and cut away from your fingers.',
@@ -331,7 +399,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 6 */
+    /* ---------------------------------------------------------------- Step 7 */
     {
       title: 'The brain stem and the diencephalon',
       intro: 'Use one half of your brain to find the parts of the brain stem and the diencephalon.',
@@ -397,7 +465,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 7 */
+    /* ---------------------------------------------------------------- Step 8 */
     {
       title: 'Gray matter, white matter, and clean up',
       intro: 'Make one last cut to compare the gray matter and the white matter. Then clean up.',
@@ -433,7 +501,7 @@ window.ASSIGNMENT = {
             { label: 'Mainly made of myelinated axons', answer: 'White matter', hint: 'Read the reading again. Which one has myelin?' },
             { label: 'The darker layer along the outside edge of the slice', answer: 'Gray matter', hint: 'Read the second paragraph of the reading. Which one is darker?' },
             { label: 'The lighter tissue inside the slice', answer: 'White matter', hint: 'Read the second paragraph of the reading. Which one is lighter?' },
-            { label: 'The arbor vitae inside the cerebellum is made of this', answer: 'White matter', hint: 'Look back at the reading in Step 5.' }
+            { label: 'The arbor vitae inside the cerebellum is made of this', answer: 'White matter', hint: 'Look back at the reading in Step 6.' }
           ]
         },
         {
@@ -451,7 +519,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 8 */
+    /* ---------------------------------------------------------------- Step 9 */
     {
       title: 'Structure and function',
       intro: 'You can see where a structure is and what it looks like on your specimen, but you can’t see its function just by looking. Use the Function Reference Guide from your handout to match each structure to its job.',
@@ -499,7 +567,7 @@ window.ASSIGNMENT = {
             { label: 'Pituitary gland', answer: 'The “master gland” that releases hormones', hint: 'Find the pituitary gland row in the guide. What is it often called?' },
             { label: 'Pineal gland', answer: 'Makes melatonin for the sleep-wake cycle', hint: 'Find the pineal gland row in the guide.' },
             { label: 'Medulla oblongata', answer: 'Controls heart rate, breathing, and blood pressure', hint: 'Find the medulla oblongata row in the guide.' },
-            { label: 'Ventricles', answer: 'Make and circulate cerebrospinal fluid', hint: 'Find the ventricles row in the guide. Think back to Step 5.' },
+            { label: 'Ventricles', answer: 'Make and circulate cerebrospinal fluid', hint: 'Find the ventricles row in the guide. Think back to Step 6.' },
             { label: 'Spinal cord', answer: 'Carries signals between the brain and the body', hint: 'Find the spinal cord row in the guide.' }
           ]
         },
@@ -515,12 +583,12 @@ window.ASSIGNMENT = {
           text: 'A person has an injury at the back of the cerebrum. Which problem are they most likely to have?',
           options: ['Trouble seeing', 'Trouble hearing', 'Trouble feeling hot and cold', 'Trouble with hunger and thirst'], answer: 0,
           explain: 'Right. The occipital lobe is at the back of the cerebrum, and it processes what you see.',
-          tip: 'First, think back to Step 4. Which lobe is at the back? Then find its row in the guide.'
+          tip: 'First, think back to Step 5. Which lobe is at the back? Then find its row in the guide.'
         }
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 9 */
+    /* ---------------------------------------------------------------- Step 10 */
     {
       title: 'Reflection',
       intro: 'These are the reflection questions from your lab handout. Answer them in complete sentences, in your own words, using what you saw in your own dissection.',
@@ -530,7 +598,7 @@ window.ASSIGNMENT = {
           text: 'What structures were you able to find with ease on the outside of the sheep’s brain? What structures were harder to identify, and why do you think that was? (2 to 4 sentences)',
           min: 40,
           ideas: [
-            { done: 'You named a structure on the outside of the brain.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 3 and 4. What did you find before you cut?', re: /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|frontal|pariet|occipit|tempor|gyr|sulc|meninge|dura/ },
+            { done: 'You named a structure on the outside of the brain.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 4 and 5. What did you find before you cut?', re: /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|frontal|pariet|occipit|tempor|gyr|sulc|meninge|dura/ },
             { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
             { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
             { done: 'You explained why.', q: 'Did you explain why it was harder?', tip: 'Add a “because” sentence. Was it small, hidden, the same color, or different from the photo?', re: /because|since|so\b|small|tiny|hidden|same colou?r|look(ed)? (the )?same|blend|different|didn.?t look|covered|flat|stretch/ },
@@ -542,7 +610,7 @@ window.ASSIGNMENT = {
           text: 'What structures were you able to find with ease inside the brain, after making the midsagittal cut? What structures were harder to identify? (2 to 4 sentences)',
           min: 40,
           ideas: [
-            { done: 'You named a structure inside the brain.', q: 'Did you name at least one structure inside the brain?', tip: 'Look back at Steps 5 to 7. What did you find after you cut?', re: /arbor|vitae|ventricle|choroid|corpus|callosum|thalam|hypothal|epithal|pituitar|pineal|midbrain|pons|medulla|brain ?stem|diencephal|gray|grey|white matter|cerebell|cerebr/ },
+            { done: 'You named a structure inside the brain.', q: 'Did you name at least one structure inside the brain?', tip: 'Look back at Steps 6 to 8. What did you find after you cut?', re: /arbor|vitae|ventricle|choroid|corpus|callosum|thalam|hypothal|epithal|pituitar|pineal|midbrain|pons|medulla|brain ?stem|diencephal|gray|grey|white matter|cerebell|cerebr/ },
             { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
             { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
