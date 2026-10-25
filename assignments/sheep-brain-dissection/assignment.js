@@ -3,7 +3,7 @@
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, and Listen buttons from it.
   Students dissect a sheep brain at home and follow along here, one step at a time. Most steps end with a photo of
-  their own work, which prints in their PDF. Built like explore-heart-dissection. The kit has no keyboard cover, so
+  their own work, which prints in their PDF. Built like heart-dissection. The kit has no keyboard cover, so
   Step 1 tells students to use plastic wrap or the bag the supplies came in.
   Sources (in source/, not saved to GitHub): the "Sheep Brain Dissection" at-home handout (with the Function
   Reference Guide), the "Dissection: Sheep Brain" handout, the sheep brain photo slides (It's Not Rocket
@@ -16,7 +16,7 @@
 window.ASSIGNMENT = {
   title: 'Sheep Brain Dissection',
   course: 'Anatomy & Physiology A',
-  storageKey: 'explore-sheep-brain-dissection-v2',
+  storageKey: 'sheep-brain-dissection-v2',
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'

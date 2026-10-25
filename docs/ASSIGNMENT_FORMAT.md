@@ -223,7 +223,7 @@ The highlighted words are marked with `[[double brackets]]` in the Canvas text-e
 
 ### photo: the student adds a photo of their own work (teacher graded)
 
-For hands-on labs done at home, such as a dissection. Example: `assignments/explore-heart-dissection/`.
+For hands-on labs done at home, such as a dissection. Example: `assignments/heart-dissection/`.
 
 ```js
 { type: 'photo', text: 'Take a photo of your heart with the anterior side facing up.',

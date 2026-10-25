@@ -49,7 +49,7 @@ diagrams from the test into `media/` and give them alt text that does not give t
 ## Hands-on labs (students add photos)
 
 For a lab students do at home, such as a dissection, end each step with a `photo` question so students add a picture
-of their own work (see "photo" in `docs/ASSIGNMENT_FORMAT.md`, and `assignments/explore-heart-dissection/` as the
+of their own work (see "photo" in `docs/ASSIGNMENT_FORMAT.md`, and `assignments/heart-dissection/` as the
 example). Put the lab handout's steps for each part in its reading box so students can follow along.
 Start the lab with a setup and safety part that has `gate: true` (the rest stays hidden until it is done), an `agree`
 lab agreement, and a ready-to-go selfie `photo`.

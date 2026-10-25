@@ -13,7 +13,7 @@
 window.ASSIGNMENT = {
   title: 'Heart Dissection',
   course: 'Anatomy & Physiology B',
-  storageKey: 'explore-heart-dissection-v3',
+  storageKey: 'heart-dissection-v3',
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
