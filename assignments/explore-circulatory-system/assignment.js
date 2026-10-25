@@ -257,7 +257,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
-          text: 'Follow the blood from the video’s toe all the way through the heart and lungs and back out to the body. Name the vessels, chambers, and valves it passes through, and tell where it picks up oxygen. Use evidence from the video and highlight it in yellow. Remember to tell where your evidence comes from. For example: “According to the video, …” or “In the video, the narrator explains that …” (3 to 5 sentences)',
+          text: 'Follow the blood from the video’s toe all the way through the heart and lungs and back out to the body. Name the vessels, chambers, and valves it passes through, and tell where it picks up oxygen. Use evidence from the video, along with transition words that tell where your evidence comes from. For example: “According to the video, …” or “In the video, the narrator explains that …” (3 to 5 sentences)',
           min: 150,
           ideas: [
             { done: 'You told how the blood gets back to the heart.', q: 'Did you name the vein that brings blood from the toe to the heart?', tip: 'The video names a large vein, and says which one (superior or inferior) the toe blood uses.', re: /vena|cava/ },
@@ -265,7 +265,8 @@ window.ASSIGNMENT = {
             { done: 'You told where and how the blood picks up oxygen.', q: 'Did you say where the blood becomes oxygenated?', tip: 'Rewatch the part about the red blood cells taking on one gas and releasing another.', re: /(lungs?[^.!?]*(oxygen|o2)|(oxygen|o2)[^.!?]*lungs?)/ },
             { done: 'You told how the blood leaves for the body.', q: 'Did you name the major artery that carries blood out to the body?', tip: 'Listen for the last stop before the blood heads out to the body.', re: /aort/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Follow the blood one stop at a time, with a sentence for each part of the trip.', sentences: 2 },
-            { done: 'You highlighted your evidence in yellow.', q: 'Did you highlight your evidence?', tip: 'Select the words that come from the video, then press the yellow button.', highlight: true }
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to the video,” or “In the video, the narrator explains that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|the narrator (says|said|explains|explained)|because|such as|as an example|one example|proves?|this means|supports?/ },
+            { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         }
       ]

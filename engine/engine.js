@@ -965,7 +965,7 @@ function writtenField(id,placeholder){
   return wrap;
 }
 
-/* written answer with a yellow evidence highlighter */
+/* written answer with a yellow highlighter for the transition words that point to evidence */
 function extract(ed){
   var segs=[];
   function push(t,hl){
@@ -1027,7 +1027,7 @@ function richField(id){
   function sync(){
     var plain=segsPlain(st.segs), n=words(plain), hl=segsHlWords(st.segs), enough=plain.trim().length>=c.min;
     cnt.textContent=n+(n===1?' word':' words')+', '+hl+' highlighted';
-    msg.textContent=enough?(hl?'Saved. Your teacher grades this one.':'Saved. Remember to highlight your evidence in yellow.'):'Write at least a couple of sentences.';
+    msg.textContent=enough?(hl?'Saved. Your teacher grades this one.':'Saved. Remember to highlight your transition words in yellow.'):'Write at least a couple of sentences.';
     wrap.dataset.s=enough?'ok':'idle';
   }
   function readEd(){
@@ -1162,9 +1162,9 @@ function videoSection(){
     after='Work from top to bottom. Each part gives you '+(hasClips?'a short clip of just that part of the video, ':'')+'a short reading, and then lets you practice and check your work.';
     if(nW){
       after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s');
-      if(nHl===1&&nW===1) after+=', and you will highlight your evidence in yellow';
-      else if(nHl===1) after+=', and in one of them you will highlight your evidence in yellow';
-      else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will highlight your evidence in yellow';
+      if(nHl===1&&nW===1) after+=', and you will use transition words to point to your evidence and highlight them in yellow';
+      else if(nHl===1) after+=', and in one of them you will use transition words to point to your evidence and highlight them in yellow';
+      else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
       after+='.';
     }
     if(hasClips){
@@ -1241,7 +1241,8 @@ function buildQuestion(q,s,tile){
     R[id]={min:q.min||40};
     o.body.append(
       h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
-      hh('p','intro','Then highlight parts of your response using this color: <span class="chip">Using evidence to support your view</span> (please highlight your use of evidence in yellow). Select your words, then press the yellow button.'),
+      h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”'),
+      hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.'),
       richField(id));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return segsHlWords((S.rich[id]||{}).segs);},ideasFrom(q.ideas)));
   } else {
@@ -1465,7 +1466,7 @@ function answerGroups(){
     } else if(o.kind==='rich'){
       var st=S.rich[o.id]||{segs:[]}, ptxt=segsPlain(st.segs).trim();
       it.resp=[ptxt||'(no answer)'];
-      if(ptxt){ it.rich=st.segs; it.tag=words(ptxt)+' words, '+segsHlWords(st.segs)+' highlighted as evidence'; }
+      if(ptxt){ it.rich=st.segs; it.tag=words(ptxt)+' words, '+segsHlWords(st.segs)+' highlighted as transition words'; }
     } else {
       var w=S.written[o.id]||{}, t=(w.text||'').trim();
       it.resp=[t||'(no answer)'];
@@ -1492,7 +1493,7 @@ function buildSummary(){
   var p=summaryParts();
   var L=[TITLE,COURSE,fullName()||'(name not entered)','Date completed: '+p.date,'','Results '+CODE_SYM[timeCode()]];
   p.res.forEach(function(r){L.push(r[0]+': '+r[1]);});
-  L.push('(Text inside [[double brackets]] was highlighted in yellow as evidence.)');
+  L.push('(Text inside [[double brackets]] was highlighted in yellow as transition words that point to evidence.)');
   L.push('');
   p.groups.forEach(function(g){
     L.push((g.num!==''?g.num+'. ':'')+plain(g.text));
@@ -1582,7 +1583,7 @@ async function buildPdf(){
       y+=lh;
     });
   }
-  /* a response with yellow highlighter marks behind the evidence words */
+  /* a response with yellow highlighter marks behind the highlighted transition words */
   function richText(segs,size,font,indent,color){
     var lh=size*1.35, width=CW-indent, sp=font.widthOfTextAtSize(' ',size);
     var paras=[[]], cur=null;
@@ -1728,7 +1729,7 @@ function finishEl(){
   s.append(ol);
   s.append(h('p','intro',BOARD
     ?'Your PDF shows your name, the date you finished, your score, and all of your answers.'
-    :'Your PDF shows your name, the date you finished, how much of the video you watched, and all of your answers, including the yellow highlights on your evidence.'));
+    :'Your PDF shows your name, the date you finished, how much of the video you watched, and all of your answers, including your yellow highlights.'));
   var row=h('div','row');
   var make=h('button','btn','Download my PDF'); make.type='button';
   var cmsg=h('span','msg'); cmsg.setAttribute('aria-live','polite');
@@ -1774,7 +1775,7 @@ function finishEl(){
   });
 
   var txtd=h('details','backup'); txtd.append(h('summary',null,'Can’t download? Copy my answers as text'));
-  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted evidence will be marked with [[double brackets]].'));
+  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted transition words will be marked with [[double brackets]].'));
   var tr=h('div','row');
   var tmake=h('button','btn ghost','Show my answers as text'); tmake.type='button';
   tr.append(tmake); txtd.append(tr);
