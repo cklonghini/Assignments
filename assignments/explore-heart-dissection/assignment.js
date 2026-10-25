@@ -13,7 +13,7 @@
 window.ASSIGNMENT = {
   title: 'Explore - Heart Dissection',
   course: 'Anatomy & Physiology B',
-  storageKey: 'explore-heart-dissection-v1',
+  storageKey: 'explore-heart-dissection-v2',
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
@@ -24,7 +24,7 @@ window.ASSIGNMENT = {
     title: 'Pig Heart Anatomy - Lab Video',
     src: 'media/pig-heart-video.mp4',
     seconds: 392,
-    intro: 'Watch the video Pig Heart Anatomy - Lab Video before you start cutting. Then keep this page open next to you and follow along, one step at a time, while you dissect your own heart.'
+    intro: 'Watch the video Pig Heart Anatomy - Lab Video before you start cutting. Then keep this page open next to you and follow along, one step at a time, while you dissect your own heart. Before you start, do Step 1 to set up and suit up.'
   },
 
   /* one clip per step, cut along the video's own chapters. from/to are times in the full video. */
@@ -40,20 +40,51 @@ window.ASSIGNMENT = {
   parts: [
     /* ---------------------------------------------------------------- Step 1 */
     {
-      title: 'Get ready and get oriented',
-      intro: 'Before you cut, get your space ready and learn to tell the front of the heart from the back. The video shows a pig heart, and the photos show a sheep heart. Both are mammal hearts, so they are built the same way as yours.',
+      title: 'Set up and suit up',
+      intro: 'Do all of this before you open the heart. Once you are ready, you will take a selfie to show your teacher you are set up safely.',
+      read: '<p><b>Do it:</b> Follow these steps in order.</p><ol>'
+        + '<li><b>Set up your space.</b> Clear a table and put down a tray or cutting board you can clean. Lay out your lab kit: the heart, the plastic knife, the scissors, the probe (the wooden stick), and a few straws or old colored pencils for marking vessels.</li>'
+        + '<li><b>Cover your keyboard.</b> Put the plastic keyboard cover from your kit over your keyboard. If your kit doesn’t have one, wrap the top of your keyboard in plastic wrap from the kitchen. That way you can type your answers without getting heart on your keyboard.</li>'
+        + '<li><b>Suit up.</b> Put on your goggles, your apron, and your gloves.</li>'
+        + '<li><b>Take your ready selfie</b> at the bottom of this step. Show your goggles, apron, and gloves, and your covered keyboard if you can.</li></ol>'
+        + '<p><b>Stay safe:</b> Cut slowly with the plastic knife or the scissors, and always cut away from your body and your fingers. Keep your tools on the tray. Keep your gloves on until you finish cleaning up.</p>',
+      questions: [
+        {
+          type: 'order',
+          text: 'Put the setup steps in order.',
+          items: ['Set up your tray and lab kit', 'Cover your keyboard', 'Put on your goggles, apron, and gloves', 'Take your ready selfie', 'Start the dissection'],
+          tip: 'Read the numbered list again. The selfie shows you are already protected.',
+          explain: 'Right. Set up, cover your keyboard, suit up, take your selfie, and then start.'
+        },
+        {
+          type: 'choice',
+          text: 'Your kit doesn’t have a keyboard cover. What should you do?',
+          options: ['Wrap the top of your keyboard in plastic wrap from the kitchen', 'Skip it and type carefully', 'Type with your gloves on and wipe the keys later', 'Do the lab without answering on the page'], answer: 0,
+          explain: 'Right. Plastic wrap keeps your keyboard clean so you can type while you work.',
+          tip: 'Read step 2 of the setup list again. It says what to use instead.'
+        },
+        {
+          type: 'photo',
+          text: 'Take a selfie that shows you are ready: goggles, apron, and gloves on, and your keyboard covered.',
+          caption: 'List the safety gear you have on.'
+        }
+      ]
+    },
+
+    /* ---------------------------------------------------------------- Step 2 */
+    {
+      title: 'Get oriented',
+      intro: 'Before you cut, learn to tell the front of the heart from the back. The video shows a pig heart, and the photos show a sheep heart. Both are mammal hearts, so they are built the same way as yours.',
       clips: ['orient'],
       images: [
         { src: 'media/slide-2.jpg', caption: 'External view of a sheep heart: posterior (back) and anterior (front).',
           alt: 'Two photos of the same sheep heart on a blue tray. The left photo shows the back of the heart. The right photo shows the front, with a darker strip of tissue near the top.',
           text: '<p>External View. Left photo: Posterior. Right photo: Anterior.</p>' }
       ],
-      read: '<p><b>Do it:</b> Follow these steps from your lab handout.</p><ol>'
-        + '<li><b>Get safe.</b> Put on gloves and safety glasses. Work on a tray or cutting board you can clean. Cut away from your body and your fingers. Have your scissors, scalpel, probe, and a few old colored pencils or straws ready.</li>'
+      read: '<p><b>Do it:</b> Step 2 from your lab handout.</p><ol start="2">'
         + '<li><b>Get oriented.</b> Find the anterior (front) and posterior (back) sides of the heart. Then find the apex and the base.</li></ol>'
         + '<p><b>Read:</b> The <b>apex</b> is the pointed tip at the bottom of the heart. The <b>base</b> is the wide top, where the big blood vessels attach. The <b>anterior</b> side is the front, and the <b>posterior</b> side is the back.</p>'
-        + '<p>To find the front, look for the <b>pulmonary trunk</b>. It has a slightly different color than the tissue around it. A shallow groove runs down the front between the left and right ventricles. This groove is the <b>interventricular sulcus</b>. A coronary artery runs in it.</p>'
-        + '<p>When you finish, wash your hands. Clean your tray and tools with soap and hot water.</p>',
+        + '<p>To find the front, look for the <b>pulmonary trunk</b>. It has a slightly different color than the tissue around it. A shallow groove runs down the front between the left and right ventricles. This groove is the <b>interventricular sulcus</b>. A coronary artery runs in it.</p>',
       questions: [
         {
           type: 'selects',
@@ -89,7 +120,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 2 */
+    /* ---------------------------------------------------------------- Step 3 */
     {
       title: 'Outside vessels and auricles',
       intro: 'Now find the big blood vessels on the outside of the heart and mark each one before you cut.',
@@ -117,7 +148,7 @@ window.ASSIGNMENT = {
             { label: 'Number 1 (purple straw)', answer: 'Aorta', hint: 'Use the color key in the reading. What does purple mark?' },
             { label: 'Number 2', answer: 'Base', hint: 'This arrow points to a region, not a vessel. Is it the wide top or the pointed tip?' },
             { label: 'Number 3 (green straws)', answer: 'Pulmonary veins', hint: 'Use the color key in the reading. These vessels bring blood back from the lungs.' },
-            { label: 'Number 4', answer: 'Apex', hint: 'This arrow points to a region at the bottom. Look back at Step 1.' },
+            { label: 'Number 4', answer: 'Apex', hint: 'This arrow points to a region at the bottom. Look back at Step 2.' },
             { label: 'Number 5 (yellow straw)', answer: 'Pulmonary trunk', hint: 'Use the color key in the reading. This vessel is on the front and leads to the lungs.' }
           ]
         },
@@ -147,15 +178,15 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 3 */
+    /* ---------------------------------------------------------------- Step 4 */
     {
       title: 'Open the heart: chambers and walls',
-      intro: 'Time to cut. Go slowly and use your straws to guide your cuts.',
+      intro: 'Time to cut. Go slowly with your scissors or plastic knife, and use your straws to guide your cuts.',
       clips: ['walls'],
       read: '<p><b>Do it:</b> These are steps from your lab handout.</p><ol start="4">'
         + '<li>Find the <b>right atrium</b>. Cut into it carefully. Pull the straw you put in the <b>superior vena cava</b> through, so you can see it empty into the right atrium.</li></ol>'
         + '<ol start="6"><li>Cut through the anterior side of the <b>right ventricle</b>.</li></ol>'
-        + '<ol start="8"><li>Find the <b>left atrium</b>. Push a probe into a <b>pulmonary vein</b>, then cut along the probe so you know you are cutting into the left atrium.</li></ol>'
+        + '<ol start="8"><li>Find the <b>left atrium</b>. Push your probe into a <b>pulmonary vein</b>, then cut along the probe so you know you are cutting into the left atrium.</li></ol>'
         + '<ol start="10"><li>Cut into the <b>left ventricle</b>. Notice how thick the <b>myocardium</b> is. It makes this chamber the hardest to cut.</li></ol>'
         + '<p><b>Read:</b> The <b>atria</b> are the two upper chambers. The <b>ventricles</b> are the two lower chambers. A thick wall of heart muscle, the <b>myocardium</b>, separates the right ventricle from the left ventricle. This wall is the <b>interventricular septum</b>.</p>'
         + '<p>Look at the walls of the two ventricles. The right ventricle only pumps blood to the lungs, which are right next door. The left ventricle pumps blood out the aorta to the whole body.</p>'
@@ -167,12 +198,12 @@ window.ASSIGNMENT = {
           img: { src: 'media/label-internal.jpg', alt: 'A sheep heart cut open like a book, showing two halves. Six numbered arrows point to a purple straw, an upper chamber on the right half, a lower chamber on the right half, a lower chamber on the left half, an upper chamber on the left half, and a yellow straw.' },
           options: ['Aorta', 'Pulmonary trunk', 'Right atrium', 'Right ventricle', 'Left atrium', 'Left ventricle'],
           items: [
-            { label: 'Number 1 (purple straw)', answer: 'Aorta', hint: 'Use the color key from Step 2. What does purple mark?' },
+            { label: 'Number 1 (purple straw)', answer: 'Aorta', hint: 'Use the color key from Step 3. What does purple mark?' },
             { label: 'Number 2', answer: 'Right atrium', hint: 'It is an upper chamber. The purple straw is not in this half, so which side is it?' },
             { label: 'Number 3', answer: 'Right ventricle', hint: 'It is a lower chamber with a thinner wall. Which side is that?' },
             { label: 'Number 4', answer: 'Left ventricle', hint: 'It is a lower chamber, and the purple straw comes out of it. Which side is that?' },
             { label: 'Number 5', answer: 'Left atrium', hint: 'It is an upper chamber in the same half as the purple straw.' },
-            { label: 'Number 6 (yellow straw)', answer: 'Pulmonary trunk', hint: 'Use the color key from Step 2. What does yellow mark?' }
+            { label: 'Number 6 (yellow straw)', answer: 'Pulmonary trunk', hint: 'Use the color key from Step 3. What does yellow mark?' }
           ]
         },
         {
@@ -204,7 +235,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 4 */
+    /* ---------------------------------------------------------------- Step 5 */
     {
       title: 'AV valves, chordae tendineae, and papillary muscles',
       intro: 'Use your probe to find the valves between the atria and the ventricles, and the strings that hold them.',
@@ -215,8 +246,8 @@ window.ASSIGNMENT = {
           text: '<p>Internal View. Label: Chordae tendineae.</p>' }
       ],
       read: '<p><b>Do it:</b> These are steps from your lab handout.</p><ol start="5">'
-        + '<li>Use a probe to find the <b>tricuspid valve</b> that connects the right atrium to the right ventricle. Try to find its three cusps (flaps).</li></ol>'
-        + '<ol start="9"><li>Use a probe to find the <b>mitral valve</b> (also called the <b>bicuspid valve</b>) that connects the left atrium to the left ventricle.</li></ol>'
+        + '<li>Use your probe (the wooden stick) to find the <b>tricuspid valve</b> that connects the right atrium to the right ventricle. Try to find its three cusps (flaps).</li></ol>'
+        + '<ol start="9"><li>Use your probe to find the <b>mitral valve</b> (also called the <b>bicuspid valve</b>) that connects the left atrium to the left ventricle.</li></ol>'
         + '<ol start="12"><li>Find the <b>chordae tendineae</b> that come off the valves and attach to the <b>papillary muscles</b>.</li></ol>'
         + '<p><b>Read:</b> The atria and ventricles are separated by the <b>AV valves</b> (atrioventricular valves). The right AV valve has three flaps, so it is called the <b>tricuspid</b>. The left AV valve has two flaps, so it is called the <b>bicuspid</b>.</p>'
         + '<p>The valve flaps are held down by the <b>chordae tendineae</b>, thin, strong strands like strings. The chordae tendineae are anchored to the bottom of the ventricles by carrot-shaped muscles called <b>papillary muscles</b>. When a ventricle squeezes, these strings keep the flaps from flipping back up into the atrium. That way blood moves only one way.</p>',
@@ -254,10 +285,10 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 5 */
+    /* ---------------------------------------------------------------- Step 6 */
     {
-      title: 'Semilunar valves and the path of blood',
-      intro: 'Last, find the valves where blood leaves the heart, then trace the whole path of blood.',
+      title: 'Semilunar valves, the path of blood, and clean up',
+      intro: 'Last, find the valves where blood leaves the heart and trace the whole path of blood. Then clean up.',
       clips: ['semilunar'],
       images: [
         { src: 'media/slide-8.jpg', caption: 'A probe in the left ventricle, with a label.',
@@ -265,9 +296,15 @@ window.ASSIGNMENT = {
           text: '<p>Internal View. Label: Probe going through the aortic valve in the left ventricle.</p>' }
       ],
       read: '<p><b>Do it:</b> These are steps from your lab handout.</p><ol start="7">'
-        + '<li>In the right ventricle, find the <b>pulmonary valve</b> that connects to the <b>pulmonary artery</b> (trunk). Push a probe through the valve and out of the pulmonary artery. Did you mark the artery correctly before you began cutting?</li></ol>'
-        + '<ol start="11"><li>Use a probe to find the <b>aortic valve</b>. Blood goes through it when it leaves the left ventricle and goes out to the body through the <b>aorta</b>.</li></ol>'
+        + '<li>In the right ventricle, find the <b>pulmonary valve</b> that connects to the <b>pulmonary artery</b> (trunk). Push your probe through the valve and out of the pulmonary artery. Did you mark the artery correctly before you began cutting?</li></ol>'
+        + '<ol start="11"><li>Use your probe to find the <b>aortic valve</b>. Blood goes through it when it leaves the left ventricle and goes out to the body through the <b>aorta</b>.</li></ol>'
         + '<ol start="13"><li>Make any other observations you need before cleaning up.</li></ol>'
+        + '<p><b>Clean up:</b> Take your last photo below first. Then, with your gloves still on:</p><ol>'
+        + '<li>Put the heart and any scraps in a plastic bag, seal it, and put it in the trash.</li>'
+        + '<li>Wash your tools and tray with hot, soapy water.</li>'
+        + '<li>Wipe down your work space.</li>'
+        + '<li>Take off your gloves and throw them away. Then wash your hands with soap and water.</li>'
+        + '<li>Take off your goggles and apron. Remove your keyboard cover last, once your hands are clean.</li></ol>'
         + '<p><b>Read:</b> The <b>semilunar valves</b> are where blood leaves the ventricles. “Semilunar” means half-moon, the shape of their flaps. The <b>pulmonary semilunar valve</b> is between the right ventricle and the pulmonary trunk. The <b>aortic semilunar valve</b> is between the left ventricle and the aorta.</p>'
         + '<p><b>The path of blood:</b> Blood comes into the right atrium from the superior and inferior vena cava. It goes through the tricuspid valve down into the right ventricle. The right ventricle pumps it through the pulmonary semilunar valve, up the pulmonary trunk, and to the lungs. From the lungs, the pulmonary veins bring it back to the left atrium. It goes through the bicuspid valve into the left ventricle. Then the left ventricle pumps it up through the aortic semilunar valve and out the aorta to the whole body.</p>',
       questions: [
@@ -297,10 +334,10 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 6 */
+    /* ---------------------------------------------------------------- Step 7 */
     {
       title: 'Structure and function',
-      intro: 'This step is your observation table from the handout. You will use what you saw in Steps 1 to 5.',
+      intro: 'This step is your observation table from the handout. You will use what you saw in Steps 2 to 6.',
       read: '<p><b>Read:</b> Every structure you found has a job. Here are the kinds of jobs.</p><ul>'
         + '<li><b>Veins bring blood into the heart.</b> They empty into an atrium.</li>'
         + '<li><b>Arteries carry blood out of the heart.</b> They leave from a ventricle.</li>'
@@ -316,7 +353,7 @@ window.ASSIGNMENT = {
           text: 'Choose the job of each structure.',
           options: ['Brings blood into the heart', 'Carries blood out of the heart', 'Receives blood (upper chamber)', 'Pumps blood out (lower chamber)', 'Keeps blood moving one way', 'Holds the AV valve flaps in place', 'Separates the left and right sides'],
           items: [
-            { label: 'Aorta', answer: 'Carries blood out of the heart', hint: 'Is it an artery or a vein? Look back at Step 2.' },
+            { label: 'Aorta', answer: 'Carries blood out of the heart', hint: 'Is it an artery or a vein? Look back at Step 3.' },
             { label: 'Pulmonary trunk', answer: 'Carries blood out of the heart', hint: 'Which way does blood go in it, toward the lungs or toward the heart?' },
             { label: 'Superior vena cava', answer: 'Brings blood into the heart', hint: 'Where did the presenter’s finger end up when he put it in this vessel?' },
             { label: 'Inferior vena cava', answer: 'Brings blood into the heart', hint: 'It works the same way as the superior one.' },
@@ -330,8 +367,8 @@ window.ASSIGNMENT = {
             { label: 'Pulmonary (SL) valve', answer: 'Keeps blood moving one way', hint: 'What do all valves do?' },
             { label: 'Bicuspid (AV) valve', answer: 'Keeps blood moving one way', hint: 'What do all valves do?' },
             { label: 'Aortic (SL) valve', answer: 'Keeps blood moving one way', hint: 'What do all valves do?' },
-            { label: 'Chordae tendineae', answer: 'Holds the AV valve flaps in place', hint: 'Look back at Step 4. What did these strings do?' },
-            { label: 'Papillary muscles', answer: 'Holds the AV valve flaps in place', hint: 'Look back at Step 4. What are these muscles attached to?' }
+            { label: 'Chordae tendineae', answer: 'Holds the AV valve flaps in place', hint: 'Look back at Step 5. What did these strings do?' },
+            { label: 'Papillary muscles', answer: 'Holds the AV valve flaps in place', hint: 'Look back at Step 5. What are these muscles attached to?' }
           ]
         },
         {
@@ -349,7 +386,7 @@ window.ASSIGNMENT = {
       ]
     },
 
-    /* ---------------------------------------------------------------- Step 7 */
+    /* ---------------------------------------------------------------- Step 8 */
     {
       title: 'Reflection',
       intro: 'These are the reflection questions from your lab handout. Answer them in your own words, using what you saw in your own dissection.',
@@ -359,7 +396,7 @@ window.ASSIGNMENT = {
           text: 'What structures were you able to find with ease on the outside of the heart? What structures may have been harder to identify? (2 to 4 sentences)',
           min: 40,
           ideas: [
-            { done: 'You named a structure on the outside of the heart.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 1 and 2. What did you find before you cut?', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter/ },
+            { done: 'You named a structure on the outside of the heart.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 2 and 3. What did you find before you cut?', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter/ },
             { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
             { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
@@ -370,7 +407,7 @@ window.ASSIGNMENT = {
           text: 'What structures were you able to find with ease inside the heart, after cutting into it? What structures may have been harder to identify? (2 to 4 sentences)',
           min: 40,
           ideas: [
-            { done: 'You named a structure inside the heart.', q: 'Did you name at least one structure inside the heart?', tip: 'Look back at Steps 3 to 5. What did you find after you cut?', re: /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|wall|string/ },
+            { done: 'You named a structure inside the heart.', q: 'Did you name at least one structure inside the heart?', tip: 'Look back at Steps 4 to 6. What did you find after you cut?', re: /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|wall|string/ },
             { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
             { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }

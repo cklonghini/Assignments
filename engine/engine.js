@@ -976,7 +976,8 @@ function writtenField(id,placeholder){
 /* A photo is too big for localStorage, so the picture itself goes in IndexedDB under KEY|question id.
    S.photos[id] keeps only {has, cap, w, h}. If IndexedDB is not available the photo lives in memory
    until the page is closed. */
-var PHOTO_MEM={}, PHOTO_URL={}, PDB=null;
+var PHOTO_MEM={}, PHOTO_URL={}, PDB=null, CAMS=[];
+var CAN_CAM=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
 function photoDb(){
   if(!PDB) PDB=new Promise(function(res,rej){
     try{
@@ -1016,7 +1017,13 @@ function photoClearAll(){
   Object.keys(PHOTO_MEM).forEach(function(k){delete PHOTO_MEM[k];});
   return photoTx('readwrite',function(os){os.delete(IDBKeyRange.bound(KEY+'|',KEY+'|￿'));}).catch(function(){});
 }
+/* open webcam streams; every one is stopped when the page re-renders */
+function camStop(st){
+  st.getTracks().forEach(function(t){t.stop();});
+  var i=CAMS.indexOf(st); if(i>=0) CAMS.splice(i,1);
+}
 function photoUrlsDrop(){
+  CAMS.slice().forEach(camStop);
   Object.keys(PHOTO_URL).forEach(function(k){URL.revokeObjectURL(PHOTO_URL[k]); delete PHOTO_URL[k];});
 }
 /* reads any picture the browser can open, turns it upright, and saves it as a JPEG no wider or taller
@@ -1055,13 +1062,22 @@ function photoField(id,q){
   var fig=h('figure','qimg'), im=document.createElement('img'); im.alt='Your photo for question '+CURQ.num; fig.append(im);
   var row=h('div','row gap');
   var add=h('button','btn'); add.type='button';
+  var cam=h('button','btn ghost','Take a picture with my camera'); cam.type='button'; cam.hidden=!CAN_CAM;
   var del=h('button','btn ghost','Remove photo'); del.type='button';
   var msg=h('span','msg'); msg.setAttribute('aria-live','polite');
-  row.append(add,del,msg);
+  row.append(add,cam,del,msg);
+  /* webcam: a live preview and a Take picture button, shown only while the camera is on */
+  var camBox=h('div','campanel'); camBox.hidden=true;
+  var vid=document.createElement('video'); vid.muted=true; vid.playsInline=true; vid.setAttribute('playsinline','');
+  vid.setAttribute('aria-label','Camera preview');
+  var snap=h('button','btn','Take picture'); snap.type='button';
+  var stopB=h('button','btn ghost','Cancel'); stopB.type='button';
+  var crow=h('div','row gap'); crow.append(snap,stopB); camBox.append(vid,crow);
+  var stream=null;
   var lab=h('label',null,q.caption||'What does your photo show? Name the parts you can see.'); lab.htmlFor='c-'+id;
   var ta=h('textarea'); ta.id='c-'+id; ta.rows=2; ta.value=st.cap||'';
   ta.setAttribute('placeholder','For example: The yellow straw is in the pulmonary trunk.');
-  wrap.append(input,fig,row,lab,ta);
+  wrap.append(input,fig,row,camBox,lab,ta);
   function say(t,bad){msg.textContent=t; if(bad) msg.dataset.s='bad'; else msg.removeAttribute('data-s');}
   function show(buf){
     if(PHOTO_URL[id]) URL.revokeObjectURL(PHOTO_URL[id]);
@@ -1073,12 +1089,13 @@ function photoField(id,q){
     add.textContent=st.has?'Replace photo':'Add a photo';
     wrap.dataset.s=st.has?'ok':'idle';
   }
-  add.addEventListener('click',function(){input.value=''; input.click();});
-  input.addEventListener('change',function(){
-    var file=input.files&&input.files[0];
-    if(!file) return;
+  function camOff(){
+    if(stream){ camStop(stream); stream=null; }
+    vid.srcObject=null; camBox.hidden=true; cam.disabled=false;
+  }
+  function savePhoto(file){
     add.disabled=true; say('Adding your photo…');
-    shrinkPhoto(file).then(function(p){
+    return shrinkPhoto(file).then(function(p){
       return photoPut(id,p.buf).then(function(kept){
         st.has=true; st.w=p.w; st.h=p.h; show(p.buf); paint(); commit();
         if(kept) say('Photo added. Your teacher will see it in your PDF.');
@@ -1087,7 +1104,31 @@ function photoField(id,q){
     }).catch(function(){
       say('This photo can’t be opened here. Take a screenshot of it or save it as a JPG, then try again.',true);
     }).then(function(){add.disabled=false;});
+  }
+  add.addEventListener('click',function(){camOff(); input.value=''; input.click();});
+  input.addEventListener('change',function(){
+    var file=input.files&&input.files[0];
+    if(file) savePhoto(file);
   });
+  cam.addEventListener('click',function(){
+    cam.disabled=true; say('Starting your camera…');
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false}).then(function(st){
+      stream=st; CAMS.push(st); vid.srcObject=st; camBox.hidden=false;
+      return vid.play();
+    }).then(function(){
+      say('Get in the picture, then press Take picture.'); snap.focus();
+    }).catch(function(){
+      camOff(); say('Your camera didn’t start. Allow camera access, or use Add a photo instead.',true);
+    });
+  });
+  snap.addEventListener('click',function(){
+    if(!vid.videoWidth) return;
+    var c=document.createElement('canvas'); c.width=vid.videoWidth; c.height=vid.videoHeight;
+    c.getContext('2d').drawImage(vid,0,0,c.width,c.height);
+    camOff();
+    c.toBlob(function(b){ if(b) savePhoto(b); else say('The picture didn’t work. Try again.',true); },'image/jpeg',0.92);
+  });
+  stopB.addEventListener('click',function(){camOff(); say(''); cam.focus();});
   del.addEventListener('click',function(){
     photoDel(id); st.has=false; delete st.w; delete st.h;
     if(PHOTO_URL[id]){URL.revokeObjectURL(PHOTO_URL[id]); delete PHOTO_URL[id];}

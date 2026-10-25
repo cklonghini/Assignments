@@ -226,7 +226,8 @@ For hands-on labs done at home, such as a dissection. Example: `assignments/expl
   caption: 'What does your photo show? Tell where the apex and the base are.' }   // optional label for the caption box
 ```
 
-Students press **Add a photo**. On a phone they can take a picture or choose one they already took. The page
+Students press **Add a photo** (on a phone they can take a picture or choose one they already took) or **Take a
+picture with my camera**, which uses the computer's webcam right on the page (good for a ready-to-go selfie). The page
 shrinks the photo (longest side 1600 pixels, JPEG) and keeps it in the browser (IndexedDB), so it survives a
 reload. A photo box counts as done when it has a photo; students can still finish without one. The PDF shows each
 photo with its caption, or "no photo added", and a "Photos added" line in the results. Photos are not in the backup

@@ -195,6 +195,7 @@ th{background:var(--bg)}
 .photo [hidden]{display:none}
 .photo .qimg img{max-height:360px}
 .photo>label{margin-top:12px}
+.campanel video{display:block;width:100%;max-width:480px;margin:12px 0 8px;border-radius:8px;background:#000}
 
 /* game board */
 .board{--tile:#1c2f9e;--tile-ink:#ffd447;display:grid;grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));gap:6px;margin:14px 0 8px}
