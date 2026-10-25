@@ -48,7 +48,7 @@ injectPage();
 /* State and saving                                                    */
 /* ------------------------------------------------------------------ */
 var KEY=A.storageKey||('assignment-'+TITLE), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},mn:[],mnRes:[],vids:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},mn:[],mnRes:[],vids:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -60,6 +60,7 @@ function copyMeta(f,o){
   f.auto=(o.auto&&typeof o.auto==='object')?o.auto:{};
   f.written=(o.written&&typeof o.written==='object')?o.written:{};
   f.rich=(o.rich&&typeof o.rich==='object')?o.rich:{};
+  f.photos=(o.photos&&typeof o.photos==='object')?o.photos:{};
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
@@ -212,12 +213,12 @@ function watchEl(v,key){
 }
 
 /* registries rebuilt on every render */
-var AUTO={}, ORDER=[], TOTAL_A=0, TOTAL_W=0;
+var AUTO={}, ORDER=[], TOTAL_A=0, TOTAL_W=0, TOTAL_P=0;
 
 /* ------------------------------------------------------------------ */
 /* Content                                                             */
 /* ------------------------------------------------------------------ */
-var W={}, R={};
+var W={}, R={}, P={};
 
 /* ------------------------------------------------------------------ */
 /* Scoring and progress                                                */
@@ -236,17 +237,20 @@ function segsHlWords(segs){
 }
 function isWrittenDone(id){var st=S.written[id]; return !!st&&(st.text||'').trim().length>=W[id].min;}
 function isRichDone(id){var st=S.rich[id]; return !!st&&segsPlain(st.segs).trim().length>=R[id].min;}
+function isPhotoDone(id){var st=S.photos[id]; return !!(st&&st.has);}
 function score(){
-  var a=0,w=0;
+  var a=0,w=0,p=0;
   Object.keys(AUTO).forEach(function(id){var r=S.auto[id]; if(r&&r.ok)a++;});
   Object.keys(W).forEach(function(id){if(isWrittenDone(id))w++;});
   Object.keys(R).forEach(function(id){if(isRichDone(id))w++;});
-  return {a:a,w:w};
+  Object.keys(P).forEach(function(id){if(isPhotoDone(id))p++;});
+  return {a:a,w:w,p:p};
 }
 function hasProgress(){
   if(Object.keys(S.auto).some(function(k){return S.auto[k]&&S.auto[k].v;})) return true;
   if(Object.keys(S.written).some(function(k){return S.written[k]&&S.written[k].text;})) return true;
   if(Object.keys(S.rich).some(function(k){return S.rich[k]&&segsPlain(S.rich[k].segs).trim();})) return true;
+  if(Object.keys(S.photos).some(function(k){return S.photos[k]&&(S.photos[k].has||S.photos[k].cap);})) return true;
   return (S.mn||[]).some(function(x){return x;});
 }
 function updateBar(){
@@ -268,7 +272,7 @@ function updateBar(){
   var sc=score();
   if(BOARD){ paintBoard(); var T=boardTotals(); $('#sAuto').innerHTML='Score: <strong>'+T.earned+'</strong> of '+T.auto+' points'; }
   else $('#sAuto').innerHTML='Auto-checked: <strong>'+sc.a+' / '+TOTAL_A+'</strong> correct';
-  $('#sWritten').innerHTML='Written: <strong>'+sc.w+' / '+TOTAL_W+'</strong> done';
+  $('#sWritten').innerHTML='Written: <strong>'+sc.w+' / '+TOTAL_W+'</strong> done'+(TOTAL_P?' • Photos: <strong>'+sc.p+' / '+TOTAL_P+'</strong> added':'');
   var sv=$('#sSaved');
   if(!storageOK) sv.textContent='This browser can’t keep a backup. Stay on this page.';
   else if(lastSaved) sv.textContent='Backup saved at '+lastSaved.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
@@ -966,6 +970,140 @@ function writtenField(id,placeholder){
   return wrap;
 }
 
+/* ------------------------------------------------------------------ */
+/* Builders: photos of the student's own work                          */
+/* ------------------------------------------------------------------ */
+/* A photo is too big for localStorage, so the picture itself goes in IndexedDB under KEY|question id.
+   S.photos[id] keeps only {has, cap, w, h}. If IndexedDB is not available the photo lives in memory
+   until the page is closed. */
+var PHOTO_MEM={}, PHOTO_URL={}, PDB=null;
+function photoDb(){
+  if(!PDB) PDB=new Promise(function(res,rej){
+    try{
+      var rq=indexedDB.open('explore-photos',1);
+      rq.onupgradeneeded=function(){rq.result.createObjectStore('photos');};
+      rq.onsuccess=function(){res(rq.result);};
+      rq.onerror=function(){rej(rq.error);};
+    }catch(e){rej(e);}
+  });
+  return PDB;
+}
+function photoTx(mode,fn){
+  return photoDb().then(function(db){
+    return new Promise(function(res,rej){
+      var tx=db.transaction('photos',mode), out=fn(tx.objectStore('photos'));
+      tx.oncomplete=function(){res(out&&'result' in out?out.result:true);};
+      tx.onerror=function(){rej(tx.error);}; tx.onabort=function(){rej(tx.error);};
+    });
+  });
+}
+function photoKey(id){return KEY+'|'+id;}
+function photoPut(id,buf){
+  PHOTO_MEM[id]=buf;
+  return photoTx('readwrite',function(os){os.put(buf,photoKey(id));}).then(function(){return true;},function(){return false;});
+}
+function photoGet(id){
+  if(PHOTO_MEM[id]) return Promise.resolve(PHOTO_MEM[id]);
+  return photoTx('readonly',function(os){return os.get(photoKey(id));}).then(function(b){
+    if(b) PHOTO_MEM[id]=b; return b||null;
+  },function(){return null;});
+}
+function photoDel(id){
+  delete PHOTO_MEM[id];
+  return photoTx('readwrite',function(os){os.delete(photoKey(id));}).catch(function(){});
+}
+function photoClearAll(){
+  Object.keys(PHOTO_MEM).forEach(function(k){delete PHOTO_MEM[k];});
+  return photoTx('readwrite',function(os){os.delete(IDBKeyRange.bound(KEY+'|',KEY+'|￿'));}).catch(function(){});
+}
+function photoUrlsDrop(){
+  Object.keys(PHOTO_URL).forEach(function(k){URL.revokeObjectURL(PHOTO_URL[k]); delete PHOTO_URL[k];});
+}
+/* reads any picture the browser can open, turns it upright, and saves it as a JPEG no wider or taller
+   than 1600 pixels (about 150 to 300 KB) */
+function shrinkPhoto(file){
+  function viaImg(){
+    return new Promise(function(res,rej){
+      var u=URL.createObjectURL(file), im=new Image();
+      im.onload=function(){res(im); setTimeout(function(){URL.revokeObjectURL(u);},0);};
+      im.onerror=function(){URL.revokeObjectURL(u); rej(new Error('decode'));};
+      im.src=u;
+    });
+  }
+  var dec=window.createImageBitmap?createImageBitmap(file,{imageOrientation:'from-image'}).catch(viaImg):viaImg();
+  return dec.then(function(src){
+    var w=src.naturalWidth||src.width, ht=src.naturalHeight||src.height;
+    if(!w||!ht) throw new Error('decode');
+    var k=Math.min(1,1600/Math.max(w,ht)), c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(w*k)); c.height=Math.max(1,Math.round(ht*k));
+    var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height);
+    x.drawImage(src,0,0,c.width,c.height);
+    if(src.close) src.close();
+    return new Promise(function(r){c.toBlob(r,'image/jpeg',0.8);}).then(function(b){
+      if(!b) throw new Error('encode');
+      return b.arrayBuffer().then(function(buf){return {buf:buf,w:c.width,h:c.height};});
+    });
+  });
+}
+function photoField(id,q){
+  P[id]=true;
+  ORDER.push({kind:'photo',id:id,q:CURQ,sub:''});
+  var st=S.photos[id]||(S.photos[id]={has:false,cap:''});
+  var wrap=h('div','sub photo'); mark(wrap);
+  var input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.hidden=true;
+  input.setAttribute('aria-hidden','true'); input.tabIndex=-1;
+  var fig=h('figure','qimg'), im=document.createElement('img'); im.alt='Your photo for question '+CURQ.num; fig.append(im);
+  var row=h('div','row gap');
+  var add=h('button','btn'); add.type='button';
+  var del=h('button','btn ghost','Remove photo'); del.type='button';
+  var msg=h('span','msg'); msg.setAttribute('aria-live','polite');
+  row.append(add,del,msg);
+  var lab=h('label',null,q.caption||'What does your photo show? Name the parts you can see.'); lab.htmlFor='c-'+id;
+  var ta=h('textarea'); ta.id='c-'+id; ta.rows=2; ta.value=st.cap||'';
+  ta.setAttribute('placeholder','For example: The yellow straw is in the pulmonary trunk.');
+  wrap.append(input,fig,row,lab,ta);
+  function say(t,bad){msg.textContent=t; if(bad) msg.dataset.s='bad'; else msg.removeAttribute('data-s');}
+  function show(buf){
+    if(PHOTO_URL[id]) URL.revokeObjectURL(PHOTO_URL[id]);
+    PHOTO_URL[id]=URL.createObjectURL(new Blob([buf],{type:'image/jpeg'}));
+    im.src=PHOTO_URL[id];
+  }
+  function paint(){
+    fig.hidden=!st.has; del.hidden=!st.has;
+    add.textContent=st.has?'Replace photo':'Add a photo';
+    wrap.dataset.s=st.has?'ok':'idle';
+  }
+  add.addEventListener('click',function(){input.value=''; input.click();});
+  input.addEventListener('change',function(){
+    var file=input.files&&input.files[0];
+    if(!file) return;
+    add.disabled=true; say('Adding your photo…');
+    shrinkPhoto(file).then(function(p){
+      return photoPut(id,p.buf).then(function(kept){
+        st.has=true; st.w=p.w; st.h=p.h; show(p.buf); paint(); commit();
+        if(kept) say('Photo added. Your teacher will see it in your PDF.');
+        else say('Photo added, but this browser can’t keep it after you leave. Download your PDF before you close this page.',true);
+      });
+    }).catch(function(){
+      say('This photo can’t be opened here. Take a screenshot of it or save it as a JPG, then try again.',true);
+    }).then(function(){add.disabled=false;});
+  });
+  del.addEventListener('click',function(){
+    photoDel(id); st.has=false; delete st.w; delete st.h;
+    if(PHOTO_URL[id]){URL.revokeObjectURL(PHOTO_URL[id]); delete PHOTO_URL[id];}
+    im.removeAttribute('src'); paint(); commit(); say('Photo removed.');
+    add.focus();
+  });
+  ta.addEventListener('input',function(){st.cap=ta.value; commit();});
+  paint();
+  if(st.has) photoGet(id).then(function(buf){
+    if(buf){ show(buf); return; }
+    st.has=false; paint(); commit();
+    say('Your photo isn’t saved in this browser anymore. Please add it again.',true);
+  });
+  return wrap;
+}
+
 /* written answer with a yellow highlighter for the transition words that point to evidence */
 function extract(ed){
   var segs=[];
@@ -1149,6 +1287,11 @@ function allQuestions(){
   return out;
 }
 
+function photoSentence(qs){
+  var n=qs.filter(function(q){return q.type==='photo';}).length;
+  return n?' You will add '+(NUMWORD[n]||n)+' photo'+(n===1?'':'s')+' of your own work. Each one shows in your PDF.':'';
+}
+
 /* top section when there is no video: start (heading, intro, after) from assignment.js */
 function startSection(){
   var V=A.start||{}, qs=allQuestions();
@@ -1160,6 +1303,7 @@ function startSection(){
   if(after==null){
     after='Each part gives you something to read and then lets you practice and check your work. Select a picture to open it full size in a new tab.';
     if(nW) after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s')+'.';
+    after+=photoSentence(qs);
   }
   s.append(h('p','intro',after));
   return s;
@@ -1203,6 +1347,7 @@ function videoSection(){
       else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
       after+='.';
     }
+    after+=photoSentence(qs);
     if(hasClips){
       var first=VIDS[VID_ORDER[1]];
       if(first) after+=' The times on each clip (like '+fmt(first.from)+' to '+fmt(first.to)+') are times in the full video above.';
@@ -1281,6 +1426,9 @@ function buildQuestion(q,s,tile){
       hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.'),
       richField(id));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return segsHlWords((S.rich[id]||{}).segs);},ideasFrom(q.ideas)));
+  } else if(t==='photo'){
+    ids=[];
+    o.body.append(photoField(id,q));
   } else {
     o.body.append(h('p','msg','Unknown question type: '+t));
   }
@@ -1504,6 +1652,11 @@ function answerGroups(){
       var st=S.rich[o.id]||{segs:[]}, ptxt=segsPlain(st.segs).trim();
       it.resp=[ptxt||'(no answer)'];
       if(ptxt){ it.rich=st.segs; it.tag=words(ptxt)+' words, '+segsHlWords(st.segs)+' highlighted as transition words'; }
+    } else if(o.kind==='photo'){
+      var ph=S.photos[o.id]||{}, cap=(ph.cap||'').trim();
+      it.photo=ph.has?o.id:null; it.cap=!!cap;
+      it.resp=[cap||'(no caption)'];
+      it.tag=ph.has?'photo added':'no photo added';
     } else {
       var w=S.written[o.id]||{}, t=(w.text||'').trim();
       it.resp=[t||'(no answer)'];
@@ -1523,7 +1676,7 @@ function summaryParts(){
   var res=videoRows().concat(board,[
     ['Auto-checked items',sc.a+' / '+TOTAL_A+' correct'],
     ['Written responses',sc.w+' / '+TOTAL_W+' completed']
-  ]);
+  ].concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]));
   return {date:fmtDate(new Date()),res:res,groups:answerGroups()};
 }
 function buildSummary(){
@@ -1537,7 +1690,8 @@ function buildSummary(){
     if(g.note) L.push('   ['+g.note+']');
     g.items.forEach(function(it){
       var pre=it.sub?'   '+plain(it.sub)+': ':'   ';
-      if(it.rich){ if(it.sub) L.push('   '+plain(it.sub)+':'); String(segsText(it.rich)).split('\n').forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
+      if(it.photo!==undefined){ L.push('   '+(it.photo?'[photo added - it shows only in the PDF]':'[no photo added]')); if(it.photo||it.cap) L.push('   Caption: “'+it.resp[0].replace(/\n/g,' ')+'”'); }
+      else if(it.rich){ if(it.sub) L.push('   '+plain(it.sub)+':'); String(segsText(it.rich)).split('\n').forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
       else if(it.resp.length===1) L.push(pre+'“'+it.resp[0].replace(/\n/g,' ')+'”'+(it.tag?' ['+it.tag+']':''));
       else { if(it.sub) L.push('   '+plain(it.sub)+':'); it.resp.forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
     });
@@ -1714,6 +1868,16 @@ async function buildPdf(){
   p.res.forEach(function(r){ text(r[0]+': '+r[1],10.5,F); y+=1; });
   y+=8; rule(LINE,1); y+=14;
 
+  /* photos: load each saved picture before drawing */
+  var pics={};
+  for(var gi=0;gi<p.groups.length;gi++){
+    for(var ii=0;ii<p.groups[gi].items.length;ii++){
+      var pid=p.groups[gi].items[ii].photo;
+      if(!pid) continue;
+      try{ var buf=await photoGet(pid); if(buf) pics[pid]=await doc.embedJpg(buf); }catch(e){}
+    }
+  }
+
   text('Questions and answers',13,FB); y+=4;
   p.groups.forEach(function(g){
     y+=6;
@@ -1724,7 +1888,14 @@ async function buildPdf(){
       y+=2;
       var ind=16;
       if(it.sub){ mixed(it.sub,10,F,FI,ind,MUTED); ind=28; }
-      if(it.rich) richText(it.rich,10.5,FI,ind);
+      if(it.photo&&pics[it.photo]){
+        var pic=pics[it.photo], k=Math.min((CW-ind)/pic.width,320/pic.height,1), pw=pic.width*k, ph=pic.height*k;
+        room(ph+8);
+        page.drawImage(pic,{x:M+ind,y:PH-y-ph,width:pw,height:ph});
+        y+=ph+8;
+      } else if(it.photo) it.tag='photo added, but it could not be loaded into this PDF';
+      if(it.photo!==undefined){ if(it.photo||it.cap) text('Caption: '+it.resp[0],10.5,FI,ind,RESP); }
+      else if(it.rich) richText(it.rich,10.5,FI,ind);
       else it.resp.forEach(function(r){ text(r,10.5,FI,ind,RESP); });
       if(it.tag) text('('+it.tag+')',8.5,F,ind,MUTED);
     });
@@ -1766,7 +1937,7 @@ function finishEl(){
   s.append(ol);
   s.append(h('p','intro',BOARD
     ?'Your PDF shows your name, the date you finished, your score, and all of your answers.'
-    :'Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers'+(Object.keys(R).length?', including your yellow highlights':'')+'.'));
+    :'Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers'+(Object.keys(R).length?', including your yellow highlights':'')+(Object.keys(P).length?'. It also shows your photos':'')+'.'));
   var row=h('div','row');
   var make=h('button','btn','Download my PDF'); make.type='button';
   var cmsg=h('span','msg'); cmsg.setAttribute('aria-live','polite');
@@ -1833,7 +2004,7 @@ function finishEl(){
   });
 
   var det=h('details','backup'); det.append(h('summary',null,'Backup and restore (optional)'));
-  det.append(h('p','intro','Copy your progress code and keep it somewhere safe, such as a note or email to yourself. If you lose your place, paste the code below to restore your answers.'));
+  det.append(h('p','intro','Copy your progress code and keep it somewhere safe, such as a note or email to yourself. If you lose your place, paste the code below to restore your answers.'+(Object.keys(P).length?' Photos are not included in the code; they stay in this browser.':'')));
   var r1=h('div','row');
   var cp=h('button','btn ghost','Copy my progress code'); cp.type='button';
   var pm=h('span','msg'); pm.setAttribute('aria-live','polite');
@@ -1871,7 +2042,8 @@ function finishEl(){
   start.addEventListener('click',function(){start.hidden=true;ask.hidden=false;});
   no.addEventListener('click',function(){start.hidden=false;ask.hidden=true;});
   yes.addEventListener('click',function(){
-    var f1=S.first, l1=S.last; S=fresh(); S.first=f1; S.last=l1; finished=false; save(); render();
+    var f1=S.first, l1=S.last; S=fresh(); S.first=f1; S.last=l1; finished=false; save();
+    photoClearAll().then(render);
   });
   return s;
 }
@@ -2036,7 +2208,8 @@ function render(){
   Object.keys(AUTO).forEach(function(k){delete AUTO[k];});
   ORDER.length=0;
   var app=$('#app'); app.textContent='';
-  Object.keys(W).forEach(function(k){delete W[k];}); Object.keys(R).forEach(function(k){delete R[k];});
+  Object.keys(W).forEach(function(k){delete W[k];}); Object.keys(R).forEach(function(k){delete R[k];}); Object.keys(P).forEach(function(k){delete P[k];});
+  photoUrlsDrop();
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;
@@ -2046,6 +2219,7 @@ function render(){
   else (A.parts||[]).forEach(function(p,i){app.append(buildPart(p,i+1));});
   app.append(finishEl());
   TOTAL_W=Object.keys(W).length+Object.keys(R).length;
+  TOTAL_P=Object.keys(P).length;
   TOTAL_A=Object.keys(AUTO).length;
   decorate();
   updateBar();

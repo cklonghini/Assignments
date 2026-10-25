@@ -191,6 +191,10 @@ th{background:var(--bg)}
 .qimg{margin:10px 0 14px;max-width:560px}
 .qimg img{display:block;max-width:100%;height:auto;max-height:440px;border-radius:8px;background:#fff;border:1px solid var(--line)}
 .qimg figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+/* a student's own photo */
+.photo [hidden]{display:none}
+.photo .qimg img{max-height:360px}
+.photo>label{margin-top:12px}
 
 /* game board */
 .board{--tile:#1c2f9e;--tile-ink:#ffd447;display:grid;grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));gap:6px;margin:14px 0 8px}

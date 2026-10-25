@@ -46,6 +46,12 @@ example). Sort the questions into 5 to 7 categories of equal size, easier questi
 diagrams from the test into `media/` and give them alt text that does not give the answer. Keep the test PDF and key in
 `source/`. Note that answers are in `assignment.js`, which anyone can read in the browser.
 
+## Hands-on labs (students add photos)
+
+For a lab students do at home, such as a dissection, end each step with a `photo` question so students add a picture
+of their own work (see "photo" in `docs/ASSIGNMENT_FORMAT.md`, and `assignments/explore-heart-dissection/` as the
+example). Put the lab handout's steps for each part in its reading box so students can follow along.
+
 ## House rules (the teacher decided these; keep them)
 
 **Page**

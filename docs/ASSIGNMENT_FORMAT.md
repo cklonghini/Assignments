@@ -217,6 +217,22 @@ The instructions tell students to provide evidence along with transition words t
 Give these questions a "used transition words" idea (a pattern for common evidence transitions) and a "highlighted" idea.
 The highlighted words are marked with `[[double brackets]]` in the Canvas text-entry fallback and in yellow on the PDF.
 
+### photo: the student adds a photo of their own work (teacher graded)
+
+For hands-on labs done at home, such as a dissection. Example: `assignments/explore-heart-dissection/`.
+
+```js
+{ type: 'photo', text: 'Take a photo of your heart with the anterior side facing up.',
+  caption: 'What does your photo show? Tell where the apex and the base are.' }   // optional label for the caption box
+```
+
+Students press **Add a photo**. On a phone they can take a picture or choose one they already took. The page
+shrinks the photo (longest side 1600 pixels, JPEG) and keeps it in the browser (IndexedDB), so it survives a
+reload. A photo box counts as done when it has a photo; students can still finish without one. The PDF shows each
+photo with its caption, or "no photo added", and a "Photos added" line in the results. Photos are not in the backup
+code or the Canvas text fallback (the text says a photo was added). Keep it to about 5 photo boxes; each photo adds
+about 100 KB to the PDF. Photo boxes do not work on a game board.
+
 ### ideas (the "Check my ideas" list)
 
 ```js
