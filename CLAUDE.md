@@ -58,6 +58,7 @@ lab agreement, and a ready-to-go selfie `photo`.
 
 **Page**
 - Title format: "Explore - Topic Name" with a dash and capitalized words. The course label sits under the title.
+  Exception: hands-on dissection labs have no "Explore - " (for example "Heart Dissection", "Sheep Brain Dissection").
 - Students enter first and last name at the top. The yellow "Stay on this page until you finish" box, the sticky
   progress bars (one per part), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
   are part of the engine. Keep them.

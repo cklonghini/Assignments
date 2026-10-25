@@ -1,5 +1,5 @@
 /*
-  Explore - Sheep Brain Dissection (Anatomy & Physiology A)
+  Sheep Brain Dissection (Anatomy & Physiology A)
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, and Listen buttons from it.
   Students dissect a sheep brain at home and follow along here, one step at a time. Most steps end with a photo of
@@ -14,7 +14,7 @@
   Full guide: docs/ASSIGNMENT_FORMAT.md
 */
 window.ASSIGNMENT = {
-  title: 'Explore - Sheep Brain Dissection',
+  title: 'Sheep Brain Dissection',
   course: 'Anatomy & Physiology A',
   storageKey: 'explore-sheep-brain-dissection-v2',
   partWord: 'Step',

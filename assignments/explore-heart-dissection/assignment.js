@@ -1,5 +1,5 @@
 /*
-  Explore - Heart Dissection (Anatomy & Physiology B)
+  Heart Dissection (Anatomy & Physiology B)
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, Listen buttons, and captions from it.
   Students dissect a heart at home and follow along here, one step at a time. Each step ends with a photo of
@@ -11,7 +11,7 @@
   Full guide: docs/ASSIGNMENT_FORMAT.md
 */
 window.ASSIGNMENT = {
-  title: 'Explore - Heart Dissection',
+  title: 'Heart Dissection',
   course: 'Anatomy & Physiology B',
   storageKey: 'explore-heart-dissection-v3',
   partWord: 'Step',
