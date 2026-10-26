@@ -15,6 +15,10 @@ A video (and ideally its captions as an .srt or .vtt), the questions or ideas sh
 course label (for example "Marine Science A"), and a title. If something that changes the build is missing, ask
 one short question. If she is not there to answer, make the most reasonable choice and say which one you made.
 
+**No video?** If the teacher gives you a quiz or worksheet (for example a Canvas QTI export) instead of a video, leave
+out `video` and `clips`. The page opens with a "Get started" box, and each part's reading must cover what its questions
+need. A labeled diagram becomes a drag-and-drop `label` question (see `docs/ASSIGNMENT_FORMAT.md`).
+
 ## Steps
 
 1. **Scaffold:** `python3 tools/new_assignment.py SLUG "Explore - Title" "Course"`. Put the original video in

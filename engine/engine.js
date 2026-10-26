@@ -39,9 +39,9 @@ function injectPage(){
 
 
 var A=window.ASSIGNMENT;
-if(!A||!A.video){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
+if(!A||!Array.isArray(A.parts)){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
 var TITLE=A.title, COURSE=A.course;
-var LINKS={ studio:A.video.altUrl||'' };
+var LINKS={ studio:(A.video&&A.video.altUrl)||'' };
 injectPage();
 
 /* ------------------------------------------------------------------ */
@@ -110,8 +110,10 @@ function words(t){var m=String(t||'').trim().match(/\S+/g); return m?m.length:0;
 var VID_DONE=95;
 /* Videos: the full video plus one short clip per part, all from assignment.js */
 var VIDS={}, VID_ORDER=[];
-VIDS.main={n:A.video.seconds,title:A.video.title,label:'Video: '+A.video.title+' (full video)',src:A.video.src};
-VID_ORDER.push('main');
+if(A.video){
+  VIDS.main={n:A.video.seconds,title:A.video.title,label:'Video: '+A.video.title+' (full video)',src:A.video.src};
+  VID_ORDER.push('main');
+}
 (A.parts||[]).forEach(function(p,pi){
   (p.clips||[]).forEach(function(k){
     var c=(A.clips||{})[k];
@@ -420,6 +422,106 @@ function mnWidget(MNW){
   return wrap;
 }
 
+/* label a picture: drag a word onto a spot, or tap a word and then tap a spot. Each spot is auto-checked on its own. */
+function labelQ(id,num,q){
+  var wrap=h('div','lbl');
+  var help=h('p','whint','Drag each label onto the matching letter, or tap a label and then tap a letter. You can use a label more than once.');
+  var fig=h('div','lblfig');
+  var img=document.createElement('img'); img.src=q.image; img.alt=q.alt||''; img.draggable=false;
+  fig.append(img);
+  var bank=h('div','lblbank'); bank.setAttribute('role','group'); bank.setAttribute('aria-label','Labels');
+  var rows=h('div','lblrows');
+  var status=h('p','msg lblstatus'); status.setAttribute('aria-live','polite');
+  var picked=null, chips=[], spots=[];
+  function pick(t){
+    picked=(t&&picked!==t)?t:null;
+    chips.forEach(function(c){c.b.setAttribute('aria-pressed',String(c.t===picked));});
+    wrap.classList.toggle('picking',!!picked);
+    status.textContent=picked?'“'+picked+'” is picked. Now tap the letter where it belongs.':'';
+  }
+  function place(i,t){
+    var sp=spots[i], prev=S.auto[sp.id]||{miss:0}, ok=(t===sp.s.answer);
+    S.auto[sp.id]={v:t,ok:ok,miss:(prev.miss||0)+(ok?0:1)};
+    pick(null); paintAll(); commit();
+  }
+  function target(i){ if(picked) place(i,picked); else status.textContent='Pick a label first, then tap the letter where it belongs.'; }
+  q.labels.forEach(function(t){
+    var b=h('button','lblchip'); b.type='button'; b.append(itxt(t)); b.setAttribute('aria-pressed','false');
+    var c={t:t,b:b}; chips.push(c); bank.append(b);
+    /* drag with mouse, pen, or finger; a plain tap falls through to click */
+    var start=null, ghost=null, over=null, dragged=false;
+    function spotAt(x,y){ var e=document.elementFromPoint(x,y); e=e&&e.closest('[data-spot]'); return e&&wrap.contains(e)?e:null; }
+    function hover(e){ if(over) over.classList.remove('over'); over=e; if(over) over.classList.add('over'); }
+    b.addEventListener('pointerdown',function(e){ if(e.button) return; start={x:e.clientX,y:e.clientY}; dragged=false; });
+    b.addEventListener('pointermove',function(e){
+      if(!start) return;
+      if(!ghost){
+        if(Math.abs(e.clientX-start.x)+Math.abs(e.clientY-start.y)<8) return;
+        try{b.setPointerCapture(e.pointerId);}catch(err){}
+        ghost=h('div','lblchip lblghost'); ghost.append(itxt(t)); document.body.append(ghost); dragged=true;
+      }
+      ghost.style.left=e.clientX+'px'; ghost.style.top=e.clientY+'px';
+      hover(spotAt(e.clientX,e.clientY));
+    });
+    function end(e,drop){
+      if(ghost){ ghost.remove(); ghost=null; var s=drop&&spotAt(e.clientX,e.clientY); hover(null); if(s) place(+s.dataset.spot,t); }
+      start=null;
+    }
+    b.addEventListener('pointerup',function(e){end(e,true);});
+    b.addEventListener('pointercancel',function(e){end(e,false);});
+    b.addEventListener('click',function(){ if(dragged){dragged=false;return;} pick(t); });
+  });
+  q.spots.forEach(function(s,i){
+    var sid=id+'_'+i, name=s.name;
+    AUTO[sid]={sum:'Q'+num+' '+name};
+    ORDER.push({kind:'auto',id:sid,label:'Q'+num+' '+name,q:CURQ,sub:name});
+    var pin=h('button','lblpin'); pin.type='button'; pin.dataset.spot=String(i);
+    pin.style.left=s.x+'%'; pin.style.top=s.y+'%';
+    var tag=h('span','lbltag'); tag.setAttribute('aria-hidden','true');
+    tag.style.top='calc('+s.y+'% + 4.4%)';
+    if(s.x>50) tag.style.right=Math.max(0,100-s.x-3.6)+'%'; else tag.style.left=Math.max(0,s.x-3.6)+'%';
+    fig.append(pin,tag);
+    var row=h('div','ctl lblrow'); mark(row); row.dataset.s='idle';
+    var line=h('div','row');
+    var nm=h('span','lblname',name);
+    var slot=h('button','lblslot'); slot.type='button'; slot.dataset.spot=String(i);
+    var clr=h('button','lblclr','×'); clr.type='button'; clr.setAttribute('aria-label','Clear '+name);
+    var st=h('span','st'); st.setAttribute('aria-hidden','true');
+    line.append(nm,slot,clr,st);
+    var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+    row.append(line,msg); rows.append(row);
+    pin.addEventListener('click',function(){target(i);});
+    slot.addEventListener('click',function(){target(i);});
+    clr.addEventListener('click',function(){
+      var prev=S.auto[sid]||{miss:0}; S.auto[sid]={v:'',ok:false,miss:prev.miss||0}; paintAll(); commit();
+    });
+    spots.push({id:sid,s:s,pin:pin,tag:tag,row:row,slot:slot,clr:clr,st:st,msg:msg});
+  });
+  function paintAll(){
+    spots.forEach(function(sp){
+      var r=S.auto[sp.id], v=r&&r.v, name=sp.s.name;
+      var state=!v?'idle':(r.ok?'ok':'bad');
+      sp.row.dataset.s=state; sp.pin.dataset.s=state;
+      sp.slot.textContent=''; if(v) sp.slot.append(itxt(v)); else sp.slot.textContent='Drop a label here';
+      sp.slot.classList.toggle('empty',!v);
+      sp.tag.textContent=''; if(v) sp.tag.append(itxt(v)); sp.tag.hidden=!v; sp.tag.dataset.s=state;
+      sp.clr.hidden=!v;
+      sp.pin.textContent=name;
+      sp.pin.setAttribute('aria-label',name+(v?': '+plain(v)+(r.ok?', correct':', not yet'):': empty')+'. Place the picked label here.');
+      sp.slot.setAttribute('aria-label',name+(v?': '+plain(v):': empty')+'. Place the picked label here.');
+      sp.st.textContent=!v?'':(r.ok?'✓':'✗');
+      sp.msg.textContent='';
+      if(v&&r.ok) sp.msg.append('Correct.'+(sp.s.ok?' ':''),itxt(sp.s.ok||''));
+      else if(v) sp.msg.append('Not yet. Tip: ',itxt(sp.s.hint||q.hint||'Look back at the reading and try again.'));
+    });
+  }
+  wrap.addEventListener('keydown',function(e){ if(e.key==='Escape'&&picked) pick(null); });
+  paintAll();
+  wrap.append(help,bank,status,h('div','lblgrid'));
+  wrap.lastChild.append(fig,rows);
+  return wrap;
+}
+
 /* ------------------------------------------------------------------ */
 /* Builders: written answers                                           */
 /* ------------------------------------------------------------------ */
@@ -624,7 +726,24 @@ function allQuestions(){
   return out;
 }
 
+/* assignments without a video start with a short "Get started" section instead */
+function startSection(){
+  var V=A.start||{}, qs=allQuestions();
+  var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
+  var s=h('section','task vidsec'); s.id='video';
+  s.append(h('h2','display',V.heading||'Get started'));
+  s.append(h('p','intro',V.intro||'Read each part carefully and then respond to the prompts. Remember, Eagles! Quality matters more than quantity, but don’t leave out anything you think is worth noting.'));
+  var after=V.after;
+  if(after==null){
+    after='Work from top to bottom. Each part gives you a short reading and then lets you practice and check your work.';
+    if(nW) after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s')+'.';
+  }
+  s.append(h('p','intro',after));
+  return s;
+}
+
 function videoSection(){
+  if(!A.video) return startSection();
   var V=A.video, qs=allQuestions();
   var nHl=qs.filter(function(q){return q.type==='highlight';}).length;
   var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
@@ -683,6 +802,8 @@ function buildQuestion(q,s){
       if(q.caseTip&&String(v).toLowerCase()===String(exp).toLowerCase()) return 'Not yet. Tip: '+q.caseTip;
       return 'Not yet. Tip: '+(q.tip||'Look back at the reading and try again.');
     },q.aria||'Your answer'));
+  } else if(t==='label'){
+    o.body.append(labelQ(id,num,q));
   } else if(t==='mnemonic'){
     o.body.append(mnWidget(q.words));
   } else if(t==='written'){
@@ -1002,7 +1123,7 @@ function finishEl(){
    'Select “Download my PDF.” If your browser asks, choose to save the file.',
    'Go to the Canvas assignment, select File Upload, upload the PDF, and submit.'].forEach(function(t){ol.append(h('li',null,t));});
   s.append(ol);
-  s.append(h('p','intro','Your PDF shows your name, the date you finished, how much of the video you watched, and all of your answers, including the yellow highlights on your evidence.'));
+  s.append(h('p','intro','Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers, including the yellow highlights on your evidence.'));
   var row=h('div','row');
   var make=h('button','btn','Download my PDF'); make.type='button';
   var cmsg=h('span','msg'); cmsg.setAttribute('aria-live','polite');
@@ -1218,7 +1339,7 @@ function decorate(){
     var hd=q.querySelector('.qhead');
     hd.append(listenBtn(function(){
       var t=q.querySelector('.qtext').innerText;
-      var opts=[].map.call(q.querySelectorAll('.opt'),function(o){return o.innerText;});
+      var opts=[].map.call(q.querySelectorAll('.opt,.lblchip'),function(o){return o.innerText;});
       if(opts.length) t+=(/[.?!:]\s*$/.test(t)?' ':'. ')+'The choices are: '+opts.join('. ')+'.';
       return t;
     }));

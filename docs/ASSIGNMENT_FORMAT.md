@@ -14,7 +14,8 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `course` | yes | Shown under the title and on the PDF, for example `'Biology A'` |
 | `storageKey` | yes | Unique key for saved progress. Change it (`-v2`) if you change the questions after students started |
 | `icon` | no | Inline SVG for the header. Leave out for a play-button icon. May use `var(--primary)`, `var(--receptor)`, `var(--ligand)`, `var(--ink)` |
-| `video` | yes | The full video (below) |
+| `video` | no | The full video (below). Leave out for a reading-only assignment (for example a quiz turned into a page) |
+| `start` | no | Only when there is no video: `{ heading, intro, after }` for the "Get started" box at the top. All three are optional |
 | `clips` | no | The short clips (below) |
 | `parts` | yes | The parts, in order (below) |
 
@@ -93,6 +94,21 @@ True/false is a choice question with two options.
   caseTip: 'Optional. Shown instead when only the capital letters are wrong.',
   aria: 'Corrected name' }
 ```
+
+### label: drag labels onto a picture (auto-checked, one point per spot)
+
+```js
+{ type: 'label', text: 'Label the four chambers of the heart.',
+  image: 'media/heart-labeling.png',               // the picture, with letters already drawn on it
+  alt: 'Diagram of the heart with four lines labeled A, B, C and D',
+  labels: ['Left atrium', 'Left ventricle', 'Right atrium', 'Right ventricle'],   // the word bank
+  hint: 'Shared tip',                              // used by every spot unless the spot has its own hint
+  spots: [ { name: 'A', x: 94.2, y: 40.9, answer: 'Left atrium', hint: 'Tip', ok: 'Shown after a right answer.' } ] }
+```
+
+`x` and `y` are the center of each letter on the picture, in percent of the picture's width and height. A round
+button covers each letter. Students drag a label onto a letter (or onto its row beside the picture), or tap a label
+and then tap a letter. Each spot is checked on its own and shows its tip when wrong. The PDF lists each letter's answer.
 
 ### mnemonic: write a sentence whose words start with given letters (auto-checked)
 

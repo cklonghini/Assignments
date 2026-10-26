@@ -37,8 +37,8 @@ for (const dir of dirs) {
       keys[A.storageKey] = dir;
     }
     const exists = f => fs.existsSync(path.join(base, dir, f));
-    if (!A.video || !A.video.src) E('Missing video.src');
-    else {
+    if (A.video && !A.video.src) E('Missing video.src');
+    else if (A.video) {
       if (!exists(A.video.src)) E('Video file not found: ' + A.video.src);
       if (!exists(A.video.src.replace(/\.mp4$/i, '.vtt'))) W('No captions file next to ' + A.video.src + ' (expected a .vtt file)');
       if (!(A.video.seconds > 0)) E('video.seconds must be a number of seconds');
@@ -90,6 +90,20 @@ for (const dir of dirs) {
             if (!q.expected) E(w + ' needs expected');
             needTip(q.tip, [q.expected]);
             nAuto++;
+            break;
+          case 'label':
+            if (!q.image) E(w + ' needs an image');
+            else if (!exists(q.image)) E(w + ': image not found: ' + q.image);
+            if (!q.alt) W(w + ' has no alt text for its image');
+            if (!(q.labels || []).length) E(w + ' has no labels');
+            if (!(q.spots || []).length) E(w + ' has no spots');
+            (q.spots || []).forEach((sp, i) => {
+              if (!sp.name) E(w + ' spot ' + (i + 1) + ' needs a name');
+              if (!(sp.x >= 0 && sp.x <= 100 && sp.y >= 0 && sp.y <= 100)) E(w + ' spot ' + (i + 1) + ': x and y must be percents from 0 to 100');
+              if (!(q.labels || []).includes(sp.answer)) E(w + ' spot ' + (i + 1) + ': the answer "' + sp.answer + '" is not one of the labels');
+              needTip(sp.hint || q.hint, [sp.answer]);
+              nAuto++;
+            });
             break;
           case 'mnemonic':
             if (!Array.isArray(q.words) || q.words.length < 2) E(w + ' needs words');
