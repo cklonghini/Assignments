@@ -2171,7 +2171,16 @@ function videoStops(block,qs){
 /* ------------------------------------------------------------------ */
 var GATED=!BOARD&&A.gated!==false&&(A.parts||[]).length>1, REOPEN={};
 function partWord(n){return (A.partWord||'Part')+' '+n;}
-function partDone(sec){return [].every.call(sec.querySelectorAll('[data-c]'),function(e){return e.dataset.s==='ok';});}
+function partDone(sec){return partShare(sec)>=1;}
+/* share of a part's checked items that are done (1 when the part has none) */
+function partShare(sec){
+  var c=sec.querySelectorAll('[data-c]');
+  return c.length?[].filter.call(c,function(e){return e.dataset.s==='ok';}).length/c.length:1;
+}
+/* the next part opens at unlockAt (default 80%) of this part. A gate: true part (lab setup and safety) needs all of it. */
+var UNLOCK=typeof A.unlockAt==='number'&&A.unlockAt>0&&A.unlockAt<=1?A.unlockAt:0.8;
+function partNeed(n){return (A.parts[n-1]||{}).gate?1:UNLOCK;}
+function pctTxt(x){return Math.round(x*100)+'%';}
 function gateEls(s,n){
   var last=n===(A.parts||[]).length;
   s.querySelector('h2').tabIndex=-1;
@@ -2180,7 +2189,7 @@ function gateEls(s,n){
   tog.addEventListener('click',function(){ REOPEN[n]=!REOPEN[n]; applyGate(); });
   s.querySelector('h2').after(tog);
   var g=h('div','pdone'); g.hidden=true;
-  g.append(h('p','pmsg','You finished '+partWord(n)+'!'));
+  g.append(h('p','pmsg'));
   var go=h('button','btn',last?'Close '+partWord(n)+' and go to Finish':'Close '+partWord(n)+' and open '+partWord(n+1));
   go.type='button';
   go.addEventListener('click',function(){
@@ -2191,7 +2200,7 @@ function gateEls(s,n){
     if(next){ next.scrollIntoView({block:'start'}); var hd=next.querySelector('h2'); if(hd){hd.tabIndex=-1; hd.focus({preventScroll:true});} }
   });
   g.append(go); s.append(g);
-  s.append(h('p','pnext','Finish all of '+partWord(n)+(last?' to get to the Finish and submit section.':' to continue to '+partWord(n+1)+'.')));
+  s.append(h('p','pnext'));
 }
 function applyGate(){
   if(!GATED) return;
@@ -2205,8 +2214,14 @@ function applyGate(){
     tog.hidden=!past;
     tog.textContent=REOPEN[n]?'Fold up '+partWord(n):'Look back at '+partWord(n);
     tog.setAttribute('aria-expanded',REOPEN[n]?'true':'false');
-    g.hidden=past||!partDone(sec);
-    $('.pnext',sec).hidden=past||!g.hidden;
+    var sh=partShare(sec), need=partNeed(n), last=n===secs.length;
+    var to=last?'the Finish and submit section':partWord(n+1);
+    g.hidden=past||sh<need;
+    $('.pmsg',g).textContent=sh>=1?'You finished '+partWord(n)+'!'
+      :'You finished enough of '+partWord(n)+' to move on. You can finish the rest first, or move on now and come back to it later.';
+    var nx=$('.pnext',sec); nx.hidden=past||!g.hidden;
+    nx.textContent=need>=1?'Finish all of '+partWord(n)+' to continue to '+to+'.'
+      :'Finish at least '+pctTxt(need)+' of '+partWord(n)+' to continue to '+to+'. So far you have finished '+Math.floor(sh*100)+'%.';
   });
   /* the full video, when it sits after part N, shows once part N+1 is open */
   var vAfter=A.video&&A.video.afterPart||0, vid=$('#video');

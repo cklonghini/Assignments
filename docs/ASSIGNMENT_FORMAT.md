@@ -19,6 +19,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `partWord` | no | The word before each part number, for example `'Station'` so headings read "Station 1: Overview". Default `'Part'` |
 | `clips` | no | The short clips (below) |
 | `parts` | yes | The parts, in order (below) |
+| `unlockAt` | no | With parts one at a time: how much of a part a student must finish before the next part opens. Default `0.8` (80%). A part with `gate: true` always needs all of it |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
@@ -120,13 +121,14 @@ Any question can also show a picture with `img` (see below), for example a numbe
 
 ## One part at a time
 
-By default students see only the part they are working on. Later parts stay hidden. When every checked item in
-a part is done (every auto-checked answer right and every written answer long enough), a green box appears at the
+By default students see only the part they are working on. Later parts stay hidden. When at least 80% of the
+checked items in a part are done (auto-checked answers right, written answers long enough; change it with
+`unlockAt`), a green box appears at the
 bottom of the part with a button such as "Close Part 1 and open Part 2". Selecting it folds Part 1 down to its
 banner (with a "Done" label), plays confetti with a "Part 1 complete!" message, and opens Part 2. Students who
 turn off motion on their device get the message without the confetti. A folded part has a "Look back at Part 1"
-button, so students can reread it. Until the part is done, a note at its bottom says "Finish all of Part 1 to continue
-to Part 2." The Finish section (PDF, Canvas, backup) stays hidden until the student closes the last part.
+button, so students can reread it. Until then, a note at its bottom says "Finish at least 80% of Part 1 to continue to Part 2. So far you
+have finished 40%." A part with `gate: true` (lab setup and safety) needs every item done. The Finish section (PDF, Canvas, backup) stays hidden until the student closes the last part.
 
 The student moves on with the button, not on their own, so they can read the explanation after their last right
 answer, and a part never folds up while they are still typing a written answer. Which part is open is saved with
