@@ -48,7 +48,7 @@ injectPage();
 /* State and saving                                                    */
 /* ------------------------------------------------------------------ */
 var KEY=A.storageKey||('assignment-'+TITLE), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},mn:[],mnRes:[],vids:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},mn:[],mnRes:[],vids:{},graphs:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -62,6 +62,7 @@ function copyMeta(f,o){
   f.rich=(o.rich&&typeof o.rich==='object')?o.rich:{};
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
+  f.graphs=(o.graphs&&typeof o.graphs==='object')?o.graphs:{};
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
   f.voice=o.voice==='male'?'male':'';
 }
@@ -247,6 +248,7 @@ function hasProgress(){
   if(Object.keys(S.auto).some(function(k){return S.auto[k]&&S.auto[k].v;})) return true;
   if(Object.keys(S.written).some(function(k){return S.written[k]&&S.written[k].text;})) return true;
   if(Object.keys(S.rich).some(function(k){return S.rich[k]&&segsPlain(S.rich[k].segs).trim();})) return true;
+  if(Object.keys(S.graphs||{}).some(function(k){var g=S.graphs[k]; return g&&g.f;})) return true;
   return (S.mn||[]).some(function(x){return x;});
 }
 function updateBar(){
@@ -358,16 +360,17 @@ function choiceQ(id,sum,options,ansIdx,explain,tip){
 }
 
 /* typed answer with a Check button */
-function typedCheck(id,sum,expected,okMsg,badMsg,aria){
+function typedCheck(id,sum,expected,okMsg,badMsg,aria,o){
+  o=o||{};
   AUTO[id]={sum:sum};
-  ORDER.push({kind:'auto',id:id,label:sum,q:CURQ,sub:''});
+  ORDER.push({kind:'auto',id:id,label:sum,q:CURQ,sub:o.sub||''});
   var wrap=h('div','ctl'); mark(wrap); wrap.dataset.s='idle';
   var row=h('div','row');
   var inp=h('input'); inp.type='text'; inp.id='f-'+id; inp.autocomplete='off'; inp.spellcheck=false; inp.autocapitalize='off';
   inp.setAttribute('aria-label',aria); inp.setAttribute('aria-describedby','m-'+id);
   var btn=h('button','btn','Check'); btn.type='button';
   var st=h('span','st'); st.setAttribute('aria-hidden','true');
-  row.append(inp,btn,st);
+  if(o.unit){ inp.classList.add('num'); row.append(inp,h('span','unit',o.unit),btn,st); } else row.append(inp,btn,st);
   var msg=h('p','msg'); msg.id='m-'+id; msg.setAttribute('aria-live','polite');
   wrap.append(row,msg);
   function paint(){
@@ -941,6 +944,456 @@ function multiQ(id,q){
 }
 
 /* ------------------------------------------------------------------ */
+/* Builders: numbers and graphs                                        */
+/* ------------------------------------------------------------------ */
+/* the first number in what a student typed: "3,300 cm3" is 3300 */
+function numVal(v){var m=String(v==null?'':v).replace(/,/g,'').match(/-?\d*\.?\d+/); return m?parseFloat(m[0]):NaN;}
+function inRange(b){return function(v){var n=numVal(v); return !isNaN(n)&&n>=b[0]&&n<=b[1];};}
+/* several numbers to type, each checked against a range (between: [low, high]) */
+function numbersQ(id,q){
+  var grid=h('div','nums');
+  (q.items||[]).forEach(function(it,i){
+    var iid=id+'_'+i;
+    var w=typedCheck(iid,it.label,inRange(it.between),'Correct.'+(it.explain?' '+plain(it.explain):''),function(){
+      return 'Not yet. Tip: '+plain(it.tip||q.tip||'Look back at the reading and try again.');
+    },plain(it.label),{sub:it.label,unit:it.unit||q.unit});
+    var l=h('label'); l.append(itxt(it.label)); l.htmlFor='f-'+iid; w.prepend(l);
+    grid.append(w);
+  });
+  return grid;
+}
+
+/* Graphs are drawn as SVG with fixed colors on a white page, so the same drawing works in dark mode and in the PDF */
+var GC={ink:'#16213a',muted:'#52607a',grid:'#b9c4d6',minor:'#e3e8f0',line:'#16213a',mark:'#0b5f7a',pick:'#d63f78',bad:'#a8321f'};
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function nfmt(n){return (Math.round(n*100)/100).toLocaleString('en-US');}
+function steps(min,max,step){var out=[], n=Math.floor((max-min)/step+1e-9); for(var i=0;i<=n;i++) out.push(min+i*step); return out;}
+/* the frame of a graph: white page, grid, axes, numbers, axis labels and title.
+   o.x and o.y are {min, max, step, minor, label}; o.x.cats (a list of group names) makes a bar graph.
+   A missing label or title is drawn as a grey reminder. Returns the markup so far and the scale functions. */
+function gFrame(o){
+  var W=640,H=450,L=88,R=26,T=58,B=78, pw=W-L-R, ph=H-T-B, x=o.x, y=o.y, cats=x.cats, s=[];
+  function X(v){return L+(v-x.min)/(x.max-x.min)*pw;}
+  function Y(v){return T+ph-(v-y.min)/(y.max-y.min)*ph;}
+  function band(i){return L+(i+0.5)*pw/cats.length;}
+  s.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" font-family="Arial, Helvetica, sans-serif">');
+  s.push('<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>');
+  if(y.minor) steps(y.min,y.max,y.minor).forEach(function(v){s.push('<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="'+GC.minor+'"/>');});
+  if(!cats&&x.minor) steps(x.min,x.max,x.minor).forEach(function(v){s.push('<line y1="'+T+'" y2="'+(T+ph)+'" x1="'+X(v)+'" x2="'+X(v)+'" stroke="'+GC.minor+'"/>');});
+  steps(y.min,y.max,y.step).forEach(function(v){
+    s.push('<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="'+GC.grid+'"/>');
+    s.push('<text x="'+(L-8)+'" y="'+(Y(v)+5)+'" text-anchor="end" font-size="14" fill="'+GC.ink+'">'+nfmt(v)+'</text>');
+  });
+  if(cats) cats.forEach(function(c,i){ s.push('<text x="'+band(i)+'" y="'+(T+ph+22)+'" text-anchor="middle" font-size="15" fill="'+GC.ink+'">'+esc(c)+'</text>'); });
+  else steps(x.min,x.max,x.step).forEach(function(v){
+    s.push('<line y1="'+T+'" y2="'+(T+ph)+'" x1="'+X(v)+'" x2="'+X(v)+'" stroke="'+GC.grid+'"/>');
+    s.push('<text x="'+X(v)+'" y="'+(T+ph+22)+'" text-anchor="middle" font-size="14" fill="'+GC.ink+'">'+nfmt(v)+'</text>');
+  });
+  s.push('<path d="M'+L+' '+T+' V'+(T+ph)+' H'+(L+pw)+'" fill="none" stroke="'+GC.line+'" stroke-width="2"/>');
+  function lab(t,ph0,attrs){ return t?'<text '+attrs+' fill="'+GC.ink+'">'+esc(t)+'</text>':'<text '+attrs+' fill="'+GC.muted+'" font-style="italic" font-weight="400">'+esc(ph0)+'</text>'; }
+  s.push(lab(x.label,'(x-axis label)','x="'+(L+pw/2)+'" y="'+(H-20)+'" text-anchor="middle" font-size="16" font-weight="700"'));
+  s.push(lab(y.label,'(y-axis label)','transform="translate(24 '+(T+ph/2)+') rotate(-90)" text-anchor="middle" font-size="16" font-weight="700"'));
+  if(o.title!==false) s.push(lab(o.title,'(title)','x="'+(W/2)+'" y="34" text-anchor="middle" font-size="19" font-weight="700"'));
+  return {s:s,X:X,Y:Y,band:band,L:L,T:T,pw:pw,ph:ph,W:W,H:H,bw:cats?Math.min(110,pw/cats.length*0.55):0};
+}
+function gDot(fr,x,y,color,r){return '<circle cx="'+fr.X(x)+'" cy="'+fr.Y(y)+'" r="'+(r||6)+'" fill="'+color+'" stroke="#ffffff" stroke-width="1.5"/>';}
+function gBar(fr,i,v,color,y0){var top=fr.Y(v), base=fr.Y(y0); return '<rect x="'+(fr.band(i)-fr.bw/2)+'" y="'+Math.min(top,base)+'" width="'+fr.bw+'" height="'+Math.abs(base-top)+'" fill="'+color+'"/>';}
+/* screen point to graph point */
+function gPoint(svg,e){
+  var pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  var m=svg.getScreenCTM(); return m?pt.matrixTransform(m.inverse()):null;
+}
+
+/* Read a value off a curve, as students do on a printed graph. A slider moves a line along the x-axis; dashed
+   lines run to the curve and across to the y-axis. The value itself is not shown: students read it off the grid. */
+function curveSvg(g,xv){
+  var fr=gFrame({title:g.title,x:g.x,y:g.y}), s=fr.s, pts=[], to=g.to!=null?g.to:g.x.max;
+  for(var d=g.x.min; d<=to+1e-9; d+=(to-g.x.min)/240){ var v=g.fn(d); if(v<=g.y.max) pts.push(fr.X(d).toFixed(1)+','+fr.Y(Math.max(g.y.min,v)).toFixed(1)); }
+  s.push('<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+GC.ink+'" stroke-width="2.5"/>');
+  if(xv!=null){
+    var yv=g.fn(xv);
+    if(yv<=g.y.max){
+      s.push('<path d="M'+fr.X(xv)+' '+(fr.T+fr.ph)+' V'+fr.Y(yv)+' H'+fr.L+'" fill="none" stroke="'+GC.pick+'" stroke-width="2.5" stroke-dasharray="7 5"/>');
+      s.push('<circle cx="'+fr.X(xv)+'" cy="'+fr.Y(yv)+'" r="6" fill="'+GC.pick+'"/>');
+    }
+  }
+  s.push('</svg>');
+  return s.join('');
+}
+function readGraphQ(id,q){
+  var g=q.graph, wrap=h('div','gwrap');
+  var fig=h('div','gfig'); fig.setAttribute('role','img'); fig.setAttribute('aria-label',g.alt||'Graph');
+  var row=h('div','row gslide'), lab=h('label'), out=h('b');
+  var sl=h('input'); sl.type='range'; sl.id='f-'+id+'_slider'; sl.min=g.x.min; sl.max=g.to!=null?g.to:g.x.max; sl.step=g.slider||0.1; sl.value=g.start!=null?g.start:g.x.min;
+  lab.htmlFor=sl.id; lab.append(g.sliderLabel||'Move the slider: ',out);
+  row.append(lab,sl);
+  function paint(){ var v=+sl.value, dp=(String(sl.step).split('.')[1]||'').length; out.textContent=v.toFixed(dp)+(g.x.unit?' '+g.x.unit:''); fig.innerHTML=curveSvg(g,v); }
+  sl.addEventListener('input',paint);
+  paint();
+  wrap.append(h('p','whint',g.hint||'Move the slider to a value on the x-axis. Follow the dashed line up to the curve and then across to the y-axis, and read the number off the grid.'),row,fig,numbersQ(id,q));
+  return wrap;
+}
+
+/* Build a graph from a data table. The student picks a factor, the type of graph, the axis labels and a title,
+   then plots the data: a bar for each group's average, or a dot for each row. Each step is checked. When the graph
+   is right, the graphs of the other factors open, the way lab partners each graph a different factor. */
+var GSTEPS=['type','x','y','title','plot'];
+function gFactor(G,key){return (G.factors||[]).filter(function(f){return f.key===key;})[0]||null;}
+function gAverages(G,f){
+  return f.cats.map(function(c){
+    var v=G.rows.filter(function(r){return r[f.key]===c;}).map(function(r){return r[G.y.key];});
+    return v.length?v.reduce(function(a,b){return a+b;},0)/v.length:0;
+  });
+}
+/* draws a graph. d: {title, xLabel, yLabel, kind, pts, bars, bad (dots or bars to show in red)} */
+function graphSvg(G,f,d){
+  var bar=d.kind==='bar', x=bar?{cats:f.cats,label:d.xLabel}:{min:f.min,max:f.max,step:f.step,minor:f.minor,label:d.xLabel};
+  var y={min:G.y.min,max:G.y.max,step:G.y.step,minor:G.y.minor,label:d.yLabel};
+  var fr=gFrame({title:d.title,x:x,y:y}), s=fr.s, bad=d.bad||{};
+  if(bar) f.cats.forEach(function(c,i){
+    var v=(d.bars||{})[c];
+    if(typeof v!=='number'||isNaN(v)) return;
+    v=Math.max(G.y.min,Math.min(G.y.max,v));
+    s.push(gBar(fr,i,v,bad[c]?GC.bad:GC.mark,G.y.min));
+    s.push('<text x="'+fr.band(i)+'" y="'+(fr.Y(v)-8)+'" text-anchor="middle" font-size="14" font-weight="700" fill="'+GC.ink+'">'+nfmt(v)+'</text>');
+  });
+  else (d.pts||[]).forEach(function(p,i){ s.push(gDot(fr,p[0],p[1],bad[i]?GC.bad:GC.mark)); });
+  s.push('</svg>');
+  return {svg:s.join(''),fr:fr};
+}
+function gAnswers(G,f){
+  return {type:f.kind==='bar'?'Bar graph':'Scatter plot',x:f.label,y:G.y.label};
+}
+/* checks the plotted data. Returns {ok, bad, note} */
+function gCheckPlot(G,f,st){
+  var bad={};
+  if(f.kind==='bar'){
+    var avg=gAverages(G,f), tol=G.barTol!=null?G.barTol:50, wrong=0, empty=0;
+    f.cats.forEach(function(c,i){
+      var v=st.bars[c];
+      if(typeof v!=='number'||isNaN(v)){ empty++; return; }
+      if(Math.abs(v-avg[i])>tol){ bad[c]=true; wrong++; }
+    });
+    if(empty) return {ok:false,bad:bad,empty:true,note:'Give every bar a height first. '+empty+(empty===1?' bar is':' bars are')+' still empty.'};
+    return {ok:!wrong,bad:bad,note:wrong?wrong+' of '+f.cats.length+' bars '+(wrong===1?'is':'are')+' not the right height yet (red).':''};
+  }
+  var rows=G.rows.map(function(r){return [r[f.key],r[G.y.key]];}), used=rows.map(function(){return false;});
+  var xt=f.tol!=null?f.tol:0.5, yt=G.y.tol!=null?G.y.tol:150, extra=0;
+  (st.pts||[]).forEach(function(p,i){
+    var best=-1, bd=1e9;
+    rows.forEach(function(r,j){
+      if(used[j]||Math.abs(p[0]-r[0])>xt||Math.abs(p[1]-r[1])>yt) return;
+      var dd=Math.abs(p[1]-r[1]); if(dd<bd){bd=dd; best=j;}
+    });
+    if(best>=0) used[best]=true; else { bad[i]=true; extra++; }
+  });
+  var hit=used.filter(Boolean).length;
+  var note=hit+' of '+rows.length+' students are plotted correctly.'+(extra?' '+extra+(extra===1?' dot does':' dots do')+' not match a student in the table (red).':'');
+  return {ok:hit===rows.length&&!extra,bad:bad,note:note};
+}
+function gPlotText(G,f,st){
+  if(f.kind==='bar') return f.cats.map(function(c){var v=st.bars[c]; return c+': '+(typeof v==='number'&&!isNaN(v)?nfmt(v):'(empty)');}).join(', ');
+  var pts=(st.pts||[]).slice().sort(function(a,b){return a[0]-b[0]||a[1]-b[1];});
+  return pts.length?pts.length+' dots: '+pts.map(function(p){return '('+nfmt(p[0])+', '+nfmt(p[1])+')';}).join(' '):'(no dots)';
+}
+function graphQ(id,q){
+  var G=q.graph, ids={};
+  var SUM={type:'Graph type',x:'X-axis label',y:'Y-axis label',title:'Title',plot:'Plotted data'};
+  GSTEPS.forEach(function(k){ ids[k]=id+'_'+k; AUTO[ids[k]]={sum:SUM[k]}; });
+  ORDER.push({kind:'graph',id:id,q:CURQ,sub:'',G:G,ids:ids});
+  if(!S.graphs) S.graphs={};
+  var st=S.graphs[id]||(S.graphs[id]={f:'',title:'',by:{}});
+  if(!st.by) st.by={};
+  var lastBad={}, plotMsg='';
+  function f(){return gFactor(G,st.f);}
+  function dat(){var k=st.f; return st.by[k]||(st.by[k]={pts:[],bars:{}});}
+  function r(k){return S.auto[ids[k]]||null;}
+  function ok(k){var x=r(k); return !!(x&&x.ok);}
+  function done(){return ok('plot');}
+  function clearChecks(){ GSTEPS.forEach(function(k){ var p=r(k); if(p) S.auto[ids[k]]={v:'',ok:false,miss:p.miss||0}; }); lastBad={}; plotMsg=''; }
+
+  var wrap=h('div','gwrap');
+  /* the factor */
+  var fRow=h('div','ctl'), fSel=h('select'); fSel.id='f-'+id+'_factor';
+  var fLab=h('label',null,G.factorLabel||'Choose the factor you will graph'); fLab.htmlFor=fSel.id;
+  fSel.append(new Option('Choose a factor…',''));
+  G.factors.forEach(function(x){fSel.append(new Option(x.name,x.key));});
+  var fMsg=h('p','msg'); fMsg.setAttribute('aria-live','polite');
+  fRow.append(fLab,fSel,fMsg);
+  /* a checked drop-down for one step */
+  function stepSel(k,label,options,tip){
+    var w=h('div','ctl gstep'); mark(w); w.dataset.s='idle';
+    var sel=h('select'); sel.id='f-'+ids[k];
+    var l=h('label'); l.append(itxt(label)); l.htmlFor=sel.id;
+    sel.append(new Option('Choose…',''));
+    options.forEach(function(t){sel.append(new Option(t,t));});
+    var stt=h('span','st'); stt.setAttribute('aria-hidden','true');
+    var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+    w.append(l,sel,stt,msg);
+    sel.addEventListener('change',function(){
+      var v=sel.value, p=r(k)||{miss:0};
+      if(!v){ S.auto[ids[k]]={v:'',ok:false,miss:p.miss||0}; }
+      else { var good=v===gAnswers(G,f())[k]; S.auto[ids[k]]={v:v,ok:good,miss:(p.miss||0)+(good?0:1)}; }
+      paint(); commit();
+    });
+    return {w:w,sel:sel,st:stt,msg:msg,paint:function(){
+      var x=r(k); sel.value=x&&x.v?x.v:''; sel.disabled=!f()||done();
+      if(!x||!x.v){ w.dataset.s='idle'; stt.textContent=''; msg.textContent=''; return; }
+      w.dataset.s=x.ok?'ok':'bad'; stt.textContent=x.ok?'✓':'✗';
+      msg.textContent=x.ok?'Correct.':'Not yet. Tip: '+tip(x.v);
+    }};
+  }
+  var labels=G.labels||[];
+  function unitsTip(v,ans){ return ans.indexOf(v)===0&&ans.length>v.length?'Close. A good axis label also shows the units.':null; }
+  var sType=stepSel('type','Step 1. Which kind of graph fits this factor?',G.types||['Bar graph','Scatter plot','Pie chart'],function(v){
+    var fa=f(); if(!fa) return '';
+    if(v==='Pie chart') return 'A pie chart shows the parts of one whole. Here you are comparing the vital capacity of different students.';
+    return fa.kind==='bar'
+      ?'Look at the values for '+fa.name.toLowerCase()+' in the table. They are groups with names, not numbers on a number line. Which graph compares groups side by side?'
+      :'Look at the values for '+fa.name.toLowerCase()+' in the table. They are numbers on a scale. Which graph puts one dot for each student at the right spot on the scale?';
+  });
+  var sX=stepSel('x','Step 2. Label the x-axis (across the bottom).',labels,function(v){
+    return unitsTip(v,f().label)||'The x-axis shows the independent variable: the factor you chose to compare.';
+  });
+  var sY=stepSel('y','Step 3. Label the y-axis (up the side).',labels,function(v){
+    return unitsTip(v,G.y.label)||'The y-axis shows the dependent variable: the thing that was measured for every student.';
+  });
+  /* the title */
+  var tW=h('div','ctl gstep'); mark(tW); tW.dataset.s='idle';
+  var tIn=h('input'); tIn.type='text'; tIn.id='f-'+ids.title; tIn.autocomplete='off';
+  var tL=h('label',null,'Step 4. Give your graph a title.'); tL.htmlFor=tIn.id;
+  var tBtn=h('button','btn','Check'); tBtn.type='button';
+  var tSt=h('span','st'); tSt.setAttribute('aria-hidden','true');
+  var tRow=h('div','row'); tRow.append(tIn,tBtn,tSt);
+  var tMsg=h('p','msg'); tMsg.setAttribute('aria-live','polite');
+  tW.append(tL,tRow,tMsg);
+  function titleTip(v){
+    var low=v.toLowerCase(), fa=f();
+    if(words(v)<3) return 'A title is a short phrase, like a headline, that says what the graph shows. Use at least three words.';
+    if(G.y.title&&!G.y.title.test(low)) return 'Your title should name what was measured (the dependent variable).';
+    if(fa.title&&!fa.title.test(low)) return 'Your title should also name the factor you are comparing.';
+    return 'Try again.';
+  }
+  function checkTitle(){
+    var v=tIn.value.trim().replace(/\s+/g,' '), p=r('title')||{miss:0};
+    st.title=v;
+    if(!v) return;
+    var low=v.toLowerCase(), fa=f();
+    var good=words(v)>=3&&(!G.y.title||G.y.title.test(low))&&(!fa.title||fa.title.test(low));
+    S.auto[ids.title]={v:v,ok:good,miss:(p.miss||0)+(good?0:1)};
+    paint(); commit();
+  }
+  tBtn.addEventListener('click',checkTitle);
+  tIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();checkTitle();}});
+  tIn.addEventListener('input',function(){
+    st.title=tIn.value; var x=r('title');
+    if(x&&x.v){ S.auto[ids.title]={v:'',ok:false,miss:x.miss||0}; }
+    drawFig(); commit(); paintTitle();
+  });
+  function paintTitle(){
+    var x=r('title'); tIn.disabled=tBtn.disabled=!f()||done();
+    if(document.activeElement!==tIn) tIn.value=st.title||'';
+    if(!x||!x.v){ tW.dataset.s='idle'; tSt.textContent=''; tMsg.textContent=''; return; }
+    tW.dataset.s=x.ok?'ok':'bad'; tSt.textContent=x.ok?'✓':'✗';
+    tMsg.textContent=x.ok?'Correct. Your title names both variables.':'Not yet. Tip: '+titleTip(x.v);
+  }
+  /* the plot */
+  var pW=h('div','gplot'); mark(pW); pW.dataset.s='idle';
+  var pHead=h('p','gsteph','Step 5. Plot the data.');
+  var pHint=h('p','whint');
+  var fig=h('div','gfig gdraw'); fig.setAttribute('role','img');
+  var tools=h('div','gtools');
+  var pRow=h('div','row gap'), pChk=h('button','btn','Check my graph'); pChk.type='button'; pRow.append(pChk);
+  var pMsg=h('p','msg'); pMsg.setAttribute('aria-live','polite');
+  pW.append(pHead,pHint,fig,tools,pRow,pMsg);
+  var others=h('div','gothers');
+  wrap.append(fRow,sType.w,sX.w,sY.w,tW,pW,others);
+
+  function chosen(k){var x=r(k); return x&&x.v?x.v:'';}
+  function drawFig(){
+    var fa=f();
+    if(!fa){ fig.innerHTML=''; return; }
+    var kind=ok('type')?fa.kind:null, d=dat();
+    var g=graphSvg(G,fa,{kind:kind||(chosen('type')==='Bar graph'?'bar':'scatter'),title:st.title||'',xLabel:chosen('x'),yLabel:chosen('y'),pts:d.pts,bars:d.bars,bad:lastBad});
+    fig.innerHTML=g.svg; fig._fr=g.fr;
+    fig.setAttribute('aria-label','Your graph. '+(st.title?'Title: '+st.title+'. ':'')+gPlotText(G,fa,d)+'.');
+  }
+  function pending(){
+    var fa=f(), x=r('plot'), p=x||{miss:0};
+    S.auto[ids.plot]={v:gPlotText(G,fa,dat()),ok:false,miss:p.miss||0,pend:true};
+    lastBad={}; plotMsg='';
+  }
+  /* bar graph: a number box for each bar; selecting inside the graph also sets a bar */
+  function barTools(fa){
+    tools.textContent='';
+    var grid=h('div','nums');
+    fa.cats.forEach(function(c){
+      var w=h('div','ctl'), inp=h('input'); inp.type='text'; inp.inputMode='decimal'; inp.className='num'; inp.id='f-'+id+'_bar_'+c.replace(/\W+/g,'');
+      var l=h('label',null,'Bar height for '+c); l.htmlFor=inp.id;
+      var v=dat().bars[c]; inp.value=typeof v==='number'?String(v):''; inp.disabled=done();
+      inp.addEventListener('input',function(){
+        var n=numVal(inp.value); if(isNaN(n)) delete dat().bars[c]; else dat().bars[c]=n;
+        pending(); drawFig(); commit(); paintPlotMsg();
+      });
+      var rw=h('div','row'); rw.append(inp,h('span','unit',G.y.unit||''));
+      w.append(l,rw); grid.append(w);
+    });
+    tools.append(grid);
+  }
+  /* scatter plot: select an empty spot to add a dot, select a dot to take it away, or type a dot in */
+  function dotTools(fa){
+    tools.textContent='';
+    var row=h('div','row gadd');
+    var xi=h('input'), yi=h('input'); xi.type=yi.type='text'; xi.inputMode=yi.inputMode='decimal';
+    xi.id='f-'+id+'_dx'; yi.id='f-'+id+'_dy'; xi.className=yi.className='num';
+    var xl=h('label',null,fa.name+' (x)'); xl.htmlFor=xi.id;
+    var yl=h('label',null,G.y.name+' (y)'); yl.htmlFor=yi.id;
+    var add=h('button','btn ghost','Add dot'), undo=h('button','btn ghost','Undo last dot'), clr=h('button','btn ghost','Clear all dots');
+    add.type=undo.type=clr.type='button';
+    var cnt=h('span','whint');
+    [xi,yi,add,undo,clr].forEach(function(e){e.disabled=done();});
+    row.append(xl,xi,yl,yi,add);
+    var row2=h('div','row'); row2.append(undo,clr,cnt);
+    function count(){ cnt.textContent=dat().pts.length+' dots on your graph. The table has '+G.rows.length+' students.'; }
+    function addDot(){
+      var x=numVal(xi.value), y=numVal(yi.value);
+      if(isNaN(x)||isNaN(y)){ plotMsg='Type both numbers first.'; paintPlotMsg(true); return; }
+      dat().pts.push([x,y]); xi.value=yi.value=''; pending(); drawFig(); commit(); count(); paintPlotMsg(); xi.focus();
+    }
+    add.addEventListener('click',addDot);
+    [xi,yi].forEach(function(e){e.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault(); addDot();}});});
+    undo.addEventListener('click',function(){ if(!dat().pts.length) return; dat().pts.pop(); pending(); drawFig(); commit(); count(); paintPlotMsg(); });
+    clr.addEventListener('click',function(){
+      if(!dat().pts.length) return;
+      if(clr.dataset.sure!=='1'){ clr.dataset.sure='1'; clr.textContent='Select again to erase every dot'; return; }
+      clr.dataset.sure=''; clr.textContent='Clear all dots';
+      dat().pts=[]; pending(); drawFig(); commit(); count(); paintPlotMsg();
+    });
+    tools.append(row,row2); count();
+    tools._count=count;
+  }
+  function snap(v,s){return Math.round(v/s)*s;}
+  var dragging=false;
+  function figAt(e,start){
+    var fa=f(), fr=fig._fr, svg=fig.querySelector('svg');
+    if(!fa||!fr||!svg||!ok('type')||done()) return;
+    var p=gPoint(svg,e); if(!p) return;
+    if(p.x<fr.L-4||p.x>fr.L+fr.pw+4||p.y<fr.T-4||p.y>fr.T+fr.ph+4) return;
+    var yv=G.y.max-(p.y-fr.T)/fr.ph*(G.y.max-G.y.min);
+    yv=Math.max(G.y.min,Math.min(G.y.max,snap(yv,G.y.snap||10)));
+    if(fa.kind==='bar'){
+      var i=Math.floor((p.x-fr.L)/(fr.pw/fa.cats.length)); if(i<0||i>=fa.cats.length) return;
+      dat().bars[fa.cats[i]]=snap(yv,G.barSnap||10);
+      var inp=tools.querySelectorAll('input')[i]; if(inp) inp.value=String(dat().bars[fa.cats[i]]);
+    } else {
+      if(!start) return;
+      var xv=fa.min+(p.x-fr.L)/fr.pw*(fa.max-fa.min), pts=dat().pts, hit=-1;
+      pts.forEach(function(q0,k){ var dx=fr.X(q0[0])-p.x, dy=fr.Y(q0[1])-p.y; if(dx*dx+dy*dy<196) hit=k; });
+      if(hit>=0) pts.splice(hit,1);
+      else pts.push([Math.max(fa.min,Math.min(fa.max,snap(xv,fa.snap||1))),yv]);
+      if(tools._count) tools._count();
+    }
+    pending(); drawFig(); commit(); paintPlotMsg();
+  }
+  fig.addEventListener('pointerdown',function(e){ if(e.button) return; dragging=true; figAt(e,true); });
+  fig.addEventListener('pointermove',function(e){ if(dragging&&f()&&f().kind==='bar') figAt(e,false); });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){fig.addEventListener(ev,function(){dragging=false;});});
+  pChk.addEventListener('click',function(){
+    var fa=f(); if(!fa) return;
+    var res=gCheckPlot(G,fa,dat()), p=r('plot')||{miss:0};
+    lastBad=res.bad; plotMsg=res.note;
+    if(res.empty){ drawFig(); paintPlotMsg(true); return; }
+    S.auto[ids.plot]={v:gPlotText(G,fa,dat()),ok:res.ok,miss:(p.miss||0)+(res.ok?0:1)};
+    paint(); commit();
+  });
+  function paintPlotMsg(bad){
+    var x=r('plot');
+    pMsg.textContent='';
+    if(done()){ pMsg.dataset.s='ok'; pMsg.append('Correct. Your graph matches the class data. ',itxt(q.explain||'')); return; }
+    if(x&&x.v&&!x.pend&&!x.ok){ pMsg.dataset.s='bad'; pMsg.append(plotMsg?plotMsg+' ':'','Tip: ',itxt(f().kind==='bar'?(q.barTip||'The height of each bar is the average for that group. Add up the values for the group, then divide by the number of students in the group.'):(q.dotTip||'Each student in the table gets one dot. Find the student’s number on the x-axis, then go up to their measured value on the y-axis.'))); return; }
+    if(plotMsg){ pMsg.dataset.s=bad?'bad':''; pMsg.textContent=plotMsg; return; }
+    pMsg.removeAttribute('data-s');
+  }
+  function paintOthers(){
+    others.textContent='';
+    if(!done()) return;
+    var fa=f(), rest=G.factors.filter(function(x){return x!==fa;});
+    if(!rest.length) return;
+    others.append(h('h3','gsteph',G.othersHeading||'Your lab group’s graphs'));
+    others.append(h('p','intro',G.othersIntro||'In class, each person in a lab group graphs a different factor. Here are the graphs for the other factors. You will use all of the graphs in the next part.'));
+    var grid=h('div','ggrid');
+    rest.forEach(function(o){
+      var a=gAnswers(G,o), d={kind:o.kind,title:o.groupTitle||(G.y.name+' and '+o.name.toLowerCase()),xLabel:a.x,yLabel:a.y};
+      if(o.kind==='bar'){ var av=gAverages(G,o); d.bars={}; o.cats.forEach(function(c,i){d.bars[c]=Math.round(av[i]);}); }
+      else d.pts=G.rows.map(function(rw){return [rw[o.key],rw[G.y.key]];});
+      var fg=h('figure','gfig small'), gs=graphSvg(G,o,d);
+      fg.innerHTML=gs.svg; fg.setAttribute('role','img'); fg.setAttribute('aria-label','Graph: '+d.title+'. '+gPlotText(G,o,{pts:d.pts,bars:d.bars||{}})+'.');
+      grid.append(fg);
+    });
+    others.append(grid);
+  }
+  function paint(){
+    var fa=f(), fin=done();
+    fSel.value=st.f||''; fSel.disabled=fin;
+    fMsg.textContent=fin?'':(fa?(G.factorNote||'You can switch to a different factor, but your checked steps will start over.'):'');
+    [sType,sX,sY].forEach(function(x){x.paint();});
+    paintTitle();
+    var on=!!fa&&ok('type');
+    pW.hidden=!fa;
+    fig.style.touchAction=on&&fa.kind==='bar'?'none':'';
+    pHint.textContent=!fa?'':(!on?'Finish Step 1 first. Your graph will appear here, and it updates as you work.'
+      :(fa.kind==='bar'?'Make one bar for each group. The height of each bar is the group’s average '+G.y.name.toLowerCase()+'. Type each height in the boxes under the graph, or select inside the graph to set a bar.'
+        :'Add one dot for each student in the table. Select a spot on the graph to add a dot there (it snaps to the nearest grid line), select a dot to remove it, or type the numbers under the graph.'));
+    if(fa&&on){ if(fa.kind==='bar') barTools(fa); else dotTools(fa); tools.hidden=false; pRow.hidden=fin; }
+    else { tools.textContent=''; tools.hidden=true; pRow.hidden=true; }
+    var x=r('plot');
+    pW.dataset.s=fin?'ok':(x&&x.v&&!x.pend?'bad':'idle');
+    drawFig(); paintPlotMsg(); paintOthers();
+  }
+  fSel.addEventListener('change',function(){
+    if(fSel.value===st.f) return;
+    st.f=fSel.value; st.title='';
+    clearChecks(); paint(); commit();
+  });
+  paint();
+  return wrap;
+}
+/* the student's graph for the PDF */
+function graphReport(o){
+  var G=o.G, st=(S.graphs||{})[o.id]||{}, fa=gFactor(G,st.f), out=[];
+  function v(k){var r=S.auto[o.ids[k]]; return r&&r.v?r.v:'';}
+  if(!fa) return [{sub:'Factor graphed',resp:['(no factor chosen)'],tag:'',rich:null}];
+  out.push({sub:'Factor graphed',resp:[fa.name],tag:'',rich:null});
+  GSTEPS.forEach(function(k){
+    var r=S.auto[o.ids[k]], it={sub:AUTO[o.ids[k]].sum,resp:[],tag:'',rich:null};
+    if(k==='plot'){
+      var d=(st.by||{})[st.f]||{pts:[],bars:{}};
+      it.resp=[gPlotText(G,fa,d)];
+      it.svg=graphSvg(G,fa,{kind:fa.kind,title:v('title')||st.title||'',xLabel:v('x'),yLabel:v('y'),pts:d.pts,bars:d.bars}).svg;
+    } else it.resp=[v(k)||'(no answer)'];
+    it.tag=autoTag(r);
+    out.push(it);
+  });
+  return out;
+}
+function autoTag(r){
+  if(!r) return '';
+  var miss=r.miss?r.miss+(r.miss===1?' wrong try':' wrong tries'):'';
+  if(!r.v) return miss;
+  return (r.pend?'not checked yet':(r.ok?'correct':'incorrect'))+(miss?' • '+miss:'');
+}
+/* an SVG drawing as a PNG for the PDF */
+async function svgPng(svg,scale){
+  var img=new Image(), url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  await new Promise(function(res,rej){img.onload=res; img.onerror=rej; img.src=url;});
+  var w=img.naturalWidth||640, hgt=img.naturalHeight||450, c=document.createElement('canvas');
+  c.width=w*scale; c.height=hgt*scale;
+  var x=c.getContext('2d'); x.fillStyle='#ffffff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height);
+  var blob=await new Promise(function(r){c.toBlob(r,'image/png');});
+  return {bytes:new Uint8Array(await blob.arrayBuffer()),w:w,h:hgt};
+}
+
+/* ------------------------------------------------------------------ */
 /* Builders: written answers                                           */
 /* ------------------------------------------------------------------ */
 function writtenField(id,placeholder){
@@ -1248,6 +1701,7 @@ function buildQuestion(q,s,tile){
   } else if(t==='typed'){
     var exp=q.expected;
     /* accept: a list of right answers, ignoring capital letters and an end period */
+    if(q.between) exp=inRange(q.between);
     if(q.accept){ var ok1=q.accept.map(function(x){return String(x).toLowerCase();}); exp=function(v){return ok1.indexOf(v.toLowerCase().replace(/[.!]+$/,''))>=0;}; }
     o.body.append(typedCheck(id,'Q'+num+' typed answer',exp,q.okMsg||'Correct.',function(v){
       if(BOARD) return triesMsg(S.auto[id],q.tip);
@@ -1267,6 +1721,15 @@ function buildQuestion(q,s,tile){
     o.body.append(labQ(id,q));
   } else if(t==='multi'){
     o.body.append(multiQ(id,q));
+  } else if(t==='numbers'){
+    ids=q.items.map(function(it,i){return id+'_'+i;});
+    o.body.append(numbersQ(id,q));
+  } else if(t==='readgraph'){
+    ids=q.items.map(function(it,i){return id+'_'+i;});
+    o.body.append(readGraphQ(id,q));
+  } else if(t==='graph'){
+    ids=GSTEPS.map(function(k){return id+'_'+k;});
+    o.body.append(graphQ(id,q));
   } else if(t==='written'){
     ids=[];
     W[id]={min:q.min||40};
@@ -1277,7 +1740,7 @@ function buildQuestion(q,s,tile){
     R[id]={min:q.min||40};
     o.body.append(
       h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
-      h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”'),
+      h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
       hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.'),
       richField(id));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return segsHlWords((S.rich[id]||{}).segs);},ideasFrom(q.ideas)));
@@ -1488,6 +1951,7 @@ function answerGroups(){
   ORDER.forEach(function(o){
     var q=o.q||{num:'',text:o.label};
     if(!last||last.q!==q){ last={q:q,num:q.num,text:q.text,note:q.tile?tileNote(q.tile):'',items:[]}; groups.push(last); }
+    if(o.kind==='graph'){ graphReport(o).forEach(function(it){last.items.push(it);}); return; }
     var it={sub:o.sub||'',resp:[],tag:'',rich:null};
     if(o.kind==='auto'){
       var r=S.auto[o.id];
@@ -1715,6 +2179,11 @@ async function buildPdf(){
   y+=8; rule(LINE,1); y+=14;
 
   text('Questions and answers',13,FB); y+=4;
+  for(var gi=0;gi<p.groups.length;gi++) for(var ii=0;ii<p.groups[gi].items.length;ii++){
+    var it0=p.groups[gi].items[ii];
+    if(!it0.svg) continue;
+    try{ var pic=await svgPng(it0.svg,3); it0.png={img:await doc.embedPng(pic.bytes),w:pic.w,h:pic.h}; }catch(e){}
+  }
   p.groups.forEach(function(g){
     y+=6;
     room(40);
@@ -1727,6 +2196,13 @@ async function buildPdf(){
       if(it.rich) richText(it.rich,10.5,FI,ind);
       else it.resp.forEach(function(r){ text(r,10.5,FI,ind,RESP); });
       if(it.tag) text('('+it.tag+')',8.5,F,ind,MUTED);
+      if(it.png){
+        var gw=Math.min(it.png.w*0.62,CW-ind), gh=it.png.h*gw/it.png.w;
+        y+=4; room(gh+4);
+        page.drawImage(it.png.img,{x:M+ind,y:PH-y-gh,width:gw,height:gh});
+        page.drawRectangle({x:M+ind,y:PH-y-gh,width:gw,height:gh,borderColor:LINE,borderWidth:1});
+        y+=gh+4;
+      }
     });
   });
 

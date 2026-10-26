@@ -12,6 +12,7 @@ Each one is a page on Vercel with the video and short clips, auto-checked practi
 | Explore - Species Classification (Marine Science A) | `assignments/explore-species-classification/` |
 | Test - Unit 4 Transport (Anatomy & Physiology), game board | `assignments/test-unit-4-transport/` |
 | Practice - The Cardiovascular System (Anatomy & Physiology B) | `assignments/practice-the-cardiovascular-system/` |
+| Explore - Lung Capacity Lab (Anatomy & Physiology), with an interactive graph | `assignments/explore-lung-capacity-lab/` |
 
 The home page (`index.html`) lists every assignment. Students get the direct link, for example
 `https://YOUR-PROJECT.vercel.app/assignments/explore-species-classification/`.

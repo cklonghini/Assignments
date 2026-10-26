@@ -44,7 +44,7 @@ for (const dir of dirs) {
     };
     const board = A.board;
     if (!A.video) {
-      if (!board && !(A.parts || []).some(p => (p.images || []).length)) E('Missing video (an assignment with no video needs images in its parts)');
+      if (!board && !A.start && !(A.parts || []).some(p => (p.images || []).length)) E('Missing video (an assignment with no video needs images in its parts, or a start box)');
     } else if (!A.video.src) E('Missing video.src');
     else {
       if (!exists(A.video.src)) E('Video file not found: ' + A.video.src);
@@ -114,7 +114,7 @@ for (const dir of dirs) {
             nAuto++;
             break;
           case 'typed':
-            if (!q.expected && !(q.accept || []).length) E(w + ' needs expected (or an accept list)');
+            if (!q.expected && !(q.accept || []).length && !q.between) E(w + ' needs expected (or an accept list, or between)');
             needTip(q.tip, [q.expected].concat(q.accept || []));
             nAuto++;
             break;
@@ -167,6 +167,45 @@ for (const dir of dirs) {
             if (!q.tip) E(w + ' needs a tip');
             nAuto++;
             break;
+          case 'numbers': case 'readgraph': {
+            const range = b => Array.isArray(b) && b.length === 2 && typeof b[0] === 'number' && b[0] <= b[1];
+            if (!(q.items || []).length) E(w + ' has no items');
+            (q.items || []).forEach((it, i) => {
+              if (!it.label) E(w + ' item ' + (i + 1) + ' needs a label');
+              if (!range(it.between)) E(w + ' item ' + (i + 1) + ' needs between: [low, high]');
+              if (!(it.tip || q.tip)) E(w + ' item ' + (i + 1) + ' needs a tip');
+              nAuto++;
+            });
+            if (q.type === 'readgraph') {
+              const g = q.graph || {};
+              if (typeof g.fn !== 'function') E(w + ' needs graph.fn (the curve)');
+              ['x', 'y'].forEach(k => { const a = g[k] || {}; if (!(a.max > a.min) || !(a.step > 0)) E(w + ' needs graph.' + k + ' with min, max and step'); });
+              if (!g.alt) W(w + ' graph has no alt text (screen readers read it)');
+            }
+            break;
+          }
+          case 'graph': {
+            const g = q.graph || {}, y = g.y || {}, rows = g.rows || [];
+            if (!rows.length) E(w + ' needs graph.rows (the data)');
+            if (!y.key || !y.label || !(y.max > y.min) || !(y.step > 0)) E(w + ' needs graph.y with key, label, min, max and step');
+            if (!(g.factors || []).length) E(w + ' needs graph.factors');
+            (g.factors || []).forEach((f, i) => {
+              const where = w + ' factor ' + (i + 1) + (f.name ? ' (' + f.name + ')' : '');
+              if (!f.key || !f.name || !f.label) E(where + ' needs key, name and label');
+              if (!(g.labels || []).includes(f.label)) E(where + ': its label "' + f.label + '" is not in graph.labels');
+              if (f.kind === 'bar') {
+                if (!(f.cats || []).length) E(where + ' needs cats (the bar groups)');
+                rows.forEach((r, j) => { if (!(f.cats || []).includes(r[f.key])) E(where + ': row ' + (j + 1) + ' has "' + r[f.key] + '", which is not one of the cats'); });
+              } else if (f.kind === 'scatter') {
+                if (!(f.max > f.min) || !(f.step > 0)) E(where + ' needs min, max and step');
+                rows.forEach((r, j) => { if (!(r[f.key] >= f.min && r[f.key] <= f.max)) E(where + ': row ' + (j + 1) + ' is off the x-axis'); });
+              } else E(where + ' needs kind: bar or scatter');
+            });
+            if (!(g.labels || []).includes(y.label)) E(w + ': graph.y.label is not in graph.labels');
+            rows.forEach((r, j) => { if (!(r[y.key] >= y.min && r[y.key] <= y.max)) E(w + ': row ' + (j + 1) + ' is off the y-axis'); });
+            nAuto += 5;
+            break;
+          }
           case 'written': case 'highlight':
             nWritten++;
             if (!(q.ideas || []).length) W(w + ' has no ideas, so students get no "Check my ideas" button');

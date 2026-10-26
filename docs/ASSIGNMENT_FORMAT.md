@@ -37,7 +37,7 @@ video: {
 
 An assignment can work from pictures instead of a video, for example classroom station cards turned into a
 virtual activity (see `assignments/practice-the-cardiovascular-system`). Leave out `video` and `clips`, and give
-each part `images`. The top of the page then shows the `start` box instead of a video:
+each part `images` (or, for a lab with no pictures, just the `start` box and readings, as in `assignments/explore-lung-capacity-lab`). The top of the page then shows the `start` box instead of a video:
 
 ```js
 start: {
@@ -202,6 +202,59 @@ Write types with the real minus sign: `'O−'`, not `'O-'`.
   patients: [ { name: 'Patient 1: Marcus', who: 'Age 17. Broke his leg playing soccer.', type: 'A+' } ] }
 ```
 
+### numbers: type one or more numbers (auto-checked, one point each)
+
+Each box accepts any number inside `between` (low and high, inclusive). Commas and units are ignored, so
+"3,300 cm3" counts as 3300. Use a range when students read a value off a graph or round.
+
+```js
+{ type: 'numbers', text: 'Find the average diameter for each volume.', unit: 'cm',     // unit shows after every box
+  items: [ { label: 'Average tidal volume diameter', between: [9.95, 10.05], tip: 'Add the three trials, then divide by 3.' } ] }
+```
+
+A `typed` question can also use `between: [low, high]` instead of `expected`.
+
+### readgraph: read values off a curve (auto-checked, one point per box)
+
+A `numbers` question with a graph above it. A slider moves a dashed line from the x-axis up to the curve and across
+to the y-axis. The value is not printed: students read it off the grid. Example: Figure 1 in
+`assignments/explore-lung-capacity-lab`.
+
+```js
+{ type: 'readgraph', text: '...', unit: 'cm³',
+  graph: { title: 'Figure 1: ...', alt: 'Description for screen readers',
+           x: { min: 0, max: 25, step: 2, minor: 1, label: 'Balloon diameter (cm)', unit: 'cm' },
+           y: { min: 0, max: 8000, step: 1000, minor: 250, label: 'Lung volume (cm³)' },
+           fn: function (d) { return Math.PI * d * d * d / 6; },   // the curve
+           to: 24.8, start: 5, sliderLabel: 'Balloon diameter: ' },
+  items: [ { label: 'Tidal volume', between: [400, 650], tip: '...' } ] }
+```
+
+### graph: build a graph from a data table (auto-checked, five points)
+
+The student chooses a factor, then works through five checked steps: the kind of graph (bar graph or scatter plot),
+the x-axis label, the y-axis label (both from the `labels` menu, so "Height" without units gets a tip), a title (it
+must match the factor's `title` pattern and `y.title`), and the data. On a bar graph each bar is a group's average
+(within `barTol`); students type the heights or select inside the graph. On a scatter plot each row gets one dot
+(x within the factor's `tol`, y within `y.tol`); students select the graph to add or remove a dot, or type the numbers.
+The graph redraws as they work. When it is right, the graphs of the other factors appear, the way lab partners each
+graph a different factor. The PDF shows every step and a picture of the student's graph.
+
+```js
+{ type: 'graph', text: 'Build your graph...',
+  graph: {
+    rows: [ { sex: 'Female', height: 61, vc: 2700 }, ... ],
+    y: { key: 'vc', name: 'Vital capacity', label: 'Vital capacity (cm³)', unit: 'cm³', min: 0, max: 6000, step: 1000,
+         minor: 250, snap: 50, tol: 150, title: /vital capacity|lung capacity/ },
+    labels: ['Sex', 'Height', 'Height (in)', 'Vital capacity', 'Vital capacity (cm³)'],   // the axis label menus
+    barTol: 50,
+    factors: [
+      { key: 'sex', name: 'Sex', kind: 'bar', label: 'Sex', cats: ['Female', 'Male'], title: /sex|male|female/ },
+      { key: 'height', name: 'Height', kind: 'scatter', label: 'Height (in)', min: 56, max: 76, step: 2, minor: 1,
+        snap: 1, tol: 0.5, title: /height|tall/ } ] },
+  barTip: 'Shown after a wrong bar graph.', dotTip: 'Shown after a wrong scatter plot.', explain: 'Shown when it is right.' }
+```
+
 ### written: a short written response the teacher grades
 
 ```js
@@ -212,6 +265,8 @@ Write types with the real minus sign: `'O−'`, not `'O-'`.
 ### highlight: a written response where students point to their evidence with transition words and highlight those words in yellow
 
 Same fields as `written` (`text`, `min`, `ideas`). The engine adds the instructions and the yellow highlight buttons.
+For an assignment with no video, set `examples` to replace the example transition words (the default list includes
+"According to the video").
 The instructions tell students to provide evidence along with transition words that bring attention to it (for example
 "According to the video," "This shows that"), then go back and highlight those transition words in yellow.
 Give these questions a "used transition words" idea (a pattern for common evidence transitions) and a "highlighted" idea.
