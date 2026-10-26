@@ -125,13 +125,13 @@ a part is done (every auto-checked answer right and every written answer long en
 bottom of the part with a button such as "Close Part 1 and open Part 2". Selecting it folds Part 1 down to its
 banner (with a "Done" label), plays confetti with a "Part 1 complete!" message, and opens Part 2. Students who
 turn off motion on their device get the message without the confetti. A folded part has a "Look back at Part 1"
-button, so students can reread it. The Finish section (PDF, backup) is always visible.
+button, so students can reread it. Until the part is done, a note at its bottom says "Finish all of Part 1 to continue
+to Part 2." The Finish section (PDF, Canvas, backup) stays hidden until the student closes the last part.
 
 The student moves on with the button, not on their own, so they can read the explanation after their last right
 answer, and a part never folds up while they are still typing a written answer. Which part is open is saved with
 their progress. Game boards are not affected. Set `gated: false` to show all parts at once.
-With one part at a time on, a part with `gate: true` also keeps the Finish section hidden until the student
-closes that part, and a full video placed with `video.afterPart: N` shows once part N+1 opens.
+With one part at a time on, a full video placed with `video.afterPart: N` shows once part N+1 opens.
 
 ## Question types
 

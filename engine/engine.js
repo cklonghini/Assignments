@@ -2191,6 +2191,7 @@ function gateEls(s,n){
     if(next){ next.scrollIntoView({block:'start'}); var hd=next.querySelector('h2'); if(hd){hd.tabIndex=-1; hd.focus({preventScroll:true});} }
   });
   g.append(go); s.append(g);
+  s.append(h('p','pnext','Finish all of '+partWord(n)+(last?' to get to the Finish and submit section.':' to continue to '+partWord(n+1)+'.')));
 }
 function applyGate(){
   if(!GATED) return;
@@ -2205,13 +2206,13 @@ function applyGate(){
     tog.textContent=REOPEN[n]?'Fold up '+partWord(n):'Look back at '+partWord(n);
     tog.setAttribute('aria-expanded',REOPEN[n]?'true':'false');
     g.hidden=past||!partDone(sec);
+    $('.pnext',sec).hidden=past||!g.hidden;
   });
   /* the full video, when it sits after part N, shows once part N+1 is open */
   var vAfter=A.video&&A.video.afterPart||0, vid=$('#video');
   if(vAfter&&vid) vid.hidden=S.onPart<=vAfter;
-  /* a part with gate: true also keeps the Finish section hidden until the student closes that part */
-  var gi=-1; (A.parts||[]).some(function(p,i){ if(p.gate){gi=i; return true;} return false; });
-  var fin=$('#finish'); if(fin) fin.hidden=gi>=0&&S.onPart<=gi+1;
+  /* the Finish section (PDF, Canvas) shows only after the student closes the last part */
+  var fin=$('#finish'); if(fin) fin.hidden=S.onPart<=secs.length;
 }
 /* confetti and a short message when a part is finished. Students who turn off motion get just the message. */
 function celebrate(text){
