@@ -353,6 +353,7 @@ names the evidence source in the instructions (default `'the video'`, for exampl
 and the video'`). The engine adds three "Check my ideas" items (claim, evidence, and expand highlighted) and drops any
 `highlight: true` idea. The PDF shows the three colors, and the text fallback marks them `[CLAIM: …]`, `[EVIDENCE: …]`,
 `[EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
+A question changed from `written` to `highlight` keeps any answer a student already typed: it moves into the new box.
 
 ### photo: the student adds a photo of their own work (teacher graded)
 

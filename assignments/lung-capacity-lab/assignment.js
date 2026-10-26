@@ -484,9 +484,11 @@ window.ASSIGNMENT = {
           ]
         },
         {
-          type: 'written',
+          type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
+          from: 'the class data and graphs',
           text: 'Conclusion: Do the class data support your hypotheses from Part 2? Give a possible explanation for the results, and say whether they make sense. Then choose one disease from the reading and explain how it causes respiratory distress and how you think it affects lung capacity. Finally, describe one way this lab could be redesigned to investigate a different question about lung capacity. (5 or more sentences)',
-          starters: ['The class data (support / do not support) my hypothesis that …', 'A possible explanation for these results is …', 'The disease I chose is … It causes respiratory distress by …', 'I think this disease affects lung capacity by …', 'To investigate a different question, this lab could be redesigned by …'],
+          starters: ['The class data (support / do not support) my hypothesis that …', 'For example, the average vital capacity for … was …', 'A possible explanation for these results is …', 'The disease I chose is … It causes respiratory distress by …', 'To investigate a different question, this lab could be redesigned by …'],
           min: 200,
           ideas: [
             { done: 'You said whether the data support your hypotheses.', q: 'Did you say whether the data support your hypotheses?', tip: 'Look back at your predictions in Part 2. Were they right, partly right, or wrong?', re: /support|hypothes|predict|correct|right|wrong|agree|match/ },

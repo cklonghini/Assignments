@@ -333,9 +333,11 @@ window.ASSIGNMENT = {
           explain: 'Mr. Chen’s cells have A and Rh. Any bag that only brings A, Rh, or no markers at all is safe: O−, O+, A−, and A+.'
         },
         {
-          type: 'written',
+          type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
+          from: 'the blood types video and your blood typing lab',
           text: 'Why does it matter that people have different blood types? Use what you learned from the blood types video and your lab. Explain how blood typing keeps patients safe, and how your blood type connects to the idea that each of us is unique. (3 to 5 sentences)',
-          starters: ['It matters that people have different blood types because …', 'Before a transfusion, blood typing keeps patients safe by …', 'If a patient gets blood that does not match, …', 'My blood type connects to the idea that I am unique because …'],
+          starters: ['Blood types matter because …', 'In the blood types video, …', 'In my blood typing lab, …', 'This shows that …'],
           min: 150,
           ideas: [
             { done: 'You explained what makes blood types different.', q: 'Did you say what makes one blood type different from another?', tip: 'Think about what sits on the surface of red blood cells.', re: /marker|antigen|\btype (a|b|ab|o)\b|\brh\b|surface/ },

@@ -66,9 +66,11 @@ window.ASSIGNMENT = {
       read: '<p><b>Read:</b> Classification is not set in stone. Linnaeus first grouped organisms by how they look (morphology). But looks can be misleading: analogous traits, like bird wings and insect wings, do the same job without coming from a common ancestor. Today scientists combine physical traits with DNA evidence to work out which organisms are truly related, so the groups can change when new evidence is found.</p>',
       questions: [
         {
-          type: 'written',
+          type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
+          from: 'the video',
           text: 'Scientists have changed how living things are classified over time. Why is it not enough to group organisms only by how they look, and how does DNA evidence help? Use at least one idea from the video. (2 to 4 sentences)',
-          starters: ['Grouping organisms only by how they look is not enough because …', 'For example, two organisms can look alike but …', 'DNA evidence helps scientists by …', 'According to the video, …'],
+          starters: ['Grouping organisms only by how they look is not enough because …', 'According to the video, …', 'For example, two organisms can look alike but …', 'This shows that DNA evidence …'],
           min: 40,
           ideas: [
             { done: 'You explained why looks alone can be misleading.', q: 'Did you explain why grouping by looks alone is not enough?',

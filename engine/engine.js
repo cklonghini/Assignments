@@ -1795,6 +1795,9 @@ function richField(id){
   var c=R[id];
   ORDER.push({kind:'rich',id:id,q:CURQ,sub:''});
   var st=S.rich[id]||(S.rich[id]={segs:[]});
+  /* a question that changed from a plain written box keeps the student's earlier answer */
+  var old=S.written[id];
+  if(!segsPlain(st.segs).trim()&&old&&(old.text||'').trim()){ st.segs=[[old.text,false]]; delete S.written[id]; }
   var wrap=h('div','sub'); mark(wrap); wrap.dataset.s='idle';
   var bar=h('div','evbar'); bar.setAttribute('role','group'); bar.setAttribute('aria-label','Highlight tools');
   var tools=c.cer?[['b','Claim (blue)','btn hl hlb'],['y','Evidence (yellow)','btn hl'],['g','Expand (green)','btn hl hlg']]
