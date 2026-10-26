@@ -24,14 +24,25 @@ var CLASS = [
 window.ASSIGNMENT = {
   title: 'Lung Capacity Lab',
   course: 'Anatomy & Physiology',
-  storageKey: 'explore-lung-capacity-lab-v1',   // kept from the old name so saved progress still loads
+  storageKey: 'lung-capacity-lab-v2',   // v2: the video and its questions were added
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 18 V34 M32 30 L26 35 M32 30 L38 35" stroke="var(--primary-ink)" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M24 30 C18 31 15 40 15 48 c0 4 3 6 7 5 l5 -2 c2 -1 2 -3 2 -5 V35 c0 -3 -2 -5 -5 -5 z M40 30 C46 31 49 40 49 48 c0 4 -3 6 -7 5 l-5 -2 c-2 -1 -2 -3 -2 -5 V35 c0 -3 2 -5 5 -5 z" fill="var(--primary-ink)"/></svg>',
 
-  /* no video: this is the box at the top of the page */
-  start: {
-    heading: 'Lab: Lung Capacity',
-    intro: 'Guiding question: What is lung capacity, and what types of factors affect it? In this lab you will investigate how sex, age, height, and activity level affect lung capacity in humans.',
-    after: 'Work from top to bottom. You will learn the lung volumes, make predictions, learn how a balloon can measure lung volume, work with one student’s balloon data, and then graph and analyze data from a whole class. The graph in Part 5 is interactive: you build it yourself and the page checks it. You will also answer three written questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.'
+  /* the full balloon demo at the top. Its captions are media/balloon-demo.vtt.
+     Made from the teacher's seven demo segments (source/balloon-demo/), joined into one video. */
+  video: {
+    title: 'Measuring Lung Volume with a Balloon',
+    src: 'media/balloon-demo.mp4',
+    seconds: 294,
+    intro: 'Guiding question: What is lung capacity, and what types of factors affect it? In this lab you will investigate how sex, age, height, and activity level affect lung capacity in humans. Please watch the video Measuring Lung Volume with a Balloon, and then work through the parts below.',
+    after: 'Work from top to bottom. You will learn the lung volumes, make predictions, see how a balloon can measure lung volume, work with one student’s balloon data, and then graph and analyze data from a whole class. Parts 3 and 4 have short clips of just that part of the video. The graph in Part 5 is interactive: you build it yourself and the page checks it. You will also answer three written questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.'
+  },
+
+  /* short clips cut from the full video. from/to are the times in the full video (they are shown to students). */
+  clips: {
+    setup:   { src: 'media/clip-setup.mp4',   from: 0.0,     to: 72.93,   seconds: 73,  title: 'Safety, and setting up the balloon and ruler' },
+    measure: { src: 'media/clip-measure.mp4', from: 72.93,   to: 211.315, seconds: 139, title: 'Measuring tidal volume, expiratory reserve volume, and vital capacity' },
+    figure1: { src: 'media/clip-figure1.mp4', from: 211.315, to: 267.571, seconds: 57,  title: 'Averaging the trials and using Figure 1' },
+    low:     { src: 'media/clip-low.mp4',     from: 267.571, to: 293.8,   seconds: 27,  title: 'Why the balloon number can come out low' }
   },
 
   parts: [
@@ -118,6 +129,7 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 3 */
     {
       title: 'Measuring with a balloon',
+      clips: ['setup', 'measure'],
       read: '<p><b>Read:</b> In the classroom, each student measures their own lung volumes with a <b>balloon</b> and a <b>ruler</b>. The more air you blow into the balloon, the larger its <b>diameter</b> (the distance across it).</p>'
         + '<p><b>Safety note:</b> If you have any sort of breathing difficulty, such as asthma or another condition, you should not collect personal data for this lab.</p>'
         + '<p><b>Part 1, Tidal volume:</b> Stretch the balloon five times to loosen it up. Take a normal breath. Breathe out into the balloon the way you normally would (do not force it). Pinch the end of the balloon to keep the air inside. Lay the balloon flat on a table and stand the ruler up beside it. Measure the diameter in centimeters and record it. Do this for three trials, then find the average.</p>'
@@ -125,6 +137,39 @@ window.ASSIGNMENT = {
         + '<p><b>Part 3, Vital capacity:</b> Take as deep a breath as you can, and breathe out as much of it as you can into the balloon. Pinch, measure, and record. Do three trials, then find the average.</p>'
         + '<p><b>Part 4, Putting it all together:</b> Use a graph (Figure 1, in the next part of this page) to turn each average balloon diameter into a lung volume.</p>',
       questions: [
+        {
+          type: 'choice',
+          text: 'In the video, why do you stretch the balloon five times before you start?',
+          options: [
+            'It loosens the rubber, so the balloon is easier to blow up.',
+            'It warms up your lungs.',
+            'It makes the balloon a perfect ball.',
+            'It lets out the air that was already inside.'
+          ],
+          answer: 0,
+          explain: 'Stretching loosens the rubber, so it is easier to blow air into the balloon.',
+          tip: 'Rewatch the start of the setting up clip. Listen to what the stretching does to the rubber.'
+        },
+        {
+          type: 'selects',
+          text: 'Measuring the diameter: Choose the right answer for each step, the way the video shows it.',
+          items: [
+            { label: 'Where does the balloon go?', options: ['Flat on the table', 'Held up in the air', 'Taped to the wall'], answer: 'Flat on the table', hint: 'Rewatch the setting up clip. Where does the balloon sit while you measure it?' },
+            { label: 'Where does the zero end of the ruler go?', options: ['On the table', 'At the top of the balloon', 'In the middle of the balloon'], answer: 'On the table', hint: 'The ruler stands up beside the balloon. Which end touches the table?' },
+            { label: 'Which side of the ruler faces you?', options: ['The centimeter side', 'The inch side', 'It does not matter'], answer: 'The centimeter side', hint: 'The lab records diameters in one unit. Which side of the ruler shows that unit?' },
+            { label: 'Where do you read the ruler?', options: ['At the top of the balloon', 'At the neck of the balloon', 'At the bottom of the balloon'], answer: 'At the top of the balloon', hint: 'The ruler starts at zero on the table. Where would you read it to get the distance across the balloon?' }
+          ]
+        },
+        {
+          type: 'selects',
+          text: 'In the video, about how wide was the balloon (its diameter) for each lung volume?',
+          options: ['About 10 cm', 'About 12 cm', 'About 18 cm'],
+          items: [
+            { label: 'Tidal volume (first trial)', answer: 'About 10 cm', hint: 'Tidal volume is the smallest of the three. Rewatch the tidal volume section of the measuring clip.' },
+            { label: 'Expiratory reserve volume', answer: 'About 12 cm', hint: 'Rewatch the expiratory reserve volume section. Listen for the number after “Measure.”' },
+            { label: 'Vital capacity', answer: 'About 18 cm', hint: 'Vital capacity is the largest of the three. Rewatch the end of the measuring clip.' }
+          ]
+        },
         {
           type: 'selects',
           text: 'Which lung volume does each balloon measurement find?',
@@ -164,19 +209,6 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
-          text: 'Why does each measurement have three trials that are then averaged?',
-          options: [
-            'So the balloon gets stretched out more each time.',
-            'Because one trial could be off by accident, and an average of several trials is more reliable.',
-            'Because the teacher needs three balloons.',
-            'So that each trial measures a different lung volume.'
-          ],
-          answer: 1,
-          explain: 'Any one breath can be a little bigger or smaller than usual, and measuring a balloon is not perfect. Averaging three trials evens out those small mistakes, so the result is more reliable.',
-          tip: 'Think about what could go wrong in just one trial. How does doing it more than once help?'
-        },
-        {
-          type: 'choice',
           text: 'Which student should NOT collect personal data for this lab?',
           options: [
             'A student who plays on the soccer team',
@@ -194,6 +226,7 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 4 */
     {
       title: 'One student’s data',
+      clips: ['figure1', 'low'],
       intro: 'Maya is a student in the class. She is female, 16 years old, 64 inches tall, and has a medium activity level. Here are her balloon measurements.',
       tableHtml: '<table><caption><b>Data Table 1: Maya’s balloon diameter</b></caption><thead><tr><th></th><th>Tidal volume (cm)</th><th>Expiratory reserve volume (cm)</th><th>Vital capacity (cm)</th></tr></thead><tbody>'
         + '<tr><th>Trial 1</th><td>9.8</td><td>12.6</td><td>17.8</td></tr>'
@@ -205,6 +238,19 @@ window.ASSIGNMENT = {
         + '<p><b>Figure 1</b> below shows the relationship between balloon diameter and lung volume. Find a diameter on the x-axis, go straight up to the curve, then go straight across to the y-axis to read the lung volume.</p>'
         + '<p>Inspiratory reserve volume can not be measured with a balloon, so we use an average value: <b>3,100 mL</b> for the average adult male and <b>1,900 mL</b> for the average adult female.</p>',
       questions: [
+        {
+          type: 'choice',
+          text: 'Why does each measurement have three trials that are then averaged?',
+          options: [
+            'So the balloon gets stretched out more each time.',
+            'Because one trial could be off by accident, and an average of several trials is more reliable.',
+            'Because the teacher needs three balloons.',
+            'So that each trial measures a different lung volume.'
+          ],
+          answer: 1,
+          explain: 'Any one breath can be a little bigger or smaller than usual, and measuring a balloon is not perfect. Averaging three trials evens out those small mistakes, so the result is more reliable.',
+          tip: 'Rewatch the start of the averaging clip. What can happen in just one trial?'
+        },
         {
           type: 'numbers',
           text: 'Data Table 1: Find Maya’s average balloon diameter for each lung volume. You can use the calculator.',
