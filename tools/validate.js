@@ -217,11 +217,13 @@ for (const dir of dirs) {
             nWritten++;
             if (!(q.ideas || []).length) W(w + ' has no ideas, so students get no "Check my ideas" button');
             if (q.starters !== undefined && !(Array.isArray(q.starters) && q.starters.every(x => typeof x === 'string' && x.trim()))) E(w + ' starters must be a list of sentence starters (text)');
+            if (q.cer && q.type !== 'highlight') E(w + ': cer: true only works on a highlight question');
             if (!(q.starters || []).length) W(w + ' has no starters, so students get no "sentence starters" help');
             (q.ideas || []).forEach((it, i) => {
               if (!it.done || !it.q || !it.tip) E(w + ' idea ' + (i + 1) + ' needs done, q and tip');
               if (Object.prototype.toString.call(it.re) !== '[object RegExp]' && !it.sentences && !it.highlight) E(w + ' idea ' + (i + 1) + ' needs re (a pattern), sentences, or highlight');
               if (it.highlight && q.type !== 'highlight') W(w + ' idea ' + (i + 1) + ' checks for highlighting but this is not a highlight question');
+              if (it.highlight && it.highlight !== true && !['claim', 'evidence', 'expand'].includes(it.highlight)) E(w + ' idea ' + (i + 1) + ': highlight must be true, or claim, evidence or expand');
             });
             break;
           case 'agree':

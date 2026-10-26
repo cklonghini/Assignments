@@ -240,15 +240,24 @@ var W={}, R={}, P={};
 /* ------------------------------------------------------------------ */
 /* highlighted-text helpers: a response is a list of [text, highlighted] pieces */
 function segsPlain(segs){return (segs||[]).map(function(s){return s[0];}).join('');}
-function segsText(segs){
+/* a highlight is false or a color: 'y' yellow, 'b' blue, 'g' green (true is yellow, from older saves).
+   Claim-evidence-reasoning (cer) answers use all three: claim blue, evidence yellow, expand green. */
+var HLC={y:'rgb(255, 255, 0)',b:'rgb(0, 255, 255)',g:'rgb(0, 255, 0)'};
+var CERW={b:'CLAIM',y:'EVIDENCE',g:'EXPAND'};
+function hlCode(x){return x===true?'y':(x||false);}
+function segsText(segs,cer){
   return (segs||[]).map(function(s){
-    if(!s[1]) return s[0];
+    var c=hlCode(s[1]); if(!c) return s[0];
     var m=s[0].match(/^(\s*)([\s\S]*?)(\s*)$/);
-    return m[2]?m[1]+'[['+m[2]+']]'+m[3]:s[0];
+    if(!m[2]) return s[0];
+    return m[1]+(cer?'['+CERW[c]+': '+m[2]+']':'[['+m[2]+']]')+m[3];
   }).join('');
 }
-function segsHlWords(segs){
-  return (segs||[]).reduce(function(n,s){return n+(s[1]?words(s[0]):0);},0);
+function segsHlWords(segs,color){
+  return (segs||[]).reduce(function(n,s){var c=hlCode(s[1]); return n+(c&&(!color||c===color)?words(s[0]):0);},0);
+}
+function cerTag(segs){
+  return 'claim (blue) '+segsHlWords(segs,'b')+', evidence (yellow) '+segsHlWords(segs,'y')+', expand (green) '+segsHlWords(segs,'g')+' words highlighted';
 }
 function isWrittenDone(id){var st=S.written[id]; return !!st&&(st.text||'').trim().length>=W[id].min;}
 function isRichDone(id){var st=S.rich[id]; return !!st&&segsPlain(st.segs).trim().length>=R[id].min;}
@@ -1744,7 +1753,12 @@ function extract(ed){
   function endsNL(){var L=segs[segs.length-1]; return !!L&&L[0].slice(-1)==='\n';}
   function isHl(el){
     var b=el.style&&el.style.backgroundColor;
-    return !!b&&!/^(transparent|initial|inherit|unset|rgba\(0,\s*0,\s*0,\s*0\))$/i.test(b);
+    if(!b||/^(transparent|initial|inherit|unset|rgba\(0,\s*0,\s*0,\s*0\))$/i.test(b)) return false;
+    var m=b.match(/(\d+)\D+(\d+)\D+(\d+)/); if(!m) return 'y';
+    var r=+m[1], g=+m[2], bl=+m[3];
+    if(r<120&&g>150&&bl>150) return 'b';
+    if(r<120&&g>150&&bl<120) return 'g';
+    return 'y';
   }
   function walk(node,hl){
     if(node.nodeType===3){push(node.nodeValue.replace(/ /g,' '),hl); return;}
@@ -1753,7 +1767,7 @@ function extract(ed){
     if(tag==='BR'){push('\n',false); return;}
     var block=/^(DIV|P|LI)$/.test(tag);
     if(block&&segs.length&&!endsNL()) push('\n',false);
-    var h2=hl||isHl(node);
+    var h2=isHl(node)||hl;
     for(var c=node.firstChild;c;c=c.nextSibling) walk(c,h2);
   }
   for(var c=ed.firstChild;c;c=c.nextSibling) walk(c,false);
@@ -1772,7 +1786,7 @@ function fillEditor(ed,segs){
     parts.forEach(function(p,i){
       if(i>0) ed.append(document.createElement('br'));
       if(!p) return;
-      if(s[1]){var sp=document.createElement('span'); sp.style.backgroundColor='rgb(255, 255, 0)'; sp.textContent=p; ed.append(sp);}
+      if(hlCode(s[1])){var sp=document.createElement('span'); sp.style.backgroundColor=HLC[hlCode(s[1])]; sp.textContent=p; ed.append(sp);}
       else ed.append(document.createTextNode(p));
     });
   });
@@ -1783,10 +1797,12 @@ function richField(id){
   var st=S.rich[id]||(S.rich[id]={segs:[]});
   var wrap=h('div','sub'); mark(wrap); wrap.dataset.s='idle';
   var bar=h('div','evbar'); bar.setAttribute('role','group'); bar.setAttribute('aria-label','Highlight tools');
-  var on=h('button','btn hl','Highlight selected text yellow'); on.type='button';
-  var off=h('button','btn ghost','Remove highlight'); off.type='button';
+  var tools=c.cer?[['b','Claim (blue)','btn hl hlb'],['y','Evidence (yellow)','btn hl'],['g','Expand (green)','btn hl hlg']]
+                 :[['y','Highlight selected text yellow','btn hl']];
+  tools.push([false,'Remove highlight','btn ghost']);
   var bmsg=h('span','msg'); bmsg.setAttribute('aria-live','polite');
-  bar.append(on,off,bmsg);
+  tools.forEach(function(t){ var b=h('button',t[2],t[1]); b.type='button'; t.push(b); bar.append(b); });
+  bar.append(bmsg);
   var ed=h('div','ev'); ed.id='f-'+id; ed.contentEditable='true'; ed.setAttribute('role','textbox'); ed.setAttribute('aria-multiline','true');
   ed.setAttribute('aria-label','Your written response'); ed.spellcheck=true; ed.setAttribute('data-placeholder','Begin your response here...');
   fillEditor(ed,st.segs);
@@ -1794,8 +1810,11 @@ function richField(id){
   wrap.append(bar,ed,cnt,msg);
   function sync(){
     var plain=segsPlain(st.segs), n=words(plain), hl=segsHlWords(st.segs), enough=plain.trim().length>=c.min;
+    var all=c.cer?(segsHlWords(st.segs,'b')&&segsHlWords(st.segs,'y')&&segsHlWords(st.segs,'g')):hl;
     cnt.textContent=n+(n===1?' word':' words')+', '+hl+' highlighted';
-    msg.textContent=enough?(hl?'Saved. Your teacher grades this one.':'Saved. Remember to highlight your transition words in yellow.'):'Write at least a couple of sentences.';
+    msg.textContent=!enough?'Write at least a couple of sentences.':all?'Saved. Your teacher grades this one.'
+      :c.cer?'Saved. Remember to highlight your claim in blue, your evidence in yellow, and where you expand on your thoughts in green.'
+      :'Saved. Remember to highlight your transition words in yellow.';
     wrap.dataset.s=enough?'ok':'idle';
   }
   function readEd(){
@@ -1811,8 +1830,8 @@ function richField(id){
     var r=sel.getRangeAt(0);
     if(ed.contains(r.commonAncestorContainer)) saved=r.cloneRange();
   });
-  [[on,true],[off,false]].forEach(function(p){
-    var btn=p[0], yes=p[1];
+  tools.forEach(function(p){
+    var btn=p[3], yes=p[0];
     btn.addEventListener('mousedown',function(e){e.preventDefault();});
     btn.addEventListener('click',function(){
       ed.focus();
@@ -1823,8 +1842,8 @@ function richField(id){
       }
       try{document.execCommand('styleWithCSS',false,true);}catch(e){}
       var ok=false;
-      try{ok=document.execCommand('hiliteColor',false,yes?'#ffff00':'transparent');}catch(e){}
-      if(!ok){try{document.execCommand('backColor',false,yes?'#ffff00':'transparent');}catch(e){}}
+      try{ok=document.execCommand('hiliteColor',false,yes?HLC[yes]:'transparent');}catch(e){}
+      if(!ok){try{document.execCommand('backColor',false,yes?HLC[yes]:'transparent');}catch(e){}}
       bmsg.dataset.s='ok'; bmsg.textContent=yes?'Highlighted.':'Highlight removed.';
       readEd();
     });
@@ -1836,39 +1855,17 @@ function richField(id){
 /* ------------------------------------------------------------------ */
 /* Written-answer self-check                                           */
 /* ------------------------------------------------------------------ */
-/* Sentence starters (from assignment.js). "Use this" adds the starter to the end of the student's answer. */
+/* Sentence starters (from assignment.js). Students read them and type them out themselves. */
 function startersEl(id,list){
   var d=h('details','starters'); d.append(h('summary',null,'Need help getting started? See sentence starters'));
   var box=h('div','stbox');
-  box.append(h('p','inote','Pick a starter, then finish the sentence in your own words. You can use more than one.'));
+  box.append(h('p','inote','Pick a starter, type it into your answer, and finish the sentence in your own words. You can use more than one.'));
   var ul=h('ul');
   list.forEach(function(t){
-    var li=h('li'), sp=h('span'); sp.append(itxt(t));
-    var b=h('button','btn ghost small','Use this'); b.type='button';
-    b.setAttribute('aria-label','Add this starter to my answer: '+plain(t));
-    /* adds the words up to the first … so the student finishes the sentence */
-    b.addEventListener('click',function(){ addToAnswer(id,plain(t).split('…')[0].replace(/\s+$/,'')); });
-    li.append(sp,b); ul.append(li);
+    var li=h('li'), sp=h('span'); sp.append(itxt(t)); li.append(sp); ul.append(li);
   });
   box.append(ul); d.append(box);
   return d;
-}
-function addToAnswer(id,t){
-  var f=$('#f-'+id); if(!f) return;
-  if(f.tagName==='TEXTAREA'){
-    var v=f.value.replace(/\s+$/,'');
-    f.value=v+(v?' ':'')+t+' ';
-    f.dispatchEvent(new Event('input',{bubbles:true}));
-    f.focus(); f.selectionStart=f.selectionEnd=f.value.length;
-    return;
-  }
-  f.focus();
-  var sel=window.getSelection(), r=document.createRange();
-  r.selectNodeContents(f); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
-  var pre=(f.textContent||'').replace(/\u00a0/g,' ');
-  var txt=(pre.trim()&&!/\s$/.test(pre)?' ':'')+t+' ';
-  var ok=false; try{ok=document.execCommand('insertText',false,txt);}catch(e){}
-  if(!ok){ f.append(document.createTextNode(txt)); f.dispatchEvent(new Event('input',{bubbles:true})); }
 }
 
 /* Writing check: capital letters, end marks, sentence problems, and common grammar mix-ups.
@@ -1926,7 +1923,6 @@ function grammarIssues(text){
 }
 function grammarCheck(getText){
   var wrap=h('div','gcheck');
-  wrap.append(h('p','inote','When you finish writing, check your capital letters, punctuation, and grammar. Words with a red wavy underline may be misspelled. Right-click or tap them for suggestions.'));
   var btn=h('button','btn','Check my writing'); btn.type='button';
   var note=h('p','msg'); note.setAttribute('aria-live','polite');
   var prev=h('div','gprev'); prev.hidden=true;
@@ -1969,7 +1965,7 @@ function grammarCheck(getText){
 
 /* Looks for key ideas with simple word matching. It never shows the answer and is not graded. */
 function sentenceCount(t){return String(t||'').split(/[.!?]+/).filter(function(x){return words(x)>=3;}).length;}
-function ideaCheck(getText,getHl,items){
+function ideaCheck(getText,getHl,items){ /* getHl returns the answer's highlighted pieces (segs) */
   var wrap=h('div','ideas');
   wrap.append(h('p','inote','Want a quick check before you move on? This looks for key ideas in your answer. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
   var btn=h('button','btn','Check my ideas'); btn.type='button';
@@ -1977,7 +1973,7 @@ function ideaCheck(getText,getHl,items){
   var list=h('ul');
   wrap.append(btn,note,list);
   btn.addEventListener('click',function(){
-    var t=String(getText()||''), low=t.toLowerCase(), hl=getHl?getHl():0;
+    var t=String(getText()||''), low=t.toLowerCase(), hl=getHl?getHl():[];
     list.textContent='';
     if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
     var found=0;
@@ -2086,7 +2082,7 @@ function figureEl(im){
 function videoSection(){
   if(!A.video) return startSection();
   var V=A.video, qs=allQuestions();
-  var nHl=qs.filter(function(q){return q.type==='highlight';}).length;
+  var nHl=qs.filter(function(q){return q.type==='highlight'&&!q.cer;}).length, nCer=qs.filter(function(q){return q.type==='highlight'&&q.cer;}).length;
   var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
   var hasClips=(A.parts||[]).some(function(p){return (p.clips||[]).length;});
   var s=h('section','task vidsec'); s.id='video';
@@ -2102,6 +2098,7 @@ function videoSection(){
       else if(nHl===1) after+=', and in one of them you will use transition words to point to your evidence and highlight them in yellow';
       else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
       after+='.';
+      if(nCer) after+=' In '+(nCer===nW?(nW===1?'it':'each one'):(nCer===1?'one of them':'some of them'))+', you will make a claim, support it with evidence, and expand on your thoughts, then highlight each part in its own color.';
     }
     after+=photoSentence(qs);
     if(GATED) after+=' Each part opens when you finish the one before it.';
@@ -2120,7 +2117,7 @@ function ideasFrom(list){
     var o={done:it.done,q:it.q,tip:it.tip};
     if(it.re){ o.re=it.re; }
     else if(it.sentences){ var k=it.sentences; o.test=function(t){return sentenceCount(t)>=k;}; }
-    else if(it.highlight){ o.test=function(t,hl){return hl>0;}; }
+    else if(it.highlight){ var col={claim:'b',evidence:'y',expand:'g'}[it.highlight]; o.test=function(t,segs){return segsHlWords(segs,col)>0;}; }
     else { o.test=function(){return false;}; }
     return o;
   });
@@ -2189,15 +2186,31 @@ function buildQuestion(q,s,tile){
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return (S.written[id]||{}).text;},null,ideasFrom(q.ideas)));
   } else if(t==='highlight'){
     ids=[];
-    R[id]={min:q.min||40};
-    o.body.append(
+    R[id]={min:q.min||40,cer:!!q.cer};
+    var intro=q.cer?[
+      h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
+      h('p','intro','Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then expand on your thoughts to explain how your evidence supports your claim.'),
+      hh('p','intro','Once you have finished, highlight parts of your response using these colors. Select the words, then press the matching button.'),
+      hh('ul','cerlist','<li><b>Claim (your opinion):</b> highlight your claim in <span class="chip chipb">blue</span></li>'
+        +'<li><b>Using evidence to support your view:</b> highlight your use of evidence in <span class="chip">yellow</span></li>'
+        +'<li><b>Expand on your thoughts:</b> highlight your use of this skill in <span class="chip chipg">green</span></li>')
+    ]:[
       h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
       h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
-      hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.'),
+      hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.')
+    ];
+    intro.forEach(function(e){o.body.append(e);});
+    o.body.append(
       q.starters&&q.starters.length?startersEl(id,q.starters):'',
       richField(id),
       grammarCheck(function(){return segsPlain((S.rich[id]||{}).segs);}));
-    if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return segsHlWords((S.rich[id]||{}).segs);},ideasFrom(q.ideas)));
+    /* a cer answer checks each color instead of one yellow highlight */
+    var ideas=(q.ideas||[]).filter(function(it){return !(q.cer&&it.highlight===true);});
+    if(q.cer) ideas=ideas.concat([
+      {done:'You highlighted your claim in blue.',q:'Did you highlight your claim in blue?',tip:'Select the sentence that gives your answer, then press the blue Claim button.',highlight:'claim'},
+      {done:'You highlighted your evidence in yellow.',q:'Did you highlight your evidence in yellow?',tip:'Select the facts or examples you used to support your claim, then press the yellow Evidence button.',highlight:'evidence'},
+      {done:'You highlighted where you expand on your thoughts in green.',q:'Did you highlight where you expand on your thoughts in green?',tip:'Select the sentences that explain how your evidence supports your claim, then press the green Expand button.',highlight:'expand'}]);
+    if(ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return (S.rich[id]||{}).segs;},ideasFrom(ideas)));
   } else if(t==='agree'){
     ids=[];
     o.body.append(agreeField(id,q));
@@ -2601,7 +2614,7 @@ function answerGroups(){
     } else if(o.kind==='rich'){
       var st=S.rich[o.id]||{segs:[]}, ptxt=segsPlain(st.segs).trim();
       it.resp=[ptxt||'(no answer)'];
-      if(ptxt){ it.rich=st.segs; it.tag=words(ptxt)+' words, '+segsHlWords(st.segs)+' highlighted as transition words'; }
+      if(ptxt){ it.rich=st.segs; it.cer=!!(R[o.id]&&R[o.id].cer); it.tag=words(ptxt)+' words, '+(it.cer?cerTag(st.segs):segsHlWords(st.segs)+' highlighted as transition words'); }
     } else if(o.kind==='agree'){
       var ag=S.agree[o.id]||{};
       it.resp=o.items.map(function(x,i){return ((ag.on||[])[i]?'[x] ':'[ ] ')+plain(x);});
@@ -2638,7 +2651,9 @@ function buildSummary(){
   var p=summaryParts();
   var L=[TITLE,COURSE,fullName()||'(name not entered)','Date completed: '+p.date,'','Results '+CODE_SYM[timeCode()]];
   p.res.forEach(function(r){L.push(r[0]+': '+r[1]);});
-  L.push('(Text inside [[double brackets]] was highlighted in yellow as transition words that point to evidence.)');
+  var anyCer=Object.keys(R).some(function(k){return R[k].cer;}), anyHl=Object.keys(R).some(function(k){return !R[k].cer;});
+  if(anyHl) L.push('(Text inside [[double brackets]] was highlighted in yellow as transition words that point to evidence.)');
+  if(anyCer) L.push('(In claim-evidence answers, [CLAIM: …] was highlighted blue, [EVIDENCE: …] yellow, and [EXPAND: …] green.)');
   L.push('');
   p.groups.forEach(function(g){
     L.push((g.num!==''?g.num+'. ':'')+plain(g.text));
@@ -2646,7 +2661,7 @@ function buildSummary(){
     g.items.forEach(function(it){
       var pre=it.sub?'   '+plain(it.sub)+': ':'   ';
       if(it.photo!==undefined){ L.push('   '+(it.photo?'[photo added - it shows only in the PDF]':'[no photo added]')); if(it.photo||it.cap) L.push('   Caption: “'+it.resp[0].replace(/\n/g,' ')+'”'); }
-      else if(it.rich){ if(it.sub) L.push('   '+plain(it.sub)+':'); String(segsText(it.rich)).split('\n').forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
+      else if(it.rich){ if(it.sub) L.push('   '+plain(it.sub)+':'); String(segsText(it.rich,it.cer)).split('\n').forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
       else if(it.resp.length===1) L.push(pre+'“'+it.resp[0].replace(/\n/g,' ')+'”'+(it.tag?' ['+it.tag+']':''));
       else { if(it.sub) L.push('   '+plain(it.sub)+':'); it.resp.forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
     });
@@ -2699,7 +2714,7 @@ async function buildPdf(){
   doc.setAuthor(pdfSafe(fullName()));
   var F=await doc.embedFont(L.StandardFonts.Helvetica), FB=await doc.embedFont(L.StandardFonts.HelveticaBold), FI=await doc.embedFont(L.StandardFonts.HelveticaOblique), FBI=await doc.embedFont(L.StandardFonts.HelveticaBoldOblique);
   var W0=612, PH=792, M=54, CW=W0-2*M, y=0, page=null;
-  var INK=L.rgb(22/255,33/255,58/255), MUTED=L.rgb(82/255,96/255,122/255), TEAL=L.rgb(11/255,95/255,122/255), LINE=L.rgb(211/255,219/255,232/255), RESP=L.rgb(10/255,80/255,105/255), YEL=L.rgb(1,0.93,0);
+  var INK=L.rgb(22/255,33/255,58/255), MUTED=L.rgb(82/255,96/255,122/255), TEAL=L.rgb(11/255,95/255,122/255), LINE=L.rgb(211/255,219/255,232/255), RESP=L.rgb(10/255,80/255,105/255), YEL=L.rgb(1,0.93,0), HLP={y:YEL,b:L.rgb(0,1,1),g:L.rgb(0,1,0)};
   function newPage(){ page=doc.addPage([W0,PH]); y=M; }
   function room(n){ if(!page||y+n>PH-M) newPage(); }
   function wrap(t,font,size,width){
@@ -2741,7 +2756,7 @@ async function buildPdf(){
           if(m[1]){ cur=null; continue; }
           if(!cur){ cur={runs:[],tw:0}; paras[paras.length-1].push(cur); }
           var rw=font.widthOfTextAtSize(m[2],size);
-          cur.runs.push({w:m[2],hl:!!s[1],tw:rw}); cur.tw+=rw;
+          cur.runs.push({w:m[2],hl:hlCode(s[1]),tw:rw}); cur.tw+=rw;
         }
       });
     });
@@ -2758,11 +2773,12 @@ async function buildPdf(){
         ln.forEach(function(tk,i){
           var rx=x;
           tk.runs.forEach(function(r){
-            if(r.hl) page.drawRectangle({x:rx-1,y:base-2.4,width:r.tw+2,height:size+3.2,color:YEL});
+            if(r.hl) page.drawRectangle({x:rx-1,y:base-2.4,width:r.tw+2,height:size+3.2,color:HLP[r.hl]});
             rx+=r.tw;
           });
           var nx=ln[i+1];
-          if(nx&&tk.runs[tk.runs.length-1].hl&&nx.runs[0].hl) page.drawRectangle({x:x+tk.tw-1,y:base-2.4,width:sp+2,height:size+3.2,color:YEL});
+          var lr=tk.runs[tk.runs.length-1].hl;
+          if(nx&&lr&&nx.runs[0].hl===lr) page.drawRectangle({x:x+tk.tw-1,y:base-2.4,width:sp+2,height:size+3.2,color:HLP[lr]});
           x+=tk.tw+sp;
         });
         x=x0;
@@ -2950,7 +2966,7 @@ function finishEl(){
   });
 
   var txtd=h('details','backup'); txtd.append(h('summary',null,'Can’t download? Copy my answers as text'));
-  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted transition words will be marked with [[double brackets]].'));
+  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted transition words will be marked with [[double brackets]]'+(Object.keys(R).some(function(k){return R[k].cer;})?', and your claim, evidence, and expanding will be marked [CLAIM: …], [EVIDENCE: …], and [EXPAND: …]':'')+'.'));
   var tr=h('div','row');
   var tmake=h('button','btn ghost','Show my answers as text'); tmake.type='button';
   tr.append(tmake); txtd.append(tr);

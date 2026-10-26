@@ -324,8 +324,7 @@ graph a different factor. The PDF shows every step and a picture of the student'
 ```
 
 `starters` (2 to 5) are sentence starters. Students open "Need help getting started? See sentence starters" above
-the box. Each starter has a **Use this** button that adds the words before the first `…` to the end of their answer,
-and they finish the sentence. Write starters that fit this question and use the video's words, but never give the
+the box. There is no button to drop a starter in: students type the starter themselves and finish the sentence. Write starters that fit this question and use the video's words, but never give the
 answer: stop each one before the part the student must think of. Use `…` where the student fills in.
 
 Every written and highlight box also has a **Check my writing** button. It runs in the browser (nothing is sent
@@ -344,6 +343,14 @@ The instructions tell students to provide evidence along with transition words t
 "According to the video," "This shows that"), then go back and highlight those transition words in yellow.
 Give these questions a "used transition words" idea (a pattern for common evidence transitions) and a "highlighted" idea.
 The highlighted words are marked with `[[double brackets]]` in the Canvas text-entry fallback and in yellow on the PDF.
+
+**Claim, evidence, reasoning:** add `cer: true` to a highlight question that asks students to argue a point with
+evidence. Students then make a claim, support it with evidence, and expand on their thoughts, and highlight each part
+in its own color with three buttons: claim in blue, evidence in yellow, expand in green (the teacher's colors). `from`
+names the evidence source in the instructions (default `'the video'`, for example `'Station 3'` or `'your dissection
+and the video'`). The engine adds three "Check my ideas" items (claim, evidence, and expand highlighted) and drops any
+`highlight: true` idea. The PDF shows the three colors, and the text fallback marks them `[CLAIM: …]`, `[EVIDENCE: …]`,
+`[EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
 
 ### photo: the student adds a photo of their own work (teacher graded)
 

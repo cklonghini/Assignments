@@ -258,6 +258,8 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
+          from: 'Station 3',
           text: 'When the national anthem is sung or the pledge of allegiance is said, it is customary to place a hand over the heart. What is not completely anatomically accurate about where we are taught to place our hand? Where should we place our hand, based on where the heart is actually located? Use evidence from Station 3, along with transition words that tell where your evidence comes from. For example: “According to Station 3, …” or “The card explains that …” (3 to 5 sentences)',
           starters: ['We are taught to place our hand …', 'According to Station 3, the heart is actually located …', 'The card explains that …', 'This means we should place our hand …'],
           min: 80,

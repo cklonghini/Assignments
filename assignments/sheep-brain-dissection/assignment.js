@@ -635,6 +635,8 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
+          from: 'your own dissection and the video',
           text: 'How did doing this dissection help you understand the brain’s structure better than only looking at diagrams or photos? Use evidence from your own dissection and the video.',
           starters: ['During my dissection, I could see …', 'Unlike a diagram, the real brain …', 'According to the video, …', 'For example, when I …'],
           min: 60,

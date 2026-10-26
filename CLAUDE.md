@@ -88,8 +88,12 @@ lab agreement, and a ready-to-go selfie `photo`.
 - Highlight questions tell students to provide evidence in their response, along with transition words that bring
   attention to that evidence. Once they finish, they go back and highlight those transition words in yellow to show
   where their evidence is. The teacher wants this on the main written prompt that asks for evidence from the video.
+- Highlight questions that ask students to argue a point with evidence use claim-evidence-reasoning colors
+  (`cer: true`): claim in blue, evidence in yellow, expand on your thoughts in green. Use the plain yellow
+  transition-word highlight for answers that describe a process instead of arguing a claim.
 - **Every written question has 2 to 5 sentence starters** (`starters`) written for that question. They help students
-  begin, use the video's words, and stop before the answer. Every written box also has a "Check my writing" button
+  begin, use the video's words, and stop before the answer. Students
+  type the starters themselves; there is no button that drops one in. Every written box also has a "Check my writing" button
   (capitals, punctuation, sentences, common grammar mix-ups). This is built into the engine.
 - Copy and paste are turned off on every assignment so students do their own thinking. This is built into the engine.
 - Write scientific names between asterisks (`*Homo sapiens*`) so they show in italics everywhere, including the PDF.

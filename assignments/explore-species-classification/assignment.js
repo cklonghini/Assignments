@@ -201,6 +201,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
           text: 'Carl Linnaeus developed the binomial nomenclature system for naming species, which is still in use today. Discuss the advantages of using scientific names over common names when identifying species. Provide examples from the video, such as the mountain lion (also called a cougar or a puma), to explain why scientific names are important for consistency in classification.',
           starters: ['One advantage of scientific names is …', 'According to the video, the mountain lion …', 'For example, …', 'This shows that scientific names …'],
           min: 40,

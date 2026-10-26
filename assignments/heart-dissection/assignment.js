@@ -445,6 +445,8 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
+          from: 'your dissection and the video',
           text: 'How was doing this dissection helpful for understanding the heart’s structure AND function? Use evidence from your dissection and the video.',
           starters: ['During my dissection, I observed …', 'This shows that the structure of the … helps it …', 'According to the video, …', 'For example, when I …'],
           min: 60,

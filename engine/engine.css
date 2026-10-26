@@ -419,3 +419,9 @@ details.starters>summary{cursor:pointer;font-weight:700;color:var(--primary);pad
 /* teacher view banner */
 .teachview{margin:12px 0 0;padding:10px 14px;border:2px solid var(--primary);border-radius:10px;background:var(--surface);color:var(--ink);font-weight:700}
 @media print{.teachview{display:none}}
+
+/* claim-evidence-reasoning highlighter colors: claim blue, evidence yellow, expand green */
+.btn.hl.hlb,.chip.chipb{background:#00ffff;color:#16213a;border-color:#00a3a3}
+.btn.hl.hlg,.chip.chipg{background:#00ff00;color:#16213a;border-color:#00a300}
+.cerlist{margin:4px 0 10px;padding-left:1.4em;display:grid;gap:4px;max-width:68ch}
+.stbox li{justify-content:flex-start}

@@ -404,6 +404,8 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          cer: true,              // claim (blue), evidence (yellow), expand (green)
+          from: 'the class data and graphs',
           text: 'Analysis: Explain what the class data show. Tell how each factor (sex, height, age, and activity level) relates to vital capacity, and use numbers or patterns from the data and graphs as evidence. Then write out at least three ways the data may not be completely accurate, with a specific way to fix each problem in the future. (6 or more sentences)',
           starters: ['The class data show that …', 'According to the graph, as height increases, …', 'For example, the average vital capacity for … was …', 'One reason the data may not be accurate is …', 'To fix this in the future, we could …'],
           examples: 'Examples: “According to the data,” “The graph shows that,” “For example,” “One piece of evidence is,” or “This shows that.”',
