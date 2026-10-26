@@ -120,6 +120,14 @@ Listen button under the picture reads it aloud. Give `text` to any picture that 
 
 Any question can also show a picture with `img` (see below), for example a numbered diagram to label.
 
+## Teacher view
+
+Add `?teacher=tm7k2q` to any assignment link (for example `https://PROJECT.vercel.app/assignments/heart-dissection/?teacher=tm7k2q`)
+to open it as the teacher: every part is open, the Finish section shows, copy and paste work, and a note at the top
+says it is the teacher view. Answers entered there are saved under their own key, apart from student progress.
+Students never see this unless they are given the link. The code is in `engine/engine.js`, so it keeps honest
+students out but is not a password.
+
 ## Copy and paste are off
 
 So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
@@ -137,8 +145,7 @@ checked items in a part are done (auto-checked answers right, written answers lo
 bottom of the part with a button such as "Close Part 1 and open Part 2". Selecting it folds Part 1 down to its
 banner (with a "Done" label), plays confetti with a "Part 1 complete!" message, and opens Part 2. Students who
 turn off motion on their device get the message without the confetti. A folded part has a "Look back at Part 1"
-button, so students can reread it. Until then, a note at its bottom says "Finish at least 80% of Part 1 to continue to Part 2. So far you
-have finished 40%." A part with `gate: true` (lab setup and safety) needs every item done. The Finish section (PDF, Canvas, backup) stays hidden until the student closes the last part.
+button, so students can reread it. Until then, a note at its bottom says "You need to complete Part 1 to continue on to Part 2." A part with `gate: true` (lab setup and safety) needs every item done. The Finish section (PDF, Canvas, backup) stays hidden until the student closes the last part.
 
 The student moves on with the button, not on their own, so they can read the explanation after their last right
 answer, and a part never folds up while they are still typing a written answer. Which part is open is saved with

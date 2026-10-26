@@ -65,7 +65,7 @@ lab agreement, and a ready-to-go selfie `photo`.
   are part of the engine. Keep them.
 - Each part starts with a thick colored line and a banner title so students can see they are moving to a new section.
 - Parts open one at a time. When at least 80% of a part is done (all of a `gate: true` setup part), the student closes it with a button, it folds down, confetti
-  plays, and the next part opens. The Finish and submit section shows only after the last part is closed. This is built into the engine (see "One part at a time" in `docs/ASSIGNMENT_FORMAT.md`).
+  plays, and the next part opens. The Finish and submit section shows only after the last part is closed. The teacher view (`?teacher=tm7k2q` on the link) opens everything. This is built into the engine (see "One part at a time" in `docs/ASSIGNMENT_FORMAT.md`).
 - No "watch for" timestamp boxes. Each clip is titled "Rewatch just this part", with its times in the full video.
 - The full video goes at the top. Do not add the old "Remember, Eagles!" line; the teacher removed it.
 

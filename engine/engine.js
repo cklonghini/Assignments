@@ -35,6 +35,11 @@ function injectPage(){
     +'<div class="statsrow"><span id="sSaved"></span></div></div>'
     +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript></div>');
   document.querySelector('h1.display').textContent=A2.title;
+  if(/[?&]teacher=tm7k2q(&|$)/.test(location.search)){
+    var tv=document.createElement('p'); tv.className='teachview'; tv.setAttribute('role','note');
+    tv.textContent='Teacher view: every part is open and copy and paste work. Answers you enter here are saved separately from student work. Students should use the link without "?teacher=…".';
+    document.querySelector('header.top').after(tv);
+  }
   document.querySelector('p.course').textContent=A2.course;
 }
 
@@ -49,7 +54,10 @@ injectPage();
 /* ------------------------------------------------------------------ */
 /* State and saving                                                    */
 /* ------------------------------------------------------------------ */
-var KEY=A.storageKey||('assignment-'+TITLE), storageOK=true, lastSaved=null, finished=false;
+/* Teacher view: the assignment link plus ?teacher=tm7k2q opens every part at once, shows the Finish section, allows
+   copy and paste, and saves under its own key so it never mixes with a student's progress on the same computer. */
+var TEACHER=/[?&]teacher=tm7k2q(&|$)/.test(location.search);
+var KEY=(A.storageKey||('assignment-'+TITLE))+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
 function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
@@ -1702,7 +1710,7 @@ function gateSetup(app){
   GATE=null;
   var gi=-1;
   (A.parts||[]).some(function(p,i){ if(p.gate){gi=i; return true;} return false; });
-  if(BOARD||GATED||gi<0||gi>=(A.parts||[]).length-1) return;
+  if(BOARD||GATED||TEACHER||gi<0||gi>=(A.parts||[]).length-1) return;
   var n=gi+1, word=A.partWord||'Part', last=(A.parts||[]).length;
   var later=[]; for(var k=n+1;k<=last;k++) later.push($('#part'+k,app));
   var before=[]; for(var j=1;j<=n;j++) before.push($('#part'+j,app));
@@ -2296,7 +2304,7 @@ function videoStops(block,qs){
 /* part before it and selects Continue. Finished parts fold down to   */
 /* their banner and can be opened again. gated: false turns this off. */
 /* ------------------------------------------------------------------ */
-var GATED=!BOARD&&A.gated!==false&&(A.parts||[]).length>1, REOPEN={};
+var GATED=!BOARD&&!TEACHER&&A.gated!==false&&(A.parts||[]).length>1, REOPEN={};
 function partWord(n){return (A.partWord||'Part')+' '+n;}
 function partDone(sec){return partShare(sec)>=1;}
 /* share of a part's checked items that are done (1 when the part has none) */
@@ -2307,7 +2315,6 @@ function partShare(sec){
 /* the next part opens at unlockAt (default 80%) of this part. A gate: true part (lab setup and safety) needs all of it. */
 var UNLOCK=typeof A.unlockAt==='number'&&A.unlockAt>0&&A.unlockAt<=1?A.unlockAt:0.8;
 function partNeed(n){return (A.parts[n-1]||{}).gate?1:UNLOCK;}
-function pctTxt(x){return Math.round(x*100)+'%';}
 function gateEls(s,n){
   var last=n===(A.parts||[]).length;
   s.querySelector('h2').tabIndex=-1;
@@ -2347,8 +2354,7 @@ function applyGate(){
     $('.pmsg',g).textContent=sh>=1?'You finished '+partWord(n)+'!'
       :'You finished enough of '+partWord(n)+' to move on. You can finish the rest first, or move on now and come back to it later.';
     var nx=$('.pnext',sec); nx.hidden=past||!g.hidden;
-    nx.textContent=need>=1?'Finish all of '+partWord(n)+' to continue to '+to+'.'
-      :'Finish at least '+pctTxt(need)+' of '+partWord(n)+' to continue to '+to+'. So far you have finished '+Math.floor(sh*100)+'%.';
+    nx.textContent='You need to complete '+partWord(n)+' to continue on to '+to+'.';
   });
   /* the full video, when it sits after part N, shows once part N+1 is open */
   var vAfter=A.video&&A.video.afterPart||0, vid=$('#video');
@@ -3169,7 +3175,7 @@ function decorate(){
    page, and no pasting or dropping text into it. The Finish section (text copy, backup code) still works.
    copyPaste: true in assignment.js turns this off. */
 (function(){
-  if(A.copyPaste===true) return;
+  if(A.copyPaste===true||TEACHER) return;
   var tell=null;
   function allowed(e){ var t=e.target; t=t&&t.nodeType===3?t.parentNode:t; return !!(t&&t.closest&&t.closest('#finish')); }
   function stop(e,msg){

@@ -415,3 +415,7 @@ details.starters>summary{cursor:pointer;font-weight:700;color:var(--primary);pad
 .glist{margin:8px 0 0;padding-left:1.6em;display:grid;gap:4px;font-size:.95rem;max-width:68ch}
 .glist q{font-weight:700;color:var(--bad)}
 @media print{details.starters,.gcheck{display:none}}
+
+/* teacher view banner */
+.teachview{margin:12px 0 0;padding:10px 14px;border:2px solid var(--primary);border-radius:10px;background:var(--surface);color:var(--ink);font-weight:700}
+@media print{.teachview{display:none}}
