@@ -107,6 +107,15 @@ h1{margin:0;font-weight:800;font-size:clamp(2rem,6vw,3.1rem);line-height:1.04;le
 .sci select,.sci option{font-style:italic}
 #f-fx{font-style:italic}
 .vidtitle{margin:0 0 8px;font-weight:700}
+/* questions inside a video */
+.vqs{margin:4px 0 18px}
+.vqs .q{margin:14px 0}
+.vqs .q[hidden]{display:none}
+.vpop{margin:10px 0;padding:12px 16px;border:3px solid var(--primary);border-radius:10px;background:var(--surface);color:var(--ink)}
+.vpop.over{position:absolute;inset:0;margin:0;border-radius:10px;overflow:auto;z-index:2}
+.vpop .q{margin:8px 0}
+.vpophead{margin:0 0 4px;font-weight:700;color:var(--primary)}
+.vpop .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .reading{max-width:68ch;margin:16px 0}
 .wfor{border-left:5px solid var(--primary);background:var(--surface);padding:8px 14px;margin:12px 0;border-radius:0 8px 8px 0;max-width:68ch}
 .learn{background:var(--learn);border:1px solid var(--learn-line);border-radius:8px;padding:12px 16px;margin:12px 0 16px;max-width:68ch}
@@ -191,6 +200,15 @@ th{background:var(--bg)}
 .qimg{margin:10px 0 14px;max-width:560px}
 .qimg img{display:block;max-width:100%;height:auto;max-height:440px;border-radius:8px;background:#fff;border:1px solid var(--line)}
 .qimg figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+/* a student's own photo */
+.photo [hidden]{display:none}
+.photo .qimg img{max-height:360px}
+.photo>label{margin-top:12px}
+.task[hidden],.gate[hidden]{display:none}
+.gate{margin:48px 0 0;padding:16px 18px;border:2px dashed var(--muted);border-radius:10px;font-weight:700;font-size:1.05rem}
+.gate[data-s="ok"]{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
+.signlab{margin-top:14px}
+.campanel video{display:block;width:100%;max-width:480px;margin:12px 0 8px;border-radius:8px;background:#000}
 
 /* game board */
 .board{--tile:#1c2f9e;--tile-ink:#ffd447;display:grid;grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));gap:6px;margin:14px 0 8px}

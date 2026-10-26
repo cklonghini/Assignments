@@ -29,7 +29,8 @@ video: {
   seconds: 324,                      // length, rounded up
   heading: 'Watch the video',        // optional
   intro: '...',                      // optional: replaces the default "Please watch the video..." sentence
-  after: '...'                       // optional: replaces the default "Work from top to bottom..." paragraph
+  after: '...',                      // optional: replaces the default "Work from top to bottom..." paragraph
+  afterPart: 1                       // optional: show this video section after part 1 instead of at the top
 }
 ```
 
@@ -70,6 +71,25 @@ video. Students see "Watch this clip: TITLE (0:00 to 3:27 of the video “OF”)
                 of: 'Multiple Alleles, ABO Blood Types, and Punnett Squares' }
 ```
 
+A whole second video can go in a part as a clip: give it `from: 0`, `to` its length, `of` its title, and
+`whole: true`. Students then see "Watch the video: TITLE", and the PDF lists it as a full video.
+
+### Questions inside a video
+
+A question with `at` (seconds into the part's first clip) pops up inside that video. At that time the video pauses and
+the question covers the player (on a narrow screen it shows right under the player). Students must answer it right to
+keep watching, and they cannot skip ahead past a question they have not answered. A "Rewatch this section" button
+goes back to the previous question's time. Answered questions stay under the video, and they print in the
+PDF like any other question. Only `choice`, `multi`, `selects`, `typed`, and `order` questions can go inside a video.
+Put each `at` at the end of a caption line, right after the video says the answer. Keep it to about 5 per video.
+Example: Step 1 of `assignments/sheep-brain-dissection/`.
+
+```js
+{ at: 93, type: 'choice', text: 'The video says the central nervous system (CNS) consists of which parts?',
+  options: ['The brain and spinal cord', 'The nerves throughout the body'], answer: 0,
+  tip: 'Rewind to about 1:05 and listen for what the CNS “consists of.”', explain: '...' }
+```
+
 ## parts
 
 ```js
@@ -85,6 +105,11 @@ video. Students see "Watch this clip: TITLE (0:00 to 3:27 of the video “OF”)
 ```
 
 Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
+
+`gate: true` (optional, one part only): every later part, and the Finish section with the PDF download, stays hidden
+until everything in this part and every part before it is done (every question answered right, every written or
+photo box filled in). A note under the part says which parts are locked.
+Once the later parts open, they stay open. Use it for a lab's safety and setup step.
 
 `images` (optional): pictures such as station cards. Selecting one opens it full size in a new tab. `alt` is
 required for screen readers. `text` (HTML) is the words on the picture: students can open it as text, and a
@@ -271,6 +296,35 @@ The instructions tell students to provide evidence along with transition words t
 "According to the video," "This shows that"), then go back and highlight those transition words in yellow.
 Give these questions a "used transition words" idea (a pattern for common evidence transitions) and a "highlighted" idea.
 The highlighted words are marked with `[[double brackets]]` in the Canvas text-entry fallback and in yellow on the PDF.
+
+### photo: the student adds a photo of their own work (teacher graded)
+
+For hands-on labs done at home, such as a dissection. Example: `assignments/heart-dissection/`.
+
+```js
+{ type: 'photo', text: 'Take a photo of your heart with the anterior side facing up.',
+  caption: 'What does your photo show? Tell where the apex and the base are.',   // optional label for the caption box
+  placeholder: 'For example: ...' }                                               // optional example in the caption box
+```
+
+Students press **Add a photo** (on a phone they can take a picture or choose one they already took) or **Take a
+picture with my camera**, which uses the computer's webcam right on the page (good for a ready-to-go selfie). The page
+shrinks the photo (longest side 1600 pixels, JPEG) and keeps it in the browser (IndexedDB), so it survives a
+reload. A photo box counts as done when it has a photo; students can still finish without one. The PDF shows each
+photo with its caption, or "no photo added", and a "Photos added" line in the results. Photos are not in the backup
+code or the Canvas text fallback (the text says a photo was added). Keep it to about 5 photo boxes; each photo adds
+about 100 KB to the PDF. Photo boxes do not work on a game board.
+
+### agree: a lab agreement students check and sign
+
+```js
+{ type: 'agree', text: 'Lab agreement. Read each statement, and check the box to show you agree. Then sign with your name.',
+  sign: true,                                       // optional: students type their first and last name to sign
+  items: [ 'I will follow safe lab procedures.', 'I will treat the specimen with respect.' ] }
+```
+
+It is done when every box is checked (and the name is typed, with `sign`). It is not scored. The PDF lists each
+statement with [x] or [ ], the signature, and the date the student agreed.
 
 ### ideas (the "Check my ideas" list)
 
