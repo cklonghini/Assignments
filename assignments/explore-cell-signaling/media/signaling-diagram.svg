@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 360" width="640" height="720">
+<rect width="320" height="360" fill="#ffffff"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16213a"/></marker></defs>
+<circle cx="150" cy="235" r="110" fill="#fff3b8" stroke="#16213a" stroke-width="2.5"/>
+<path d="M108 62 Q108 112 150 112 Q192 112 192 62" fill="none" stroke="#58cfe6" stroke-width="16" stroke-linecap="round"/>
+<rect x="142" y="108" width="16" height="72" fill="#58cfe6"/>
+<ellipse cx="150" cy="186" rx="26" ry="20" fill="#58cfe6"/>
+<circle cx="150" cy="86" r="13" fill="#d63f78"/>
+<rect x="105" y="224" width="90" height="22" rx="11" fill="#d63f78"/>
+<rect x="105" y="262" width="90" height="22" rx="11" fill="#d63f78"/>
+<g stroke="#16213a" stroke-width="2.5" fill="none">
+<path d="M150 207 L150 221" marker-end="url(#ah)"/>
+<path d="M150 247 L150 259" marker-end="url(#ah)"/>
+<path d="M150 285 L150 291" marker-end="url(#ah)"/>
+<path d="M205 224 q12 0 12 12 v36 q0 12 -12 12"/>
+</g>
+<polygon points="150.0,292.0 154.8,304.8 166.7,298.1 162.1,311.0 175.6,313.5 163.8,320.4 172.5,331.0 159.0,328.7 158.9,342.4 150.0,332.0 141.1,342.4 141.0,328.7 127.5,331.0 136.2,320.4 124.4,313.5 137.9,311.0 133.3,298.1 145.2,304.8" fill="#7ed99a" stroke="#16213a" stroke-width="2"/>
+<g stroke="#52607a" stroke-width="1.5">
+<line x1="258" y1="46" x2="165" y2="82"/><line x1="258" y1="140" x2="162" y2="140"/>
+<line x1="258" y1="254" x2="222" y2="254"/><line x1="258" y1="322" x2="180" y2="320"/>
+</g>
+<g font-family="Atkinson Hyperlegible, Arial, sans-serif" font-weight="700" font-size="15" text-anchor="middle" fill="#ffffff">
+<circle cx="272" cy="42" r="14" fill="#0b5f7a"/><text x="272" y="47.5">A</text>
+<circle cx="272" cy="140" r="14" fill="#0b5f7a"/><text x="272" y="145.5">B</text>
+<circle cx="272" cy="254" r="14" fill="#0b5f7a"/><text x="272" y="259.5">C</text>
+<circle cx="272" cy="322" r="14" fill="#0b5f7a"/><text x="272" y="327.5">D</text>
+</g>
+</svg>
