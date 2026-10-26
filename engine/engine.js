@@ -1883,18 +1883,49 @@ var GFIX=[
   [/\bits (a|an|the|not|because|very|important|also|going|true)\b/gi,function(){return 'Use “it’s” (it is) here. “Its” means belonging to it.';}],
   [/\bit's (own)\b/gi,function(){return 'Use “its” (no apostrophe) here. It means belonging to it.';}],
   [/\bto (much|many)\b/gi,function(m){return 'Use “too” (meaning more than enough): “too '+m.split(' ')[1]+'.”';}],
+  [/\b(is|are|was|were|be|get|got|seems?|felt|feels?) to (big|small|fast|slow|hard|easy|hot|cold|late|early|thick|thin|long|short|little|high|low|loud|weak|strong)\b/gi,function(m){return 'Use “too” here (meaning more than enough): “… too '+m.split(' ')[2]+'.”';}],
+  [/\bto(?=[.!?])/gi,function(m,t,i){return /\b(attached|connected|related|compared|according|due|next|close|similar|belongs?|listen|talk|went|go|goes|come|comes|used|up|back|happens?|happened|want|wants|need|needs|have|has|had|going|supposed)\s+$/i.test(t.slice(Math.max(0,i-14),i))?null:'If you mean “also,” use “too” at the end of a sentence.';}],
+  [/\btwo (the|a|an|my|your|our|their|his|her|its|be|see|get|go|make|do|help|find|show|keep|move|carry|pump|take|have|know|learn|use|test|check|form|break|bring|send|stop|start|work|look|understand|protect|supply|deliver|remove|fight|fit|hold)\b/gi,function(){return 'Use “to” here. “Two” is the number 2.';}],
+  [/\btwo (much|many)\b/gi,function(m){return 'Use “too” here (meaning more than enough). “Two” is the number 2.';}],
+  [/\btoo (the|a|an|my|your|our|their|his|her|be|see|get|go|make|do|help|find|show|carry|pump|take|keep|move)\b/gi,function(){return 'Use “to” here. “Too” means “also” or “more than enough.”';}],
+  [/\b(thing|things|stuff)\b/gi,function(m,t,i){return /living\s+$/i.test(t.slice(Math.max(0,i-8),i))?null:'“'+m+'” is not specific. Name exactly what you mean, such as the part, the process, or the tool.';}],
   [/\ba (?=[aeio][a-z])(?!one\b|once\b)[a-z]+/g,function(){return 'Use “an” before a word that starts with a vowel sound.';}],
   [/\b([a-z]+) \1\b/gi,function(m){return 'The word “'+m.split(' ')[0]+'” is written twice in a row.';}],
   [/ +[.,!?;:](?=\s|$)/g,function(){return 'Take out the space before this punctuation mark.';}],
   [/[a-z]{2}[.!?,;:](?=[A-Za-z])/g,function(){return 'Add a space after this punctuation mark.';},2]
 ];
 var GSUB=/^(because|since|although|though|when|while|if|unless|whereas|after|before|even though)\b/i;
+/* a light test for a verb: helping verbs, common irregular verbs, words ending in -ed or -s, or a word after I/we/they */
+var GAUX=/^(is|are|was|were|be|been|am|being|has|have|had|do|does|did|can|could|will|would|shall|should|may|might|must|it's|that's|there's|here's|what's|he's|she's|i'm|i've|we're|they're|you're|we've|they've|don't|doesn't|didn't|can't|won't|isn't|aren't|wasn't|weren't|couldn't|shouldn't|wouldn't|let's)$/;
+var GIRR=/^(went|came|saw|made|took|got|gave|found|felt|thought|knew|left|kept|held|beat|ran|grew|became|began|brought|built|cut|put|set|said|told|showed|lost|meant|sent|spent|stood|understood|wrote|ate|fell|forgot|heard|hit|hurt|led|let|paid|read|sat|spoke|stuck|taught|threw|tore|woke|wore|won|broke|chose|drew|bled|fed|fought|dug|slid|split|spread|shut|need|think|know|want|like|see|feel|believe|learned|learnt|get|go|make|help|keep|use|move|carry|pump|take|give|look|find|work|flow|contain|connect|separate|return|send|receive|supply|deliver|absorb|release|exchange|protect|control|cause|affect|increase|decrease|depend|allow|prevent|stop|form|produce|create|break|fight|clot|bind|fit|attach|enter|leave|travel|pass|reach|push|pull|squeeze|contract|relax|expand|breathe|grow|live|die|eat|react|change|act|seem|appear|mean|show|tell|explain|describe|compare|draw|share|lay|stand|pinch|measure|record|add|divide|place|stay|become|have|call|name|write|say|hear|try|start|begin|end|finish|open|close|hold|turn|lead|follow|include|belong|differ|vary|match|test|check|come|run|sit|learn|understand|remember|notice|observe|discover|identify|classify|support|prove|bring|fill|empty|mix|pour|sink|float|swim|fly|hunt|catch|hide|survive|adapt|evolve|reproduce|digest|filter|wrap|cover|surround|line|lie|rest|sleep|wake|happen|occur|matter|count|weigh|cost|smell|taste|sound|bleed|heal|repair|build|store|transport|transfer|pick|drop)$/;
+function hasVerb(lw){
+  for(var i=0;i<lw.length;i++){
+    var x=lw[i];
+    if(GAUX.test(x)||GIRR.test(x)) return true;
+    if(x.length>3&&/ed$/.test(x)) return true;
+    if(x.length>3&&/[^su]s$/.test(x)&&!/(ss|ous|is|us)$/.test(x)&&i>0) return true;
+    if(/^(i|you|we|they|he|she|it|people|children)$/.test(x)&&lw[i+1]) return true;
+  }
+  return false;
+}
+/* a missing a/an/the, as in "This is just test to see": a linking verb, then a word that is not an adjective, then "to" */
+var GADJ=/^(able|about|enough|going|trying|supposed|used|due|ready|free|sure|likely|easy|hard|good|bad|important|necessary|possible|impossible|difficult|simple|safe|helpful|harmful|best|better|worse|worst|first|last|next|only|right|wrong|key|close|similar|related|connected|attached|meant|made|said|known|thought|found|needed|told|asked|allowed|forced|built|designed|there|here|up|down|back|out|in|on|off|over|still|also|not|just|really|very|so|too|more|less|most|much|able|unable|happy|glad|sad|tired|interesting|amazing|cool|fun|nice|great|weird|strange|crazy|surprising|surprised|confused|confusing|clear|new|old|big|small|large|thick|thin|long|short|high|low|hot|cold|fast|slow|strong|weak|ready|willing|available|responsible|similar|different|same|true|false|common|normal|healthy|unique|special|essential|vital|critical|crucial|useful|harder|easier|bigger|smaller|faster|slower|stronger|weaker|thicker|thinner|higher|lower|larger|longer|shorter|closer|how|what|why|where|when|who|which|that|this|it|them|me|us|him|her|you|i|we|they|he|she|one|ok|okay)$/;
+function missingWord(text,add){
+  var re=/\b(is|was|it's|that's|this's)\s+(?:(?:just|only|also|really|still|not|probably|basically|actually)\s+)?([a-z]+)\s+(to|that|for)\s+([a-z]+)/gi, m;
+  while((m=re.exec(text))){
+    var x=m[2].toLowerCase();
+    if(GADJ.test(x)||/(ly|ing|ed|ful|ous|ive|ic|ical|able|ible|ant|ent|ary|less)$/.test(x)) continue;
+    var at=m.index+m[0].indexOf(m[2],m[1].length);
+    add(at,at+m[2].length,'A small word may be missing before “'+m[2]+'”, such as “a,” “an,” or “the.”');
+  }
+}
 function grammarIssues(text){
   var out=[];
   function add(a,b,msg,wide){ if(b>a) out.push({a:a,b:b,msg:msg,wide:!!wide}); }
+  missingWord(text,add);
   GFIX.forEach(function(rule){
     var re=new RegExp(rule[0].source,rule[0].flags), m;
-    while((m=re.exec(text))){ add(m.index+(rule[2]||0),m.index+m[0].length,rule[1](m[0])); if(!m[0].length) re.lastIndex++; }
+    while((m=re.exec(text))){ var msg=rule[1](m[0],text,m.index); if(msg) add(m.index+(rule[2]||0),m.index+m[0].length,msg); if(!m[0].length) re.lastIndex++; }
   });
   /* sentences: split at end marks and line breaks, but not at decimals (37.5) or titles and short forms (Mrs., e.g.) */
   var sc=text.replace(/\d\.\d/g,function(x){return x.replace('.','\u2024');})
@@ -1910,7 +1941,9 @@ function grammarIssues(text){
     if(!/[.!?]["”’')\]]*$/.test(sen)){
       var lw=sen.match(/\S+$/); add(end-lw[0].length,end,'End this sentence with a period (or a question mark or exclamation point).');
     }
+    var lw=w.map(function(x){return x.toLowerCase().replace(/’/g,"'");});
     if(w.length<3) add(st,end,'This looks too short to be a complete sentence. A sentence needs a subject and a verb.',1);
+    else if(!hasVerb(lw)) add(st,end,'This may be an incomplete sentence. Check that it says who or what (the subject) and what they do or are (the verb).',1);
     else if(GSUB.test(core)&&core.indexOf(',')<0&&w.length<14) add(st,end,'A sentence that starts with “'+core.match(GSUB)[0]+'” needs two parts with a comma between them, like this: “When the heart contracts, blood moves out.” Check that this sentence has both parts and the comma.',1);
     else if(w.length>40) add(st,end,'This sentence is very long ('+w.length+' words). Try splitting it into two or three sentences.',1);
   }
@@ -1933,9 +1966,9 @@ function grammarCheck(getText){
     prev.textContent=''; list.textContent=''; prev.hidden=true;
     if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
     var is=grammarIssues(t);
-    if(!is.length){ note.dataset.s='ok'; note.textContent='Nice! I did not find any problems with capital letters, punctuation, or sentences. This check cannot catch everything, so read your answer one more time.'; return; }
+    if(!is.length){ note.dataset.s='ok'; note.textContent='Nice! I did not find any problems with capital letters, punctuation, or sentences. This check cannot catch everything. Press “Listen to my answer” to hear your writing. Missing words are easier to hear than to see.'; return; }
     note.removeAttribute('data-s');
-    note.textContent='I found '+is.length+' thing'+(is.length===1?'':'s')+' to check. Each one is highlighted in your writing below. Fix them in your answer above, then check again.';
+    note.textContent='I found '+is.length+' thing'+(is.length===1?'':'s')+' to check. Each one is highlighted in your writing below. Fix them in your answer above, then check again. Tip: press “Listen to my answer” to hear your writing. Missing words are easier to hear than to see.';
     is.forEach(function(x,i){
       x.n=i+1;
       var li=h('li'), q=t.slice(x.a,x.b);

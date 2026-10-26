@@ -330,8 +330,10 @@ answer: stop each one before the part the student must think of. Use `…` where
 Every written and highlight box also has a **Check my writing** button. It runs in the browser (nothing is sent
 anywhere) and marks capital letters at the start of sentences, a capital "I", missing end punctuation, missing
 apostrophes (dont, cant, im), repeated words, spacing around punctuation, mix-ups (their is, more then, should of,
-alot, a/an), very short sentences, very long sentences, and sentences that start with "Because," "When," "If," and
-similar words but have no comma. It shows the student's writing with each problem highlighted and a tip for each.
+alot, a/an, to/too/two), vague words (thing, things, stuff), a missing "a" or "the" in patterns like "is just test to
+see", sentences with no verb (fragments such as "For example, the right ventricle."), very short and very long
+sentences, and sentences that start with "Because," "When," "If," and similar words but have no comma. It suggests
+pressing "Listen to my answer," because missing words are easier to hear than to see. It shows the student's writing with each problem highlighted and a tip for each.
 It does not fix anything for them. Spelling is left to the browser's red underline.
 
 ### highlight: a written response where students point to their evidence with transition words and highlight those words in yellow
