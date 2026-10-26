@@ -64,6 +64,7 @@ function copyMeta(f,o){
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
   f.voice=o.voice==='male'?'male':'';
+  f.gate=typeof o.gate==='number'&&o.gate>=1?Math.floor(o.gate):0;
 }
 function load(){
   try{
@@ -267,7 +268,7 @@ function updateBar(){
   });
   var sc=score();
   if(BOARD){ paintBoard(); var T=boardTotals(); $('#sAuto').innerHTML='Score: <strong>'+T.earned+'</strong> of '+T.auto+' points'; }
-  else $('#sAuto').innerHTML='Auto-checked: <strong>'+sc.a+' / '+TOTAL_A+'</strong> correct';
+  else{ $('#sAuto').innerHTML='Auto-checked: <strong>'+sc.a+' / '+TOTAL_A+'</strong> correct'; applyGate(); }
   $('#sWritten').innerHTML='Written: <strong>'+sc.w+' / '+TOTAL_W+'</strong> done';
   var sv=$('#sSaved');
   if(!storageOK) sv.textContent='This browser can’t keep a backup. Stay on this page.';
@@ -1160,6 +1161,7 @@ function startSection(){
   if(after==null){
     after='Each part gives you something to read and then lets you practice and check your work. Select a picture to open it full size in a new tab.';
     if(nW) after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s')+'.';
+    if(GATED) after+=' Each part opens when you finish the one before it.';
   }
   s.append(h('p','intro',after));
   return s;
@@ -1203,6 +1205,7 @@ function videoSection(){
       else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
       after+='.';
     }
+    if(GATED) after+=' Each part opens when you finish the one before it.';
     if(hasClips){
       var first=VIDS[VID_ORDER[1]];
       if(first) after+=' The times on each clip (like '+fmt(first.from)+' to '+fmt(first.to)+') are times in the full video above.';
@@ -1296,7 +1299,85 @@ function buildPart(p,n){
   if(p.read) s.append(learn(p.read));
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
   (p.questions||[]).forEach(function(q){ buildQuestion(q,s); });
+  if(GATED) gateEls(s,n);
   return s;
+}
+
+/* ------------------------------------------------------------------ */
+/* One part at a time: a part opens when the student finishes the     */
+/* part before it and selects Continue. Finished parts fold down to   */
+/* their banner and can be opened again. gated: false turns this off. */
+/* ------------------------------------------------------------------ */
+var GATED=!BOARD&&A.gated!==false&&(A.parts||[]).length>1, REOPEN={};
+function partWord(n){return (A.partWord||'Part')+' '+n;}
+function partDone(sec){return [].every.call(sec.querySelectorAll('[data-c]'),function(e){return e.dataset.s==='ok';});}
+function gateEls(s,n){
+  var last=n===(A.parts||[]).length;
+  s.querySelector('h2').tabIndex=-1;
+  s.querySelector('h2').append(h('span','gdone','Done'));
+  var tog=h('button','btn ghost small gtog'); tog.type='button';
+  tog.addEventListener('click',function(){ REOPEN[n]=!REOPEN[n]; applyGate(); });
+  s.querySelector('h2').after(tog);
+  var g=h('div','gate'); g.hidden=true;
+  g.append(h('p','gmsg','You finished '+partWord(n)+'!'));
+  var go=h('button','btn',last?'Close '+partWord(n)+' and go to Finish':'Close '+partWord(n)+' and open '+partWord(n+1));
+  go.type='button';
+  go.addEventListener('click',function(){
+    S.gate=n+1; REOPEN[n]=false; commit();
+    [].forEach.call(s.querySelectorAll('video'),function(v){try{v.pause();}catch(e){}});
+    var next=$(last?'#finish':'#part'+(n+1));
+    celebrate(last?'You finished every part!':partWord(n)+' complete!');
+    if(next){ next.scrollIntoView({block:'start'}); var hd=next.querySelector('h2'); if(hd){hd.tabIndex=-1; hd.focus({preventScroll:true});} }
+  });
+  g.append(go); s.append(g);
+}
+function applyGate(){
+  if(!GATED) return;
+  var secs=[].slice.call(document.querySelectorAll('section.task[data-task]'));
+  /* first visit, or progress saved before this feature: open the first part not yet finished */
+  if(!S.gate){ S.gate=1; while(S.gate<=secs.length&&partDone(secs[S.gate-1])) S.gate++; }
+  secs.forEach(function(sec,i){
+    var n=i+1, past=n<S.gate, tog=$('.gtog',sec), g=$('.gate',sec);
+    sec.hidden=n>S.gate;
+    sec.classList.toggle('closed',past&&!REOPEN[n]);
+    tog.hidden=!past;
+    tog.textContent=REOPEN[n]?'Fold up '+partWord(n):'Look back at '+partWord(n);
+    tog.setAttribute('aria-expanded',REOPEN[n]?'true':'false');
+    g.hidden=past||!partDone(sec);
+  });
+}
+/* confetti and a short message when a part is finished. Students who turn off motion get just the message. */
+function celebrate(text){
+  var note=h('div','cheer',text); note.setAttribute('role','status');
+  document.body.append(note);
+  setTimeout(function(){note.classList.add('out');},2200);
+  setTimeout(function(){note.remove();},2800);
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var c=document.createElement('canvas'), ctx=c.getContext&&c.getContext('2d');
+  if(!ctx) return;
+  c.className='confetti'; c.setAttribute('aria-hidden','true');
+  var W0=c.width=window.innerWidth, H0=c.height=window.innerHeight;
+  document.body.append(c);
+  var cols=['#f4c430','#e8505b','#14b1ab','#5b8def','#9b5de5','#3ac569','#ff8c42'], bits=[];
+  for(var i=0;i<160;i++){
+    var left=i%2===0;
+    bits.push({x:left?0:W0, y:H0*0.75, vx:(left?1:-1)*(4+Math.random()*9), vy:-(9+Math.random()*10),
+      w:6+Math.random()*6, h:8+Math.random()*8, r:Math.random()*6, vr:(Math.random()-.5)*0.4, col:cols[i%cols.length]});
+  }
+  var t0=null;
+  function frame(now){
+    if(t0===null) t0=now;
+    var age=now-t0;
+    ctx.clearRect(0,0,W0,H0);
+    ctx.globalAlpha=age>2200?Math.max(0,1-(age-2200)/800):1;
+    bits.forEach(function(b){
+      b.vy+=0.35; b.vx*=0.985; b.x+=b.vx; b.y+=b.vy; b.r+=b.vr;
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.r); ctx.fillStyle=b.col;
+      ctx.fillRect(-b.w/2,-b.h/2,b.w,b.h*Math.abs(Math.cos(b.r*2))); ctx.restore();
+    });
+    if(age<3000) requestAnimationFrame(frame); else c.remove();
+  }
+  requestAnimationFrame(frame);
 }
 
 /* ------------------------------------------------------------------ */

@@ -19,6 +19,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `partWord` | no | The word before each part number, for example `'Station'` so headings read "Station 1: Overview". Default `'Part'` |
 | `clips` | no | The short clips (below) |
 | `parts` | yes | The parts, in order (below) |
+| `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
 
@@ -91,6 +92,19 @@ required for screen readers. `text` (HTML) is the words on the picture: students
 Listen button under the picture reads it aloud. Give `text` to any picture that has words students need.
 
 Any question can also show a picture with `img` (see below), for example a numbered diagram to label.
+
+## One part at a time
+
+By default students see only the part they are working on. Later parts stay hidden. When every checked item in
+a part is done (every auto-checked answer right and every written answer long enough), a green box appears at the
+bottom of the part with a button such as "Close Part 1 and open Part 2". Selecting it folds Part 1 down to its
+banner (with a "Done" label), plays confetti with a "Part 1 complete!" message, and opens Part 2. Students who
+turn off motion on their device get the message without the confetti. A folded part has a "Look back at Part 1"
+button, so students can reread it. The Finish section (PDF, backup) is always visible.
+
+The student moves on with the button, not on their own, so they can read the explanation after their last right
+answer, and a part never folds up while they are still typing a written answer. Which part is open is saved with
+their progress. Game boards are not affected. Set `gated: false` to show all parts at once.
 
 ## Question types
 
