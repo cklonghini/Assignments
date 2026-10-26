@@ -955,6 +955,64 @@ function multiQ(id,q){
 }
 
 /* ------------------------------------------------------------------ */
+/* Calculator (calculator: true on a question)                         */
+/* ------------------------------------------------------------------ */
+/* A basic calculator next to a question, for averages and sums. It is not saved and not graded. */
+function calcEval(src){
+  var t=String(src).replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/,/g,'').replace(/\s+/g,''), i=0;
+  function num(){ var m=t.slice(i).match(/^(\d+\.?\d*|\.\d+)/); if(!m) throw 0; i+=m[0].length; return parseFloat(m[0]); }
+  function atom(){
+    if(t[i]==='-'){ i++; return -atom(); }
+    if(t[i]==='+'){ i++; return atom(); }
+    if(t[i]==='('){ i++; var v=sum(); if(t[i]!==')') throw 0; i++; return v; }
+    return num();
+  }
+  function prod(){ var v=atom(); while(t[i]==='*'||t[i]==='/'){ var o=t[i++], b=atom(); v=o==='*'?v*b:v/b; } return v; }
+  function sum(){ var v=prod(); while(t[i]==='+'||t[i]==='-'){ var o=t[i++], b=prod(); v=o==='+'?v+b:v-b; } return v; }
+  if(!t) throw 0;
+  var v=sum(); if(i!==t.length||!isFinite(v)) throw 0;
+  return Math.round(v*1e8)/1e8;
+}
+function calcEl(id){
+  var d=h('details','calc'); d.open=true;
+  d.append(h('summary',null,'Calculator'));
+  var inp=h('input'); inp.type='text'; inp.id='calc-'+id; inp.autocomplete='off'; inp.spellcheck=false; inp.inputMode='decimal';
+  inp.setAttribute('aria-label','Calculator. Type a math problem, then press Enter or the equals button.');
+  var out=h('p','calcout'); out.setAttribute('aria-live','polite');
+  var keys=h('div','calckeys');
+  function show(){ inp.focus({preventScroll:true}); }
+  function put(k){ var a=inp.selectionStart==null?inp.value.length:inp.selectionStart, b=inp.selectionEnd==null?a:inp.selectionEnd; inp.value=inp.value.slice(0,a)+k+inp.value.slice(b); inp.setSelectionRange(a+k.length,a+k.length); }
+  function equals(){
+    var src=inp.value.trim(); if(!src) return;
+    try{ var v=calcEval(src); out.removeAttribute('data-s'); out.textContent=src+' = '+v.toLocaleString('en-US',{maximumFractionDigits:8}); inp.value=String(v); }
+    catch(e){ out.dataset.s='bad'; out.textContent='That problem has a mistake. Check the numbers and signs, then try again.'; }
+  }
+  [['C','Clear'],['⌫','Delete the last character'],['(','Open parenthesis'],[')','Close parenthesis'],
+   ['7'],['8'],['9'],['÷','Divide'],['4'],['5'],['6'],['×','Times'],['1'],['2'],['3'],['−','Minus'],['0'],['.','Decimal point'],['=','Equals'],['+','Plus']
+  ].forEach(function(k){
+    var b=h('button','calckey'+(k[0]==='='?' eq':(/^[÷×−+]$/.test(k[0])?' op':'')),k[0]); b.type='button';
+    if(k[1]) b.setAttribute('aria-label',k[1]);
+    b.addEventListener('mousedown',function(e){e.preventDefault();});
+    b.addEventListener('click',function(){
+      if(k[0]==='C'){ inp.value=''; out.textContent=''; }
+      else if(k[0]==='⌫'){ var a=inp.selectionStart, c=inp.selectionEnd; if(a!==c&&a!=null){ inp.value=inp.value.slice(0,a)+inp.value.slice(c); inp.setSelectionRange(a,a); } else if(a>0){ inp.value=inp.value.slice(0,a-1)+inp.value.slice(a); inp.setSelectionRange(a-1,a-1); } }
+      else if(k[0]==='=') equals();
+      else put(k[0]);
+      if(window.matchMedia&&matchMedia('(pointer:fine)').matches) show();
+    });
+    keys.append(b);
+  });
+  inp.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key==='='){ e.preventDefault(); equals(); }
+    else if(e.key==='Escape'){ inp.value=''; out.textContent=''; }
+  });
+  inp.addEventListener('input',function(){ var v=inp.value.replace(/[xX]/g,'×').replace(/[^0-9.+\-*/×÷−()\s,]/g,''); if(v!==inp.value) inp.value=v; });
+  var body=h('div','calcbody'); body.append(inp,out,keys);
+  d.append(body);
+  return d;
+}
+
+/* ------------------------------------------------------------------ */
 /* Builders: numbers and graphs                                        */
 /* ------------------------------------------------------------------ */
 /* the first number in what a student typed: "3,300 cm3" is 3300 */
@@ -1943,6 +2001,7 @@ function buildQuestion(q,s,tile){
     if(q.img.caption) fig.append(h('figcaption',null,q.img.caption));
     o.body.append(fig);
   }
+  if(q.calculator) o.body.append(calcEl(id));
   if(t==='selects'){
     ids=q.items.map(function(it,i){return id+'_'+i;});
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));

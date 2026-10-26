@@ -38,7 +38,7 @@ video: {
 
 An assignment can work from pictures instead of a video, for example classroom station cards turned into a
 virtual activity (see `assignments/practice-the-cardiovascular-system`). Leave out `video` and `clips`, and give
-each part `images` (or, for a lab with no pictures, just the `start` box and readings, as in `assignments/explore-lung-capacity-lab`). The top of the page then shows the `start` box instead of a video:
+each part `images` (or, for a lab with no pictures, just the `start` box and readings, as in `assignments/lung-capacity-lab`). The top of the page then shows the `start` box instead of a video:
 
 ```js
 start: {
@@ -243,7 +243,7 @@ A `typed` question can also use `between: [low, high]` instead of `expected`.
 
 A `numbers` question with a graph above it. A slider moves a dashed line from the x-axis up to the curve and across
 to the y-axis. The value is not printed: students read it off the grid. Example: Figure 1 in
-`assignments/explore-lung-capacity-lab`.
+`assignments/lung-capacity-lab`.
 
 ```js
 { type: 'readgraph', text: '...', unit: 'cm³',
@@ -375,6 +375,8 @@ board: {
 
 - `img: { src: 'media/heart.png', alt: 'Description that does not give the answer', caption: 'optional' }` shows a
   picture under the question. `alt` is required.
+- `calculator: true` shows a basic calculator under the question text (add, subtract, multiply, divide, parentheses).
+  It is for working out averages and sums. It is not saved or graded.
 - `typed` questions can use `accept: ['cellular respiration', 'cell respiration']` instead of `expected`. Capital
   letters and an end period are ignored.
 - In question text, `_____` (3 or more underscores) is read aloud as "blank".

@@ -1,5 +1,5 @@
 /*
-  Explore - Lung Capacity Lab (Anatomy & Physiology)
+  Lung Capacity Lab (Anatomy & Physiology)
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, Listen buttons, and graphs from it.
   Write *scientific names* between asterisks to show them in italics. Reading boxes and tables use HTML.
@@ -22,9 +22,9 @@ var CLASS = [
 ].map(function (r) { return { sex: r[0], height: r[1], age: r[2], activity: r[3], vc: r[4] }; });
 
 window.ASSIGNMENT = {
-  title: 'Explore - Lung Capacity Lab',
+  title: 'Lung Capacity Lab',
   course: 'Anatomy & Physiology',
-  storageKey: 'explore-lung-capacity-lab-v1',
+  storageKey: 'explore-lung-capacity-lab-v1',   // kept from the old name so saved progress still loads
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 18 V34 M32 30 L26 35 M32 30 L38 35" stroke="var(--primary-ink)" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M24 30 C18 31 15 40 15 48 c0 4 3 6 7 5 l5 -2 c2 -1 2 -3 2 -5 V35 c0 -3 -2 -5 -5 -5 z M40 30 C46 31 49 40 49 48 c0 4 -3 6 -7 5 l-5 -2 c-2 -1 -2 -3 -2 -5 V35 c0 -3 2 -5 5 -5 z" fill="var(--primary-ink)"/></svg>',
 
   /* no video: this is the box at the top of the page */
@@ -200,14 +200,15 @@ window.ASSIGNMENT = {
         + '<tr><th>Trial 2</th><td>10.2</td><td>13.2</td><td>18.1</td></tr>'
         + '<tr><th>Trial 3</th><td>10.0</td><td>13.2</td><td>18.1</td></tr>'
         + '<tr><th>Average</th><td>?</td><td>?</td><td>?</td></tr></tbody></table>',
-      read: '<p><b>Read:</b> To find an <b>average</b>, add the three trials and divide by 3.</p>'
+      read: '<p><b>Read:</b> To find an <b>average</b>, add the three trials and divide by 3. On the calculator, type the problem with parentheses, for example (9.8 + 10.2 + 10.0) ÷ 3.</p>'
         + '<p>Lung volume is measured in milliliters (mL) or cubic centimeters (cm³). They are the same size: <b>1 mL = 1 cm³</b>. There are 1,000 mL in 1 liter (L).</p>'
         + '<p><b>Figure 1</b> below shows the relationship between balloon diameter and lung volume. Find a diameter on the x-axis, go straight up to the curve, then go straight across to the y-axis to read the lung volume.</p>'
         + '<p>Inspiratory reserve volume can not be measured with a balloon, so we use an average value: <b>3,100 mL</b> for the average adult male and <b>1,900 mL</b> for the average adult female.</p>',
       questions: [
         {
           type: 'numbers',
-          text: 'Data Table 1: Find Maya’s average balloon diameter for each lung volume.',
+          text: 'Data Table 1: Find Maya’s average balloon diameter for each lung volume. You can use the calculator.',
+          calculator: true,
           unit: 'cm',
           items: [
             { label: 'Average tidal volume diameter', between: [9.95, 10.05], tip: 'Add the three tidal volume trials, then divide by 3.' },
@@ -237,6 +238,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Vital capacity calculated: Use the formula and Maya’s numbers from Figure 1. Maya is female, so use the average inspiratory reserve volume for an adult female.',
+          calculator: true,
           unit: 'cm³',
           items: [
             { label: 'Vital capacity (calculated)', between: [3300, 3850], tip: 'Vital capacity = tidal volume + inspiratory reserve volume + expiratory reserve volume. Use your tidal volume and expiratory reserve volume from Figure 1, and the female inspiratory reserve volume from the reading.' }
@@ -245,6 +247,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Vital capacity researched: An online vital capacity calculator uses a person’s sex, age, and height. For Maya it says 3.3 liters. Change this to cm³.',
+          calculator: true,
           unit: 'cm³',
           items: [
             { label: 'Vital capacity (researched)', between: [3300, 3300], tip: 'There are 1,000 mL in 1 L, and 1 mL = 1 cm³. Multiply the liters by 1,000.' }
@@ -288,7 +291,8 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'graph',
-          text: 'Build your graph. Choose a factor, then work through the steps. Your graph updates as you go. When it is right, you will see the graphs for the other three factors too.',
+          text: 'Build your graph. Choose a factor, then work through the steps. Your graph updates as you go. When it is right, you will see the graphs for the other three factors too. Use the calculator to find averages for a bar graph.',
+          calculator: true,
           graph: {
             rows: CLASS,
             y: { key: 'vc', name: 'Vital capacity', label: 'Vital capacity (cm³)', unit: 'cm³', min: 0, max: 6000, step: 1000, minor: 250, snap: 50, tol: 150,
