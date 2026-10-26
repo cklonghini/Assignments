@@ -94,7 +94,8 @@ lab agreement, and a ready-to-go selfie `photo`.
 - **Every written question has 2 to 5 sentence starters** (`starters`) written for that question. They help students
   begin, use the video's words, and stop before the answer. Students
   type the starters themselves; there is no button that drops one in. Every written box also has a "Check my writing" button
-  (capitals, punctuation, sentences, common grammar mix-ups). This is built into the engine.
+  (capitals, punctuation, sentences, common grammar mix-ups). This is built into the engine. It runs only in the
+  browser: the teacher decided not to send student writing to an outside checker such as LanguageTool.
 - Copy and paste are turned off on every assignment so students do their own thinking. This is built into the engine.
 - Write scientific names between asterisks (`*Homo sapiens*`) so they show in italics everywhere, including the PDF.
 - Use the words the video uses (for example "single-celled" if the video says that), so students can match the
