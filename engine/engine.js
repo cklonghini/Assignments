@@ -17,6 +17,8 @@ function injectPage(){
     var n=i+1, lab=A2.board?String(p.title||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'):(A2.partWord||'Part')+' '+n;
     tracks+='<div class="track" id="trk'+n+'"><span class="tl">'+lab+'</span><div class="tt" role="progressbar" aria-label="'+lab+' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>';
   });
+  /* the only things that open a new tab are the pictures in a part (figureEl) */
+  var hasPics=!A2.board&&(A2.parts||[]).some(function(p){return (p.images||[]).length;});
   document.body.insertAdjacentHTML('afterbegin',
     '<div class="wrap"><header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
@@ -25,7 +27,7 @@ function injectPage(){
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
     +'<p><strong>If you close this tab, refresh the page, or leave it for another website, your progress may be lost and you will have to start over.</strong></p>'
-    +'<ul><li>Every link on this page opens in a new tab. Keep this tab open and come back to it to enter your answers.</li>'
+    +'<ul>'+(hasPics?'<li>Selecting a picture opens it full size in a new tab. Keep this tab open and come back to it to enter your answers.</li>':'')
     +'<li>Do not use your browser’s back button or refresh button.</li>'
     +'<li>When you finish, scroll to the bottom, download your PDF, and upload it to the Canvas assignment.</li></ul>'
     +'<p class="small">This page keeps a backup copy in your browser as you work, but don’t count on it. It disappears if you switch devices, use a private window, or clear your browser data.</p></aside>'
@@ -48,7 +50,7 @@ injectPage();
 /* State and saving                                                    */
 /* ------------------------------------------------------------------ */
 var KEY=A.storageKey||('assignment-'+TITLE), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},mn:[],mnRes:[],vids:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -60,11 +62,15 @@ function copyMeta(f,o){
   f.auto=(o.auto&&typeof o.auto==='object')?o.auto:{};
   f.written=(o.written&&typeof o.written==='object')?o.written:{};
   f.rich=(o.rich&&typeof o.rich==='object')?o.rich:{};
+  f.photos=(o.photos&&typeof o.photos==='object')?o.photos:{};
+  f.agree=(o.agree&&typeof o.agree==='object')?o.agree:{};
+  f.open=!!o.open;
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
+  f.graphs=(o.graphs&&typeof o.graphs==='object')?o.graphs:{};
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
   f.voice=o.voice==='male'?'male':'';
-  f.gate=typeof o.gate==='number'&&o.gate>=1?Math.floor(o.gate):0;
+  f.onPart=typeof o.onPart==='number'&&o.onPart>=1?Math.floor(o.onPart):0;
 }
 function load(){
   try{
@@ -120,7 +126,8 @@ if(A.video){
   (p.clips||[]).forEach(function(k){
     var c=(A.clips||{})[k];
     if(!c){ if(window.console) console.error('Unknown clip: '+k); return; }
-    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src,of:c.of||''};
+    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src,of:c.of||'',whole:!!c.whole};
+    if(c.whole) VIDS[k].label='Video ('+(A.partWord||'Part')+' '+(pi+1)+'): '+c.title+' (full video)';
     VID_ORDER.push(k);
   });
 });
@@ -152,7 +159,7 @@ function videoBlock(key){
   tr.src=String(info.src).replace(/\.mp4$/i,'.vtt'); tr.default=true; v.append(tr);
   vid.append(v);
   if(info.from!=null){
-    wrap.append(h('p','vidtitle',info.of?'Watch this clip: '+info.title+' ('+clipWhere(info)+')':'Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
+    wrap.append(h('p','vidtitle',info.whole?'Watch the video: '+info.title:info.of?'Watch this clip: '+info.title+' ('+clipWhere(info)+')':'Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
     return wrap;
   }
   var alt=h('p','vidalt','Captions are on. Use the CC button on the video to turn them off. Watching it here is what your teacher can track.');
@@ -213,12 +220,12 @@ function watchEl(v,key){
 }
 
 /* registries rebuilt on every render */
-var AUTO={}, ORDER=[], TOTAL_A=0, TOTAL_W=0;
+var AUTO={}, ORDER=[], TOTAL_A=0, TOTAL_W=0, TOTAL_P=0;
 
 /* ------------------------------------------------------------------ */
 /* Content                                                             */
 /* ------------------------------------------------------------------ */
-var W={}, R={};
+var W={}, R={}, P={};
 
 /* ------------------------------------------------------------------ */
 /* Scoring and progress                                                */
@@ -237,20 +244,26 @@ function segsHlWords(segs){
 }
 function isWrittenDone(id){var st=S.written[id]; return !!st&&(st.text||'').trim().length>=W[id].min;}
 function isRichDone(id){var st=S.rich[id]; return !!st&&segsPlain(st.segs).trim().length>=R[id].min;}
+function isPhotoDone(id){var st=S.photos[id]; return !!(st&&st.has);}
 function score(){
-  var a=0,w=0;
+  var a=0,w=0,p=0;
   Object.keys(AUTO).forEach(function(id){var r=S.auto[id]; if(r&&r.ok)a++;});
   Object.keys(W).forEach(function(id){if(isWrittenDone(id))w++;});
   Object.keys(R).forEach(function(id){if(isRichDone(id))w++;});
-  return {a:a,w:w};
+  Object.keys(P).forEach(function(id){if(isPhotoDone(id))p++;});
+  return {a:a,w:w,p:p};
 }
 function hasProgress(){
   if(Object.keys(S.auto).some(function(k){return S.auto[k]&&S.auto[k].v;})) return true;
   if(Object.keys(S.written).some(function(k){return S.written[k]&&S.written[k].text;})) return true;
   if(Object.keys(S.rich).some(function(k){return S.rich[k]&&segsPlain(S.rich[k].segs).trim();})) return true;
+  if(Object.keys(S.agree).some(function(k){return S.agree[k]&&((S.agree[k].on||[]).some(Boolean)||S.agree[k].sign);})) return true;
+  if(Object.keys(S.photos).some(function(k){return S.photos[k]&&(S.photos[k].has||S.photos[k].cap);})) return true;
+  if(Object.keys(S.graphs||{}).some(function(k){var g=S.graphs[k]; return g&&g.f;})) return true;
   return (S.mn||[]).some(function(x){return x;});
 }
 function updateBar(){
+  gateCheck();
   document.querySelectorAll('section.task[data-task]').forEach(function(sec){
     var n=sec.dataset.task, c=[].slice.call(sec.querySelectorAll('[data-c]'));
     var ok=c.filter(function(e){return e.dataset.s==='ok';}).length;
@@ -269,7 +282,7 @@ function updateBar(){
   var sc=score();
   if(BOARD){ paintBoard(); var T=boardTotals(); $('#sAuto').innerHTML='Score: <strong>'+T.earned+'</strong> of '+T.auto+' points'; }
   else{ $('#sAuto').innerHTML='Auto-checked: <strong>'+sc.a+' / '+TOTAL_A+'</strong> correct'; applyGate(); }
-  $('#sWritten').innerHTML='Written: <strong>'+sc.w+' / '+TOTAL_W+'</strong> done';
+  $('#sWritten').innerHTML='Written: <strong>'+sc.w+' / '+TOTAL_W+'</strong> done'+(TOTAL_P?' • Photos: <strong>'+sc.p+' / '+TOTAL_P+'</strong> added':'');
   var sv=$('#sSaved');
   if(!storageOK) sv.textContent='This browser can’t keep a backup. Stay on this page.';
   else if(lastSaved) sv.textContent='Backup saved at '+lastSaved.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
@@ -359,16 +372,17 @@ function choiceQ(id,sum,options,ansIdx,explain,tip){
 }
 
 /* typed answer with a Check button */
-function typedCheck(id,sum,expected,okMsg,badMsg,aria){
+function typedCheck(id,sum,expected,okMsg,badMsg,aria,o){
+  o=o||{};
   AUTO[id]={sum:sum};
-  ORDER.push({kind:'auto',id:id,label:sum,q:CURQ,sub:''});
+  ORDER.push({kind:'auto',id:id,label:sum,q:CURQ,sub:o.sub||''});
   var wrap=h('div','ctl'); mark(wrap); wrap.dataset.s='idle';
   var row=h('div','row');
   var inp=h('input'); inp.type='text'; inp.id='f-'+id; inp.autocomplete='off'; inp.spellcheck=false; inp.autocapitalize='off';
   inp.setAttribute('aria-label',aria); inp.setAttribute('aria-describedby','m-'+id);
   var btn=h('button','btn','Check'); btn.type='button';
   var st=h('span','st'); st.setAttribute('aria-hidden','true');
-  row.append(inp,btn,st);
+  if(o.unit){ inp.classList.add('num'); row.append(inp,h('span','unit',o.unit),btn,st); } else row.append(inp,btn,st);
   var msg=h('p','msg'); msg.id='m-'+id; msg.setAttribute('aria-live','polite');
   wrap.append(row,msg);
   function paint(){
@@ -942,6 +956,514 @@ function multiQ(id,q){
 }
 
 /* ------------------------------------------------------------------ */
+/* Calculator (calculator: true on a question)                         */
+/* ------------------------------------------------------------------ */
+/* A basic calculator next to a question, for averages and sums. It is not saved and not graded. */
+function calcEval(src){
+  var t=String(src).replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/,/g,'').replace(/\s+/g,''), i=0;
+  function num(){ var m=t.slice(i).match(/^(\d+\.?\d*|\.\d+)/); if(!m) throw 0; i+=m[0].length; return parseFloat(m[0]); }
+  function atom(){
+    if(t[i]==='-'){ i++; return -atom(); }
+    if(t[i]==='+'){ i++; return atom(); }
+    if(t[i]==='('){ i++; var v=sum(); if(t[i]!==')') throw 0; i++; return v; }
+    return num();
+  }
+  function prod(){ var v=atom(); while(t[i]==='*'||t[i]==='/'){ var o=t[i++], b=atom(); v=o==='*'?v*b:v/b; } return v; }
+  function sum(){ var v=prod(); while(t[i]==='+'||t[i]==='-'){ var o=t[i++], b=prod(); v=o==='+'?v+b:v-b; } return v; }
+  if(!t) throw 0;
+  var v=sum(); if(i!==t.length||!isFinite(v)) throw 0;
+  return Math.round(v*1e8)/1e8;
+}
+function calcEl(id){
+  var d=h('details','calc'); d.open=true;
+  d.append(h('summary',null,'Calculator'));
+  var inp=h('input'); inp.type='text'; inp.id='calc-'+id; inp.autocomplete='off'; inp.spellcheck=false; inp.inputMode='decimal';
+  inp.setAttribute('aria-label','Calculator. Type a math problem, then press Enter or the equals button.');
+  var out=h('p','calcout'); out.setAttribute('aria-live','polite');
+  var keys=h('div','calckeys');
+  function show(){ inp.focus({preventScroll:true}); }
+  function put(k){ var a=inp.selectionStart==null?inp.value.length:inp.selectionStart, b=inp.selectionEnd==null?a:inp.selectionEnd; inp.value=inp.value.slice(0,a)+k+inp.value.slice(b); inp.setSelectionRange(a+k.length,a+k.length); }
+  function equals(){
+    var src=inp.value.trim(); if(!src) return;
+    try{ var v=calcEval(src); out.removeAttribute('data-s'); out.textContent=src+' = '+v.toLocaleString('en-US',{maximumFractionDigits:8}); inp.value=String(v); }
+    catch(e){ out.dataset.s='bad'; out.textContent='That problem has a mistake. Check the numbers and signs, then try again.'; }
+  }
+  [['C','Clear'],['⌫','Delete the last character'],['(','Open parenthesis'],[')','Close parenthesis'],
+   ['7'],['8'],['9'],['÷','Divide'],['4'],['5'],['6'],['×','Times'],['1'],['2'],['3'],['−','Minus'],['0'],['.','Decimal point'],['=','Equals'],['+','Plus']
+  ].forEach(function(k){
+    var b=h('button','calckey'+(k[0]==='='?' eq':(/^[÷×−+]$/.test(k[0])?' op':'')),k[0]); b.type='button';
+    if(k[1]) b.setAttribute('aria-label',k[1]);
+    b.addEventListener('mousedown',function(e){e.preventDefault();});
+    b.addEventListener('click',function(){
+      if(k[0]==='C'){ inp.value=''; out.textContent=''; }
+      else if(k[0]==='⌫'){ var a=inp.selectionStart, c=inp.selectionEnd; if(a!==c&&a!=null){ inp.value=inp.value.slice(0,a)+inp.value.slice(c); inp.setSelectionRange(a,a); } else if(a>0){ inp.value=inp.value.slice(0,a-1)+inp.value.slice(a); inp.setSelectionRange(a-1,a-1); } }
+      else if(k[0]==='=') equals();
+      else put(k[0]);
+      if(window.matchMedia&&matchMedia('(pointer:fine)').matches) show();
+    });
+    keys.append(b);
+  });
+  inp.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key==='='){ e.preventDefault(); equals(); }
+    else if(e.key==='Escape'){ inp.value=''; out.textContent=''; }
+  });
+  inp.addEventListener('input',function(){ var v=inp.value.replace(/[xX]/g,'×').replace(/[^0-9.+\-*/×÷−()\s,]/g,''); if(v!==inp.value) inp.value=v; });
+  var body=h('div','calcbody'); body.append(inp,out,keys);
+  d.append(body);
+  return d;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: numbers and graphs                                        */
+/* ------------------------------------------------------------------ */
+/* the first number in what a student typed: "3,300 cm3" is 3300 */
+function numVal(v){var m=String(v==null?'':v).replace(/,/g,'').match(/-?\d*\.?\d+/); return m?parseFloat(m[0]):NaN;}
+function inRange(b){return function(v){var n=numVal(v); return !isNaN(n)&&n>=b[0]&&n<=b[1];};}
+/* several numbers to type, each checked against a range (between: [low, high]) */
+function numbersQ(id,q){
+  var grid=h('div','nums');
+  (q.items||[]).forEach(function(it,i){
+    var iid=id+'_'+i;
+    var w=typedCheck(iid,it.label,inRange(it.between),'Correct.'+(it.explain?' '+plain(it.explain):''),function(){
+      return 'Not yet. Tip: '+plain(it.tip||q.tip||'Look back at the reading and try again.');
+    },plain(it.label),{sub:it.label,unit:it.unit||q.unit});
+    var l=h('label'); l.append(itxt(it.label)); l.htmlFor='f-'+iid; w.prepend(l);
+    grid.append(w);
+  });
+  return grid;
+}
+
+/* Graphs are drawn as SVG with fixed colors on a white page, so the same drawing works in dark mode and in the PDF */
+var GC={ink:'#16213a',muted:'#52607a',grid:'#b9c4d6',minor:'#e3e8f0',line:'#16213a',mark:'#0b5f7a',pick:'#d63f78',bad:'#a8321f'};
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function nfmt(n){return (Math.round(n*100)/100).toLocaleString('en-US');}
+function steps(min,max,step){var out=[], n=Math.floor((max-min)/step+1e-9); for(var i=0;i<=n;i++) out.push(min+i*step); return out;}
+/* the frame of a graph: white page, grid, axes, numbers, axis labels and title.
+   o.x and o.y are {min, max, step, minor, label}; o.x.cats (a list of group names) makes a bar graph.
+   A missing label or title is drawn as a grey reminder. Returns the markup so far and the scale functions. */
+function gFrame(o){
+  var W=640,H=450,L=88,R=26,T=58,B=78, pw=W-L-R, ph=H-T-B, x=o.x, y=o.y, cats=x.cats, s=[];
+  function X(v){return L+(v-x.min)/(x.max-x.min)*pw;}
+  function Y(v){return T+ph-(v-y.min)/(y.max-y.min)*ph;}
+  function band(i){return L+(i+0.5)*pw/cats.length;}
+  s.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" font-family="Arial, Helvetica, sans-serif">');
+  s.push('<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>');
+  if(y.minor) steps(y.min,y.max,y.minor).forEach(function(v){s.push('<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="'+GC.minor+'"/>');});
+  if(!cats&&x.minor) steps(x.min,x.max,x.minor).forEach(function(v){s.push('<line y1="'+T+'" y2="'+(T+ph)+'" x1="'+X(v)+'" x2="'+X(v)+'" stroke="'+GC.minor+'"/>');});
+  steps(y.min,y.max,y.step).forEach(function(v){
+    s.push('<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="'+GC.grid+'"/>');
+    s.push('<text x="'+(L-8)+'" y="'+(Y(v)+5)+'" text-anchor="end" font-size="14" fill="'+GC.ink+'">'+nfmt(v)+'</text>');
+  });
+  if(cats) cats.forEach(function(c,i){ s.push('<text x="'+band(i)+'" y="'+(T+ph+22)+'" text-anchor="middle" font-size="15" fill="'+GC.ink+'">'+esc(c)+'</text>'); });
+  else steps(x.min,x.max,x.step).forEach(function(v){
+    s.push('<line y1="'+T+'" y2="'+(T+ph)+'" x1="'+X(v)+'" x2="'+X(v)+'" stroke="'+GC.grid+'"/>');
+    s.push('<text x="'+X(v)+'" y="'+(T+ph+22)+'" text-anchor="middle" font-size="14" fill="'+GC.ink+'">'+nfmt(v)+'</text>');
+  });
+  s.push('<path d="M'+L+' '+T+' V'+(T+ph)+' H'+(L+pw)+'" fill="none" stroke="'+GC.line+'" stroke-width="2"/>');
+  function lab(t,ph0,attrs){ return t?'<text '+attrs+' fill="'+GC.ink+'">'+esc(t)+'</text>':'<text '+attrs+' fill="'+GC.muted+'" font-style="italic" font-weight="400">'+esc(ph0)+'</text>'; }
+  s.push(lab(x.label,'(x-axis label)','x="'+(L+pw/2)+'" y="'+(H-20)+'" text-anchor="middle" font-size="16" font-weight="700"'));
+  s.push(lab(y.label,'(y-axis label)','transform="translate(24 '+(T+ph/2)+') rotate(-90)" text-anchor="middle" font-size="16" font-weight="700"'));
+  if(o.title!==false) s.push(lab(o.title,'(title)','x="'+(W/2)+'" y="34" text-anchor="middle" font-size="19" font-weight="700"'));
+  return {s:s,X:X,Y:Y,band:band,L:L,T:T,pw:pw,ph:ph,W:W,H:H,bw:cats?Math.min(110,pw/cats.length*0.55):0};
+}
+function gDot(fr,x,y,color,r){return '<circle cx="'+fr.X(x)+'" cy="'+fr.Y(y)+'" r="'+(r||6)+'" fill="'+color+'" stroke="#ffffff" stroke-width="1.5"/>';}
+function gBar(fr,i,v,color,y0){var top=fr.Y(v), base=fr.Y(y0); return '<rect x="'+(fr.band(i)-fr.bw/2)+'" y="'+Math.min(top,base)+'" width="'+fr.bw+'" height="'+Math.abs(base-top)+'" fill="'+color+'"/>';}
+/* screen point to graph point */
+function gPoint(svg,e){
+  var pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  var m=svg.getScreenCTM(); return m?pt.matrixTransform(m.inverse()):null;
+}
+
+/* Read a value off a curve, as students do on a printed graph. A slider moves a line along the x-axis; dashed
+   lines run to the curve and across to the y-axis. The value itself is not shown: students read it off the grid. */
+function curveSvg(g,xv){
+  var fr=gFrame({title:g.title,x:g.x,y:g.y}), s=fr.s, pts=[], to=g.to!=null?g.to:g.x.max;
+  for(var d=g.x.min; d<=to+1e-9; d+=(to-g.x.min)/240){ var v=g.fn(d); if(v<=g.y.max) pts.push(fr.X(d).toFixed(1)+','+fr.Y(Math.max(g.y.min,v)).toFixed(1)); }
+  s.push('<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+GC.ink+'" stroke-width="2.5"/>');
+  if(xv!=null){
+    var yv=g.fn(xv);
+    if(yv<=g.y.max){
+      s.push('<path d="M'+fr.X(xv)+' '+(fr.T+fr.ph)+' V'+fr.Y(yv)+' H'+fr.L+'" fill="none" stroke="'+GC.pick+'" stroke-width="2.5" stroke-dasharray="7 5"/>');
+      s.push('<circle cx="'+fr.X(xv)+'" cy="'+fr.Y(yv)+'" r="6" fill="'+GC.pick+'"/>');
+    }
+  }
+  s.push('</svg>');
+  return s.join('');
+}
+function readGraphQ(id,q){
+  var g=q.graph, wrap=h('div','gwrap');
+  var fig=h('div','gfig'); fig.setAttribute('role','img'); fig.setAttribute('aria-label',g.alt||'Graph');
+  var row=h('div','row gslide'), lab=h('label'), out=h('b');
+  var sl=h('input'); sl.type='range'; sl.id='f-'+id+'_slider'; sl.min=g.x.min; sl.max=g.to!=null?g.to:g.x.max; sl.step=g.slider||0.1; sl.value=g.start!=null?g.start:g.x.min;
+  lab.htmlFor=sl.id; lab.append(g.sliderLabel||'Move the slider: ',out);
+  row.append(lab,sl);
+  function paint(){ var v=+sl.value, dp=(String(sl.step).split('.')[1]||'').length; out.textContent=v.toFixed(dp)+(g.x.unit?' '+g.x.unit:''); fig.innerHTML=curveSvg(g,v); }
+  sl.addEventListener('input',paint);
+  paint();
+  wrap.append(h('p','whint',g.hint||'Move the slider to a value on the x-axis. Follow the dashed line up to the curve and then across to the y-axis, and read the number off the grid.'),row,fig,numbersQ(id,q));
+  return wrap;
+}
+
+/* Build a graph from a data table. The student picks a factor, the type of graph, the axis labels and a title,
+   then plots the data: a bar for each group's average, or a dot for each row. Each step is checked. When the graph
+   is right, the graphs of the other factors open, the way lab partners each graph a different factor. */
+var GSTEPS=['type','x','y','title','plot'];
+function gFactor(G,key){return (G.factors||[]).filter(function(f){return f.key===key;})[0]||null;}
+function gAverages(G,f){
+  return f.cats.map(function(c){
+    var v=G.rows.filter(function(r){return r[f.key]===c;}).map(function(r){return r[G.y.key];});
+    return v.length?v.reduce(function(a,b){return a+b;},0)/v.length:0;
+  });
+}
+/* draws a graph. d: {title, xLabel, yLabel, kind, pts, bars, bad (dots or bars to show in red)} */
+function graphSvg(G,f,d){
+  var bar=d.kind==='bar', x=bar?{cats:f.cats,label:d.xLabel}:{min:f.min,max:f.max,step:f.step,minor:f.minor,label:d.xLabel};
+  var y={min:G.y.min,max:G.y.max,step:G.y.step,minor:G.y.minor,label:d.yLabel};
+  var fr=gFrame({title:d.title,x:x,y:y}), s=fr.s, bad=d.bad||{};
+  if(bar) f.cats.forEach(function(c,i){
+    var v=(d.bars||{})[c];
+    if(typeof v!=='number'||isNaN(v)) return;
+    v=Math.max(G.y.min,Math.min(G.y.max,v));
+    s.push(gBar(fr,i,v,bad[c]?GC.bad:GC.mark,G.y.min));
+    s.push('<text x="'+fr.band(i)+'" y="'+(fr.Y(v)-8)+'" text-anchor="middle" font-size="14" font-weight="700" fill="'+GC.ink+'">'+nfmt(v)+'</text>');
+  });
+  else (d.pts||[]).forEach(function(p,i){ s.push(gDot(fr,p[0],p[1],bad[i]?GC.bad:GC.mark)); });
+  s.push('</svg>');
+  return {svg:s.join(''),fr:fr};
+}
+function gAnswers(G,f){
+  return {type:f.kind==='bar'?'Bar graph':'Scatter plot',x:f.label,y:G.y.label};
+}
+/* checks the plotted data. Returns {ok, bad, note} */
+function gCheckPlot(G,f,st){
+  var bad={};
+  if(f.kind==='bar'){
+    var avg=gAverages(G,f), tol=G.barTol!=null?G.barTol:50, wrong=0, empty=0;
+    f.cats.forEach(function(c,i){
+      var v=st.bars[c];
+      if(typeof v!=='number'||isNaN(v)){ empty++; return; }
+      if(Math.abs(v-avg[i])>tol){ bad[c]=true; wrong++; }
+    });
+    if(empty) return {ok:false,bad:bad,empty:true,note:'Give every bar a height first. '+empty+(empty===1?' bar is':' bars are')+' still empty.'};
+    return {ok:!wrong,bad:bad,note:wrong?wrong+' of '+f.cats.length+' bars '+(wrong===1?'is':'are')+' not the right height yet (red).':''};
+  }
+  var rows=G.rows.map(function(r){return [r[f.key],r[G.y.key]];}), used=rows.map(function(){return false;});
+  var xt=f.tol!=null?f.tol:0.5, yt=G.y.tol!=null?G.y.tol:150, extra=0;
+  (st.pts||[]).forEach(function(p,i){
+    var best=-1, bd=1e9;
+    rows.forEach(function(r,j){
+      if(used[j]||Math.abs(p[0]-r[0])>xt||Math.abs(p[1]-r[1])>yt) return;
+      var dd=Math.abs(p[1]-r[1]); if(dd<bd){bd=dd; best=j;}
+    });
+    if(best>=0) used[best]=true; else { bad[i]=true; extra++; }
+  });
+  var hit=used.filter(Boolean).length;
+  var note=hit+' of '+rows.length+' students are plotted correctly.'+(extra?' '+extra+(extra===1?' dot does':' dots do')+' not match a student in the table (red).':'');
+  return {ok:hit===rows.length&&!extra,bad:bad,note:note};
+}
+function gPlotText(G,f,st){
+  if(f.kind==='bar') return f.cats.map(function(c){var v=st.bars[c]; return c+': '+(typeof v==='number'&&!isNaN(v)?nfmt(v):'(empty)');}).join(', ');
+  var pts=(st.pts||[]).slice().sort(function(a,b){return a[0]-b[0]||a[1]-b[1];});
+  return pts.length?pts.length+' dots: '+pts.map(function(p){return '('+nfmt(p[0])+', '+nfmt(p[1])+')';}).join(' '):'(no dots)';
+}
+function graphQ(id,q){
+  var G=q.graph, ids={};
+  var SUM={type:'Graph type',x:'X-axis label',y:'Y-axis label',title:'Title',plot:'Plotted data'};
+  GSTEPS.forEach(function(k){ ids[k]=id+'_'+k; AUTO[ids[k]]={sum:SUM[k]}; });
+  ORDER.push({kind:'graph',id:id,q:CURQ,sub:'',G:G,ids:ids});
+  if(!S.graphs) S.graphs={};
+  var st=S.graphs[id]||(S.graphs[id]={f:'',title:'',by:{}});
+  if(!st.by) st.by={};
+  var lastBad={}, plotMsg='';
+  function f(){return gFactor(G,st.f);}
+  function dat(){var k=st.f; return st.by[k]||(st.by[k]={pts:[],bars:{}});}
+  function r(k){return S.auto[ids[k]]||null;}
+  function ok(k){var x=r(k); return !!(x&&x.ok);}
+  function done(){return ok('plot');}
+  function clearChecks(){ GSTEPS.forEach(function(k){ var p=r(k); if(p) S.auto[ids[k]]={v:'',ok:false,miss:p.miss||0}; }); lastBad={}; plotMsg=''; }
+
+  var wrap=h('div','gwrap');
+  /* the factor */
+  var fRow=h('div','ctl'), fSel=h('select'); fSel.id='f-'+id+'_factor';
+  var fLab=h('label',null,G.factorLabel||'Choose the factor you will graph'); fLab.htmlFor=fSel.id;
+  fSel.append(new Option('Choose a factor…',''));
+  G.factors.forEach(function(x){fSel.append(new Option(x.name,x.key));});
+  var fMsg=h('p','msg'); fMsg.setAttribute('aria-live','polite');
+  fRow.append(fLab,fSel,fMsg);
+  /* a checked drop-down for one step */
+  function stepSel(k,label,options,tip){
+    var w=h('div','ctl gstep'); mark(w); w.dataset.s='idle';
+    var sel=h('select'); sel.id='f-'+ids[k];
+    var l=h('label'); l.append(itxt(label)); l.htmlFor=sel.id;
+    sel.append(new Option('Choose…',''));
+    options.forEach(function(t){sel.append(new Option(t,t));});
+    var stt=h('span','st'); stt.setAttribute('aria-hidden','true');
+    var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+    w.append(l,sel,stt,msg);
+    sel.addEventListener('change',function(){
+      var v=sel.value, p=r(k)||{miss:0};
+      if(!v){ S.auto[ids[k]]={v:'',ok:false,miss:p.miss||0}; }
+      else { var good=v===gAnswers(G,f())[k]; S.auto[ids[k]]={v:v,ok:good,miss:(p.miss||0)+(good?0:1)}; }
+      paint(); commit();
+    });
+    return {w:w,sel:sel,st:stt,msg:msg,paint:function(){
+      var x=r(k); sel.value=x&&x.v?x.v:''; sel.disabled=!f()||done();
+      if(!x||!x.v){ w.dataset.s='idle'; stt.textContent=''; msg.textContent=''; return; }
+      w.dataset.s=x.ok?'ok':'bad'; stt.textContent=x.ok?'✓':'✗';
+      msg.textContent=x.ok?'Correct.':'Not yet. Tip: '+tip(x.v);
+    }};
+  }
+  var labels=G.labels||[];
+  function unitsTip(v,ans){ return ans.indexOf(v)===0&&ans.length>v.length?'Close. A good axis label also shows the units.':null; }
+  var sType=stepSel('type','Step 1. Which kind of graph fits this factor?',G.types||['Bar graph','Scatter plot','Pie chart'],function(v){
+    var fa=f(); if(!fa) return '';
+    if(v==='Pie chart') return 'A pie chart shows the parts of one whole. Here you are comparing the vital capacity of different students.';
+    return fa.kind==='bar'
+      ?'Look at the values for '+fa.name.toLowerCase()+' in the table. They are groups with names, not numbers on a number line. Which graph compares groups side by side?'
+      :'Look at the values for '+fa.name.toLowerCase()+' in the table. They are numbers on a scale. Which graph puts one dot for each student at the right spot on the scale?';
+  });
+  var sX=stepSel('x','Step 2. Label the x-axis (across the bottom).',labels,function(v){
+    return unitsTip(v,f().label)||'The x-axis shows the independent variable: the factor you chose to compare.';
+  });
+  var sY=stepSel('y','Step 3. Label the y-axis (up the side).',labels,function(v){
+    return unitsTip(v,G.y.label)||'The y-axis shows the dependent variable: the thing that was measured for every student.';
+  });
+  /* the title */
+  var tW=h('div','ctl gstep'); mark(tW); tW.dataset.s='idle';
+  var tIn=h('input'); tIn.type='text'; tIn.id='f-'+ids.title; tIn.autocomplete='off';
+  var tL=h('label',null,'Step 4. Give your graph a title.'); tL.htmlFor=tIn.id;
+  var tBtn=h('button','btn','Check'); tBtn.type='button';
+  var tSt=h('span','st'); tSt.setAttribute('aria-hidden','true');
+  var tRow=h('div','row'); tRow.append(tIn,tBtn,tSt);
+  var tMsg=h('p','msg'); tMsg.setAttribute('aria-live','polite');
+  tW.append(tL,tRow,tMsg);
+  function titleTip(v){
+    var low=v.toLowerCase(), fa=f();
+    if(words(v)<3) return 'A title is a short phrase, like a headline, that says what the graph shows. Use at least three words.';
+    if(G.y.title&&!G.y.title.test(low)) return 'Your title should name what was measured (the dependent variable).';
+    if(fa.title&&!fa.title.test(low)) return 'Your title should also name the factor you are comparing.';
+    return 'Try again.';
+  }
+  function checkTitle(){
+    var v=tIn.value.trim().replace(/\s+/g,' '), p=r('title')||{miss:0};
+    st.title=v;
+    if(!v) return;
+    var low=v.toLowerCase(), fa=f();
+    var good=words(v)>=3&&(!G.y.title||G.y.title.test(low))&&(!fa.title||fa.title.test(low));
+    S.auto[ids.title]={v:v,ok:good,miss:(p.miss||0)+(good?0:1)};
+    paint(); commit();
+  }
+  tBtn.addEventListener('click',checkTitle);
+  tIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();checkTitle();}});
+  tIn.addEventListener('input',function(){
+    st.title=tIn.value; var x=r('title');
+    if(x&&x.v){ S.auto[ids.title]={v:'',ok:false,miss:x.miss||0}; }
+    drawFig(); commit(); paintTitle();
+  });
+  function paintTitle(){
+    var x=r('title'); tIn.disabled=tBtn.disabled=!f()||done();
+    if(document.activeElement!==tIn) tIn.value=st.title||'';
+    if(!x||!x.v){ tW.dataset.s='idle'; tSt.textContent=''; tMsg.textContent=''; return; }
+    tW.dataset.s=x.ok?'ok':'bad'; tSt.textContent=x.ok?'✓':'✗';
+    tMsg.textContent=x.ok?'Correct. Your title names both variables.':'Not yet. Tip: '+titleTip(x.v);
+  }
+  /* the plot */
+  var pW=h('div','gplot'); mark(pW); pW.dataset.s='idle';
+  var pHead=h('p','gsteph','Step 5. Plot the data.');
+  var pHint=h('p','whint');
+  var fig=h('div','gfig gdraw'); fig.setAttribute('role','img');
+  var tools=h('div','gtools');
+  var pRow=h('div','row gap'), pChk=h('button','btn','Check my graph'); pChk.type='button'; pRow.append(pChk);
+  var pMsg=h('p','msg'); pMsg.setAttribute('aria-live','polite');
+  pW.append(pHead,pHint,fig,tools,pRow,pMsg);
+  var others=h('div','gothers');
+  wrap.append(fRow,sType.w,sX.w,sY.w,tW,pW,others);
+
+  function chosen(k){var x=r(k); return x&&x.v?x.v:'';}
+  function drawFig(){
+    var fa=f();
+    if(!fa){ fig.innerHTML=''; return; }
+    var kind=ok('type')?fa.kind:null, d=dat();
+    var g=graphSvg(G,fa,{kind:kind||(chosen('type')==='Bar graph'?'bar':'scatter'),title:st.title||'',xLabel:chosen('x'),yLabel:chosen('y'),pts:d.pts,bars:d.bars,bad:lastBad});
+    fig.innerHTML=g.svg; fig._fr=g.fr;
+    fig.setAttribute('aria-label','Your graph. '+(st.title?'Title: '+st.title+'. ':'')+gPlotText(G,fa,d)+'.');
+  }
+  function pending(){
+    var fa=f(), x=r('plot'), p=x||{miss:0};
+    S.auto[ids.plot]={v:gPlotText(G,fa,dat()),ok:false,miss:p.miss||0,pend:true};
+    lastBad={}; plotMsg='';
+  }
+  /* bar graph: a number box for each bar; selecting inside the graph also sets a bar */
+  function barTools(fa){
+    tools.textContent='';
+    var grid=h('div','nums');
+    fa.cats.forEach(function(c){
+      var w=h('div','ctl'), inp=h('input'); inp.type='text'; inp.inputMode='decimal'; inp.className='num'; inp.id='f-'+id+'_bar_'+c.replace(/\W+/g,'');
+      var l=h('label',null,'Bar height for '+c); l.htmlFor=inp.id;
+      var v=dat().bars[c]; inp.value=typeof v==='number'?String(v):''; inp.disabled=done();
+      inp.addEventListener('input',function(){
+        var n=numVal(inp.value); if(isNaN(n)) delete dat().bars[c]; else dat().bars[c]=n;
+        pending(); drawFig(); commit(); paintPlotMsg();
+      });
+      var rw=h('div','row'); rw.append(inp,h('span','unit',G.y.unit||''));
+      w.append(l,rw); grid.append(w);
+    });
+    tools.append(grid);
+  }
+  /* scatter plot: select an empty spot to add a dot, select a dot to take it away, or type a dot in */
+  function dotTools(fa){
+    tools.textContent='';
+    var row=h('div','row gadd');
+    var xi=h('input'), yi=h('input'); xi.type=yi.type='text'; xi.inputMode=yi.inputMode='decimal';
+    xi.id='f-'+id+'_dx'; yi.id='f-'+id+'_dy'; xi.className=yi.className='num';
+    var xl=h('label',null,fa.name+' (x)'); xl.htmlFor=xi.id;
+    var yl=h('label',null,G.y.name+' (y)'); yl.htmlFor=yi.id;
+    var add=h('button','btn ghost','Add dot'), undo=h('button','btn ghost','Undo last dot'), clr=h('button','btn ghost','Clear all dots');
+    add.type=undo.type=clr.type='button';
+    var cnt=h('span','whint');
+    [xi,yi,add,undo,clr].forEach(function(e){e.disabled=done();});
+    row.append(xl,xi,yl,yi,add);
+    var row2=h('div','row'); row2.append(undo,clr,cnt);
+    function count(){ cnt.textContent=dat().pts.length+' dots on your graph. The table has '+G.rows.length+' students.'; }
+    function addDot(){
+      var x=numVal(xi.value), y=numVal(yi.value);
+      if(isNaN(x)||isNaN(y)){ plotMsg='Type both numbers first.'; paintPlotMsg(true); return; }
+      dat().pts.push([x,y]); xi.value=yi.value=''; pending(); drawFig(); commit(); count(); paintPlotMsg(); xi.focus();
+    }
+    add.addEventListener('click',addDot);
+    [xi,yi].forEach(function(e){e.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault(); addDot();}});});
+    undo.addEventListener('click',function(){ if(!dat().pts.length) return; dat().pts.pop(); pending(); drawFig(); commit(); count(); paintPlotMsg(); });
+    clr.addEventListener('click',function(){
+      if(!dat().pts.length) return;
+      if(clr.dataset.sure!=='1'){ clr.dataset.sure='1'; clr.textContent='Select again to erase every dot'; return; }
+      clr.dataset.sure=''; clr.textContent='Clear all dots';
+      dat().pts=[]; pending(); drawFig(); commit(); count(); paintPlotMsg();
+    });
+    tools.append(row,row2); count();
+    tools._count=count;
+  }
+  function snap(v,s){return Math.round(v/s)*s;}
+  var dragging=false;
+  function figAt(e,start){
+    var fa=f(), fr=fig._fr, svg=fig.querySelector('svg');
+    if(!fa||!fr||!svg||!ok('type')||done()) return;
+    var p=gPoint(svg,e); if(!p) return;
+    if(p.x<fr.L-4||p.x>fr.L+fr.pw+4||p.y<fr.T-4||p.y>fr.T+fr.ph+4) return;
+    var yv=G.y.max-(p.y-fr.T)/fr.ph*(G.y.max-G.y.min);
+    yv=Math.max(G.y.min,Math.min(G.y.max,snap(yv,G.y.snap||10)));
+    if(fa.kind==='bar'){
+      var i=Math.floor((p.x-fr.L)/(fr.pw/fa.cats.length)); if(i<0||i>=fa.cats.length) return;
+      dat().bars[fa.cats[i]]=snap(yv,G.barSnap||10);
+      var inp=tools.querySelectorAll('input')[i]; if(inp) inp.value=String(dat().bars[fa.cats[i]]);
+    } else {
+      if(!start) return;
+      var xv=fa.min+(p.x-fr.L)/fr.pw*(fa.max-fa.min), pts=dat().pts, hit=-1;
+      pts.forEach(function(q0,k){ var dx=fr.X(q0[0])-p.x, dy=fr.Y(q0[1])-p.y; if(dx*dx+dy*dy<196) hit=k; });
+      if(hit>=0) pts.splice(hit,1);
+      else pts.push([Math.max(fa.min,Math.min(fa.max,snap(xv,fa.snap||1))),yv]);
+      if(tools._count) tools._count();
+    }
+    pending(); drawFig(); commit(); paintPlotMsg();
+  }
+  fig.addEventListener('pointerdown',function(e){ if(e.button) return; dragging=true; figAt(e,true); });
+  fig.addEventListener('pointermove',function(e){ if(dragging&&f()&&f().kind==='bar') figAt(e,false); });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){fig.addEventListener(ev,function(){dragging=false;});});
+  pChk.addEventListener('click',function(){
+    var fa=f(); if(!fa) return;
+    var res=gCheckPlot(G,fa,dat()), p=r('plot')||{miss:0};
+    lastBad=res.bad; plotMsg=res.note;
+    if(res.empty){ drawFig(); paintPlotMsg(true); return; }
+    S.auto[ids.plot]={v:gPlotText(G,fa,dat()),ok:res.ok,miss:(p.miss||0)+(res.ok?0:1)};
+    paint(); commit();
+  });
+  function paintPlotMsg(bad){
+    var x=r('plot');
+    pMsg.textContent='';
+    if(done()){ pMsg.dataset.s='ok'; pMsg.append('Correct. Your graph matches the class data. ',itxt(q.explain||'')); return; }
+    if(x&&x.v&&!x.pend&&!x.ok){ pMsg.dataset.s='bad'; pMsg.append(plotMsg?plotMsg+' ':'','Tip: ',itxt(f().kind==='bar'?(q.barTip||'The height of each bar is the average for that group. Add up the values for the group, then divide by the number of students in the group.'):(q.dotTip||'Each student in the table gets one dot. Find the student’s number on the x-axis, then go up to their measured value on the y-axis.'))); return; }
+    if(plotMsg){ pMsg.dataset.s=bad?'bad':''; pMsg.textContent=plotMsg; return; }
+    pMsg.removeAttribute('data-s');
+  }
+  function paintOthers(){
+    others.textContent='';
+    if(!done()) return;
+    var fa=f(), rest=G.factors.filter(function(x){return x!==fa;});
+    if(!rest.length) return;
+    others.append(h('h3','gsteph',G.othersHeading||'Your lab group’s graphs'));
+    others.append(h('p','intro',G.othersIntro||'In class, each person in a lab group graphs a different factor. Here are the graphs for the other factors. You will use all of the graphs in the next part.'));
+    var grid=h('div','ggrid');
+    rest.forEach(function(o){
+      var a=gAnswers(G,o), d={kind:o.kind,title:o.groupTitle||(G.y.name+' and '+o.name.toLowerCase()),xLabel:a.x,yLabel:a.y};
+      if(o.kind==='bar'){ var av=gAverages(G,o); d.bars={}; o.cats.forEach(function(c,i){d.bars[c]=Math.round(av[i]);}); }
+      else d.pts=G.rows.map(function(rw){return [rw[o.key],rw[G.y.key]];});
+      var fg=h('figure','gfig small'), gs=graphSvg(G,o,d);
+      fg.innerHTML=gs.svg; fg.setAttribute('role','img'); fg.setAttribute('aria-label','Graph: '+d.title+'. '+gPlotText(G,o,{pts:d.pts,bars:d.bars||{}})+'.');
+      grid.append(fg);
+    });
+    others.append(grid);
+  }
+  function paint(){
+    var fa=f(), fin=done();
+    fSel.value=st.f||''; fSel.disabled=fin;
+    fMsg.textContent=fin?'':(fa?(G.factorNote||'You can switch to a different factor, but your checked steps will start over.'):'');
+    [sType,sX,sY].forEach(function(x){x.paint();});
+    paintTitle();
+    var on=!!fa&&ok('type');
+    pW.hidden=!fa;
+    fig.style.touchAction=on&&fa.kind==='bar'?'none':'';
+    pHint.textContent=!fa?'':(!on?'Finish Step 1 first. Your graph will appear here, and it updates as you work.'
+      :(fa.kind==='bar'?'Make one bar for each group. The height of each bar is the group’s average '+G.y.name.toLowerCase()+'. Type each height in the boxes under the graph, or select inside the graph to set a bar.'
+        :'Add one dot for each student in the table. Select a spot on the graph to add a dot there (it snaps to the nearest grid line), select a dot to remove it, or type the numbers under the graph.'));
+    if(fa&&on){ if(fa.kind==='bar') barTools(fa); else dotTools(fa); tools.hidden=false; pRow.hidden=fin; }
+    else { tools.textContent=''; tools.hidden=true; pRow.hidden=true; }
+    var x=r('plot');
+    pW.dataset.s=fin?'ok':(x&&x.v&&!x.pend?'bad':'idle');
+    drawFig(); paintPlotMsg(); paintOthers();
+  }
+  fSel.addEventListener('change',function(){
+    if(fSel.value===st.f) return;
+    st.f=fSel.value; st.title='';
+    clearChecks(); paint(); commit();
+  });
+  paint();
+  return wrap;
+}
+/* the student's graph for the PDF */
+function graphReport(o){
+  var G=o.G, st=(S.graphs||{})[o.id]||{}, fa=gFactor(G,st.f), out=[];
+  function v(k){var r=S.auto[o.ids[k]]; return r&&r.v?r.v:'';}
+  if(!fa) return [{sub:'Factor graphed',resp:['(no factor chosen)'],tag:'',rich:null}];
+  out.push({sub:'Factor graphed',resp:[fa.name],tag:'',rich:null});
+  GSTEPS.forEach(function(k){
+    var r=S.auto[o.ids[k]], it={sub:AUTO[o.ids[k]].sum,resp:[],tag:'',rich:null};
+    if(k==='plot'){
+      var d=(st.by||{})[st.f]||{pts:[],bars:{}};
+      it.resp=[gPlotText(G,fa,d)];
+      it.svg=graphSvg(G,fa,{kind:fa.kind,title:v('title')||st.title||'',xLabel:v('x'),yLabel:v('y'),pts:d.pts,bars:d.bars}).svg;
+    } else it.resp=[v(k)||'(no answer)'];
+    it.tag=autoTag(r);
+    out.push(it);
+  });
+  return out;
+}
+function autoTag(r){
+  if(!r) return '';
+  var miss=r.miss?r.miss+(r.miss===1?' wrong try':' wrong tries'):'';
+  if(!r.v) return miss;
+  return (r.pend?'not checked yet':(r.ok?'correct':'incorrect'))+(miss?' • '+miss:'');
+}
+/* an SVG drawing as a PNG for the PDF */
+async function svgPng(svg,scale){
+  var img=new Image(), url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  await new Promise(function(res,rej){img.onload=res; img.onerror=rej; img.src=url;});
+  var w=img.naturalWidth||640, hgt=img.naturalHeight||450, c=document.createElement('canvas');
+  c.width=w*scale; c.height=hgt*scale;
+  var x=c.getContext('2d'); x.fillStyle='#ffffff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height);
+  var blob=await new Promise(function(r){c.toBlob(r,'image/png');});
+  return {bytes:new Uint8Array(await blob.arrayBuffer()),w:w,h:hgt};
+}
+
+/* ------------------------------------------------------------------ */
 /* Builders: written answers                                           */
 /* ------------------------------------------------------------------ */
 function writtenField(id,placeholder){
@@ -965,6 +1487,245 @@ function writtenField(id,placeholder){
   ta.addEventListener('input',function(){st.text=ta.value;grow();sync();commit();});
   sync(); setTimeout(grow,0);
   return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: photos of the student's own work                          */
+/* ------------------------------------------------------------------ */
+/* A photo is too big for localStorage, so the picture itself goes in IndexedDB under KEY|question id.
+   S.photos[id] keeps only {has, cap, w, h}. If IndexedDB is not available the photo lives in memory
+   until the page is closed. */
+var PHOTO_MEM={}, PHOTO_URL={}, PDB=null, CAMS=[];
+var CAN_CAM=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
+function photoDb(){
+  if(!PDB) PDB=new Promise(function(res,rej){
+    try{
+      var rq=indexedDB.open('explore-photos',1);
+      rq.onupgradeneeded=function(){rq.result.createObjectStore('photos');};
+      rq.onsuccess=function(){res(rq.result);};
+      rq.onerror=function(){rej(rq.error);};
+    }catch(e){rej(e);}
+  });
+  return PDB;
+}
+function photoTx(mode,fn){
+  return photoDb().then(function(db){
+    return new Promise(function(res,rej){
+      var tx=db.transaction('photos',mode), out=fn(tx.objectStore('photos'));
+      tx.oncomplete=function(){res(out&&'result' in out?out.result:true);};
+      tx.onerror=function(){rej(tx.error);}; tx.onabort=function(){rej(tx.error);};
+    });
+  });
+}
+function photoKey(id){return KEY+'|'+id;}
+function photoPut(id,buf){
+  PHOTO_MEM[id]=buf;
+  return photoTx('readwrite',function(os){os.put(buf,photoKey(id));}).then(function(){return true;},function(){return false;});
+}
+function photoGet(id){
+  if(PHOTO_MEM[id]) return Promise.resolve(PHOTO_MEM[id]);
+  return photoTx('readonly',function(os){return os.get(photoKey(id));}).then(function(b){
+    if(b) PHOTO_MEM[id]=b; return b||null;
+  },function(){return null;});
+}
+function photoDel(id){
+  delete PHOTO_MEM[id];
+  return photoTx('readwrite',function(os){os.delete(photoKey(id));}).catch(function(){});
+}
+function photoClearAll(){
+  Object.keys(PHOTO_MEM).forEach(function(k){delete PHOTO_MEM[k];});
+  return photoTx('readwrite',function(os){os.delete(IDBKeyRange.bound(KEY+'|',KEY+'|￿'));}).catch(function(){});
+}
+/* open webcam streams; every one is stopped when the page re-renders */
+function camStop(st){
+  st.getTracks().forEach(function(t){t.stop();});
+  var i=CAMS.indexOf(st); if(i>=0) CAMS.splice(i,1);
+}
+function photoUrlsDrop(){
+  CAMS.slice().forEach(camStop);
+  Object.keys(PHOTO_URL).forEach(function(k){URL.revokeObjectURL(PHOTO_URL[k]); delete PHOTO_URL[k];});
+}
+/* reads any picture the browser can open, turns it upright, and saves it as a JPEG no wider or taller
+   than 1600 pixels (about 150 to 300 KB) */
+function shrinkPhoto(file){
+  function viaImg(){
+    return new Promise(function(res,rej){
+      var u=URL.createObjectURL(file), im=new Image();
+      im.onload=function(){res(im); setTimeout(function(){URL.revokeObjectURL(u);},0);};
+      im.onerror=function(){URL.revokeObjectURL(u); rej(new Error('decode'));};
+      im.src=u;
+    });
+  }
+  var dec=window.createImageBitmap?createImageBitmap(file,{imageOrientation:'from-image'}).catch(viaImg):viaImg();
+  return dec.then(function(src){
+    var w=src.naturalWidth||src.width, ht=src.naturalHeight||src.height;
+    if(!w||!ht) throw new Error('decode');
+    var k=Math.min(1,1600/Math.max(w,ht)), c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(w*k)); c.height=Math.max(1,Math.round(ht*k));
+    var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height);
+    x.drawImage(src,0,0,c.width,c.height);
+    if(src.close) src.close();
+    return new Promise(function(r){c.toBlob(r,'image/jpeg',0.8);}).then(function(b){
+      if(!b) throw new Error('encode');
+      return b.arrayBuffer().then(function(buf){return {buf:buf,w:c.width,h:c.height};});
+    });
+  });
+}
+function photoField(id,q){
+  P[id]=true;
+  ORDER.push({kind:'photo',id:id,q:CURQ,sub:''});
+  var st=S.photos[id]||(S.photos[id]={has:false,cap:''});
+  var wrap=h('div','sub photo'); mark(wrap);
+  var input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.hidden=true;
+  input.setAttribute('aria-hidden','true'); input.tabIndex=-1;
+  var fig=h('figure','qimg'), im=document.createElement('img'); im.alt='Your photo for question '+CURQ.num; fig.append(im);
+  var row=h('div','row gap');
+  var add=h('button','btn'); add.type='button';
+  var cam=h('button','btn ghost','Take a picture with my camera'); cam.type='button'; cam.hidden=!CAN_CAM;
+  var del=h('button','btn ghost','Remove photo'); del.type='button';
+  var msg=h('span','msg'); msg.setAttribute('aria-live','polite');
+  row.append(add,cam,del,msg);
+  /* webcam: a live preview and a Take picture button, shown only while the camera is on */
+  var camBox=h('div','campanel'); camBox.hidden=true;
+  var vid=document.createElement('video'); vid.muted=true; vid.playsInline=true; vid.setAttribute('playsinline','');
+  vid.setAttribute('aria-label','Camera preview');
+  var snap=h('button','btn','Take picture'); snap.type='button';
+  var stopB=h('button','btn ghost','Cancel'); stopB.type='button';
+  var crow=h('div','row gap'); crow.append(snap,stopB); camBox.append(vid,crow);
+  var stream=null;
+  var lab=h('label',null,q.caption||'What does your photo show? Name the parts you can see.'); lab.htmlFor='c-'+id;
+  var ta=h('textarea'); ta.id='c-'+id; ta.rows=2; ta.value=st.cap||'';
+  ta.setAttribute('placeholder',q.placeholder||'Type your caption here');
+  wrap.append(input,fig,row,camBox,lab,ta);
+  function say(t,bad){msg.textContent=t; if(bad) msg.dataset.s='bad'; else msg.removeAttribute('data-s');}
+  function show(buf){
+    if(PHOTO_URL[id]) URL.revokeObjectURL(PHOTO_URL[id]);
+    PHOTO_URL[id]=URL.createObjectURL(new Blob([buf],{type:'image/jpeg'}));
+    im.src=PHOTO_URL[id];
+  }
+  function paint(){
+    fig.hidden=!st.has; del.hidden=!st.has;
+    add.textContent=st.has?'Replace photo':'Add a photo';
+    wrap.dataset.s=st.has?'ok':'idle';
+  }
+  function camOff(){
+    if(stream){ camStop(stream); stream=null; }
+    vid.srcObject=null; camBox.hidden=true; cam.disabled=false;
+  }
+  function savePhoto(file){
+    add.disabled=true; say('Adding your photo…');
+    return shrinkPhoto(file).then(function(p){
+      return photoPut(id,p.buf).then(function(kept){
+        st.has=true; st.w=p.w; st.h=p.h; show(p.buf); paint(); commit();
+        if(kept) say('Photo added. Your teacher will see it in your PDF.');
+        else say('Photo added, but this browser can’t keep it after you leave. Download your PDF before you close this page.',true);
+      });
+    }).catch(function(){
+      say('This photo can’t be opened here. Take a screenshot of it or save it as a JPG, then try again.',true);
+    }).then(function(){add.disabled=false;});
+  }
+  add.addEventListener('click',function(){camOff(); input.value=''; input.click();});
+  input.addEventListener('change',function(){
+    var file=input.files&&input.files[0];
+    if(file) savePhoto(file);
+  });
+  cam.addEventListener('click',function(){
+    cam.disabled=true; say('Starting your camera…');
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false}).then(function(st){
+      stream=st; CAMS.push(st); vid.srcObject=st; camBox.hidden=false;
+      return vid.play();
+    }).then(function(){
+      say('Get in the picture, then press Take picture.'); snap.focus();
+    }).catch(function(){
+      camOff(); say('Your camera didn’t start. Allow camera access, or use Add a photo instead.',true);
+    });
+  });
+  snap.addEventListener('click',function(){
+    if(!vid.videoWidth) return;
+    var c=document.createElement('canvas'); c.width=vid.videoWidth; c.height=vid.videoHeight;
+    c.getContext('2d').drawImage(vid,0,0,c.width,c.height);
+    camOff();
+    c.toBlob(function(b){ if(b) savePhoto(b); else say('The picture didn’t work. Try again.',true); },'image/jpeg',0.92);
+  });
+  stopB.addEventListener('click',function(){camOff(); say(''); cam.focus();});
+  del.addEventListener('click',function(){
+    photoDel(id); st.has=false; delete st.w; delete st.h;
+    if(PHOTO_URL[id]){URL.revokeObjectURL(PHOTO_URL[id]); delete PHOTO_URL[id];}
+    im.removeAttribute('src'); paint(); commit(); say('Photo removed.');
+    add.focus();
+  });
+  ta.addEventListener('input',function(){st.cap=ta.value; commit();});
+  paint();
+  if(st.has) photoGet(id).then(function(buf){
+    if(buf){ show(buf); return; }
+    st.has=false; paint(); commit();
+    say('Your photo isn’t saved in this browser anymore. Please add it again.',true);
+  });
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: agreement (a safety pledge: check every statement, then   */
+/* sign with your name). Saved in S.agree[id] = {on:[...], sign, at}.  */
+/* ------------------------------------------------------------------ */
+function agreeField(id,q){
+  var items=q.items||[];
+  ORDER.push({kind:'agree',id:id,q:CURQ,sub:'',items:items,sign:!!q.sign});
+  var st=S.agree[id]||(S.agree[id]={on:[],sign:'',at:''});
+  var wrap=h('div','ctl'); mark(wrap);
+  var boxes=items.map(function(t,i){
+    var lab=h('label','opt'), inp=document.createElement('input'); inp.type='checkbox'; inp.checked=!!st.on[i];
+    var sp=h('span'); sp.append(itxt(t)); lab.append(inp,sp); wrap.append(lab);
+    inp.addEventListener('change',function(){st.on[i]=inp.checked; changed();});
+    return lab;
+  });
+  if(q.sign){
+    var sl=h('label','signlab','Type your first and last name to sign'); sl.htmlFor='f-'+id;
+    var sig=h('input'); sig.type='text'; sig.id='f-'+id; sig.autocomplete='name'; sig.value=st.sign||'';
+    wrap.append(sl,sig);
+    sig.addEventListener('input',function(){st.sign=sig.value; changed();});
+  }
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite'); wrap.append(msg);
+  function done(){ return items.every(function(t,i){return !!st.on[i];})&&(!q.sign||words(st.sign)>=2); }
+  function changed(){ st.at=done()?(st.at||new Date().toISOString()):''; paint(); commit(); }
+  function paint(){
+    boxes.forEach(function(lab,i){ if(st.on[i]) lab.dataset.s='ok'; else lab.removeAttribute('data-s'); });
+    var d=done(), left=items.some(function(t,i){return !st.on[i];});
+    wrap.dataset.s=d?'ok':'idle';
+    msg.textContent=d?'Thank you. You agreed to every statement.':(left?'Check every box to agree.'+(q.sign?' Then type your first and last name to sign.':''):'Type your first and last name to sign.');
+  }
+  paint();
+  return wrap;
+}
+
+/* A part with gate: true hides every later part, and the Finish section, until everything in that part and in every
+   part before it is done. Once open it stays open. */
+var GATE=null;
+function gateSetup(app){
+  GATE=null;
+  var gi=-1;
+  (A.parts||[]).some(function(p,i){ if(p.gate){gi=i; return true;} return false; });
+  if(BOARD||GATED||gi<0||gi>=(A.parts||[]).length-1) return;
+  var n=gi+1, word=A.partWord||'Part', last=(A.parts||[]).length;
+  var later=[]; for(var k=n+1;k<=last;k++) later.push($('#part'+k,app));
+  var before=[]; for(var j=1;j<=n;j++) before.push($('#part'+j,app));
+  var need=n===1?word+' 1':n===2?word+'s 1 and 2':word+'s 1 to '+n;
+  var note=h('div','gate'); note.setAttribute('aria-live','polite');
+  $('#part'+n,app).after(note);
+  GATE={n:n,later:later,before:before,note:note,
+    locked:word+'s '+(n+1)+' to '+last+' and the Finish section are locked. They open when you finish everything in '+need+'.',
+    open:word+' '+(n+1)+' is open. Keep going!'};
+}
+function gateCheck(){
+  if(!GATE) return;
+  var c=[]; GATE.before.forEach(function(sec){ c=c.concat([].slice.call(sec.querySelectorAll('[data-c]'))); });
+  var now=false;
+  if(!S.open&&c.length&&c.every(function(e){return e.dataset.s==='ok';})){ S.open=true; save(); now=true; }
+  GATE.later.forEach(function(s){s.hidden=!S.open;});
+  var fin=$('#finish'); if(fin) fin.hidden=!S.open;
+  if(!S.open){ GATE.note.hidden=false; GATE.note.removeAttribute('data-s'); GATE.note.textContent=GATE.locked; }
+  else if(now){ GATE.note.hidden=false; GATE.note.dataset.s='ok'; GATE.note.textContent=GATE.open; }
+  else if(!GATE.note.dataset.s) GATE.note.hidden=true;
 }
 
 /* written answer with a yellow highlighter for the transition words that point to evidence */
@@ -1150,6 +1911,11 @@ function allQuestions(){
   return out;
 }
 
+function photoSentence(qs){
+  var n=qs.filter(function(q){return q.type==='photo';}).length;
+  return n?' You will add '+(NUMWORD[n]||n)+' photo'+(n===1?'':'s')+' of your own work. Each one shows in your PDF.':'';
+}
+
 /* top section when there is no video: start (heading, intro, after) from assignment.js */
 function startSection(){
   var V=A.start||{}, qs=allQuestions();
@@ -1161,6 +1927,7 @@ function startSection(){
   if(after==null){
     after='Each part gives you something to read and then lets you practice and check your work. Select a picture to open it full size in a new tab.';
     if(nW) after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s')+'.';
+    after+=photoSentence(qs);
     if(GATED) after+=' Each part opens when you finish the one before it.';
   }
   s.append(h('p','intro',after));
@@ -1205,9 +1972,10 @@ function videoSection(){
       else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
       after+='.';
     }
+    after+=photoSentence(qs);
     if(GATED) after+=' Each part opens when you finish the one before it.';
     if(hasClips){
-      var first=VIDS[VID_ORDER[1]];
+      var first=null; VID_ORDER.some(function(k){var c=VIDS[k]; if(c.from!=null&&!c.of){first=c;return true;} return false;});
       if(first) after+=' The times on each clip (like '+fmt(first.from)+' to '+fmt(first.to)+') are times in the full video above.';
     }
   }
@@ -1236,6 +2004,7 @@ function buildQuestion(q,s,tile){
     if(q.img.caption) fig.append(h('figcaption',null,q.img.caption));
     o.body.append(fig);
   }
+  if(q.calculator) o.body.append(calcEl(id));
   if(t==='selects'){
     ids=q.items.map(function(it,i){return id+'_'+i;});
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
@@ -1251,6 +2020,7 @@ function buildQuestion(q,s,tile){
   } else if(t==='typed'){
     var exp=q.expected;
     /* accept: a list of right answers, ignoring capital letters and an end period */
+    if(q.between) exp=inRange(q.between);
     if(q.accept){ var ok1=q.accept.map(function(x){return String(x).toLowerCase();}); exp=function(v){return ok1.indexOf(v.toLowerCase().replace(/[.!]+$/,''))>=0;}; }
     o.body.append(typedCheck(id,'Q'+num+' typed answer',exp,q.okMsg||'Correct.',function(v){
       if(BOARD) return triesMsg(S.auto[id],q.tip);
@@ -1270,6 +2040,15 @@ function buildQuestion(q,s,tile){
     o.body.append(labQ(id,q));
   } else if(t==='multi'){
     o.body.append(multiQ(id,q));
+  } else if(t==='numbers'){
+    ids=q.items.map(function(it,i){return id+'_'+i;});
+    o.body.append(numbersQ(id,q));
+  } else if(t==='readgraph'){
+    ids=q.items.map(function(it,i){return id+'_'+i;});
+    o.body.append(readGraphQ(id,q));
+  } else if(t==='graph'){
+    ids=GSTEPS.map(function(k){return id+'_'+k;});
+    o.body.append(graphQ(id,q));
   } else if(t==='written'){
     ids=[];
     W[id]={min:q.min||40};
@@ -1280,10 +2059,16 @@ function buildQuestion(q,s,tile){
     R[id]={min:q.min||40};
     o.body.append(
       h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
-      h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”'),
+      h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
       hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.'),
       richField(id));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return segsHlWords((S.rich[id]||{}).segs);},ideasFrom(q.ideas)));
+  } else if(t==='agree'){
+    ids=[];
+    o.body.append(agreeField(id,q));
+  } else if(t==='photo'){
+    ids=[];
+    o.body.append(photoField(id,q));
   } else {
     o.body.append(h('p','msg','Unknown question type: '+t));
   }
@@ -1294,13 +2079,89 @@ function buildQuestion(q,s,tile){
 function buildPart(p,n){
   var s=part(n,p.title);
   if(p.intro) s.append(h('p','intro',p.intro));
-  (p.clips||[]).forEach(function(k){ if(VIDS[k]) s.append(videoBlock(k)); });
+  var first=null;
+  (p.clips||[]).forEach(function(k){ if(VIDS[k]){ var b=videoBlock(k); s.append(b); if(!first) first=b; } });
+  /* questions with "at" pop up inside the part's first video at that time (seconds into that video) */
+  var inVid=(p.questions||[]).filter(function(q){return q.at!=null;});
+  if(inVid.length&&first) s.append(videoStops(first,inVid));
   (p.images||[]).forEach(function(im){ s.append(figureEl(im)); });
   if(p.read) s.append(learn(p.read));
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
-  (p.questions||[]).forEach(function(q){ buildQuestion(q,s); });
+  (p.questions||[]).forEach(function(q){ if(!(q.at!=null&&first)) buildQuestion(q,s); });
   if(GATED) gateEls(s,n);
   return s;
+}
+
+/* Questions inside a video. At each question's time the video pauses and the question pops up over the player
+   (under it on a narrow screen). The student must answer it right to keep watching, and cannot skip ahead past a
+   question that is not answered yet. Answered questions stay in a list under the video. */
+function videoStops(block,qs){
+  var v=block.querySelector('video'), vid=block.querySelector('.vid');
+  var list=h('div','vqs');
+  if(!S.vstop) S.vstop={};
+  var stops=qs.slice().sort(function(a,b){return a.at-b.at;}).map(function(q){
+    var holder=h('div','vqslot');
+    var r=buildQuestion(q,holder);
+    list.append(holder);
+    return {at:q.at,num:r.num,id:r.id,ids:r.auto,el:r.el,slot:holder};
+  });
+  function done(st){return st.ids.length>0&&st.ids.every(function(k){var x=S.auto[k];return !!(x&&x.ok);});}
+  function paintSlots(){
+    stops.forEach(function(st){
+      var seen=!!S.vstop[st.id]||done(st);
+      st.el.hidden=!seen;
+    });
+  }
+  paintSlots();
+  var cur=null, pop=null, poll=null, msg=null, go=null;
+  function close(play){
+    if(!cur) return;
+    cur.slot.append(cur.el);
+    if(pop) pop.remove();
+    clearInterval(poll); cur=null; pop=null;
+    paintSlots();
+    if(play) v.play();
+  }
+  function open(st){
+    v.pause();
+    try{ if(document.fullscreenElement) document.exitFullscreen(); else if(v.webkitDisplayingFullscreen) v.webkitExitFullscreen(); }catch(e){}
+    cur=st; S.vstop[st.id]=1; save();
+    st.el.hidden=false;
+    pop=h('div','vpop'+(vid.clientWidth>=560?' over':''));
+    pop.setAttribute('role','dialog'); pop.setAttribute('aria-label','Question '+st.num+' in the video');
+    pop.append(h('p','vpophead','The video paused at '+fmt(st.at)+'. Answer this question to keep watching.'));
+    pop.append(st.el);
+    msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+    go=h('button','btn','Keep watching'); go.type='button'; go.hidden=true;
+    go.addEventListener('click',function(){close(true);});
+    /* the question covers the player's controls, so this is how students go back and listen again */
+    var i=stops.indexOf(st), from=i>0?stops[i-1].at:0;
+    var back=h('button','btn ghost','Rewatch this section (from '+fmt(from)+')'); back.type='button';
+    back.addEventListener('click',function(){ close(false); v.currentTime=from; v.play(); });
+    var row=h('div','row'); row.append(go,back,msg); pop.append(row);
+    if(pop.classList.contains('over')) vid.append(pop); else vid.after(pop);
+    pop.scrollIntoView({block:'nearest'});
+    var hd=st.el.querySelector('.qtext'); if(hd){ hd.tabIndex=-1; hd.focus({preventScroll:true}); }
+    poll=setInterval(function(){
+      if(!document.contains(v)){ clearInterval(poll); return; }
+      if(cur&&done(cur)&&go.hidden){ go.hidden=false; msg.dataset.s='ok'; msg.textContent='Right! Press Keep watching.'; }
+    },300);
+  }
+  function next(){ for(var i=0;i<stops.length;i++) if(!done(stops[i])) return stops[i]; return null; }
+  v.addEventListener('timeupdate',function(){
+    if(cur||v.seeking) return;
+    var st=next(); if(st&&v.currentTime>=st.at-0.25) open(st);
+  });
+  v.addEventListener('seeking',function(){
+    var st=next();
+    if(st&&v.currentTime>st.at+0.5){ v.currentTime=st.at; if(!cur) open(st); }
+  });
+  v.addEventListener('play',function(){
+    if(!cur) return;
+    if(done(cur)) close(false);
+    else { v.pause(); msg.removeAttribute('data-s'); msg.textContent='Answer the question first. Then the video can keep going.'; }
+  });
+  return list;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1318,12 +2179,12 @@ function gateEls(s,n){
   var tog=h('button','btn ghost small gtog'); tog.type='button';
   tog.addEventListener('click',function(){ REOPEN[n]=!REOPEN[n]; applyGate(); });
   s.querySelector('h2').after(tog);
-  var g=h('div','gate'); g.hidden=true;
-  g.append(h('p','gmsg','You finished '+partWord(n)+'!'));
+  var g=h('div','pdone'); g.hidden=true;
+  g.append(h('p','pmsg','You finished '+partWord(n)+'!'));
   var go=h('button','btn',last?'Close '+partWord(n)+' and go to Finish':'Close '+partWord(n)+' and open '+partWord(n+1));
   go.type='button';
   go.addEventListener('click',function(){
-    S.gate=n+1; REOPEN[n]=false; commit();
+    S.onPart=n+1; REOPEN[n]=false; commit();
     [].forEach.call(s.querySelectorAll('video'),function(v){try{v.pause();}catch(e){}});
     var next=$(last?'#finish':'#part'+(n+1));
     celebrate(last?'You finished every part!':partWord(n)+' complete!');
@@ -1335,16 +2196,22 @@ function applyGate(){
   if(!GATED) return;
   var secs=[].slice.call(document.querySelectorAll('section.task[data-task]'));
   /* first visit, or progress saved before this feature: open the first part not yet finished */
-  if(!S.gate){ S.gate=1; while(S.gate<=secs.length&&partDone(secs[S.gate-1])) S.gate++; }
+  if(!S.onPart){ S.onPart=1; while(S.onPart<=secs.length&&partDone(secs[S.onPart-1])) S.onPart++; }
   secs.forEach(function(sec,i){
-    var n=i+1, past=n<S.gate, tog=$('.gtog',sec), g=$('.gate',sec);
-    sec.hidden=n>S.gate;
+    var n=i+1, past=n<S.onPart, tog=$('.gtog',sec), g=$('.pdone',sec);
+    sec.hidden=n>S.onPart;
     sec.classList.toggle('closed',past&&!REOPEN[n]);
     tog.hidden=!past;
     tog.textContent=REOPEN[n]?'Fold up '+partWord(n):'Look back at '+partWord(n);
     tog.setAttribute('aria-expanded',REOPEN[n]?'true':'false');
     g.hidden=past||!partDone(sec);
   });
+  /* the full video, when it sits after part N, shows once part N+1 is open */
+  var vAfter=A.video&&A.video.afterPart||0, vid=$('#video');
+  if(vAfter&&vid) vid.hidden=S.onPart<=vAfter;
+  /* a part with gate: true also keeps the Finish section hidden until the student closes that part */
+  var gi=-1; (A.parts||[]).some(function(p,i){ if(p.gate){gi=i; return true;} return false; });
+  var fin=$('#finish'); if(fin) fin.hidden=gi>=0&&S.onPart<=gi+1;
 }
 /* confetti and a short message when a part is finished. Students who turn off motion get just the message. */
 function celebrate(text){
@@ -1569,6 +2436,7 @@ function answerGroups(){
   ORDER.forEach(function(o){
     var q=o.q||{num:'',text:o.label};
     if(!last||last.q!==q){ last={q:q,num:q.num,text:q.text,note:q.tile?tileNote(q.tile):'',items:[]}; groups.push(last); }
+    if(o.kind==='graph'){ graphReport(o).forEach(function(it){last.items.push(it);}); return; }
     var it={sub:o.sub||'',resp:[],tag:'',rich:null};
     if(o.kind==='auto'){
       var r=S.auto[o.id];
@@ -1585,6 +2453,16 @@ function answerGroups(){
       var st=S.rich[o.id]||{segs:[]}, ptxt=segsPlain(st.segs).trim();
       it.resp=[ptxt||'(no answer)'];
       if(ptxt){ it.rich=st.segs; it.tag=words(ptxt)+' words, '+segsHlWords(st.segs)+' highlighted as transition words'; }
+    } else if(o.kind==='agree'){
+      var ag=S.agree[o.id]||{};
+      it.resp=o.items.map(function(x,i){return ((ag.on||[])[i]?'[x] ':'[ ] ')+plain(x);});
+      if(o.sign) it.resp.push('Signed: '+((ag.sign||'').trim()||'(not signed)'));
+      it.tag=ag.at?'agreed on '+fmtDate(new Date(ag.at)):'not finished';
+    } else if(o.kind==='photo'){
+      var ph=S.photos[o.id]||{}, cap=(ph.cap||'').trim();
+      it.photo=ph.has?o.id:null; it.cap=!!cap;
+      it.resp=[cap||'(no caption)'];
+      it.tag=ph.has?'photo added':'no photo added';
     } else {
       var w=S.written[o.id]||{}, t=(w.text||'').trim();
       it.resp=[t||'(no answer)'];
@@ -1604,7 +2482,7 @@ function summaryParts(){
   var res=videoRows().concat(board,[
     ['Auto-checked items',sc.a+' / '+TOTAL_A+' correct'],
     ['Written responses',sc.w+' / '+TOTAL_W+' completed']
-  ]);
+  ].concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]));
   return {date:fmtDate(new Date()),res:res,groups:answerGroups()};
 }
 function buildSummary(){
@@ -1618,7 +2496,8 @@ function buildSummary(){
     if(g.note) L.push('   ['+g.note+']');
     g.items.forEach(function(it){
       var pre=it.sub?'   '+plain(it.sub)+': ':'   ';
-      if(it.rich){ if(it.sub) L.push('   '+plain(it.sub)+':'); String(segsText(it.rich)).split('\n').forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
+      if(it.photo!==undefined){ L.push('   '+(it.photo?'[photo added - it shows only in the PDF]':'[no photo added]')); if(it.photo||it.cap) L.push('   Caption: “'+it.resp[0].replace(/\n/g,' ')+'”'); }
+      else if(it.rich){ if(it.sub) L.push('   '+plain(it.sub)+':'); String(segsText(it.rich)).split('\n').forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
       else if(it.resp.length===1) L.push(pre+'“'+it.resp[0].replace(/\n/g,' ')+'”'+(it.tag?' ['+it.tag+']':''));
       else { if(it.sub) L.push('   '+plain(it.sub)+':'); it.resp.forEach(function(x){L.push('      '+x);}); if(it.tag) L.push('      ['+it.tag+']'); }
     });
@@ -1795,7 +2674,22 @@ async function buildPdf(){
   p.res.forEach(function(r){ text(r[0]+': '+r[1],10.5,F); y+=1; });
   y+=8; rule(LINE,1); y+=14;
 
+  /* photos: load each saved picture before drawing */
+  var pics={};
+  for(var gi=0;gi<p.groups.length;gi++){
+    for(var ii=0;ii<p.groups[gi].items.length;ii++){
+      var pid=p.groups[gi].items[ii].photo;
+      if(!pid) continue;
+      try{ var buf=await photoGet(pid); if(buf) pics[pid]=await doc.embedJpg(buf); }catch(e){}
+    }
+  }
+
   text('Questions and answers',13,FB); y+=4;
+  for(var gi=0;gi<p.groups.length;gi++) for(var ii=0;ii<p.groups[gi].items.length;ii++){
+    var it0=p.groups[gi].items[ii];
+    if(!it0.svg) continue;
+    try{ var pic=await svgPng(it0.svg,3); it0.png={img:await doc.embedPng(pic.bytes),w:pic.w,h:pic.h}; }catch(e){}
+  }
   p.groups.forEach(function(g){
     y+=6;
     room(40);
@@ -1805,9 +2699,23 @@ async function buildPdf(){
       y+=2;
       var ind=16;
       if(it.sub){ mixed(it.sub,10,F,FI,ind,MUTED); ind=28; }
-      if(it.rich) richText(it.rich,10.5,FI,ind);
+      if(it.photo&&pics[it.photo]){
+        var pic=pics[it.photo], k=Math.min((CW-ind)/pic.width,320/pic.height,1), pw=pic.width*k, ph=pic.height*k;
+        room(ph+8);
+        page.drawImage(pic,{x:M+ind,y:PH-y-ph,width:pw,height:ph});
+        y+=ph+8;
+      } else if(it.photo) it.tag='photo added, but it could not be loaded into this PDF';
+      if(it.photo!==undefined){ if(it.photo||it.cap) text('Caption: '+it.resp[0],10.5,FI,ind,RESP); }
+      else if(it.rich) richText(it.rich,10.5,FI,ind);
       else it.resp.forEach(function(r){ text(r,10.5,FI,ind,RESP); });
       if(it.tag) text('('+it.tag+')',8.5,F,ind,MUTED);
+      if(it.png){
+        var gw=Math.min(it.png.w*0.62,CW-ind), gh=it.png.h*gw/it.png.w;
+        y+=4; room(gh+4);
+        page.drawImage(it.png.img,{x:M+ind,y:PH-y-gh,width:gw,height:gh});
+        page.drawRectangle({x:M+ind,y:PH-y-gh,width:gw,height:gh,borderColor:LINE,borderWidth:1});
+        y+=gh+4;
+      }
     });
   });
 
@@ -1847,7 +2755,7 @@ function finishEl(){
   s.append(ol);
   s.append(h('p','intro',BOARD
     ?'Your PDF shows your name, the date you finished, your score, and all of your answers.'
-    :'Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers'+(Object.keys(R).length?', including your yellow highlights':'')+'.'));
+    :'Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers'+(Object.keys(R).length?', including your yellow highlights':'')+(Object.keys(P).length?'. It also shows your photos':'')+'.'));
   var row=h('div','row');
   var make=h('button','btn','Download my PDF'); make.type='button';
   var cmsg=h('span','msg'); cmsg.setAttribute('aria-live','polite');
@@ -1914,7 +2822,7 @@ function finishEl(){
   });
 
   var det=h('details','backup'); det.append(h('summary',null,'Backup and restore (optional)'));
-  det.append(h('p','intro','Copy your progress code and keep it somewhere safe, such as a note or email to yourself. If you lose your place, paste the code below to restore your answers.'));
+  det.append(h('p','intro','Copy your progress code and keep it somewhere safe, such as a note or email to yourself. If you lose your place, paste the code below to restore your answers.'+(Object.keys(P).length?' Photos are not included in the code; they stay in this browser.':'')));
   var r1=h('div','row');
   var cp=h('button','btn ghost','Copy my progress code'); cp.type='button';
   var pm=h('span','msg'); pm.setAttribute('aria-live','polite');
@@ -1952,7 +2860,8 @@ function finishEl(){
   start.addEventListener('click',function(){start.hidden=true;ask.hidden=false;});
   no.addEventListener('click',function(){start.hidden=false;ask.hidden=true;});
   yes.addEventListener('click',function(){
-    var f1=S.first, l1=S.last; S=fresh(); S.first=f1; S.last=l1; finished=false; save(); render();
+    var f1=S.first, l1=S.last; S=fresh(); S.first=f1; S.last=l1; finished=false; save();
+    photoClearAll().then(render);
   });
   return s;
 }
@@ -2117,16 +3026,21 @@ function render(){
   Object.keys(AUTO).forEach(function(k){delete AUTO[k];});
   ORDER.length=0;
   var app=$('#app'); app.textContent='';
-  Object.keys(W).forEach(function(k){delete W[k];}); Object.keys(R).forEach(function(k){delete R[k];});
+  Object.keys(W).forEach(function(k){delete W[k];}); Object.keys(R).forEach(function(k){delete R[k];}); Object.keys(P).forEach(function(k){delete P[k];});
+  photoUrlsDrop();
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;
-  if(A.video) app.append(videoSection());
-  else if(!BOARD) app.append(startSection());
+  /* video.afterPart: N puts the full video section after part N instead of at the top */
+  var vAfter=A.video&&A.video.afterPart||0;
+  if(A.video&&!vAfter) app.append(videoSection());
+  else if(!A.video&&!BOARD) app.append(startSection());
   if(BOARD) app.append(boardSection());
-  else (A.parts||[]).forEach(function(p,i){app.append(buildPart(p,i+1));});
+  else (A.parts||[]).forEach(function(p,i){ app.append(buildPart(p,i+1)); if(vAfter===i+1) app.append(videoSection()); });
+  gateSetup(app);
   app.append(finishEl());
   TOTAL_W=Object.keys(W).length+Object.keys(R).length;
+  TOTAL_P=Object.keys(P).length;
   TOTAL_A=Object.keys(AUTO).length;
   decorate();
   updateBar();

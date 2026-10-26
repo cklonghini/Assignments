@@ -46,10 +46,20 @@ example). Sort the questions into 5 to 7 categories of equal size, easier questi
 diagrams from the test into `media/` and give them alt text that does not give the answer. Keep the test PDF and key in
 `source/`. Note that answers are in `assignment.js`, which anyone can read in the browser.
 
+## Hands-on labs (students add photos)
+
+For a lab students do at home, such as a dissection, end each step with a `photo` question so students add a picture
+of their own work (see "photo" in `docs/ASSIGNMENT_FORMAT.md`, and `assignments/heart-dissection/` as the
+example). Put the lab handout's steps for each part in its reading box so students can follow along.
+Start the lab with a setup and safety part that has `gate: true` (the rest stays hidden until it is done), an `agree`
+lab agreement, and a ready-to-go selfie `photo`.
+
 ## House rules (the teacher decided these; keep them)
 
 **Page**
 - Title format: "Explore - Topic Name" with a dash and capitalized words. The course label sits under the title.
+  Exception: hands-on labs have no "Explore - " (for example "Heart Dissection", "Sheep Brain Dissection",
+  "Lung Capacity Lab").
 - Students enter first and last name at the top. The yellow "Stay on this page until you finish" box, the sticky
   progress bars (one per part), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
   are part of the engine. Keep them.

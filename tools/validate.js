@@ -44,12 +44,13 @@ for (const dir of dirs) {
     };
     const board = A.board;
     if (!A.video) {
-      if (!board && !(A.parts || []).some(p => (p.images || []).length)) E('Missing video (an assignment with no video needs images in its parts)');
+      if (!board && !A.start && !(A.parts || []).some(p => (p.images || []).length)) E('Missing video (an assignment with no video needs images in its parts, or a start box)');
     } else if (!A.video.src) E('Missing video.src');
     else {
       if (!exists(A.video.src)) E('Video file not found: ' + A.video.src);
       if (!exists(A.video.src.replace(/\.mp4$/i, '.vtt'))) W('No captions file next to ' + A.video.src + ' (expected a .vtt file)');
       if (!(A.video.seconds > 0)) E('video.seconds must be a number of seconds');
+      if (A.video.afterPart != null && !(Number.isInteger(A.video.afterPart) && A.video.afterPart >= 1 && A.video.afterPart <= (A.parts || []).length)) E('video.afterPart must be a part number');
     }
     const clips = A.clips || {}, used = new Set();
     Object.keys(clips).forEach(k => {
@@ -75,7 +76,7 @@ for (const dir of dirs) {
       if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
       groups = (A.parts || []).map((p, pi) => ({ where: 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : ''), title: p.title, clips: p.clips, questions: p.questions || [] }));
     }
-    let qn = 0, nAuto = 0, nWritten = 0;
+    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0;
     groups.forEach(p => {
       const where = p.where;
       if (!p.title) E(where + ' needs a title');
@@ -95,6 +96,12 @@ for (const dir of dirs) {
           if (!tip) { if (!board) E(w + ' needs a tip'); return; }
           answers.forEach(a => { if (a && String(a).length > 3 && plain(tip).includes(plain(a))) W(w + ': the tip contains the answer "' + plain(a) + '". Tips should point, not tell.'); });
         };
+        if (q.at != null) {
+          const ck = (p.clips || [])[0], c = ck && clips[ck];
+          if (!c) E(w + ': "at" (a question inside the video) needs a clip in its part');
+          else if (!(q.at > 0 && q.at < c.seconds)) E(w + ': "at" must be between 0 and the length of clip ' + ck + ' (' + c.seconds + ' seconds)');
+          if (!['choice', 'multi', 'selects', 'typed', 'order'].includes(q.type)) E(w + ': only choice, multi, selects, typed, and order questions can go inside a video');
+        }
         switch (q.type) {
           case 'selects':
             if (!(q.items || []).length) E(w + ' has no items');
@@ -114,7 +121,7 @@ for (const dir of dirs) {
             nAuto++;
             break;
           case 'typed':
-            if (!q.expected && !(q.accept || []).length) E(w + ' needs expected (or an accept list)');
+            if (!q.expected && !(q.accept || []).length && !q.between) E(w + ' needs expected (or an accept list, or between)');
             needTip(q.tip, [q.expected].concat(q.accept || []));
             nAuto++;
             break;
@@ -167,6 +174,45 @@ for (const dir of dirs) {
             if (!q.tip) E(w + ' needs a tip');
             nAuto++;
             break;
+          case 'numbers': case 'readgraph': {
+            const range = b => Array.isArray(b) && b.length === 2 && typeof b[0] === 'number' && b[0] <= b[1];
+            if (!(q.items || []).length) E(w + ' has no items');
+            (q.items || []).forEach((it, i) => {
+              if (!it.label) E(w + ' item ' + (i + 1) + ' needs a label');
+              if (!range(it.between)) E(w + ' item ' + (i + 1) + ' needs between: [low, high]');
+              if (!(it.tip || q.tip)) E(w + ' item ' + (i + 1) + ' needs a tip');
+              nAuto++;
+            });
+            if (q.type === 'readgraph') {
+              const g = q.graph || {};
+              if (typeof g.fn !== 'function') E(w + ' needs graph.fn (the curve)');
+              ['x', 'y'].forEach(k => { const a = g[k] || {}; if (!(a.max > a.min) || !(a.step > 0)) E(w + ' needs graph.' + k + ' with min, max and step'); });
+              if (!g.alt) W(w + ' graph has no alt text (screen readers read it)');
+            }
+            break;
+          }
+          case 'graph': {
+            const g = q.graph || {}, y = g.y || {}, rows = g.rows || [];
+            if (!rows.length) E(w + ' needs graph.rows (the data)');
+            if (!y.key || !y.label || !(y.max > y.min) || !(y.step > 0)) E(w + ' needs graph.y with key, label, min, max and step');
+            if (!(g.factors || []).length) E(w + ' needs graph.factors');
+            (g.factors || []).forEach((f, i) => {
+              const where = w + ' factor ' + (i + 1) + (f.name ? ' (' + f.name + ')' : '');
+              if (!f.key || !f.name || !f.label) E(where + ' needs key, name and label');
+              if (!(g.labels || []).includes(f.label)) E(where + ': its label "' + f.label + '" is not in graph.labels');
+              if (f.kind === 'bar') {
+                if (!(f.cats || []).length) E(where + ' needs cats (the bar groups)');
+                rows.forEach((r, j) => { if (!(f.cats || []).includes(r[f.key])) E(where + ': row ' + (j + 1) + ' has "' + r[f.key] + '", which is not one of the cats'); });
+              } else if (f.kind === 'scatter') {
+                if (!(f.max > f.min) || !(f.step > 0)) E(where + ' needs min, max and step');
+                rows.forEach((r, j) => { if (!(r[f.key] >= f.min && r[f.key] <= f.max)) E(where + ': row ' + (j + 1) + ' is off the x-axis'); });
+              } else E(where + ' needs kind: bar or scatter');
+            });
+            if (!(g.labels || []).includes(y.label)) E(w + ': graph.y.label is not in graph.labels');
+            rows.forEach((r, j) => { if (!(r[y.key] >= y.min && r[y.key] <= y.max)) E(w + ': row ' + (j + 1) + ' is off the y-axis'); });
+            nAuto += 5;
+            break;
+          }
           case 'written': case 'highlight':
             nWritten++;
             if (!(q.ideas || []).length) W(w + ' has no ideas, so students get no "Check my ideas" button');
@@ -176,14 +222,27 @@ for (const dir of dirs) {
               if (it.highlight && q.type !== 'highlight') W(w + ' idea ' + (i + 1) + ' checks for highlighting but this is not a highlight question');
             });
             break;
+          case 'agree':
+            if (!(q.items || []).length) E(w + ' needs items (the statements to agree to)');
+            break;
+          case 'photo':
+            nPhoto++;
+            break;
           default:
             E(w + ' has an unknown type: ' + q.type);
         }
       });
     });
+    if (board && nPhoto) E('Photo questions do not work on a game board');
+    if (!board) {
+      const gates = (A.parts || []).filter(p => p.gate);
+      if (gates.length > 1) E('Only one part can have gate: true');
+      if (gates.length && (A.parts || []).indexOf(gates[0]) === (A.parts || []).length - 1) W('gate: true on the last part does nothing');
+    }
+    if (nPhoto > 10) W(nPhoto + ' photo questions is a lot. Each photo makes the PDF bigger; aim for 10 or fewer');
     if (groups.reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
     Object.keys(clips).forEach(k => { if (!used.has(k)) W('Clip ' + k + ' is defined but not used in any part'); });
-    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
+    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
   }
   errors.forEach(m => console.log('  ERROR   ' + m));
   warnings.forEach(m => console.log('  warning ' + m));

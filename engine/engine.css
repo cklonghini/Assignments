@@ -107,6 +107,15 @@ h1{margin:0;font-weight:800;font-size:clamp(2rem,6vw,3.1rem);line-height:1.04;le
 .sci select,.sci option{font-style:italic}
 #f-fx{font-style:italic}
 .vidtitle{margin:0 0 8px;font-weight:700}
+/* questions inside a video */
+.vqs{margin:4px 0 18px}
+.vqs .q{margin:14px 0}
+.vqs .q[hidden]{display:none}
+.vpop{margin:10px 0;padding:12px 16px;border:3px solid var(--primary);border-radius:10px;background:var(--surface);color:var(--ink)}
+.vpop.over{position:absolute;inset:0;margin:0;border-radius:10px;overflow:auto;z-index:2}
+.vpop .q{margin:8px 0}
+.vpophead{margin:0 0 4px;font-weight:700;color:var(--primary)}
+.vpop .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .reading{max-width:68ch;margin:16px 0}
 .wfor{border-left:5px solid var(--primary);background:var(--surface);padding:8px 14px;margin:12px 0;border-radius:0 8px 8px 0;max-width:68ch}
 .learn{background:var(--learn);border:1px solid var(--learn-line);border-radius:8px;padding:12px 16px;margin:12px 0 16px;max-width:68ch}
@@ -191,6 +200,15 @@ th{background:var(--bg)}
 .qimg{margin:10px 0 14px;max-width:560px}
 .qimg img{display:block;max-width:100%;height:auto;max-height:440px;border-radius:8px;background:#fff;border:1px solid var(--line)}
 .qimg figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+/* a student's own photo */
+.photo [hidden]{display:none}
+.photo .qimg img{max-height:360px}
+.photo>label{margin-top:12px}
+.task[hidden],.gate[hidden]{display:none}
+.gate{margin:48px 0 0;padding:16px 18px;border:2px dashed var(--muted);border-radius:10px;font-weight:700;font-size:1.05rem}
+.gate[data-s="ok"]{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
+.signlab{margin-top:14px}
+.campanel video{display:block;width:100%;max-width:480px;margin:12px 0 8px;border-radius:8px;background:#000}
 
 /* game board */
 .board{--tile:#1c2f9e;--tile-ink:#ffd447;display:grid;grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));gap:6px;margin:14px 0 8px}
@@ -323,6 +341,38 @@ details.backup textarea{min-height:90px;margin-top:8px;font:.8rem/1.3 ui-monospa
 @media (max-width:560px){.qbody{margin-left:0}.tl{font-size:.7rem}.tracks{gap:5px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
+/* numbers and graphs */
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 18px;margin-top:12px}
+input.num{width:9ch}
+.unit{color:var(--muted);font-weight:700}
+.gwrap{display:grid;gap:14px;margin-top:6px}
+.gfig{background:#ffffff;border:1px solid var(--line);border-radius:12px;padding:6px;max-width:640px;margin:0}
+.gfig svg{display:block;width:100%;height:auto}
+.gdraw{cursor:crosshair;user-select:none;-webkit-user-select:none}
+.gslide input[type=range]{flex:1 1 220px;max-width:360px;accent-color:var(--primary)}
+.gslide label{font-weight:700}
+.gstep select{min-width:22ch}
+.gsteph{margin:0 0 6px;font-weight:700;font-size:1rem}
+.gplot{display:grid;gap:10px}
+.gplot[data-s="ok"] .gfig{border-color:var(--ok);border-width:2px}
+.gtools{display:grid;gap:10px}
+.gadd label{font-weight:700;font-size:.95rem}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.gothers .gsteph{font-size:1.1rem;margin-top:8px}
+
+/* calculator */
+.calc{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0 14px;max-width:300px}
+.calc summary{cursor:pointer;font-weight:700;color:var(--primary)}
+.calcbody{margin-top:8px}
+.calc input[type=text]{width:100%;font-variant-numeric:tabular-nums;text-align:right;font-size:1.15rem}
+.calcout{min-height:1.5em;margin:6px 0;font-size:.93rem;color:var(--muted);text-align:right;overflow-wrap:anywhere}
+.calcout[data-s="bad"]{color:var(--bad);text-align:left}
+.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.calckey{font:inherit;font-weight:700;font-size:1.05rem;padding:9px 0;border-radius:8px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.calckey.op{color:var(--primary);border-color:var(--primary)}
+.calckey.eq{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.calckey:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
 /* one part at a time: finished parts fold to their banner; confetti when a part is finished */
 .task.closed>*:not(h2):not(.gtog){display:none}
 .task.closed{padding-top:18px}
@@ -332,11 +382,12 @@ details.backup textarea{min-height:90px;margin-top:8px;font:.8rem/1.3 ui-monospa
 .task h2:focus{outline:none}
 .task h2:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .gtog{margin:0 0 12px}
-.gate{margin-top:28px;padding:16px 18px;border:2px solid var(--ok);background:var(--ok-bg);border-radius:12px}
-.gmsg{margin:0 0 10px;font-weight:700;font-size:1.1rem;color:var(--ok)}
+.pdone{margin-top:28px;padding:16px 18px;border:2px solid var(--ok);background:var(--ok-bg);border-radius:12px}
+.pdone[hidden]{display:none}
+.pmsg{margin:0 0 10px;font-weight:700;font-size:1.1rem;color:var(--ok)}
 .confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1000}
 .cheer{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:1001;pointer-events:none;
   background:var(--primary);color:var(--primary-ink);font-weight:800;font-size:1.6rem;padding:16px 28px;border-radius:14px;
   box-shadow:0 10px 30px rgba(0,0,0,.25);text-align:center;max-width:calc(100% - 32px);transition:opacity .5s}
 .cheer.out{opacity:0}
-@media print{.gtog,.gate,.confetti,.cheer{display:none}}
+@media print{.gtog,.pdone,.confetti,.cheer{display:none}}
