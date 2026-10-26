@@ -200,6 +200,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What does the dura mater look and feel like as you remove it? (2 to 3 sentences)',
+          starters: ['The dura mater looks …', 'When I touched it, it felt …', 'As I removed it, I noticed …'],
           min: 30,
           ideas: [
             { done: 'You told what the dura mater looks like.', q: 'Did you tell what it looks like?', tip: 'Describe its color, how thick it is, or whether it is shiny or see-through.', re: /look|color|colou?r|white|gray|grey|clear|see.?through|shiny|thin|thick|dark|tan|yellow|brown|pale/ },
@@ -598,6 +599,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What structures were you able to find with ease on the outside of the sheep’s brain? What structures were harder to identify, and why do you think that was? (2 to 4 sentences)',
+          starters: ['On the outside of the sheep’s brain, I easily found the …', 'It was harder to identify … because …', 'I think this was because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure on the outside of the brain.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 4 and 5. What did you find before you cut?', re: /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|frontal|pariet|occipit|tempor|gyr|sulc|meninge|dura/ },
@@ -610,6 +612,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What structures were you able to find with ease inside the brain, after making the midsagittal cut? What structures were harder to identify? (2 to 4 sentences)',
+          starters: ['After making the midsagittal cut, I easily found the …', 'Inside the brain, it was harder to identify … because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure inside the brain.', q: 'Did you name at least one structure inside the brain?', tip: 'Look back at Steps 6 to 8. What did you find after you cut?', re: /arbor|vitae|ventricle|choroid|corpus|callosum|thalam|hypothal|epithal|pituitar|pineal|midbrain|pons|medulla|brain ?stem|diencephal|gray|grey|white matter|cerebell|cerebr/ },
@@ -621,6 +624,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What surprised you about the structure and organization of the brain? (2 to 4 sentences)',
+          starters: ['I was surprised that …', 'Before the dissection, I thought …, but …', 'Something I did not expect was …'],
           min: 40,
           ideas: [
             { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', re: /surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/ },
@@ -632,6 +636,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',
           text: 'How did doing this dissection help you understand the brain’s structure better than only looking at diagrams or photos? Use evidence from your own dissection and the video.',
+          starters: ['During my dissection, I could see …', 'Unlike a diagram, the real brain …', 'According to the video, …', 'For example, when I …'],
           min: 60,
           ideas: [
             { done: 'You wrote about the brain’s structure (what a part looks like, feels like, or where it is).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like the folds, the arbor vitae, or the gray and white matter.', re: /structur|shape|fold|groove|gyr|sulc|lobe|layer|inside|outside|size|look(s|ed)?|saw|see|seeing|felt|feel|texture|colou?r|where|located|location|position|arbor|matter|half|halves/ },
@@ -644,6 +649,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What parts of the brain are still confusing for you? Be specific about what you are unsure of. (2 to 4 sentences)',
+          starters: ['I am still confused about …', 'I am not sure whether …', 'A question I still have is …'],
           min: 40,
           ideas: [
             { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', re: /confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/ },

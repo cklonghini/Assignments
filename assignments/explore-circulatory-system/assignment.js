@@ -258,6 +258,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',
           text: 'Follow the blood from the video’s toe all the way through the heart and lungs and back out to the body. Name the vessels, chambers, and valves it passes through, and tell where it picks up oxygen. Use evidence from the video, along with transition words that tell where your evidence comes from. For example: “According to the video, …” or “In the video, the narrator explains that …” (3 to 5 sentences)',
+          starters: ['The blood starts in the toe and travels …', 'According to the video, the blood enters the heart through …', 'Next, the blood passes through …', 'In the video, the narrator explains that the blood picks up oxygen when …', 'Finally, the blood leaves the heart through …'],
           min: 150,
           ideas: [
             { done: 'You told how the blood gets back to the heart.', q: 'Did you name the vein that brings blood from the toe to the heart?', tip: 'The video names a large vein, and says which one (superior or inferior) the toe blood uses.', re: /vena|cava/ },
@@ -334,6 +335,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Why does it matter that people have different blood types? Use what you learned from the blood types video and your lab. Explain how blood typing keeps patients safe, and how your blood type connects to the idea that each of us is unique. (3 to 5 sentences)',
+          starters: ['It matters that people have different blood types because …', 'Before a transfusion, blood typing keeps patients safe by …', 'If a patient gets blood that does not match, …', 'My blood type connects to the idea that I am unique because …'],
           min: 150,
           ideas: [
             { done: 'You explained what makes blood types different.', q: 'Did you say what makes one blood type different from another?', tip: 'Think about what sits on the surface of red blood cells.', re: /marker|antigen|\btype (a|b|ab|o)\b|\brh\b|surface/ },

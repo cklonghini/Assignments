@@ -61,7 +61,7 @@ lab agreement, and a ready-to-go selfie `photo`.
   Exception: hands-on labs have no "Explore - " (for example "Heart Dissection", "Sheep Brain Dissection",
   "Lung Capacity Lab").
 - Students enter first and last name at the top. The yellow "Stay on this page until you finish" box, the sticky
-  progress bars (one per part), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
+  progress bars (one per part, with only the "Backup saved at" time under them), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
   are part of the engine. Keep them.
 - Each part starts with a thick colored line and a banner title so students can see they are moving to a new section.
 - Parts open one at a time. When at least 80% of a part is done (all of a `gate: true` setup part), the student closes it with a button, it folds down, confetti
@@ -88,6 +88,10 @@ lab agreement, and a ready-to-go selfie `photo`.
 - Highlight questions tell students to provide evidence in their response, along with transition words that bring
   attention to that evidence. Once they finish, they go back and highlight those transition words in yellow to show
   where their evidence is. The teacher wants this on the main written prompt that asks for evidence from the video.
+- **Every written question has 2 to 5 sentence starters** (`starters`) written for that question. They help students
+  begin, use the video's words, and stop before the answer. Every written box also has a "Check my writing" button
+  (capitals, punctuation, sentences, common grammar mix-ups). This is built into the engine.
+- Copy and paste are turned off on every assignment so students do their own thinking. This is built into the engine.
 - Write scientific names between asterisks (`*Homo sapiens*`) so they show in italics everywhere, including the PDF.
 - Use the words the video uses (for example "single-celled" if the video says that), so students can match the
   question to what they heard.

@@ -68,6 +68,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Scientists have changed how living things are classified over time. Why is it not enough to group organisms only by how they look, and how does DNA evidence help? Use at least one idea from the video. (2 to 4 sentences)',
+          starters: ['Grouping organisms only by how they look is not enough because …', 'For example, two organisms can look alike but …', 'DNA evidence helps scientists by …', 'According to the video, …'],
           min: 40,
           ideas: [
             { done: 'You explained why looks alone can be misleading.', q: 'Did you explain why grouping by looks alone is not enough?',
@@ -201,6 +202,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',
           text: 'Carl Linnaeus developed the binomial nomenclature system for naming species, which is still in use today. Discuss the advantages of using scientific names over common names when identifying species. Provide examples from the video, such as the mountain lion (also called a cougar or a puma), to explain why scientific names are important for consistency in classification.',
+          starters: ['One advantage of scientific names is …', 'According to the video, the mountain lion …', 'For example, …', 'This shows that scientific names …'],
           min: 40,
           ideas: [
             { done: 'You explained the problem with common names.', q: 'Did you explain what goes wrong with common names?',

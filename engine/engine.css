@@ -393,3 +393,25 @@ input.num{width:9ch}
   box-shadow:0 10px 30px rgba(0,0,0,.25);text-align:center;max-width:calc(100% - 32px);transition:opacity .5s}
 .cheer.out{opacity:0}
 @media print{.gtog,.pdone,.pnext,.confetti,.cheer{display:none}}
+
+/* sentence starters */
+details.starters{margin:10px 0;border:2px solid var(--line);border-radius:10px;background:var(--surface)}
+details.starters>summary{cursor:pointer;font-weight:700;color:var(--primary);padding:10px 14px}
+.stbox{padding:0 14px 12px}
+.stbox .inote{font-size:.9rem;color:var(--muted);margin:0 0 8px}
+.stbox ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.stbox li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.stbox li span{font-style:italic}
+.stbox li .btn{flex:none}
+
+/* writing check (capitals, punctuation, grammar) */
+.gcheck{margin:12px 0 0}
+.gcheck .inote{font-size:.9rem;color:var(--muted);margin:0 0 8px}
+.gprev{margin:10px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);white-space:pre-wrap;line-height:1.7;max-width:68ch}
+.gprev[hidden]{display:none}
+.gprev mark{background:var(--bad-bg);color:inherit;border-bottom:2px solid var(--bad);border-radius:3px;padding:0 1px}
+.gprev .gsen{text-decoration:underline wavy var(--bad);text-decoration-thickness:1.5px;text-underline-offset:4px}
+.gprev sup{color:var(--bad);font-weight:700;font-size:.7rem;margin-left:1px}
+.glist{margin:8px 0 0;padding-left:1.6em;display:grid;gap:4px;font-size:.95rem;max-width:68ch}
+.glist q{font-weight:700;color:var(--bad)}
+@media print{details.starters,.gcheck{display:none}}

@@ -20,6 +20,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `clips` | no | The short clips (below) |
 | `parts` | yes | The parts, in order (below) |
 | `unlockAt` | no | With parts one at a time: how much of a part a student must finish before the next part opens. Default `0.8` (80%). A part with `gate: true` always needs all of it |
+| `copyPaste` | no | Copy and paste are off by default (see below). Set `copyPaste: true` to allow them on this assignment |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
@@ -118,6 +119,15 @@ required for screen readers. `text` (HTML) is the words on the picture: students
 Listen button under the picture reads it aloud. Give `text` to any picture that has words students need.
 
 Any question can also show a picture with `img` (see below), for example a numbered diagram to label.
+
+## Copy and paste are off
+
+So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
+into any box. A short message says copying or pasting is turned off. The Finish section still copies (the "Copy my
+answers as text" fallback and the backup code), and the restore box still takes a pasted code. Spell-check
+suggestions still work. This stops the easy shortcut, not a determined student (anyone can retype or take a picture
+of the screen). It can also block assistive tools that type by pasting; set `copyPaste: true` for an assignment if a
+student needs one.
 
 ## One part at a time
 
@@ -302,12 +312,25 @@ graph a different factor. The PDF shows every step and a picture of the student'
 
 ```js
 { type: 'written', text: 'Explain... (2 to 4 sentences)', min: 40, placeholder: 'optional',
+  starters: ['One reason is …', 'This shows that … because …'],
   ideas: [ ...ideas ] }
 ```
 
+`starters` (2 to 5) are sentence starters. Students open "Need help getting started? See sentence starters" above
+the box. Each starter has a **Use this** button that adds the words before the first `…` to the end of their answer,
+and they finish the sentence. Write starters that fit this question and use the video's words, but never give the
+answer: stop each one before the part the student must think of. Use `…` where the student fills in.
+
+Every written and highlight box also has a **Check my writing** button. It runs in the browser (nothing is sent
+anywhere) and marks capital letters at the start of sentences, a capital "I", missing end punctuation, missing
+apostrophes (dont, cant, im), repeated words, spacing around punctuation, mix-ups (their is, more then, should of,
+alot, a/an), very short sentences, very long sentences, and sentences that start with "Because," "When," "If," and
+similar words but have no comma. It shows the student's writing with each problem highlighted and a tip for each.
+It does not fix anything for them. Spelling is left to the browser's red underline.
+
 ### highlight: a written response where students point to their evidence with transition words and highlight those words in yellow
 
-Same fields as `written` (`text`, `min`, `ideas`). The engine adds the instructions and the yellow highlight buttons.
+Same fields as `written` (`text`, `min`, `starters`, `ideas`). The engine adds the instructions and the yellow highlight buttons.
 For an assignment with no video, set `examples` to replace the example transition words (the default list includes
 "According to the video").
 The instructions tell students to provide evidence along with transition words that bring attention to it (for example

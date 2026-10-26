@@ -410,6 +410,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What structures were you able to find with ease on the outside of the heart? What structures may have been harder to identify? (2 to 4 sentences)',
+          starters: ['On the outside of the heart, I easily found the …', 'A structure that was harder to identify was … because …', 'It was easier to find … because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure on the outside of the heart.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 2 and 3. What did you find before you cut?', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter/ },
@@ -421,6 +422,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What structures were you able to find with ease inside the heart, after cutting into it? What structures may have been harder to identify? (2 to 4 sentences)',
+          starters: ['After cutting into the heart, I easily found the …', 'Inside the heart, it was harder to identify … because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure inside the heart.', q: 'Did you name at least one structure inside the heart?', tip: 'Look back at Steps 4 to 6. What did you find after you cut?', re: /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|wall|string/ },
@@ -432,6 +434,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What surprised you about the structure and organization of the heart? (2 to 4 sentences)',
+          starters: ['I was surprised that …', 'Before the dissection, I thought …, but …', 'Something I did not expect was …'],
           min: 40,
           ideas: [
             { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', re: /surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/ },
@@ -443,6 +446,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',
           text: 'How was doing this dissection helpful for understanding the heart’s structure AND function? Use evidence from your dissection and the video.',
+          starters: ['During my dissection, I observed …', 'This shows that the structure of the … helps it …', 'According to the video, …', 'For example, when I …'],
           min: 60,
           ideas: [
             { done: 'You wrote about structure (what a part looks like or how it is built).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like how thick a wall was or how a valve flap looked.', re: /structur|shape|thick|thin|wall|look(s|ed)?|saw|see|seeing|felt|feel|size|flap|string|built|layer|chamber/ },
@@ -455,6 +459,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What about the structure and function of the heart do you still find confusing? (2 to 4 sentences)',
+          starters: ['I am still confused about …', 'One thing I do not understand yet is …', 'A question I still have is …'],
           min: 40,
           ideas: [
             { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', re: /confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/ },

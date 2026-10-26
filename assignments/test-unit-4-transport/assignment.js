@@ -42,6 +42,7 @@ window.ASSIGNMENT = {
               { label: 'The organ system that controls it with the hormone EPO', options: ['Skeletal system', 'Endocrine system', 'Nervous system', 'Digestive system', 'Respiratory system'], answer: 'Endocrine system' }
             ] },
           { ref: 21, type: 'written', text: 'Explain how the unique shape of erythrocytes (red blood cells) enables them to best carry out their function. (2 to 4 sentences)',
+            starters: ['The shape of a red blood cell is …', 'This shape helps it … because …'],
             min: 60,
             ideas: [
               { done: 'You described the shape.', q: 'Did you describe the shape of an erythrocyte?', tip: 'Think about what a red blood cell looks like from the side.', re: /biconcave|concave|flatten|flat|dis[ck]|donut|doughnut|dimpl|indent|squish/ },
@@ -74,6 +75,7 @@ window.ASSIGNMENT = {
               { label: 'The blood vessel narrows (vasoconstriction) to slow blood flow to the damaged area', answer: 'Vascular spasm' }
             ] },
           { ref: '25 c-d', type: 'written', text: 'Assume you are blood type A. (c) What would happen if you received a blood transfusion from someone with type B blood, and why? (d) Who can you donate blood to, and why? Label your answers c and d.',
+            starters: ['c. If I received type B blood, …', 'This happens because …', 'd. I can donate blood to … because …'],
             min: 80,
             ideas: [
               { done: 'For part c, you said what your body would do.', q: 'For part c, did you say what your body would do with the type B blood?', tip: 'Think about how your body treats blood it sees as foreign.', re: /attack|reject|react|clump|agglutinat|foreign|immune|destroy|clot/ },
@@ -105,6 +107,7 @@ window.ASSIGNMENT = {
               { label: 'F', answer: 'Left atrium' }
             ] },
           { ref: 27, type: 'written', text: 'Explain the function of the myocardium and why it needs to be thicker in one of the ventricles than the other. Be sure to clearly state which ventricle it is thicker in. (2 to 4 sentences)',
+            starters: ['The function of the myocardium is …', 'It is thicker in the … ventricle because …'],
             min: 60,
             ideas: [
               { done: 'You explained what the myocardium does.', q: 'Did you explain what the myocardium does?', tip: 'Think about what job the muscle layer of the heart wall does.', re: /contract|pump|squeez|push|beat|muscle/ },
@@ -127,6 +130,7 @@ window.ASSIGNMENT = {
           { ref: 7, type: 'choice', text: 'Which of the following accurately reflects the order of events that causes the heart to pump out blood?',
             options: ['Electrical event → distribution → mechanical event → pressure change → fluid movement', 'Electrical event → pressure change → mechanical event → distribution → fluid movement', 'Mechanical event → distribution → electrical event → pressure change → fluid movement', 'Mechanical event → pressure change → electrical event → distribution → fluid movement'], answer: 0 },
           { ref: 31, type: 'written', text: 'Describe the purpose of an electrocardiogram (EKG). Then describe what the EKG tracing would look like for a heart beating at a high frequency, a heart beating at a low frequency, and a heart that isn’t beating at all.',
+            starters: ['An EKG is used to …', 'For a heart beating at a high frequency, the tracing would …', 'For a heart beating at a low frequency, …', 'For a heart that is not beating, …'],
             min: 80,
             ideas: [
               { done: 'You said what an EKG tracks.', q: 'Did you say what an EKG tracks?', tip: 'Think about what kind of activity the heart’s conduction system makes.', re: /electric|signal|impulse|depolariz|action potential/ },
@@ -152,6 +156,7 @@ window.ASSIGNMENT = {
               { label: 'Coronary circulation', answer: 'Supplies the heart with its own oxygen-rich blood' }
             ] },
           { ref: 35, type: 'written', text: 'Explain the purpose of the different blood vessels in the picture that connect to the alveoli: the artery, the capillary network, and the vein.',
+            starters: ['The artery carries …', 'The capillary network is where …', 'The vein carries …'],
             img: { src: 'media/alveoli.png', alt: 'Drawing of clusters of alveoli. An artery and a vein connect to a capillary network that wraps around the alveoli.' },
             min: 80,
             ideas: [
@@ -161,6 +166,7 @@ window.ASSIGNMENT = {
               TWO_SENTENCES
             ] },
           { ref: 30, type: 'written', text: 'List three factors that cause resistance to the flow of blood through the vessels. Explain which has the greatest impact and why.',
+            starters: ['Three factors that cause resistance are …', 'The factor with the greatest impact is … because …'],
             min: 80,
             ideas: [
               { done: 'You named a factor about the blood itself.', q: 'Did you name a factor that is about the blood itself?', tip: 'One factor is about the blood, not the vessel.', re: /viscos|thick|thin|sticky|syrup/ },
@@ -210,6 +216,7 @@ window.ASSIGNMENT = {
           { ref: 17, type: 'choice', text: 'Which of the following statements about gas exchange is FALSE?',
             options: ['Our blood plays a central role.', 'Exchange happens in the alveoli and our body tissues.', 'Simple diffusion is the method of transport.', 'In the alveoli, CO2 moves into the blood and O2 moves out of it.'], answer: 3 },
           { ref: 34, type: 'written', text: 'Explain the relationship between pressure and volume changes that cause air to flow into and out of the lungs. (2 to 4 sentences)',
+            starters: ['When you breathe in, the volume …', 'As the volume changes, the pressure …', 'Air flows into the lungs when …'],
             min: 60,
             ideas: [
               { done: 'You explained how volume and pressure are related.', q: 'Did you explain how volume and pressure change together?', tip: 'When the lungs get bigger, what happens to the pressure inside them?', re: /opposite|inverse|(volume[^.]*(increase|goes up|rise|bigger|larger|expand|grow)[^.]*pressure[^.]*(decrease|drop|goes down|lower|fall|less))|(pressure[^.]*(decrease|drop|goes down|lower|fall)[^.]*volume)/ },

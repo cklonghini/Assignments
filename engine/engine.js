@@ -32,7 +32,7 @@ function injectPage(){
     +'<li>When you finish, scroll to the bottom, download your PDF, and upload it to the Canvas assignment.</li></ul>'
     +'<p class="small">This page keeps a backup copy in your browser as you work, but don’t count on it. It disappears if you switch devices, use a private window, or clear your browser data.</p></aside>'
     +'<div class="bar" aria-label="Your progress"><div class="tracks">'+tracks+'</div>'
-    +'<div class="statsrow"><span id="sAuto"></span><span id="sWritten"></span><span id="sSaved"></span></div></div>'
+    +'<div class="statsrow"><span id="sSaved"></span></div></div>'
     +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript></div>');
   document.querySelector('h1.display').textContent=A2.title;
   document.querySelector('p.course').textContent=A2.course;
@@ -279,10 +279,7 @@ function updateBar(){
     var bad=c.some(function(e){return e.dataset.s==='bad';});
     q.dataset.s= ok===c.length?'done':(bad?'bad':(ok>0?'partial':'idle'));
   });
-  var sc=score();
-  if(BOARD){ paintBoard(); var T=boardTotals(); $('#sAuto').innerHTML='Score: <strong>'+T.earned+'</strong> of '+T.auto+' points'; }
-  else{ $('#sAuto').innerHTML='Auto-checked: <strong>'+sc.a+' / '+TOTAL_A+'</strong> correct'; applyGate(); }
-  $('#sWritten').innerHTML='Written: <strong>'+sc.w+' / '+TOTAL_W+'</strong> done'+(TOTAL_P?' • Photos: <strong>'+sc.p+' / '+TOTAL_P+'</strong> added':'');
+  if(BOARD) paintBoard(); else applyGate();
   var sv=$('#sSaved');
   if(!storageOK) sv.textContent='This browser can’t keep a backup. Stay on this page.';
   else if(lastSaved) sv.textContent='Backup saved at '+lastSaved.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
@@ -1471,7 +1468,7 @@ function writtenField(id,placeholder){
   ORDER.push({kind:'written',id:id,q:CURQ,sub:''});
   var st=S.written[id]||(S.written[id]={text:''});
   var wrap=h('div','sub'); mark(wrap); wrap.dataset.s='idle';
-  var ta=h('textarea'); ta.id='f-'+id; ta.rows=4; ta.value=st.text||'';
+  var ta=h('textarea'); ta.id='f-'+id; ta.rows=4; ta.value=st.text||''; ta.spellcheck=true;
   ta.setAttribute('placeholder',placeholder||'Type your answer here');
   ta.setAttribute('aria-label','Your written answer');
   wrap.append(ta);
@@ -1783,7 +1780,7 @@ function richField(id){
   var bmsg=h('span','msg'); bmsg.setAttribute('aria-live','polite');
   bar.append(on,off,bmsg);
   var ed=h('div','ev'); ed.id='f-'+id; ed.contentEditable='true'; ed.setAttribute('role','textbox'); ed.setAttribute('aria-multiline','true');
-  ed.setAttribute('aria-label','Your written response'); ed.setAttribute('data-placeholder','Begin your response here...');
+  ed.setAttribute('aria-label','Your written response'); ed.spellcheck=true; ed.setAttribute('data-placeholder','Begin your response here...');
   fillEditor(ed,st.segs);
   var cnt=h('p','words'); var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
   wrap.append(bar,ed,cnt,msg);
@@ -1799,11 +1796,6 @@ function richField(id){
     sync(); commit();
   }
   ed.addEventListener('input',readEd);
-  ed.addEventListener('paste',function(e){
-    e.preventDefault();
-    var t=(e.clipboardData||window.clipboardData).getData('text/plain');
-    document.execCommand('insertText',false,t);
-  });
   var saved=null;
   document.addEventListener('selectionchange',function(){
     var sel=window.getSelection();
@@ -1836,6 +1828,137 @@ function richField(id){
 /* ------------------------------------------------------------------ */
 /* Written-answer self-check                                           */
 /* ------------------------------------------------------------------ */
+/* Sentence starters (from assignment.js). "Use this" adds the starter to the end of the student's answer. */
+function startersEl(id,list){
+  var d=h('details','starters'); d.append(h('summary',null,'Need help getting started? See sentence starters'));
+  var box=h('div','stbox');
+  box.append(h('p','inote','Pick a starter, then finish the sentence in your own words. You can use more than one.'));
+  var ul=h('ul');
+  list.forEach(function(t){
+    var li=h('li'), sp=h('span'); sp.append(itxt(t));
+    var b=h('button','btn ghost small','Use this'); b.type='button';
+    b.setAttribute('aria-label','Add this starter to my answer: '+plain(t));
+    /* adds the words up to the first … so the student finishes the sentence */
+    b.addEventListener('click',function(){ addToAnswer(id,plain(t).split('…')[0].replace(/\s+$/,'')); });
+    li.append(sp,b); ul.append(li);
+  });
+  box.append(ul); d.append(box);
+  return d;
+}
+function addToAnswer(id,t){
+  var f=$('#f-'+id); if(!f) return;
+  if(f.tagName==='TEXTAREA'){
+    var v=f.value.replace(/\s+$/,'');
+    f.value=v+(v?' ':'')+t+' ';
+    f.dispatchEvent(new Event('input',{bubbles:true}));
+    f.focus(); f.selectionStart=f.selectionEnd=f.value.length;
+    return;
+  }
+  f.focus();
+  var sel=window.getSelection(), r=document.createRange();
+  r.selectNodeContents(f); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
+  var pre=(f.textContent||'').replace(/\u00a0/g,' ');
+  var txt=(pre.trim()&&!/\s$/.test(pre)?' ':'')+t+' ';
+  var ok=false; try{ok=document.execCommand('insertText',false,txt);}catch(e){}
+  if(!ok){ f.append(document.createTextNode(txt)); f.dispatchEvent(new Event('input',{bubbles:true})); }
+}
+
+/* Writing check: capital letters, end marks, sentence problems, and common grammar mix-ups.
+   Simple rules that run in the browser. Nothing the student writes leaves the page. Spelling is left to the
+   browser's own red underline. */
+var GFIX=[
+  [/\b(i)(?=\b(?!\.)|'(?:m|ve|ll|d)\b)/g,function(m){return 'Use a capital “I” when you mean yourself.';}],
+  [/\b(dont|doesnt|didnt|cant|isnt|wasnt|arent|werent|couldnt|shouldnt|wouldnt|havent|hasnt|hadnt|im|ive|thats|theyre|youre|whats|theres|heres|wont)\b/gi,function(m){
+    var fix={dont:'don’t',doesnt:'doesn’t',didnt:'didn’t',cant:'can’t',isnt:'isn’t',wasnt:'wasn’t',arent:'aren’t',werent:'weren’t',couldnt:'couldn’t',shouldnt:'shouldn’t',wouldnt:'wouldn’t',havent:'haven’t',hasnt:'hasn’t',hadnt:'hadn’t',im:'I’m',ive:'I’ve',thats:'that’s',theyre:'they’re',youre:'you’re',whats:'what’s',theres:'there’s',heres:'here’s',wont:'won’t'}[m.toLowerCase()];
+    return 'This word needs an apostrophe: “'+fix+'”.';}],
+  [/\balot\b/gi,function(){return '“A lot” is two words.';}],
+  [/\b(should|could|would|must|might) of\b/gi,function(m){return 'Write “'+m.split(' ')[0]+' have,” not “'+m+'.”';}],
+  [/\b(more|less|better|worse|bigger|smaller|greater|larger|faster|slower|higher|lower|thicker|thinner|stronger|weaker|longer|shorter|rather|other) then\b|\b(more|less) [a-z]+ then\b/gi,function(m){return 'When you compare two things, use “than,” not “then.”';}],
+  [/\btheir (is|are|was|were)\b/gi,function(){return 'Use “there” here. “Their” means it belongs to them.';}],
+  [/\bits (a|an|the|not|because|very|important|also|going|true)\b/gi,function(){return 'Use “it’s” (it is) here. “Its” means belonging to it.';}],
+  [/\bit's (own)\b/gi,function(){return 'Use “its” (no apostrophe) here. It means belonging to it.';}],
+  [/\bto (much|many)\b/gi,function(m){return 'Use “too” (meaning more than enough): “too '+m.split(' ')[1]+'.”';}],
+  [/\ba (?=[aeio][a-z])(?!one\b|once\b)[a-z]+/g,function(){return 'Use “an” before a word that starts with a vowel sound.';}],
+  [/\b([a-z]+) \1\b/gi,function(m){return 'The word “'+m.split(' ')[0]+'” is written twice in a row.';}],
+  [/ +[.,!?;:](?=\s|$)/g,function(){return 'Take out the space before this punctuation mark.';}],
+  [/[a-z]{2}[.!?,;:](?=[A-Za-z])/g,function(){return 'Add a space after this punctuation mark.';},2]
+];
+var GSUB=/^(because|since|although|though|when|while|if|unless|whereas|after|before|even though)\b/i;
+function grammarIssues(text){
+  var out=[];
+  function add(a,b,msg,wide){ if(b>a) out.push({a:a,b:b,msg:msg,wide:!!wide}); }
+  GFIX.forEach(function(rule){
+    var re=new RegExp(rule[0].source,rule[0].flags), m;
+    while((m=re.exec(text))){ add(m.index+(rule[2]||0),m.index+m[0].length,rule[1](m[0])); if(!m[0].length) re.lastIndex++; }
+  });
+  /* sentences: split at end marks and line breaks, but not at decimals (37.5) or titles and short forms (Mrs., e.g.) */
+  var sc=text.replace(/\d\.\d/g,function(x){return x.replace('.','\u2024');})
+    .replace(/\b(mr|mrs|ms|dr|st|vs|etc|approx|e\.g|i\.e)\./gi,function(x){return x.slice(0,-1).replace(/\./g,'\u2024')+'\u2024';});
+  var re=/[^.!?\n]+(?:[.!?]+["”’')\]]*|(?=\n)|$)/g, m;
+  while((m=re.exec(sc))){
+    var raw=text.substr(m.index,m[0].length); if(!raw.trim()){ if(!raw.length) re.lastIndex++; continue; }
+    var lead=raw.length-raw.replace(/^\s+/,'').length, st=m.index+lead, sen=raw.trim(), end=st+sen.length;
+    var core=sen.replace(/^[“"'(\[]+/,''), w=core.match(/[A-Za-z’'-]+/g)||[];
+    if(w.length<=1&&core.replace(/[^A-Za-z]/g,'').length<=1) continue;   /* labels such as "c." or "1." */
+    var fw=core.match(/^[A-Za-z’'-]+/);
+    if(fw&&/^[a-z]/.test(fw[0])) add(end-core.length,end-core.length+fw[0].length,'Start each sentence with a capital letter.');
+    if(!/[.!?]["”’')\]]*$/.test(sen)){
+      var lw=sen.match(/\S+$/); add(end-lw[0].length,end,'End this sentence with a period (or a question mark or exclamation point).');
+    }
+    if(w.length<3) add(st,end,'This looks too short to be a complete sentence. A sentence needs a subject and a verb.',1);
+    else if(GSUB.test(core)&&core.indexOf(',')<0&&w.length<14) add(st,end,'A sentence that starts with “'+core.match(GSUB)[0]+'” needs two parts with a comma between them, like this: “When the heart contracts, blood moves out.” Check that this sentence has both parts and the comma.',1);
+    else if(w.length>40) add(st,end,'This sentence is very long ('+w.length+' words). Try splitting it into two or three sentences.',1);
+  }
+  /* whole-sentence problems and word problems are kept apart, so one never hides the other.
+     Within each kind, keep the first problem when two overlap. */
+  out.sort(function(x,y){return x.a-y.a||(y.wide-x.wide)||y.b-x.b;});
+  var keep=[], to={0:-1,1:-1};
+  out.forEach(function(x){ var k=x.wide?1:0; if(x.a>=to[k]){ keep.push(x); to[k]=x.b; } });
+  return keep;
+}
+function grammarCheck(getText){
+  var wrap=h('div','gcheck');
+  wrap.append(h('p','inote','When you finish writing, check your capital letters, punctuation, and grammar. Words with a red wavy underline may be misspelled. Right-click or tap them for suggestions.'));
+  var btn=h('button','btn','Check my writing'); btn.type='button';
+  var note=h('p','msg'); note.setAttribute('aria-live','polite');
+  var prev=h('div','gprev'); prev.hidden=true;
+  var list=h('ol','glist');
+  wrap.append(btn,note,prev,list);
+  btn.addEventListener('click',function(){
+    var t=String(getText()||'').replace(/\u00a0/g,' ').replace(/[ \t]+$/gm,'').replace(/\s+$/,'');
+    prev.textContent=''; list.textContent=''; prev.hidden=true;
+    if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
+    var is=grammarIssues(t);
+    if(!is.length){ note.dataset.s='ok'; note.textContent='Nice! I did not find any problems with capital letters, punctuation, or sentences. This check cannot catch everything, so read your answer one more time.'; return; }
+    note.removeAttribute('data-s');
+    note.textContent='I found '+is.length+' thing'+(is.length===1?'':'s')+' to check. Each one is highlighted in your writing below. Fix them in your answer above, then check again.';
+    is.forEach(function(x,i){
+      x.n=i+1;
+      var li=h('li'), q=t.slice(x.a,x.b);
+      li.append(h('q',null,q.slice(0,60)+(q.length>60?'…':'')),' ',x.msg); list.append(li);
+    });
+    /* word problems are marked; a whole-sentence problem underlines its sentence */
+    function marks(el,a,b){
+      var at=a;
+      is.forEach(function(x){
+        if(x.wide||x.a<a||x.b>b) return;
+        el.append(t.slice(at,x.a), h('mark',null,t.slice(x.a,x.b)), h('sup',null,String(x.n)));
+        at=x.b;
+      });
+      el.append(t.slice(at,b));
+    }
+    var at=0;
+    is.forEach(function(x){
+      if(!x.wide) return;
+      marks(prev,at,x.a);
+      var sp=h('span','gsen'); sp.append(h('sup',null,String(x.n))); marks(sp,x.a,x.b); prev.append(sp);
+      at=x.b;
+    });
+    marks(prev,at,t.length); prev.hidden=false;
+  });
+  return wrap;
+}
+
 /* Looks for key ideas with simple word matching. It never shows the answer and is not graded. */
 function sentenceCount(t){return String(t||'').split(/[.!?]+/).filter(function(x){return words(x)>=3;}).length;}
 function ideaCheck(getText,getHl,items){
@@ -2052,7 +2175,9 @@ function buildQuestion(q,s,tile){
   } else if(t==='written'){
     ids=[];
     W[id]={min:q.min||40};
+    if(q.starters&&q.starters.length) o.body.append(startersEl(id,q.starters));
     o.body.append(writtenField(id,q.placeholder));
+    o.body.append(grammarCheck(function(){return (S.written[id]||{}).text;}));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return (S.written[id]||{}).text;},null,ideasFrom(q.ideas)));
   } else if(t==='highlight'){
     ids=[];
@@ -2061,7 +2186,9 @@ function buildQuestion(q,s,tile){
       h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
       h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
       hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.'),
-      richField(id));
+      q.starters&&q.starters.length?startersEl(id,q.starters):'',
+      richField(id),
+      grammarCheck(function(){return segsPlain((S.rich[id]||{}).segs);}));
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return segsHlWords((S.rich[id]||{}).segs);},ideasFrom(q.ideas)));
   } else if(t==='agree'){
     ids=[];
@@ -2850,7 +2977,7 @@ function finishEl(){
   var rm=h('span','msg'); rm.setAttribute('aria-live','polite');
   r2.append(rb,rm); det.append(r2);
   cp.addEventListener('click',function(){
-    var tmp=h('textarea'); tmp.value=encodeState(); tmp.style.position='fixed'; tmp.style.opacity='0'; document.body.append(tmp);
+    var tmp=h('textarea'); tmp.value=encodeState(); tmp.style.position='fixed'; tmp.style.opacity='0'; ($('#finish')||document.body).append(tmp);
     copyText(tmp.value,tmp).then(function(ok){
       tmp.remove();
       pm.dataset.s=ok?'ok':'bad';
@@ -2990,6 +3117,9 @@ function decorate(){
   if(!TTS) return;
   var app=$('#app');
   /* instructions and readings */
+  app.querySelectorAll('.stbox').forEach(function(el){
+    el.prepend(listenBtn(function(){return [].map.call(el.querySelectorAll('li span'),function(x){return x.innerText;}).join('. ');}));
+  });
   app.querySelectorAll('.wfor,.learn').forEach(function(el){
     el.prepend(listenBtn(function(){return el.innerText;}));
   });
@@ -3033,6 +3163,27 @@ function decorate(){
   row.hidden=false; sel.value=String(S.tts||0.95);
   sel.addEventListener('change',function(){S.tts=parseFloat(sel.value)||0.95; commit(); ttsStop();});
   window.addEventListener('beforeunload',ttsStop);
+})();
+
+/* Copy and paste are off so students write in their own words: no copying questions or answers out of the
+   page, and no pasting or dropping text into it. The Finish section (text copy, backup code) still works.
+   copyPaste: true in assignment.js turns this off. */
+(function(){
+  if(A.copyPaste===true) return;
+  var tell=null;
+  function allowed(e){ var t=e.target; t=t&&t.nodeType===3?t.parentNode:t; return !!(t&&t.closest&&t.closest('#finish')); }
+  function stop(e,msg){
+    if(allowed(e)) return;
+    e.preventDefault(); e.stopPropagation();
+    if(tell) tell.remove();
+    tell=h('div','cheer nocopy',msg); tell.setAttribute('role','status'); document.body.append(tell);
+    var me=tell; setTimeout(function(){me.classList.add('out');},2200); setTimeout(function(){me.remove();},2800);
+  }
+  var OUT='Copying is turned off for this assignment.', IN='Pasting is turned off. Type your answer in your own words.';
+  ['copy','cut'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,OUT);},true); });
+  ['paste','drop'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,IN);},true); });
+  document.addEventListener('beforeinput',function(e){ if(/^insertFrom(Paste|Drop|Yank)/.test(e.inputType||'')) stop(e,IN); },true);
+  document.addEventListener('dragstart',function(e){ var t=e.target; if(!(t&&t.nodeType===1&&t.getAttribute('draggable')==='true')) stop(e,OUT); },true);
 })();
 
 /* ------------------------------------------------------------------ */

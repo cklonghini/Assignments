@@ -113,6 +113,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Hypotheses: Make a prediction about the relationship between lung capacity and each factor: sex, age, height, and activity level. Tell why you think so. (4 or more sentences)',
+          starters: ['I predict that sex will affect lung capacity because …', 'I think older students will have … lung capacity because …', 'If a person is taller, then I predict …', 'I think people who are more active will … because …'],
           min: 120,
           placeholder: 'Sex: I predict...\nAge: I predict...\nHeight: I predict...\nActivity level: I predict...',
           ideas: [
@@ -404,6 +405,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',
           text: 'Analysis: Explain what the class data show. Tell how each factor (sex, height, age, and activity level) relates to vital capacity, and use numbers or patterns from the data and graphs as evidence. Then write out at least three ways the data may not be completely accurate, with a specific way to fix each problem in the future. (6 or more sentences)',
+          starters: ['The class data show that …', 'According to the graph, as height increases, …', 'For example, the average vital capacity for … was …', 'One reason the data may not be accurate is …', 'To fix this in the future, we could …'],
           examples: 'Examples: “According to the data,” “The graph shows that,” “For example,” “One piece of evidence is,” or “This shows that.”',
           min: 250,
           ideas: [
@@ -482,6 +484,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Conclusion: Do the class data support your hypotheses from Part 2? Give a possible explanation for the results, and say whether they make sense. Then choose one disease from the reading and explain how it causes respiratory distress and how you think it affects lung capacity. Finally, describe one way this lab could be redesigned to investigate a different question about lung capacity. (5 or more sentences)',
+          starters: ['The class data (support / do not support) my hypothesis that …', 'A possible explanation for these results is …', 'The disease I chose is … It causes respiratory distress by …', 'I think this disease affects lung capacity by …', 'To investigate a different question, this lab could be redesigned by …'],
           min: 200,
           ideas: [
             { done: 'You said whether the data support your hypotheses.', q: 'Did you say whether the data support your hypotheses?', tip: 'Look back at your predictions in Part 2. Were they right, partly right, or wrong?', re: /support|hypothes|predict|correct|right|wrong|agree|match/ },

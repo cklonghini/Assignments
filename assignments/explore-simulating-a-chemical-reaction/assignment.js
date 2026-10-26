@@ -47,6 +47,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Hypothesis: Make a prediction about how you think each factor will affect the rate of a chemical reaction. Write one prediction for each trial: baseline, denatured, coenzyme, and competitive inhibitor. (4 or more sentences)',
+          starters: ['In the baseline trial, I predict that the reaction rate will …', 'If the enzyme is denatured, I think the rate will … because …', 'When a coenzyme is added, I predict that …', 'With a competitive inhibitor, I think the reaction will … because …'],
           min: 80,
           placeholder: 'Baseline: I predict...\nDenatured: I predict...\nCoenzyme: I predict...\nCompetitive inhibitor: I predict...',
           ideas: [
@@ -154,6 +155,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Describe how taping my thumb acted as a denatured enzyme. (2 to 4 sentences)',
+          starters: ['Taping my thumb acted like a denatured enzyme because …', 'When my thumb was taped, …', 'As a result, the rate of the reaction …'],
           min: 40,
           ideas: [
             { done: 'You described what the taped thumb did to the hand.', q: 'Did you describe what taping the thumb did to the hand?',
@@ -208,6 +210,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Describe how having Mrs. Kinzy’s niece flip pennies with her acted as a coenzyme. (2 to 4 sentences)',
+          starters: ['Mrs. Kinzy’s niece acted like a coenzyme because …', 'With her niece helping, …', 'This shows that a coenzyme …'],
           min: 40,
           ideas: [
             { done: 'You described what the niece did.', q: 'Did you describe what Mrs. Kinzy’s niece did?',
@@ -261,6 +264,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Describe how holding the tennis ball acted as a competitive inhibitor. (2 to 4 sentences)',
+          starters: ['Holding the tennis ball acted like a competitive inhibitor because …', 'While my hand was holding the tennis ball, …', 'This is similar to an inhibitor that …'],
           min: 40,
           ideas: [
             { done: 'You described what the tennis ball did.', q: 'Did you describe what the tennis ball did to the hand?',
@@ -311,6 +315,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Real World Connection: Most enzymes in the human body work best at 37°C (98.6°F). What do you think this means then when you are sick? (2 to 4 sentences)',
+          starters: ['If most enzymes work best at 37°C, then when I have a fever …', 'When body temperature goes up, enzymes might …', 'This could explain why, when I am sick, …'],
           min: 40,
           ideas: [
             { done: 'You described what happens to body temperature when you are sick.', q: 'Did you say what happens to your body temperature when you are sick?',
@@ -329,6 +334,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'In relation to your answer to the last question, pretend scientists discover an enzyme in the human body that works best at 39°C (102.2°F). What processes do you think this enzyme is most likely involved in? (2 to 4 sentences)',
+          starters: ['An enzyme that works best at 39°C would be most active when …', 'I think this enzyme is involved in … because …', 'This would help the body …'],
           min: 40,
           ideas: [
             { done: 'You noticed that 39°C is a fever temperature.', q: 'Did you notice when your body would be at 39°C?',

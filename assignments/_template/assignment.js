@@ -57,6 +57,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',        // written response; the teacher grades it. ideas power the "Check my ideas" button.
           text: 'Explain your thinking. (2 to 4 sentences)',
+          starters: ['I think this because …', 'One reason is …', 'This means that …'],
           min: 40,
           ideas: [
             { done: 'You explained the main idea.', q: 'Did you explain the main idea?', tip: 'A nudge toward the idea.', re: /keyword|another word/ },
@@ -66,6 +67,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',      // written response: students give evidence with transition words, then highlight those words in yellow
           text: 'Use evidence from the video to support your answer.',
+          starters: ['According to the video, …', 'One piece of evidence is …', 'This shows that …'],
           min: 40,
           ideas: [
             { done: 'You used an example from the video.', q: 'Did you give an example from the video?', tip: 'What example did the video use?', re: /example|for instance/ },
