@@ -8,14 +8,14 @@
 window.ASSIGNMENT = {
   title: 'Explore - Cell Signaling',
   course: 'Biology A',
-  storageKey: 'explore-cell-signaling-v1',
+  storageKey: 'explore-cell-signaling-v2',
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><circle cx="32" cy="14" r="8" fill="var(--ligand)"/><path d="M12 22 Q12 46 32 46 Q52 46 52 22" fill="none" stroke="var(--receptor)" stroke-width="9" stroke-linecap="round"/><rect x="28" y="44" width="8" height="22" fill="var(--receptor)"/></svg>',
 
   /* No single main video: each part has its own whole video. */
   start: {
     heading: 'How this assignment works',
     intro: 'In this assignment you will learn how cells “talk” to each other. You will watch four short videos, read about cell signaling, and try an online interactive.',
-    after: 'Work from top to bottom. Each part gives you a video or a reading, and then lets you practice and check your work. You will also answer eight written questions. Each part opens when you finish the one before it.'
+    after: 'Work from top to bottom. Each part gives you a video or a reading, and then lets you practice and check your work. Some questions pop up inside the videos. You will also answer five written questions. Each part opens when you finish the one before it.'
   },
 
   clips: {
@@ -29,37 +29,65 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 1 */
     {
       title: 'Introduction to cell signaling',
-      intro: 'Watch the Intro to Cell Signaling video and answer the questions underneath it as you watch. Pause the video whenever you need to.',
+      intro: 'Watch the Intro to Cell Signaling video. It stops on its own 5 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again. Then answer the two written questions below the video.',
       clips: ['intro'],
       questions: [
         {
+          at: 74,
           type: 'typed',
-          text: 'What is the name of the molecule that a signal molecule can bind to?',
+          text: 'The video says we will be talking a lot about one kind of molecule. What is the name of the molecule that a signal molecule can bind to?',
           accept: ['receptor', 'receptors', 'a receptor', 'the receptor', 'receptor protein', 'receptor proteins', 'a receptor protein'],
-          okMsg: 'Correct. A signal molecule binds to a receptor on the target cell.',
-          tip: 'Think about the protein that catches the signal on the target cell. (A ligand is the signal molecule itself.)',
+          okMsg: 'Correct. A receptor is a molecule, such as a protein, where a signal molecule can bind. Many receptors are on the surface of the cell membrane.',
+          tip: 'Rewind to about 1:06 and listen for the word the video says we will be talking a lot about. (A ligand is the signal molecule itself.)',
           aria: 'Your answer'
         },
         {
-          type: 'written',
-          text: 'What is a ligand? (1 to 2 sentences)',
-          starters: ['A ligand is a …', 'It binds to …', 'When it binds, …'],
-          min: 40,
-          ideas: [
-            { done: 'You said a ligand is a signaling molecule.', q: 'Did you say what kind of molecule a ligand is?', tip: 'Listen for what the video calls the molecule that carries the message.', re: /signal|messenger|message|molecule|chemical/ },
-            { done: 'You said what a ligand binds to.', q: 'Did you say what a ligand binds to?', tip: 'What does the signal molecule attach to on the target cell?', re: /receptor/ },
-            { done: 'You connected binding to a response.', q: 'Did you say what happens when it binds?', tip: 'Binding starts something in the target cell. What?', re: /respon|start|trigger|caus|change|react|tells? the cell/ }
+          at: 117.5,
+          type: 'choice',
+          text: 'The video says the signal molecule can be considered a ligand. What does it say a ligand is?',
+          options: ['The smaller molecule that binds to a typically larger molecule, such as a receptor', 'A large protein in the cell membrane that catches signals', 'The change a cell makes after it gets a signal', 'A connection between two cells that touch'],
+          answer: 0,
+          tip: 'Rewind to about 1:34. Listen for what “ligand” basically means, and whether it is smaller or larger than the molecule it binds.',
+          explain: 'Right. A ligand is the smaller molecule that binds to a typically larger molecule. Signal molecules are ligands, and they are generally smaller than the receptors they bind.'
+        },
+        {
+          at: 157,
+          type: 'order',
+          text: 'The video gives the general sequence of cell signaling. Put the three stages in order.',
+          items: ['Reception', 'Transduction', 'Response'],
+          tip: 'Rewind to about 2:01. Listen for the stage the video calls “first.” What has to happen before the receptor can be activated?',
+          explain: 'Right. First reception (a signal molecule binds a receptor), then transduction (the receptor gets activated), then a response.'
+        },
+        {
+          at: 200.5,
+          type: 'choice',
+          text: 'The video says gap junctions in animal cells and plasmodesmata in plant cells are connections between two close together cells. What do they allow?',
+          options: ['Ions or other small molecules can pass between the cells without crossing the cell membrane.', 'Hormones can travel through the bloodstream to cells far away.', 'A cell can send a signal back to itself.', 'Neurotransmitters can cross a synapse between two neurons.'],
+          answer: 0,
+          tip: 'Rewind to about 3:02. These connections are for cells that are very close. Listen for what is able to pass.',
+          explain: 'Right. Gap junctions and plasmodesmata connect two close cells so ions or other small molecules can pass, and they do not have to cross the cell membrane.'
+        },
+        {
+          at: 258.3,
+          type: 'selects',
+          text: 'Match each type of cell signaling to what the video says about it.',
+          options: ['autocrine', 'endocrine', 'paracrine', 'synaptic'],
+          items: [
+            { label: 'A signal molecule diffuses to a nearby cell. The cells are close but need not be connected.', answer: 'paracrine', hint: 'Rewind to about 3:21. This is the first type of local signaling the video names.' },
+            { label: 'Neurotransmitters carry the signal across a synapse.', answer: 'synaptic', hint: 'Rewind to about 3:40. The video calls this another example of local signaling.' },
+            { label: 'A cell talks to a target cell far away. Signals such as hormones may be carried in the bloodstream.', answer: 'endocrine', hint: 'Rewind to about 3:50. Listen for the long-distance type.' },
+            { label: 'A cell signals itself, such as a cell releasing its own growth factor.', answer: 'autocrine', hint: 'Rewind to about 4:02. The molecule binds to a receptor on the same cell that made it.' }
           ]
         },
         {
           type: 'written',
           text: 'Summarize the three stages of cell signaling: reception, transduction, and response. Write at least one sentence for each stage.',
-          starters: ['During reception, the ligand …', 'During transduction, the signal …', 'During the response, the cell …'],
+          starters: ['During reception, a signal molecule …', 'During transduction, the receptor …', 'During the response, the cell …'],
           min: 120,
           ideas: [
             { done: 'You described reception.', q: 'Did you describe reception?', tip: 'Reception is the first stage. What arrives at the cell, and what does it bind to?', re: /recept/ },
-            { done: 'You described transduction.', q: 'Did you describe transduction?', tip: 'Transduction is the middle stage. How does the signal get passed along inside the cell?', re: /transduc|relay|pass(es|ed)? (the signal|along|on)|chain|messengers?|inside the cell/ },
-            { done: 'You described the response.', q: 'Did you describe the response?', tip: 'The response is the last stage. What does the cell do because of the signal?', re: /respon|makes? (a )?protein|divid|gene|mov(e|es|ing)|grow/ },
+            { done: 'You described transduction.', q: 'Did you describe transduction?', tip: 'Transduction is the middle stage. What happens to the receptor after the signal binds?', re: /transduc|activat|shape|pathway|amplif|relay|pass(es|ed)? (the signal|along|on)|chain|messengers?|inside the cell/ },
+            { done: 'You described the response.', q: 'Did you describe the response?', tip: 'The response is the last stage. What does the cell do because of the signal? The video gives an example with DNA.', re: /respon|dna|transcri|makes? (a )?protein|divid|gene|mov(e|es|ing)|grow/ },
             { done: 'You wrote at least 3 sentences.', q: 'Did you write a sentence for each stage?', tip: 'Give each stage its own sentence.', sentences: 3 }
           ]
         },
@@ -69,33 +97,9 @@ window.ASSIGNMENT = {
           starters: ['Intercellular signaling happens …', 'Intracellular signaling happens …', 'The difference is that …'],
           min: 60,
           ideas: [
-            { done: 'You explained intercellular signaling.', q: 'Did you explain intercellular signaling?', tip: '“Inter-” means between. Who is talking to whom?', re: /between (two |different |other )?cells|one cell (to|sends)|cell to (another )?cell|from one cell/ },
+            { done: 'You explained intercellular signaling.', q: 'Did you explain intercellular signaling?', tip: '“Inter-” means between. Who is talking to whom?', re: /between (two |different |other )?cells|one cell (to|sends)|cell to (another )?cell|from one cell|with another cell|communicates with/ },
             { done: 'You explained intracellular signaling.', q: 'Did you explain intracellular signaling?', tip: '“Intra-” means within. Where does this signal travel?', re: /(inside|within|in) (a |the |one |that |the same )?(single )?cell/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Give each type its own sentence.', sentences: 2 }
-          ]
-        },
-        {
-          type: 'written',
-          text: 'What is the purpose of gap junctions in animal cells and plasmodesmata in plant cells? (2 to 3 sentences)',
-          starters: ['Gap junctions and plasmodesmata are …', 'They let …', 'This helps cells …'],
-          min: 60,
-          ideas: [
-            { done: 'You said they connect neighboring cells.', q: 'Did you say what they connect?', tip: 'Where are these found? Think about cells that sit right next to each other.', re: /connect|join|link|channel|tunnel|opening|pore|neighbo|next to|nearby|adjacent/ },
-            { done: 'You said what passes through them.', q: 'Did you say what can pass through them?', tip: 'What moves directly from one cell to the next?', re: /ion|small (signal|molecule)|signal|molecule|messag|pass|flow|travel|move/ },
-            { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Add a sentence about why this helps the cells.', sentences: 2 }
-          ]
-        },
-        {
-          type: 'written',
-          text: 'Summarize the four types of cell signaling presented in the video: paracrine, synaptic, endocrine, and autocrine. Write at least one sentence for each type.',
-          starters: ['In paracrine signaling, a cell …', 'In synaptic signaling, a neuron …', 'In endocrine signaling, hormones …', 'In autocrine signaling, a cell …'],
-          min: 160,
-          ideas: [
-            { done: 'You described paracrine signaling.', q: 'Did you describe paracrine signaling?', tip: 'How far does a paracrine signal travel?', re: /paracrine/ },
-            { done: 'You described synaptic signaling.', q: 'Did you describe synaptic signaling?', tip: 'Which kind of cell uses synaptic signaling, and what does it release?', re: /synap/ },
-            { done: 'You described endocrine signaling.', q: 'Did you describe endocrine signaling?', tip: 'How do hormones get to cells far away?', re: /endocrine/ },
-            { done: 'You described autocrine signaling.', q: 'Did you describe autocrine signaling?', tip: 'Which cell receives an autocrine signal?', re: /autocrine/ },
-            { done: 'You wrote at least 4 sentences.', q: 'Did you write a sentence for each type?', tip: 'Give each of the four types its own sentence.', sentences: 4 }
           ]
         }
       ]
