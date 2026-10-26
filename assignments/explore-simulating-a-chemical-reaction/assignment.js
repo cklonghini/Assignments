@@ -9,6 +9,7 @@ window.ASSIGNMENT = {
   title: 'Explore - Simulating A Chemical Reaction',
   course: 'Biology A',
   storageKey: 'explore-simulating-a-chemical-reaction-v1',
+  short: 'chemical-reaction',                 // short link: SITE/chemical-reaction
 
   /* the full video at the top. A captions file with the same name (.vtt) sits next to it.
      TODO: no captions yet. Re-cut with --captions once the teacher sends the Canvas Studio caption file. */

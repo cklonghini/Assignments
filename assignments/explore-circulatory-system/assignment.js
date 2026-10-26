@@ -10,6 +10,7 @@ window.ASSIGNMENT = {
   title: 'Explore - The Cardiovascular System',
   course: 'Anatomy and Physiology B',
   storageKey: 'explore-circulatory-system-v2',
+  short: 'cardiovascular-system',                 // short link: SITE/cardiovascular-system
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
     + '<path d="M32 64 C10 48 4 36 4 25 C4 15 12 9 20 9 C26 9 30 13 32 17 C34 13 38 9 44 9 C52 9 60 15 60 25 C60 36 54 48 32 64 Z" fill="var(--ligand)"/>'

@@ -1,0 +1,154 @@
+{
+  "redirects": [
+    {
+      "source": "/cell-signaling",
+      "destination": "/assignments/explore-cell-signaling/",
+      "permanent": false
+    },
+    {
+      "source": "/cell-signaling/",
+      "destination": "/assignments/explore-cell-signaling/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-cell-signaling",
+      "destination": "/assignments/explore-cell-signaling/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-cell-signaling/",
+      "destination": "/assignments/explore-cell-signaling/",
+      "permanent": false
+    },
+    {
+      "source": "/cardiovascular-system",
+      "destination": "/assignments/explore-circulatory-system/",
+      "permanent": false
+    },
+    {
+      "source": "/cardiovascular-system/",
+      "destination": "/assignments/explore-circulatory-system/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-circulatory-system",
+      "destination": "/assignments/explore-circulatory-system/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-circulatory-system/",
+      "destination": "/assignments/explore-circulatory-system/",
+      "permanent": false
+    },
+    {
+      "source": "/chemical-reaction",
+      "destination": "/assignments/explore-simulating-a-chemical-reaction/",
+      "permanent": false
+    },
+    {
+      "source": "/chemical-reaction/",
+      "destination": "/assignments/explore-simulating-a-chemical-reaction/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-simulating-a-chemical-reaction",
+      "destination": "/assignments/explore-simulating-a-chemical-reaction/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-simulating-a-chemical-reaction/",
+      "destination": "/assignments/explore-simulating-a-chemical-reaction/",
+      "permanent": false
+    },
+    {
+      "source": "/species-classification",
+      "destination": "/assignments/explore-species-classification/",
+      "permanent": false
+    },
+    {
+      "source": "/species-classification/",
+      "destination": "/assignments/explore-species-classification/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-species-classification",
+      "destination": "/assignments/explore-species-classification/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-species-classification/",
+      "destination": "/assignments/explore-species-classification/",
+      "permanent": false
+    },
+    {
+      "source": "/heart-dissection",
+      "destination": "/assignments/heart-dissection/",
+      "permanent": false
+    },
+    {
+      "source": "/heart-dissection/",
+      "destination": "/assignments/heart-dissection/",
+      "permanent": false
+    },
+    {
+      "source": "/lung-capacity-lab",
+      "destination": "/assignments/lung-capacity-lab/",
+      "permanent": false
+    },
+    {
+      "source": "/lung-capacity-lab/",
+      "destination": "/assignments/lung-capacity-lab/",
+      "permanent": false
+    },
+    {
+      "source": "/cardiovascular-practice",
+      "destination": "/assignments/practice-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
+      "source": "/cardiovascular-practice/",
+      "destination": "/assignments/practice-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
+      "source": "/practice-the-cardiovascular-system",
+      "destination": "/assignments/practice-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
+      "source": "/practice-the-cardiovascular-system/",
+      "destination": "/assignments/practice-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
+      "source": "/sheep-brain-dissection",
+      "destination": "/assignments/sheep-brain-dissection/",
+      "permanent": false
+    },
+    {
+      "source": "/sheep-brain-dissection/",
+      "destination": "/assignments/sheep-brain-dissection/",
+      "permanent": false
+    },
+    {
+      "source": "/unit-4-test",
+      "destination": "/assignments/test-unit-4-transport/",
+      "permanent": false
+    },
+    {
+      "source": "/unit-4-test/",
+      "destination": "/assignments/test-unit-4-transport/",
+      "permanent": false
+    },
+    {
+      "source": "/test-unit-4-transport",
+      "destination": "/assignments/test-unit-4-transport/",
+      "permanent": false
+    },
+    {
+      "source": "/test-unit-4-transport/",
+      "destination": "/assignments/test-unit-4-transport/",
+      "permanent": false
+    }
+  ]
+}

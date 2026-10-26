@@ -36,7 +36,9 @@ one short question. If she is not there to answer, make the most reasonable choi
    use "Check my ideas" on each written question, download the PDF, and watch a clip with captions on.
    (Captions need the page served over http. They do not load from a double-clicked file.)
 7. **Publish:** run `python3 tools/build_index.py` (the scaffold already does), commit, and push to the main
-   branch. Vercel redeploys on its own. The student link is `https://PROJECT.vercel.app/assignments/SLUG/`.
+   branch. Vercel redeploys on its own. The student link is `https://PROJECT.vercel.app/assignments/SLUG/`, and
+   `build_index.py` also makes a short link, `https://PROJECT.vercel.app/SHORT` (the slug without "explore-", or the
+   assignment's `short:` name), by writing `vercel.json`. Do not edit `vercel.json` by hand.
 
 ## Game boards (tests and reviews)
 

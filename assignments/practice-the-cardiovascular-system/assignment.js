@@ -12,6 +12,7 @@ window.ASSIGNMENT = {
   title: 'Practice - The Cardiovascular System',
   course: 'Anatomy & Physiology B',
   storageKey: 'practice-the-cardiovascular-system-v1',
+  short: 'cardiovascular-practice',                 // short link: SITE/cardiovascular-practice
   partWord: 'Station',            // headings and progress bars say "Station 1" instead of "Part 1"
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 52 C16 41 13 33 13 27 a9.5 9.5 0 0 1 19 -3 a9.5 9.5 0 0 1 19 3 c0 6 -3 14 -19 25 z" fill="var(--primary-ink)"/></svg>',
 

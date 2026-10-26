@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Rebuild the home page (index.html) so it lists every assignment in assignments/. Run it after adding one."""
-import html, os, re
+"""Rebuild the home page (index.html) so it lists every assignment in assignments/, and write vercel.json with a
+short link for each one (for example /cell-signaling goes to /assignments/explore-cell-signaling/). Run it after
+adding an assignment. The short name is the folder name without "explore-", or `short: 'name'` in assignment.js."""
+import html, json, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -18,8 +20,22 @@ def main():
         if d.startswith('_') or not os.path.isfile(p):
             continue
         t = open(p, encoding='utf-8').read()
-        items.append((d, field(t, 'title') or d, field(t, 'course')))
-    rows = '\n'.join('      <li><a href="assignments/%s/">%s</a><span>%s</span></li>' % (d, html.escape(t), html.escape(c)) for d, t, c in items)
+        short = field(t, 'short') or re.sub(r'^explore-', '', d)
+        items.append((d, field(t, 'title') or d, field(t, 'course'), short))
+    seen = {}
+    for d, t, c, short in items:
+        if short in seen:
+            raise SystemExit('Short link /%s is used by both %s and %s. Give one of them its own short: name.' % (short, seen[short], d))
+        if short in ('assignments', 'engine', 'docs', 'tools', 'index.html'):
+            raise SystemExit('Short link /%s for %s clashes with a folder of the site. Give it its own short: name.' % (short, d))
+        seen[short] = d
+    redirects = []
+    for d, t, c, short in items:
+        for name in dict.fromkeys([short, d]):
+            for src in ('/' + name, '/' + name + '/'):
+                redirects.append({'source': src, 'destination': '/assignments/%s/' % d, 'permanent': False})
+    open(os.path.join(ROOT, 'vercel.json'), 'w', encoding='utf-8').write(json.dumps({'redirects': redirects}, indent=2) + '\n')
+    rows = '\n'.join('      <li><a href="assignments/%s/">%s</a><span>%s</span><code>/%s</code></li>' % (d, html.escape(t), html.escape(c), html.escape(s)) for d, t, c, s in items)
     page = """<!doctype html>
 <html lang="en">
 <head>
@@ -37,12 +53,14 @@ def main():
   a{color:#0b5f7a;font-weight:700;text-decoration:none}
   a:hover,a:focus{text-decoration:underline}
   span{color:#52607a}
+  code{flex-basis:100%%;color:#52607a;font-size:.9rem}
 </style>
 </head>
 <body>
   <main>
     <h1>Assignments</h1>
-    <p>This list is for the teacher. Give students the direct link to their assignment.</p>
+    <p>This list is for the teacher. Give students the direct link to their assignment. Each one also has a short
+      link: this site's address followed by the short name under it, for example <code style="display:inline">/cell-signaling</code>.</p>
     <ul>
 %s
     </ul>

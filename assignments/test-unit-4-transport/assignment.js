@@ -18,6 +18,7 @@ window.ASSIGNMENT = {
   title: 'Test - Unit 4 Transport',
   course: 'Anatomy & Physiology',
   storageKey: 'test-unit-4-transport-v1',
+  short: 'unit-4-test',                 // short link: SITE/unit-4-test
 
   board: {
     heading: 'Unit 4 Transport game board',

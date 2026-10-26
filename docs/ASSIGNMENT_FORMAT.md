@@ -20,6 +20,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `clips` | no | The short clips (below) |
 | `parts` | yes | The parts, in order (below) |
 | `unlockAt` | no | With parts one at a time: how much of a part a student must finish before the next part opens. Default `0.8` (80%). A part with `gate: true` always needs all of it |
+| `short` | no | The short link name, so students can use `SITE/short` (for example `short: 'chemical-reaction'`). Default: the folder name without "explore-". Run `tools/build_index.py` after changing it |
 | `copyPaste` | no | Copy and paste are off by default (see below). Set `copyPaste: true` to allow them on this assignment |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
