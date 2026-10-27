@@ -54,7 +54,7 @@ def main():
     nav = '\n'.join('      <a href="#%s">%s <span>(%d)</span></a>' % (slug(g), html.escape(g), len(groups[g])) for g in order)
     rows = '\n'.join(
         '    <section id="%s">\n      <h2>%s</h2>\n      <ul>\n%s\n      </ul>\n    </section>' % (slug(g), html.escape(g), '\n'.join(
-            '        <li><a href="assignments/%s/">%s</a><span>%s</span><code>/%s</code></li>' % (d, html.escape(t), html.escape(c), html.escape(s))
+            '        <li><a href="assignments/%s/">%s</a><span>%s</span></li>' % (d, html.escape(t), html.escape(c))
             for _, _, d, t, c, s in sorted(groups[g])))
         for g in order)
     page = """<!doctype html>
@@ -80,14 +80,12 @@ def main():
   a{color:#0b5f7a;font-weight:700;text-decoration:none}
   a:hover,a:focus{text-decoration:underline}
   span{color:#52607a}
-  code{flex-basis:100%%;color:#52607a;font-size:.9rem}
 </style>
 </head>
 <body>
   <main>
     <h1>Assignments</h1>
-    <p>This list is for the teacher. Give students the direct link to their assignment. Each one also has a short
-      link: this site's address followed by the short name under it, for example <code style="display:inline">/cell-signaling</code>.</p>
+    <p>This list is for the teacher. Give students the direct link to their assignment.</p>
     <nav aria-label="Jump to a subject">
 %s
     </nav>
