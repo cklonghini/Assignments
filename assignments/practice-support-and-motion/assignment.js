@@ -4,14 +4,14 @@
   progress bars, PDF printout, Listen buttons, and captions from it.
   Video: Amoeba Sisters, "Skeletal System". Captions come from the teacher's transcript (source/transcript.txt,
   not saved to GitHub). Vocabulary card pictures are frames from the video (card-*.jpg) or simple drawings
-  (card-*.svg). The skeleton diagram is a frame from the video; the long bone diagram is a drawing.
+  (card-*.svg). The skeleton diagram is a frame from the video.
   Write *scientific names* between asterisks to show them in italics. Reading boxes and tables use HTML.
   Full guide: docs/ASSIGNMENT_FORMAT.md
 */
 window.ASSIGNMENT = {
   title: 'Practice - Support and Motion',
   course: 'Anatomy & Physiology A',
-  storageKey: 'practice-support-and-motion-v1',
+  storageKey: 'practice-support-and-motion-v2',
   short: 'support-and-motion',              // short link: SITE/support-and-motion
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/>'
@@ -21,7 +21,7 @@ window.ASSIGNMENT = {
   start: {
     heading: 'How this assignment works',
     intro: 'First you will practice this unit’s vocabulary words out loud. Then you will watch the Amoeba Sisters video “Skeletal System.” The video stops on its own 6 times for a question.',
-    after: 'After the video, you will label a skeleton and a bone, and write two short responses. Work from top to bottom. Each part opens when you finish the one before it.'
+    after: 'After the video, you will label a skeleton and write two short responses. Work from top to bottom. Each part opens when you finish the one before it.'
   },
 
   /* Short clips, one or two per part. from/to are the times in the full video (they are shown to students). */
@@ -31,9 +31,7 @@ window.ASSIGNMENT = {
                   of: 'Skeletal System', whole: true },
     skeleton:   { src: 'media/clip-skeleton.mp4', from: 96.85, to: 143.85, seconds: 48, title: 'The axial skeleton and the appendicular skeleton' },
     shapes:     { src: 'media/clip-shapes.mp4', from: 143.85, to: 221.85, seconds: 79, title: 'Classifying bones by shape' },
-    inside:     { src: 'media/clip-inside.mp4', from: 221.85, to: 269.85, seconds: 49, title: 'Inside bones: compact bone, spongy bone, and marrow' },
-    cells:      { src: 'media/clip-cells.mp4', from: 269.85, to: 356.85, seconds: 88, title: 'Osteoblasts, osteoclasts, and bone remodeling' },
-    cartilage:  { src: 'media/clip-cartilage.mp4', from: 356.85, to: 405.85, seconds: 50, title: 'Chondroblasts, cartilage, and bone growth' },
+    inside:     { src: 'media/clip-inside.mp4', from: 221.85, to: 405.85, seconds: 185, title: 'Inside bones: marrow, bone cells, remodeling, and cartilage' },
     fracture:   { src: 'media/clip-fracture.mp4', from: 405.85, to: 521.85, seconds: 117, title: 'When a bone breaks, and conditions that affect bone' }
   },
 
@@ -293,7 +291,7 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 4 */
     {
       title: 'Inside bones: a living tissue',
-      clips: ['inside', 'cells', 'cartilage'],
+      clips: ['inside'],
       read: '<p><b>Read:</b> Bone is a <b>living tissue</b>. It is made of the protein <b>collagen</b> and minerals.</p>'
         + '<p>There are two general types of bone tissue. <b>Compact bone</b> is the hard outer layer. <b>Spongy bone</b> is inside, and it is where you find bone marrow. <b>Yellow marrow</b> stores fat for long-term energy. <b>Red marrow</b> makes red blood cells (which transport gases), white blood cells (which defend the body), and platelets (which help blood clot). Bones have a rich blood supply, so we say bones are <b>vascular</b>.</p>'
         + '<p><b>Bone cells:</b> <b>Osteoblasts</b> make bone. They can mature into <b>osteocytes</b>, which maintain bone. <b>Osteoclasts</b> break down bone. They have many lysosomes, with enzymes that, together with acids, dissolve bone.</p>'
@@ -301,26 +299,12 @@ window.ASSIGNMENT = {
         + '<p><b>Cartilage:</b> <b>Chondroblasts</b> make cartilage, and they mature into <b>chondrocytes</b>, which maintain it. Cartilage supports bone and is important in joints. In a developing baby, cartilage is the template that bone later replaces. With the help of osteoblasts, bones grow in length until early adulthood.</p>',
       questions: [
         {
-          type: 'label',
-          text: 'Label the inside of a long bone. Drag each label to the box with the matching number, then press “Check my labels.”',
-          viewBox: '-230 0 760 820',
-          image: { src: 'media/long-bone-diagram.svg', width: 300, height: 820 },
-          alt: 'Drawing of a long bone cut open lengthwise, with 4 numbered parts',
-          spots: [
-            { x: -130, y: 60, label: 'Cartilage', tip: 'This blue layer covers the end of the bone, where it meets another bone at a joint.', to: [[62, 72]] },
-            { x: 430, y: 140, label: 'Spongy bone', tip: 'Look for bone tissue with many small spaces inside the end of the bone.', to: [[205, 140]] },
-            { x: -130, y: 420, label: 'Compact bone', tip: 'This is the hard outer layer of the bone’s wall.', to: [[119, 420]] },
-            { x: 430, y: 430, label: 'Yellow marrow', tip: 'This soft tissue fills the hollow middle of the shaft. Its color is a clue.', to: [[150, 430]] }
-          ],
-          explain: 'Compact bone is the hard outer layer. Spongy bone is inside, with spaces that hold red marrow. Yellow marrow, which stores fat, fills the middle of the shaft. Cartilage cushions the ends of the bone at joints.'
-        },
-        {
           type: 'selects',
           text: 'Match each part of the bone to its job.',
           options: ['Red marrow', 'Yellow marrow', 'Compact bone'],
           items: [
-            { label: 'Makes blood cells and platelets', answer: 'Red marrow', hint: 'The first clip says this is “where blood cells can be made.”' },
-            { label: 'Stores fat for long-term energy', answer: 'Yellow marrow', hint: 'One kind of marrow stores fat. Listen to the first clip for its color.' },
+            { label: 'Makes blood cells and platelets', answer: 'Red marrow', hint: 'Near the start of the clip, listen for “where blood cells can be made.”' },
+            { label: 'Stores fat for long-term energy', answer: 'Yellow marrow', hint: 'One kind of marrow stores fat. Listen near the start of the clip for its color.' },
             { label: 'The hard outer layer', answer: 'Compact bone', hint: 'Which bone tissue is hard and on the outside?' }
           ]
         },
@@ -332,7 +316,7 @@ window.ASSIGNMENT = {
             { label: 'Makes bone', answer: 'Osteoblast', hint: 'Think “B” for build.' },
             { label: 'Maintains bone; most of the cells in bone', answer: 'Osteocyte', hint: 'Bone-making cells mature into these.' },
             { label: 'Breaks down bone', answer: 'Osteoclast', hint: 'These cells have many lysosomes.' },
-            { label: 'Makes cartilage', answer: 'Chondroblast', hint: 'The third clip says these cells make the connective tissue cartilage.' },
+            { label: 'Makes cartilage', answer: 'Chondroblast', hint: 'Near the end of the clip, listen for the cells that make the connective tissue cartilage.' },
             { label: 'Maintains cartilage', answer: 'Chondrocyte', hint: 'Cartilage-making cells mature into these.' }
           ]
         },
@@ -346,7 +330,7 @@ window.ASSIGNMENT = {
             'Because osteoblasts are not able to make new bone'
           ], answer: 0,
           explain: 'Right. Osteoclasts remove old or damaged bone, and osteoblasts rebuild it. Breaking down bone also releases calcium the body may need.',
-          tip: 'Listen to the second clip after the question, “Why would you want to normally break down bone?”'
+          tip: 'In the middle of the clip, listen after the question, “Why would you want to normally break down bone?”'
         },
         {
           type: 'highlight',
