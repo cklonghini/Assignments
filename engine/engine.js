@@ -1999,32 +1999,49 @@ function grammarCheck(getText){
   return wrap;
 }
 
-/* Looks for key ideas with simple word matching. It never shows the answer and is not graded. */
+/* Looks for key ideas with word matching. It never shows the answer and is not graded.
+   Science ideas (what the answer says) and writing checks (sentences, transition words, highlights) are counted
+   separately, so writing two sentences never counts as a science idea. */
 function sentenceCount(t){return String(t||'').split(/[.!?]+/).filter(function(x){return words(x)>=3;}).length;}
+function sentencesOf(t){return String(t||'').split(/[.!?\n]+/).filter(function(x){return x.trim();});}
 function ideaCheck(getText,getHl,items){ /* getHl returns the answer's highlighted pieces (segs) */
   var wrap=h('div','ideas');
-  wrap.append(h('p','inote','Want a quick check before you move on? This looks for key ideas in your answer. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
+  wrap.append(h('p','inote','Want a quick check before you move on? This looks for the key science ideas in your answer and checks your writing steps. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
   var btn=h('button','btn','Check my ideas'); btn.type='button';
   var note=h('p','msg'); note.setAttribute('aria-live','polite');
-  var list=h('ul');
-  wrap.append(btn,note,list);
-  btn.addEventListener('click',function(){
-    var t=String(getText()||''), low=t.toLowerCase(), hl=getHl?getHl():[];
-    list.textContent='';
-    if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
-    var found=0;
-    items.forEach(function(it){
-      var ok=it.test?it.test(t,hl):it.re.test(low);
+  var groups=h('div','igroups');
+  wrap.append(btn,note,groups);
+  var sci=items.filter(function(it){return !it.writing;}), wr=items.filter(function(it){return it.writing;});
+  function group(title,list,t,hl){
+    var found=0, ul=h('ul');
+    list.forEach(function(it){
+      var ok=it.test(t,hl);
       if(ok) found++;
       var li=h('li'); li.dataset.s=ok?'ok':'todo';
       if(ok) li.append('✓ '+it.done);
       else { li.append('○ '+it.q+' '); var b=h('b',null,'Tip: '); li.append(b,it.tip); }
-      list.append(li);
+      ul.append(li);
     });
-    note.dataset.s=(found===items.length)?'ok':'';
-    note.textContent=(found===items.length)
-      ? 'Nice work. You covered all '+items.length+' ideas. Read your answer one more time to make sure it is clear.'
-      : 'I found '+found+' of '+items.length+' ideas. Add what is missing, then check again.';
+    var box=h('div','igroup'), hd=h('p','ihead');
+    hd.append(h('b',null,title+': '),found+' of '+list.length);
+    var bar=h('span','ibar'); bar.setAttribute('aria-hidden','true');
+    list.forEach(function(x,i){var d=h('i'); if(i<found) d.className='on'; bar.append(d);});
+    hd.append(bar);
+    box.append(hd,ul); groups.append(box);
+    return found;
+  }
+  btn.addEventListener('click',function(){
+    var t=String(getText()||''), hl=getHl?getHl():[];
+    groups.textContent='';
+    if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
+    var fs=sci.length?group('Science ideas',sci,t,hl):0, fw=wr.length?group('Writing',wr,t,hl):0;
+    var allSci=fs===sci.length, allWr=fw===wr.length;
+    note.dataset.s=(allSci&&allWr)?'ok':'';
+    note.textContent=(allSci&&allWr)
+      ? 'Nice work. You covered all the key ideas. Read your answer one more time to make sure it is clear.'
+      : !allSci
+        ? 'I found '+fs+' of '+sci.length+' key science ideas. Use the tips to add what is missing, then check again.'
+        : 'You covered all the key science ideas. Now finish the writing steps below.';
   });
   return wrap;
 }
@@ -2147,11 +2164,15 @@ function videoSection(){
   return s;
 }
 
-/* turns the ideas written in assignment.js into checks that ideaCheck can run */
+/* turns the ideas written in assignment.js into checks that ideaCheck can run.
+   re: the pattern is somewhere in the answer. all: every pattern is in the same sentence, so an idea can ask for
+   two things together (the coenzyme AND faster, the lungs AND oxygen). sentences, highlight and writing: true are
+   writing checks, listed apart from the science ideas. */
 function ideasFrom(list){
   return (list||[]).map(function(it){
-    var o={done:it.done,q:it.q,tip:it.tip};
-    if(it.re){ o.re=it.re; }
+    var o={done:it.done,q:it.q,tip:it.tip,writing:!!(it.writing||it.sentences||it.highlight)};
+    if(it.all){ var pats=it.all; o.test=function(t){return sentencesOf(t.toLowerCase()).some(function(x){return pats.every(function(r){return r.test(x);});});}; }
+    else if(it.re){ var re=it.re; o.test=function(t){return re.test(t.toLowerCase());}; }
     else if(it.sentences){ var k=it.sentences; o.test=function(t){return sentenceCount(t)>=k;}; }
     else if(it.highlight){ var col={claim:'b',evidence:'y',expand:'g'}[it.highlight]; o.test=function(t,segs){return segsHlWords(segs,col)>0;}; }
     else { o.test=function(){return false;}; }

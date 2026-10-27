@@ -394,8 +394,25 @@ statement with [x] or [ ], the signature, and the date the student agreed.
   re: /dna|genetic|genes?\b/ }                    // found when the student's answer matches (case ignored)
 ```
 
-Instead of `re`, an idea can use `sentences: 2` (found when the answer has at least 2 sentences) or
-`highlight: true` (found when the student highlighted something; highlight questions only).
+Instead of `re`, an idea can use:
+
+- `all: [/pattern/, /pattern/]`: found only when **every** pattern is in the **same sentence**. Use it when the idea
+  is two things together: the trial and the prediction (`all: [/coenzyme|niece/, /fast|slow|same/]`), the structure
+  and "easy to find", the lungs and oxygen. A sentence that only names the topic does not count.
+- `sentences: 2`: found when the answer has at least 2 sentences.
+- `highlight: true` (or `'claim'`, `'evidence'`, `'expand'`): found when the student highlighted something
+  (highlight questions only).
+
+Add `writing: true` to an idea that checks how the answer is written rather than what it says (the "used
+transition words" idea). Students see two lists after "Check my ideas": **Science ideas** (each `re` or `all` idea)
+and **Writing** (`sentences`, `highlight`, and `writing: true` ideas), each with its own count. Only science ideas
+count toward "I found 2 of 3 key science ideas", so writing two sentences never counts as an idea.
+
+**Write patterns that need the science, not filler.** `node tools/validate.js` warns when a science idea lights up
+for an answer that says nothing (it tries sentences like "I think this is important because it helps the body work
+better") or for a sentence starter typed alone. Leave out everyday words such as because, more, help, change,
+different, look, she, her, still, and things; use `\b` around short words (`\bthin\b` so "think" does not match);
+and ask for the part the student must add, not the words the starter already gives them.
 
 ## What the teacher sees
 

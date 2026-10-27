@@ -113,7 +113,7 @@ window.ASSIGNMENT = {
             ideas: [
               { done: 'You explained what the myocardium does.', q: 'Did you explain what the myocardium does?', tip: 'Think about what job the muscle layer of the heart wall does.', re: /contract|pump|squeez|push|beat|muscle/ },
               { done: 'You named the ventricle with the thicker wall.', q: 'Did you clearly name which ventricle has the thicker wall?', tip: 'Compare where each ventricle sends its blood.', re: /left ventricle|left side|the left/ },
-              { done: 'You explained why that ventricle needs more muscle.', q: 'Did you explain why that ventricle needs more muscle?', tip: 'Think about how far each ventricle has to push blood.', re: /body|systemic|farther|further|more force|more pressure|harder|stronger|everywhere|far/ },
+              { done: 'You explained why that ventricle needs more muscle.', q: 'Did you explain why that ventricle needs more muscle?', tip: 'Think about how far each ventricle has to push blood.', re: /farther|further|more force|more pressure|harder|stronger|(entire|whole|rest of the) body|all (over|of) the body|systemic|far(ther)? away|everywhere|long(er)? distance/ },
               { done: 'You compared it to the other ventricle.', q: 'Did you say where the other ventricle sends its blood?', tip: 'Name the circuit the other ventricle pumps blood through.', re: /lungs?|pulmonary|right ventricle|right side/ },
               TWO_SENTENCES
             ] }
@@ -170,10 +170,10 @@ window.ASSIGNMENT = {
             starters: ['Three factors that cause resistance are …', 'The factor with the greatest impact is … because …'],
             min: 80,
             ideas: [
-              { done: 'You named a factor about the blood itself.', q: 'Did you name a factor that is about the blood itself?', tip: 'One factor is about the blood, not the vessel.', re: /viscos|thick|thin|sticky|syrup/ },
+              { done: 'You named a factor about the blood itself.', q: 'Did you name a factor that is about the blood itself?', tip: 'One factor is about the blood, not the vessel.', re: /viscos|thick|\bthin(ner)?\b|sticky|syrup/ },
               { done: 'You named two factors about the blood vessel.', q: 'Did you name two factors that are about the blood vessel?', tip: 'Think about the size of a blood vessel in two different ways.', re: /^(?=[\s\S]*(length|\blong))(?=[\s\S]*(diameter|width|wide|narrow|radius|lumen|size))/ },
-              { done: 'You said which factor has the greatest impact.', q: 'Did you say which factor has the greatest impact?', tip: 'Choose one of your three factors and say it matters most.', re: /greatest|most|biggest|largest|main|strongest|highest/ },
-              { done: 'You explained why.', q: 'Did you explain why that factor has the greatest impact?', tip: 'Think about which factor can change from minute to minute, and which stay about the same.', re: /chang|constrict|dilat|block|cholesterol|plaque|clog|stay(s)? (about )?the same|constant|doesn'?t change|does not change/ },
+              { done: 'You said which factor has the greatest impact.', q: 'Did you say which factor has the greatest impact?', tip: 'Choose one of your three factors and say it matters most.', all: [/greatest|most|biggest|largest|main|strongest|highest|matters/, /diameter|width|radius|lumen|size|narrow|wide|length|long|viscos|thick/] },
+              { done: 'You explained why.', q: 'Did you explain why that factor has the greatest impact?', tip: 'Think about which factor can change from minute to minute, and which stay about the same.', re: /chang(es|ed|ing)? (size|width|diameter|quickly|often|a lot|all the time|minute|moment|easily)|can change|constrict|dilat|block|cholesterol|plaque|clog|narrow|widen|squeez|stay(s)? (about )?the same|constant|doesn'?t change|does not change/ },
               TWO_SENTENCES
             ] }
         ]
@@ -221,7 +221,7 @@ window.ASSIGNMENT = {
             min: 60,
             ideas: [
               { done: 'You explained how volume and pressure are related.', q: 'Did you explain how volume and pressure change together?', tip: 'When the lungs get bigger, what happens to the pressure inside them?', re: /opposite|inverse|(volume[^.]*(increase|goes up|rise|bigger|larger|expand|grow)[^.]*pressure[^.]*(decrease|drop|goes down|lower|fall|less))|(pressure[^.]*(decrease|drop|goes down|lower|fall)[^.]*volume)/ },
-              { done: 'You explained breathing in.', q: 'Did you explain what happens when we inhale?', tip: 'Describe the lungs and the air when we breathe in.', re: /inhal|breathe in|breathing in|air (moves|flows|rushes|comes|goes) in/ },
+              { done: 'You explained breathing in.', q: 'Did you explain what happens when we inhale?', tip: 'Describe the lungs and the air when we breathe in.', all: [/inhal|breathe in|breathing in|air (moves|flows|rushes|comes|goes) in/, /diaphragm|contract|expand|bigger|larger|increase|grows?|volume (goes up|increases|gets)|pressure (drops|decreases|goes down|lower|falls)|lower pressure/] },
               { done: 'You explained breathing out.', q: 'Did you explain what happens when we exhale?', tip: 'Describe the lungs and the air when we breathe out.', re: /exhal|breathe out|breathing out|air (moves|flows|rushes|goes|leaves) out|pushed out/ },
               { done: 'You explained which way air moves.', q: 'Did you explain which way air moves between areas of pressure?', tip: 'Air always moves from one kind of pressure area to another.', re: /high(er)?[^.]*to[^.]*low(er)?|from high|toward(s)? (the )?low|low(er)? pressure/ },
               TWO_SENTENCES

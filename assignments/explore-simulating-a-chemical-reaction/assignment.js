@@ -54,19 +54,19 @@ window.ASSIGNMENT = {
           ideas: [
             { done: 'You made a prediction for the baseline trial.', q: 'Did you make a prediction for the baseline trial?',
               tip: 'The baseline is the control group. What do you think will happen when Mrs. Kinzy just flips the pennies over?',
-              re: /baseline|control|normal|just flip/ },
+              all: [/baseline|control|just flip/, /fast|slow|quick|same|steady|constant|average|\d|regular|increase|decrease|more|less|fewer|stop|not work|won.?t work|harder|longer|shorter|speed/] },
             { done: 'You made a prediction for the denatured trial.', q: 'Did you make a prediction for the denatured trial?',
               tip: 'Think about the trial where her thumb is taped.',
-              re: /denatur|tape|thumb/ },
+              all: [/denatur|tape|thumb/, /fast|slow|quick|same|steady|constant|average|\d|regular|increase|decrease|more|less|fewer|stop|not work|won.?t work|harder|longer|shorter|speed/] },
             { done: 'You made a prediction for the coenzyme trial.', q: 'Did you make a prediction for the coenzyme trial?',
               tip: 'Think about the trial where her niece joins in.',
-              re: /co-?enzyme|niece|help/ },
+              all: [/co-?enzyme|niece|helper/, /fast|slow|quick|same|steady|constant|average|\d|regular|increase|decrease|more|less|fewer|stop|not work|won.?t work|harder|longer|shorter|speed/] },
             { done: 'You made a prediction for the competitive inhibitor trial.', q: 'Did you make a prediction for the competitive inhibitor trial?',
               tip: 'Think about the trial with the tennis ball.',
-              re: /inhibit|tennis|ball/ },
+              all: [/inhibit|tennis|ball/, /fast|slow|quick|same|steady|constant|average|\d|regular|increase|decrease|more|less|fewer|stop|not work|won.?t work|harder|longer|shorter|speed/] },
             { done: 'You said how the rate will change.', q: 'Did you say whether the reaction will go faster, slower, or stay the same?',
               tip: 'A prediction about rate tells how fast. Use words that compare speed.',
-              re: /fast|slow|quick|speed|rate|increase|decrease|more|less|fewer|same|longer|shorter|time/ }
+              re: /faster|slower|quicker|more quickly|more slowly|sped up|speeds? up|slows? down|stay(s)? the same|same (rate|speed|pace)|increase|decrease|fewer pennies|more pennies/ }
           ]
         }
       ]
@@ -161,13 +161,13 @@ window.ASSIGNMENT = {
           ideas: [
             { done: 'You described what the taped thumb did to the hand.', q: 'Did you describe what taping the thumb did to the hand?',
               tip: 'Think about what Mrs. Kinzy’s hand could and could not do with the thumb taped.',
-              re: /tape|thumb|can.?t (use|grab|grip|pick|flip)|couldn.?t|could not|harder|hard to|difficult|struggl|grip|grab/ },
+              re: /can.?t (use|grab|grip|pick|flip|hold|move|bend)|couldn.?t|could not|unable|harder|hard(er)? (for (her|me) )?to (flip|grab|grip|pick|hold|use|turn)|difficult|struggl|less (grip|control)|without (my |her |the |a )?thumb|only (use|had|using) (four|4|her|my)|clums|awkward/ },
             { done: 'You connected it to the enzyme’s shape.', q: 'Did you connect the taped thumb to the enzyme’s shape?',
               tip: 'What does denaturing change about an enzyme? Reread the reading.',
-              re: /shape|active site|fit|form|structure|bent|chang/ },
+              re: /shape|active site|\bfits?\b|structure|bent|folded|changed? (its )?(form|structure)/ },
             { done: 'You said how it affected the rate of the reaction.', q: 'Did you say how this affected the rate of the reaction?',
               tip: 'Think about how fast the pennies were flipped compared to the baseline trial.',
-              re: /slow|fast|rate|speed|fewer|less|longer|more time|decrease|stop|not work|didn.?t work|work(s|ed)? (less|worse)/ },
+              re: /slow|fewer|less|longer|more time|decrease|stop|not work|didn.?t work|work(s|ed)? (less|worse)|not as (fast|quick)|only \d+|\b42\b/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?',
               tip: 'Add another sentence that explains your idea.', sentences: 2 }
           ]
@@ -216,13 +216,13 @@ window.ASSIGNMENT = {
           ideas: [
             { done: 'You described what the niece did.', q: 'Did you describe what Mrs. Kinzy’s niece did?',
               tip: 'Think about what changed when the niece joined in.',
-              re: /niece|she|her|helper|second|another|extra|partner|two/ },
+              all: [/niece|\bshe\b|\bher\b|help|partner|together|both|two/, /flip|penn(y|ies)|hands?\b|turn/] },
             { done: 'You explained that a coenzyme helps the enzyme.', q: 'Did you explain what a coenzyme does?',
               tip: 'What is a coenzyme’s job? Reread the reading.',
-              re: /help|assist|work(s|ed|ing)? (together|with)|together|team|partner|support/ },
+              all: [/help|assist|together|team|partner|support|with/, /enzyme|kinzy|aunt|reaction|flip/] },
             { done: 'You said how it affected the rate of the reaction.', q: 'Did you say how this affected the rate of the reaction?',
               tip: 'Think about how fast the pennies were flipped compared to the baseline trial.',
-              re: /fast|quick|rate|speed|more|increase|less time|shorter|slow/ },
+              re: /fast|quick|sped|speeds? up|less time|shorter|in half|half the time|\b50 seconds|all 100|increase/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?',
               tip: 'Add another sentence that explains your idea.', sentences: 2 }
           ]
@@ -270,10 +270,10 @@ window.ASSIGNMENT = {
           ideas: [
             { done: 'You described what the tennis ball did.', q: 'Did you describe what the tennis ball did to the hand?',
               tip: 'Think about what Mrs. Kinzy’s hand was doing while she held the tennis ball.',
-              re: /tennis|ball|holding|hold|occupied|full|in (her|the|my) hand|in the way/ },
+              re: /occupied|full|in (her|the|my) hand|in the way|took up|takes up|taking up|(can.?t|couldn.?t|could not|unable to) (use|grab|grip|pick|flip|open)|only (one|1|part)|less (room|space)|block/ },
             { done: 'You connected it to the active site.', q: 'Did you connect the tennis ball to the active site?',
               tip: 'Where does a competitive inhibitor go? Reread the reading.',
-              re: /active site|spot|place|space|block|took up|takes up|taking up|room|compet|fit/ },
+              re: /active site|spot|place|space|block|took up|takes up|taking up|room|\bfits?\b|substrate/ },
             { done: 'You said how it affected the rate of the reaction.', q: 'Did you say how this affected the rate of the reaction?',
               tip: 'Think about how fast the pennies were flipped compared to the baseline trial.',
               re: /slow|fast|rate|speed|fewer|less|longer|more time|decrease|harder/ },
@@ -316,18 +316,18 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Real World Connection: Most enzymes in the human body work best at 37°C (98.6°F). What do you think this means then when you are sick? (2 to 4 sentences)',
-          starters: ['If most enzymes work best at 37°C, then when I have a fever …', 'When body temperature goes up, enzymes might …', 'This could explain why, when I am sick, …'],
+          starters: ['If most enzymes work best at 37°C, then when I have a fever …', 'Because of this, my enzymes might …', 'This could explain why, when I am sick, …'],
           min: 40,
           ideas: [
             { done: 'You described what happens to body temperature when you are sick.', q: 'Did you say what happens to your body temperature when you are sick?',
               tip: 'Think about what a fever does to your body temperature.',
-              re: /fever|temperature|hot|warm|heat|higher|rise|above|over 37|over 98/ },
+              re: /(temperature|temp|body|i|you) (goes|go|gets|get|is|are|will be|rises?|went) (up|higher|hot|warm|above)|higher (temperature|than)|rises?|raises?|hotter|warmer|above (normal|37|98)|over (37|98)|heats? up|\b(38|39|40|41|10[0-4])\b/ },
             { done: 'You explained how that affects your enzymes.', q: 'Did you explain how that affects your enzymes?',
               tip: 'What happens to an enzyme when it is not at its optimal temperature? Reread the reading.',
-              re: /enzyme|denatur|shape|slow|not work|don.?t work|work (less|worse)|less well|not as well|optimal/ },
+              re: /denatur|shape|slow|not work|don.?t work|stop working|work (less|worse|slower)|less well|not as (well|good|fast)|break down/ },
             { done: 'You connected it to how your body works or feels.', q: 'Did you connect it to how your body works or feels when you are sick?',
               tip: 'Enzymes run many reactions in your body. What might happen if they slow down?',
-              re: /body|feel|tired|weak|process|reaction|function|digest|energy|sick|ill/ },
+              re: /tired|weak|sleepy|exhaust|\bach(e|es|y|ing)\b|hurts?|pain|sore|\bbad\b|awful|terrible|digest|energy|metabol|can.?t (think|focus|move)|reactions? (slow|stop)|processes? (slow|stop)/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?',
               tip: 'Add another sentence that explains your idea.', sentences: 2 }
           ]
@@ -340,13 +340,13 @@ window.ASSIGNMENT = {
           ideas: [
             { done: 'You noticed that 39°C is a fever temperature.', q: 'Did you notice when your body would be at 39°C?',
               tip: 'Is 39°C (102.2°F) a normal body temperature? When would your body be that warm?',
-              re: /fever|sick|ill|higher than normal|above normal|hotter|warmer|infection/ },
+              re: /fever|sick|\bill\b|higher than normal|above normal|hotter|warmer|infection/ },
             { done: 'You named a process the enzyme might be part of.', q: 'Did you name a process this enzyme might be involved in?',
               tip: 'Think about what your body is busy doing when it has a fever.',
               re: /immune|fight|infection|germ|bacteria|virus|pathogen|white blood|heal|recover|defen|kill|antibod|sick/ },
             { done: 'You explained your reasoning.', q: 'Did you explain why you think so?',
               tip: 'Use “because” to connect the enzyme’s best temperature to the process you named.',
-              re: /because|since|so that|this means|that.?s why|when/ },
+              all: [/because|since|\bso\b|this means|that.?s why|when|during|while/, /fever|sick|\bill\b|hot|warm|temperature|infect/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?',
               tip: 'Add another sentence that explains your idea.', sentences: 2 }
           ]
