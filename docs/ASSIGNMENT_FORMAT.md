@@ -144,7 +144,7 @@ By default students see only the part they are working on. Later parts stay hidd
 checked items in a part are done (auto-checked answers right, written answers long enough; change it with
 `unlockAt`), a green box appears at the
 bottom of the part with a button such as "Close Part 1 and open Part 2". Selecting it folds Part 1 down to its
-banner (with a "Done" label), plays confetti (falling autumn leaves from September 15 to November 30) with a "Part 1 complete!" message, and opens Part 2. Students who
+banner (with a "Done" label), plays confetti (or seasonal shapes: autumn leaves September 15 to November 30, snowflakes in December and January, hearts in February, clovers and rainbows in March) with a "Part 1 complete!" message, and opens Part 2. Students who
 turn off motion on their device get the message without the confetti. A folded part has a "Look back at Part 1"
 button, so students can reread it. Until then, a note at its bottom says "You need to complete Part 1 to continue on to Part 2." A part with `gate: true` (lab setup and safety) needs every item done. The Finish section (PDF, Canvas, backup) stays hidden until the student closes the last part.
 

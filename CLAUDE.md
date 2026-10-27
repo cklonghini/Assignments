@@ -66,7 +66,7 @@ lab agreement, and a ready-to-go selfie `photo`.
   progress bars (one per part, with only the "Backup saved at" time under them), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
   are part of the engine. Keep them.
 - Each part starts with a thick colored line and a banner title so students can see they are moving to a new section.
-- Parts open one at a time. When at least 80% of a part is done (all of a `gate: true` setup part), the student closes it with a button, it folds down, confetti (falling autumn leaves from September 15 to November 30)
+- Parts open one at a time. When at least 80% of a part is done (all of a `gate: true` setup part), the student closes it with a button, it folds down, confetti (or seasonal shapes: autumn leaves September 15 to November 30, snowflakes in December and January, hearts in February, clovers and rainbows in March)
   plays, and the next part opens. The Finish and submit section shows only after the last part is closed. The teacher view (`?teacher=tm7k2q` on the link) opens everything. This is built into the engine (see "One part at a time" in `docs/ASSIGNMENT_FORMAT.md`).
 - No "watch for" timestamp boxes. Each clip is titled "Rewatch just this part", with its times in the full video.
 - The full video goes at the top. Do not add the old "Remember, Eagles!" line; the teacher removed it.

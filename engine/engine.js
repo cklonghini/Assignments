@@ -2423,7 +2423,8 @@ function celebrate(text){
   c.className='confetti'; c.setAttribute('aria-hidden','true');
   var W0=c.width=window.innerWidth, H0=c.height=window.innerHeight;
   document.body.append(c);
-  if(isFall()){ fallingLeaves(c,ctx,W0,H0); return; }
+  var season=seasonShapes();
+  if(season){ fallingShapes(c,ctx,W0,H0,season); return; }
   var cols=['#f4c430','#e8505b','#14b1ab','#5b8def','#9b5de5','#3ac569','#ff8c42'], bits=[];
   for(var i=0;i<160;i++){
     var left=i%2===0;
@@ -2445,19 +2446,19 @@ function celebrate(text){
   }
   requestAnimationFrame(frame);
 }
-/* in the fall (September 15 to November 30) autumn leaves drift down from the top instead of confetti */
-function isFall(){
+/* in some seasons shapes drift down from the top instead of confetti:
+   autumn leaves September 15 to November 30, snowflakes in December and January, hearts in February,
+   and four-leaf clovers and rainbows in March */
+function seasonShapes(){
   var d=new Date(), m=d.getMonth();
-  return (m===8&&d.getDate()>=15)||m===9||m===10;
+  if((m===8&&d.getDate()>=15)||m===9||m===10) return SEASONS.fall;
+  if(m===11||m===0) return SEASONS.winter;
+  if(m===1) return SEASONS.valentine;
+  if(m===2) return SEASONS.spring;
+  return null;
 }
-function fallingLeaves(c,ctx,W0,H0){
-  var cols=['#c0392b','#d35400','#e67e22','#f39c12','#b7950b','#8e3b1f','#a04000'], leaves=[];
-  for(var i=0;i<70;i++){
-    leaves.push({x:Math.random()*W0, y:-20-Math.random()*H0*0.9, vy:2.2+Math.random()*2.6,
-      sway:20+Math.random()*40, ph:Math.random()*6.3, sp:0.002+Math.random()*0.003,
-      s:9+Math.random()*9, r:Math.random()*6.3, vr:(Math.random()-.5)*0.08, col:cols[i%cols.length]});
-  }
-  function leaf(L){
+var SEASONS={
+  fall:{cols:['#c0392b','#d35400','#e67e22','#f39c12','#b7950b','#8e3b1f','#a04000'], flip:true, draw:function(ctx,L){
     var s=L.s;
     ctx.fillStyle=L.col;
     ctx.beginPath(); ctx.moveTo(0,-s);
@@ -2466,6 +2467,55 @@ function fallingLeaves(c,ctx,W0,H0){
     ctx.fill();
     ctx.strokeStyle='rgba(60,25,5,.55)'; ctx.lineWidth=1.2;
     ctx.beginPath(); ctx.moveTo(0,-s*0.85); ctx.lineTo(0,s*1.35); ctx.stroke();
+  }},
+  /* light blue with a darker edge so the flakes show on the light page */
+  winter:{cols:['#5b9bd5','#7fb3e0','#3d7cc9','#9cc7ec'], spin:true, draw:function(ctx,L){
+    var s=L.s;
+    ctx.strokeStyle=L.col; ctx.lineWidth=Math.max(1.5,s/7); ctx.lineCap='round';
+    for(var k=0;k<6;k++){
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-s);
+      ctx.moveTo(0,-s*0.55); ctx.lineTo(s*0.28,-s*0.8);
+      ctx.moveTo(0,-s*0.55); ctx.lineTo(-s*0.28,-s*0.8);
+      ctx.stroke(); ctx.rotate(Math.PI/3);
+    }
+  }},
+  valentine:{cols:['#e8505b','#d81b60','#ff6f91','#c2185b','#f48fb1'], draw:function(ctx,L){
+    var s=L.s;
+    ctx.fillStyle=L.col;
+    ctx.beginPath(); ctx.moveTo(0,s*0.9);
+    ctx.bezierCurveTo(-s*1.3,0,-s*0.7,-s*1.1,0,-s*0.35);
+    ctx.bezierCurveTo(s*0.7,-s*1.1,s*1.3,0,0,s*0.9);
+    ctx.fill();
+  }},
+  /* mostly clovers, with every fifth shape a rainbow */
+  spring:{cols:['#2e9e4f','#3ac569','#1e7d3a','#4caf50'], draw:function(ctx,L,i){
+    var s=L.s;
+    if(i%5===4){
+      var bands=['#e8505b','#ff8c42','#f4c430','#3ac569','#5b8def','#9b5de5'], w=s*0.22;
+      ctx.lineWidth=w;
+      bands.forEach(function(col,k){
+        ctx.strokeStyle=col; ctx.beginPath(); ctx.arc(0,s*0.5,s*1.4-k*w,Math.PI,0); ctx.stroke();
+      });
+      return;
+    }
+    ctx.fillStyle=L.col;
+    for(var k=0;k<4;k++){
+      ctx.beginPath(); ctx.moveTo(0,0);
+      ctx.bezierCurveTo(-s*0.75,-s*0.35,-s*0.55,-s*1.05,0,-s*0.6);
+      ctx.bezierCurveTo(s*0.55,-s*1.05,s*0.75,-s*0.35,0,0);
+      ctx.fill(); ctx.rotate(Math.PI/2);
+    }
+    ctx.strokeStyle=L.col; ctx.lineWidth=Math.max(1.5,s/7); ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(s*0.25,s*0.7,s*0.1,s*1.2); ctx.stroke();
+  }}
+};
+function fallingShapes(c,ctx,W0,H0,kind){
+  var bits=[];
+  for(var i=0;i<70;i++){
+    bits.push({x:Math.random()*W0, y:-20-Math.random()*H0*0.9, vy:2.2+Math.random()*2.6,
+      sway:20+Math.random()*40, ph:Math.random()*6.3, sp:0.002+Math.random()*0.003,
+      s:9+Math.random()*9, r:kind.spin?Math.random()*6.3:(Math.random()-.5)*0.6,
+      vr:kind.spin?(Math.random()-.5)*0.08:0, col:kind.cols[i%kind.cols.length]});
   }
   var t0=null;
   function frame(now){
@@ -2473,12 +2523,14 @@ function fallingLeaves(c,ctx,W0,H0){
     var age=now-t0;
     ctx.clearRect(0,0,W0,H0);
     ctx.globalAlpha=age>2600?Math.max(0,1-(age-2600)/800):1;
-    leaves.forEach(function(L){
+    bits.forEach(function(L,i){
       L.y+=L.vy; L.r+=L.vr;
       var x=L.x+Math.sin(L.ph+age*L.sp)*L.sway;
-      ctx.save(); ctx.translate(x,L.y); ctx.rotate(L.r+Math.sin(L.ph+age*L.sp)*0.6);
-      ctx.scale(1,0.55+0.45*Math.abs(Math.cos(L.ph+age*L.sp*1.5)));
-      leaf(L); ctx.restore();
+      ctx.save(); ctx.translate(x,L.y);
+      /* leaves tumble and flip; the other shapes rock gently from side to side */
+      ctx.rotate(L.r+Math.sin(L.ph+age*L.sp)*(kind.flip?0.6:0.3));
+      if(kind.flip) ctx.scale(1,0.55+0.45*Math.abs(Math.cos(L.ph+age*L.sp*1.5)));
+      kind.draw(ctx,L,i); ctx.restore();
     });
     if(age<3400) requestAnimationFrame(frame); else c.remove();
   }
