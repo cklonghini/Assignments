@@ -2423,6 +2423,7 @@ function celebrate(text){
   c.className='confetti'; c.setAttribute('aria-hidden','true');
   var W0=c.width=window.innerWidth, H0=c.height=window.innerHeight;
   document.body.append(c);
+  if(isFall()){ fallingLeaves(c,ctx,W0,H0); return; }
   var cols=['#f4c430','#e8505b','#14b1ab','#5b8def','#9b5de5','#3ac569','#ff8c42'], bits=[];
   for(var i=0;i<160;i++){
     var left=i%2===0;
@@ -2441,6 +2442,45 @@ function celebrate(text){
       ctx.fillRect(-b.w/2,-b.h/2,b.w,b.h*Math.abs(Math.cos(b.r*2))); ctx.restore();
     });
     if(age<3000) requestAnimationFrame(frame); else c.remove();
+  }
+  requestAnimationFrame(frame);
+}
+/* in the fall (September 15 to November 30) autumn leaves drift down from the top instead of confetti */
+function isFall(){
+  var d=new Date(), m=d.getMonth();
+  return (m===8&&d.getDate()>=15)||m===9||m===10;
+}
+function fallingLeaves(c,ctx,W0,H0){
+  var cols=['#c0392b','#d35400','#e67e22','#f39c12','#b7950b','#8e3b1f','#a04000'], leaves=[];
+  for(var i=0;i<70;i++){
+    leaves.push({x:Math.random()*W0, y:-20-Math.random()*H0*0.9, vy:2.2+Math.random()*2.6,
+      sway:20+Math.random()*40, ph:Math.random()*6.3, sp:0.002+Math.random()*0.003,
+      s:9+Math.random()*9, r:Math.random()*6.3, vr:(Math.random()-.5)*0.08, col:cols[i%cols.length]});
+  }
+  function leaf(L){
+    var s=L.s;
+    ctx.fillStyle=L.col;
+    ctx.beginPath(); ctx.moveTo(0,-s);
+    ctx.bezierCurveTo(s*0.8,-s*0.6,s*0.8,s*0.5,0,s);
+    ctx.bezierCurveTo(-s*0.8,s*0.5,-s*0.8,-s*0.6,0,-s);
+    ctx.fill();
+    ctx.strokeStyle='rgba(60,25,5,.55)'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(0,-s*0.85); ctx.lineTo(0,s*1.35); ctx.stroke();
+  }
+  var t0=null;
+  function frame(now){
+    if(t0===null) t0=now;
+    var age=now-t0;
+    ctx.clearRect(0,0,W0,H0);
+    ctx.globalAlpha=age>2600?Math.max(0,1-(age-2600)/800):1;
+    leaves.forEach(function(L){
+      L.y+=L.vy; L.r+=L.vr;
+      var x=L.x+Math.sin(L.ph+age*L.sp)*L.sway;
+      ctx.save(); ctx.translate(x,L.y); ctx.rotate(L.r+Math.sin(L.ph+age*L.sp)*0.6);
+      ctx.scale(1,0.55+0.45*Math.abs(Math.cos(L.ph+age*L.sp*1.5)));
+      leaf(L); ctx.restore();
+    });
+    if(age<3400) requestAnimationFrame(frame); else c.remove();
   }
   requestAnimationFrame(frame);
 }
