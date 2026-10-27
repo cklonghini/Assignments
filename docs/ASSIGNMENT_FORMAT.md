@@ -332,9 +332,17 @@ Every written and highlight box also has a **Check my writing** button. It runs 
 anywhere) and marks capital letters at the start of sentences, a capital "I", missing end punctuation, missing
 apostrophes (dont, cant, im), repeated words, spacing around punctuation, mix-ups (their is, more then, should of,
 alot, a/an, to/too/two), vague words (thing, things, stuff), a missing "a" or "the" in patterns like "is just test to
-see", sentences with no verb (fragments such as "For example, the right ventricle."), very short and very long
-sentences, and sentences that start with "Because," "When," "If," and similar words but have no comma. It suggests
-pressing "Listen to my answer," because missing words are easier to hear than to see. It shows the student's writing with each problem highlighted and a tip for each.
+see", incomplete thoughts and missing words, very short and very long sentences, and sentences that start with "Because," "When," "If," and similar words but have no comma. It suggests
+pressing "Listen to my answer," because missing words are easier to hear than to see.
+
+Incomplete thoughts are found without a dictionary or an outside service: a few word lists and rules find each
+sentence's main verb from the words around it ("cells" after "blood" is a noun, "carry" after "cells" is a verb).
+It flags a sentence with no main verb ("The left ventricle thicker than the right."), a part after "that," "so," or
+"because" that never says what happens ("This shows that the coenzyme."), a sentence that ends on "the," "and," or
+"because," and common missing words: "goes the lungs," "pumps blood the body," "It slower," "I surprised," "able
+flip," "the is," and "back of brain." It cannot catch every missing word, and it skips labels and definitions with a
+colon. When you change these rules, test them against broken sentences and against the readings and explanations in
+`assignments/`, so good writing is not flagged. It shows the student's writing with each problem highlighted and a tip for each.
 It does not fix anything for them. Spelling is left to the browser's red underline.
 
 ### highlight: a written response where students point to their evidence with transition words and highlight those words in yellow
