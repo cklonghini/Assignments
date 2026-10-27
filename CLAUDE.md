@@ -86,7 +86,10 @@ lab agreement, and a ready-to-go selfie `photo`.
 - **Every written question has a "Check my ideas" list** of 3 to 5 key ideas. Each is a short pattern match that
   lights up when the student mentions the idea, plus a tip when they have not. It is not a grade and never shows
   the answer. Add a "wrote at least 2 sentences" idea, and for highlight questions a "used transition words" idea and a "highlighted transition words" idea.
-  Write the patterns generously (include word forms and plain-language ways to say the idea).
+  Write the patterns generously (include word forms and plain-language ways to say the idea), but make each one need
+  the science: use `all: [...]` when an idea is two things in one sentence (the trial and the prediction), mark the
+  transition-word idea `writing: true`, and fix every "lights up for an answer that says nothing" warning from
+  `node tools/validate.js`. Science ideas and writing checks are counted separately on the page.
 - Highlight questions tell students to provide evidence in their response, along with transition words that bring
   attention to that evidence. Once they finish, they go back and highlight those transition words in yellow to show
   where their evidence is. The teacher wants this on the main written prompt that asks for evidence from the video.

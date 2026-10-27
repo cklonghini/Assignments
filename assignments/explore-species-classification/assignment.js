@@ -75,10 +75,10 @@ window.ASSIGNMENT = {
           ideas: [
             { done: 'You explained why looks alone can be misleading.', q: 'Did you explain why grouping by looks alone is not enough?',
               tip: 'Think about what the video said about bird wings and insect wings.',
-              re: /mislead|trick|fool|deceiv|not enough|isn.?t enough|aren.?t enough|can.?t (just|only)|look(s|ed)? (alike|similar|the same)|similar.{0,12}look|appearance|same job|analogous|unrelated|not (always )?related|different ancestor|evolved separately|separately/ },
+              re: /mislead|trick|fool|deceiv|same (job|function)|analogous|unrelated|not (always |closely |actually )?related|aren.?t related|different (ancestor|ancestry|lineage)|evolved (separately|differently|on their own)|separately|wings?\b|\bbirds?\b|insects?/ },
             { done: 'You told how DNA evidence helps.', q: 'Did you say how DNA evidence helps?',
               tip: 'The video says taxonomists combine physical traits with another kind of evidence. What is it, and what does it show?',
-              re: /dna|genetic|genes?\b/ },
+              all: [/dna|genetic|genes?\b/, /relat|ancest|share|common|closer|closely|family|evolv|compar|similar|match|same/] },
             { done: 'You connected your answer to how closely organisms are related.', q: 'Did you connect your answer to how closely organisms are related?',
               tip: 'Think about what scientists are really trying to figure out when they group organisms.',
               re: /ancestor|related|relationship|relatives|evolv|evolution/ },
@@ -213,7 +213,7 @@ window.ASSIGNMENT = {
               re: /common name|nickname|different names|many names|names? (can |may |often )?(change|vary|differ|are different)|change from place|vary|differs?\b|confus|depending on where|region|language|country/ },
             { done: 'You gave an example from the video.', q: 'Did you give an example from the video?',
               tip: 'The video uses a big cat as its example. What names does it give for that animal?',
-              re: /mountain lion|cougar|puma|concolor|felis|catus|house cat|domestic cat/ },
+              re: /cougar|puma|concolor|felis|catus|house cat|domestic cat|(mountain lion|it|this cat|this animal)[^.!?]*(also|other|different|three|many|multiple) names?/ },
             { done: 'You said why a scientific name is helpful.', q: 'Did you say why a scientific name is better?',
               tip: 'Think about what stays the same about a scientific name no matter where you are in the world.',
               re: /same (everywhere|worldwide|all over|around the world|in every|for every)|worldwide|around the world|all over the world|standard|consistent|consistency|universal|everywhere|one (scientific |official )?name|only one|avoid|clear|exact|specific|precise/ },
@@ -221,7 +221,7 @@ window.ASSIGNMENT = {
               tip: 'Add another sentence that explains your idea.', sentences: 2 },
             { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?',
               tip: 'Introduce your evidence with words like “For example,” “According to the video,” or “This shows that.”',
-              re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?/ },
+              writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?',
               tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]

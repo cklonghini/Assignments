@@ -132,7 +132,7 @@ students out but is not a password.
 ## Copy and paste are off
 
 So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
-into any box. A short message says copying or pasting is turned off. The Finish section still copies (the "Copy my
+into any box. A short message says copying or pasting is turned off and that students can reach out to their teacher if they need help. The Finish section still copies (the "Copy my
 answers as text" fallback and the backup code), and the restore box still takes a pasted code. Spell-check
 suggestions still work. This stops the easy shortcut, not a determined student (anyone can retype or take a picture
 of the screen). It can also block assistive tools that type by pasting; set `copyPaste: true` for an assignment if a
@@ -337,9 +337,17 @@ Every written and highlight box also has a **Check my writing** button. It runs 
 anywhere) and marks capital letters at the start of sentences, a capital "I", missing end punctuation, missing
 apostrophes (dont, cant, im), repeated words, spacing around punctuation, mix-ups (their is, more then, should of,
 alot, a/an, to/too/two), vague words (thing, things, stuff), a missing "a" or "the" in patterns like "is just test to
-see", sentences with no verb (fragments such as "For example, the right ventricle."), very short and very long
-sentences, and sentences that start with "Because," "When," "If," and similar words but have no comma. It suggests
-pressing "Listen to my answer," because missing words are easier to hear than to see. It shows the student's writing with each problem highlighted and a tip for each.
+see", incomplete thoughts and missing words, very short and very long sentences, and sentences that start with "Because," "When," "If," and similar words but have no comma. It suggests
+pressing "Listen to my answer," because missing words are easier to hear than to see.
+
+Incomplete thoughts are found without a dictionary or an outside service: a few word lists and rules find each
+sentence's main verb from the words around it ("cells" after "blood" is a noun, "carry" after "cells" is a verb).
+It flags a sentence with no main verb ("The left ventricle thicker than the right."), a part after "that," "so," or
+"because" that never says what happens ("This shows that the coenzyme."), a sentence that ends on "the," "and," or
+"because," and common missing words: "goes the lungs," "pumps blood the body," "It slower," "I surprised," "able
+flip," "the is," and "back of brain." It cannot catch every missing word, and it skips labels and definitions with a
+colon. When you change these rules, test them against broken sentences and against the readings and explanations in
+`assignments/`, so good writing is not flagged. It shows the student's writing with each problem highlighted and a tip for each.
 It does not fix anything for them. Spelling is left to the browser's red underline.
 
 ### highlight: a written response where students point to their evidence with transition words and highlight those words in yellow
@@ -399,8 +407,25 @@ statement with [x] or [ ], the signature, and the date the student agreed.
   re: /dna|genetic|genes?\b/ }                    // found when the student's answer matches (case ignored)
 ```
 
-Instead of `re`, an idea can use `sentences: 2` (found when the answer has at least 2 sentences) or
-`highlight: true` (found when the student highlighted something; highlight questions only).
+Instead of `re`, an idea can use:
+
+- `all: [/pattern/, /pattern/]`: found only when **every** pattern is in the **same sentence**. Use it when the idea
+  is two things together: the trial and the prediction (`all: [/coenzyme|niece/, /fast|slow|same/]`), the structure
+  and "easy to find", the lungs and oxygen. A sentence that only names the topic does not count.
+- `sentences: 2`: found when the answer has at least 2 sentences.
+- `highlight: true` (or `'claim'`, `'evidence'`, `'expand'`): found when the student highlighted something
+  (highlight questions only).
+
+Add `writing: true` to an idea that checks how the answer is written rather than what it says (the "used
+transition words" idea). Students see two lists after "Check my ideas": **Science ideas** (each `re` or `all` idea)
+and **Writing** (`sentences`, `highlight`, and `writing: true` ideas), each with its own count. Only science ideas
+count toward "I found 2 of 3 key science ideas", so writing two sentences never counts as an idea.
+
+**Write patterns that need the science, not filler.** `node tools/validate.js` warns when a science idea lights up
+for an answer that says nothing (it tries sentences like "I think this is important because it helps the body work
+better") or for a sentence starter typed alone. Leave out everyday words such as because, more, help, change,
+different, look, she, her, still, and things; use `\b` around short words (`\bthin\b` so "think" does not match);
+and ask for the part the student must add, not the words the starter already gives them.
 
 ## What the teacher sees
 

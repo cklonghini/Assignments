@@ -85,9 +85,9 @@ window.ASSIGNMENT = {
           starters: ['During reception, a signal molecule …', 'During transduction, the receptor …', 'During the response, the cell …'],
           min: 120,
           ideas: [
-            { done: 'You described reception.', q: 'Did you describe reception?', tip: 'Reception is the first stage. What arrives at the cell, and what does it bind to?', re: /recept/ },
-            { done: 'You described transduction.', q: 'Did you describe transduction?', tip: 'Transduction is the middle stage. What happens to the receptor after the signal binds?', re: /transduc|activat|shape|pathway|amplif|relay|pass(es|ed)? (the signal|along|on)|chain|messengers?|inside the cell/ },
-            { done: 'You described the response.', q: 'Did you describe the response?', tip: 'The response is the last stage. What does the cell do because of the signal? The video gives an example with DNA.', re: /respon|dna|transcri|makes? (a )?protein|divid|gene|mov(e|es|ing)|grow/ },
+            { done: 'You described reception.', q: 'Did you describe reception?', tip: 'Reception is the first stage. What arrives at the cell, and what does it bind to?', all: [/bind|attach|lands? on|connects?|\bfits?\b|sticks?|hooks?/, /receptor|protein|cell (surface|membrane)|outside of the cell|membrane/] },
+            { done: 'You described transduction.', q: 'Did you describe transduction?', tip: 'Transduction is the middle stage. What happens to the receptor after the signal binds?', re: /activat|changes? (its )?shape|shape change|pathway|amplif|relay|pass(es|ed)? (the signal|it|along|on)|chain|cascade|messengers?|carr(y|ies|ied) the signal|inside the cell|into the cell|converts?|turns? (the signal|it) into/ },
+            { done: 'You described the response.', q: 'Did you describe the response?', tip: 'The response is the last stage. What does the cell do because of the signal? The video gives an example with DNA.', re: /dna|transcri|makes? (a |new )?proteins?|divid|genes?\b|turns? on|switch(es)? on|grows?\b|growth|mov(e|es|ing)\b|secret|releas|reacts?|changes? (what|its|how)/ },
             { done: 'You wrote at least 3 sentences.', q: 'Did you write a sentence for each stage?', tip: 'Give each stage its own sentence.', sentences: 3 }
           ]
         },
@@ -98,7 +98,7 @@ window.ASSIGNMENT = {
           min: 60,
           ideas: [
             { done: 'You explained intercellular signaling.', q: 'Did you explain intercellular signaling?', tip: '“Inter-” means between. Who is talking to whom?', re: /between (two |different |other )?cells|one cell (to|sends)|cell to (another )?cell|from one cell|with another cell|communicates with/ },
-            { done: 'You explained intracellular signaling.', q: 'Did you explain intracellular signaling?', tip: '“Intra-” means within. Where does this signal travel?', re: /(inside|within|in) (a |the |one |that |the same )?(single )?cell/ },
+            { done: 'You explained intracellular signaling.', q: 'Did you explain intracellular signaling?', tip: '“Intra-” means within. Where does this signal travel?', re: /(inside|within) (a |the |one |that |the same )?(single )?cell|in (a|one|the same|a single) cell|stays? in(side)? (the )?cell|intracellular[^.!?]*\bin (the )?cell/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Give each type its own sentence.', sentences: 2 }
           ]
         }
@@ -204,7 +204,7 @@ window.ASSIGNMENT = {
           ideas: [
             { done: 'You said neurotransmitters are chemical messengers.', q: 'Did you say what kind of molecule they are?', tip: 'Are neurotransmitters electrical or chemical?', re: /chemical|messenger|molecule|signal/ },
             { done: 'You said where they come from.', q: 'Did you say what releases them?', tip: 'Which kind of cell releases neurotransmitters?', re: /neuron|nerve/ },
-            { done: 'You said where they go.', q: 'Did you say where they go or what they bind to?', tip: 'Reread the reading. What gap do they cross, and what do they bind to?', re: /synap|gap|receptor|bind|next (cell|neuron)|receiving/ }
+            { done: 'You said where they go.', q: 'Did you say where they go or what they bind to?', tip: 'Reread the reading. What gap do they cross, and what do they bind to?', re: /synap|gap|receptors?|next (cell|neuron)|receiving|dendrite|target cell|another (neuron|nerve|cell)/ }
           ]
         },
         {
@@ -214,7 +214,7 @@ window.ASSIGNMENT = {
           min: 40,
           ideas: [
             { done: 'You said dopamine is a neurotransmitter.', q: 'Did you say what kind of molecule dopamine is?', tip: 'Dopamine is one of the molecules you just read about.', re: /neurotransmitter|chemical|messenger|molecule|signal/ },
-            { done: 'You said what dopamine does.', q: 'Did you say what dopamine does in the body?', tip: 'How do you feel when dopamine is released?', re: /good|happy|pleasure|reward|mood|better|motivat|enjoy/ }
+            { done: 'You said what dopamine does.', q: 'Did you say what dopamine does in the body?', tip: 'How do you feel when dopamine is released?', re: /happ(y|iness)|pleasure|reward|mood|motivat|enjoy|feel(s|ing)? good|good feeling|satisf|excite|calm|relax/ }
           ]
         },
         {
@@ -223,7 +223,7 @@ window.ASSIGNMENT = {
           starters: ['When I am feeling down, I …', 'This helps me feel better because …'],
           min: 30,
           ideas: [
-            { done: 'You named something you do.', q: 'Did you name something you do?', tip: 'Name one activity, like listening to music, going for a walk, or talking to a friend.', re: /\bi\b|\bmy\b/ },
+            { done: 'You named something you do.', q: 'Did you name something you do?', tip: 'Name one activity, like listening to music, going for a walk, or talking to a friend.', re: /listen|music|songs?|walk|\brun|jog|exercis|sports?|\bplay|games?|talk(ing)? (to|with)|friends?|family|\bmom\b|\bdad\b|\bcall|\beat|food|snack|sleep|\bnap|\bread(ing)?\b|books?|draw|paint|\bart\b|journal|\btv\b|movies?|shows?\b|netflix|youtube|pets?\b|\bdogs?\b|\bcats?\b|outside|nature|shower|bath|cook|bake|danc|\bsing|pray|meditat|deep breath|hug|gym|ride|bike|swim|shop|clean|hang out|\brest\b/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Add a sentence about how it makes you feel.', sentences: 2 }
           ]
         }

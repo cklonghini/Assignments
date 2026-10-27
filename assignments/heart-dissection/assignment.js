@@ -414,8 +414,8 @@ window.ASSIGNMENT = {
           min: 40,
           ideas: [
             { done: 'You named a structure on the outside of the heart.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 2 and 3. What did you find before you cut?', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter/ },
-            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
-            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
+            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', all: [/eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/, /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|coronary|\bfat\b/] },
+            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', all: [/hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/, /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|coronary|\bfat\b/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
@@ -426,8 +426,8 @@ window.ASSIGNMENT = {
           min: 40,
           ideas: [
             { done: 'You named a structure inside the heart.', q: 'Did you name at least one structure inside the heart?', tip: 'Look back at Steps 4 to 6. What did you find after you cut?', re: /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|wall|string/ },
-            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
-            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
+            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', all: [/eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/, /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|walls?\b|strings?|chambers?|muscle/] },
+            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', all: [/hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/, /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|walls?\b|strings?|chambers?|muscle/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
@@ -437,9 +437,9 @@ window.ASSIGNMENT = {
           starters: ['I was surprised that …', 'Before the dissection, I thought …, but …', 'Something I did not expect was …'],
           min: 40,
           ideas: [
-            { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', re: /surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/ },
+            { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', all: [/surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/, /aort|pulmonary|vena cava|cava|auricle|apex|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|walls?\b|chambers?|strings?|coronary|\bfat\b|heart|size|big|small|thick|\bthin(ner)?\b|tough|hard|soft|color|smell|heavy|layers?/] },
             { done: 'You named a part of the heart.', q: 'Did you name the part of the heart that surprised you?', tip: 'Which structure was it? Use its name.', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|wall/ },
-            { done: 'You explained why it surprised you.', q: 'Did you explain why it surprised you?', tip: 'Add a “because” sentence. What did you think before, and what did you see?', re: /because|since|so\b|which|that means|than|instead|bigger|smaller|thick|thin|tough|soft|hard/ },
+            { done: 'You explained why it surprised you.', q: 'Did you explain why it surprised you?', tip: 'Add a “because” sentence. What did you think before, and what did you see?', all: [/because|since|\bso\b|which|that means|than|instead|but/, /thick|\bthin(ner)?\b|tough|soft|harder|firm|big|bigger|small|smaller|tiny|heavy|strong|muscle|\bfat\b|pictures?|diagram/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
@@ -451,9 +451,9 @@ window.ASSIGNMENT = {
           starters: ['During my dissection, I observed …', 'This shows that the structure of the … helps it …', 'According to the video, …', 'For example, when I …'],
           min: 60,
           ideas: [
-            { done: 'You wrote about structure (what a part looks like or how it is built).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like how thick a wall was or how a valve flap looked.', re: /structur|shape|thick|thin|wall|look(s|ed)?|saw|see|seeing|felt|feel|size|flap|string|built|layer|chamber/ },
-            { done: 'You wrote about function (what a part does).', q: 'Did you write about function?', tip: 'Tell what a part does, like pumping blood or keeping blood moving one way.', re: /function|job|pump|carr(y|ies|ied)|flow|move|keep|prevent|open|close|one (way|direction)|backward|send|bring|receive/ },
-            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” or “This shows that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened)|in my dissection/ },
+            { done: 'You wrote about structure (what a part looks like or how it is built).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like how thick a wall was or how a valve flap looked.', re: /shape|thick|\bthin(ner)?\b|walls?\b|flaps?|strings?|layers?|chambers?|valves?|cusps?|chordae|tendine|papillary|septum|myocardium|muscle|tough|rubbery|bigger|smaller|size of|built|texture|hollow|tubes?|vessels?|opening/ },
+            { done: 'You wrote about function (what a part does).', q: 'Did you write about function?', tip: 'Tell what a part does, like pumping blood or keeping blood moving one way.', re: /pump|carr(y|ies|ied)|flows?|flowing|prevent|opens?|closes?|one (way|direction)|backward|backflow|sends?|bring|receives?|push|squeez|contract|circulat|oxygen|blood (to|from|out|in)/ },
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” or “This shows that.”',writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened)|in my dissection/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
@@ -464,7 +464,7 @@ window.ASSIGNMENT = {
           starters: ['I am still confused about …', 'One thing I do not understand yet is …', 'A question I still have is …'],
           min: 40,
           ideas: [
-            { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', re: /confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/ },
+            { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', all: [/confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/, /aort|pulmonary|vena cava|cava|auricle|apex|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|walls?\b|chambers?|strings?|coronary|\bfat\b|blood|oxygen|pump|flow|beat|side|circuit|lungs?/] },
             { done: 'You named a part of the heart.', q: 'Did you name the part of the heart you are asking about?', tip: 'Which structure is it? Use its name.', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|wall|blood|oxygen/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
