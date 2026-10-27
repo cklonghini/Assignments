@@ -10,6 +10,12 @@
   main{max-width:720px;margin:0 auto;padding:40px 20px}
   h1{margin:0 0 6px}
   p{color:#52607a;margin:0 0 24px}
+  nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  nav a{background:#fff;border:1px solid #d3dbe8;border-radius:999px;padding:6px 14px;font-weight:600}
+  nav a span{color:#52607a;font-weight:400}
+  input{width:100%;box-sizing:border-box;font:inherit;padding:10px 12px;border:1px solid #b9c4d6;border-radius:8px;margin:0 0 8px}
+  h2{margin:28px 0 10px;padding-bottom:6px;border-bottom:3px solid #0b5f7a;font-size:1.3rem}
+  section[hidden],li[hidden]{display:none}
   ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
   li{background:#fff;border:1px solid #d3dbe8;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   a{color:#0b5f7a;font-weight:700;text-decoration:none}
@@ -23,17 +29,52 @@
     <h1>Assignments</h1>
     <p>This list is for the teacher. Give students the direct link to their assignment. Each one also has a short
       link: this site's address followed by the short name under it, for example <code style="display:inline">/cell-signaling</code>.</p>
-    <ul>
-      <li><a href="assignments/explore-cell-signaling/">Explore - Cell Signaling</a><span>Biology A</span><code>/cell-signaling</code></li>
-      <li><a href="assignments/explore-circulatory-system/">Explore - The Cardiovascular System</a><span>Anatomy and Physiology B</span><code>/cardiovascular-system</code></li>
-      <li><a href="assignments/explore-simulating-a-chemical-reaction/">Explore - Simulating A Chemical Reaction</a><span>Biology A</span><code>/chemical-reaction</code></li>
-      <li><a href="assignments/explore-species-classification/">Explore - Species Classification</a><span>Marine Science A</span><code>/species-classification</code></li>
-      <li><a href="assignments/heart-dissection/">Heart Dissection</a><span>Anatomy &amp; Physiology B</span><code>/heart-dissection</code></li>
-      <li><a href="assignments/lung-capacity-lab/">Lung Capacity Lab</a><span>Anatomy &amp; Physiology</span><code>/lung-capacity-lab</code></li>
-      <li><a href="assignments/practice-the-cardiovascular-system/">Practice - The Cardiovascular System</a><span>Anatomy &amp; Physiology B</span><code>/cardiovascular-practice</code></li>
-      <li><a href="assignments/sheep-brain-dissection/">Sheep Brain Dissection</a><span>Anatomy &amp; Physiology A</span><code>/sheep-brain-dissection</code></li>
-      <li><a href="assignments/test-unit-4-transport/">Test - Unit 4 Transport</a><span>Anatomy &amp; Physiology</span><code>/unit-4-test</code></li>
-    </ul>
+    <nav aria-label="Jump to a subject">
+      <a href="#biology">Biology <span>(2)</span></a>
+      <a href="#anatomy-physiology">Anatomy &amp; Physiology <span>(6)</span></a>
+      <a href="#marine-science">Marine Science <span>(1)</span></a>
+    </nav>
+    <input type="search" id="find" placeholder="Search assignments" aria-label="Search assignments">
+    <section id="biology">
+      <h2>Biology</h2>
+      <ul>
+        <li><a href="assignments/explore-cell-signaling/">Explore - Cell Signaling</a><span>Biology A</span><code>/cell-signaling</code></li>
+        <li><a href="assignments/explore-simulating-a-chemical-reaction/">Explore - Simulating A Chemical Reaction</a><span>Biology A</span><code>/chemical-reaction</code></li>
+      </ul>
+    </section>
+    <section id="anatomy-physiology">
+      <h2>Anatomy &amp; Physiology</h2>
+      <ul>
+        <li><a href="assignments/sheep-brain-dissection/">Sheep Brain Dissection</a><span>Anatomy &amp; Physiology A</span><code>/sheep-brain-dissection</code></li>
+        <li><a href="assignments/explore-circulatory-system/">Explore - The Cardiovascular System</a><span>Anatomy and Physiology B</span><code>/cardiovascular-system</code></li>
+        <li><a href="assignments/heart-dissection/">Heart Dissection</a><span>Anatomy &amp; Physiology B</span><code>/heart-dissection</code></li>
+        <li><a href="assignments/practice-the-cardiovascular-system/">Practice - The Cardiovascular System</a><span>Anatomy &amp; Physiology B</span><code>/cardiovascular-practice</code></li>
+        <li><a href="assignments/lung-capacity-lab/">Lung Capacity Lab</a><span>Anatomy &amp; Physiology</span><code>/lung-capacity-lab</code></li>
+        <li><a href="assignments/test-unit-4-transport/">Test - Unit 4 Transport</a><span>Anatomy &amp; Physiology</span><code>/unit-4-test</code></li>
+      </ul>
+    </section>
+    <section id="marine-science">
+      <h2>Marine Science</h2>
+      <ul>
+        <li><a href="assignments/explore-species-classification/">Explore - Species Classification</a><span>Marine Science A</span><code>/species-classification</code></li>
+      </ul>
+    </section>
+    <p id="none" hidden>No assignments match that search.</p>
   </main>
+  <script>
+    var box = document.getElementById('find');
+    box.addEventListener('input', function(){
+      var q = box.value.trim().toLowerCase(), any = false;
+      document.querySelectorAll('main section').forEach(function(sec){
+        var shown = 0;
+        sec.querySelectorAll('li').forEach(function(li){
+          var hit = !q || li.textContent.toLowerCase().indexOf(q) > -1;
+          li.hidden = !hit; if(hit) shown++;
+        });
+        sec.hidden = !shown; if(shown) any = true;
+      });
+      document.getElementById('none').hidden = any;
+    });
+  </script>
 </body>
 </html>
