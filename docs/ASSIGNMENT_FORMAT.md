@@ -132,7 +132,7 @@ students out but is not a password.
 ## Copy and paste are off
 
 So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
-into any box. A short message says copying or pasting is turned off. The Finish section still copies (the "Copy my
+into any box. A short message says copying or pasting is turned off and that students can reach out to their teacher if they need help. The Finish section still copies (the "Copy my
 answers as text" fallback and the backup code), and the restore box still takes a pasted code. Spell-check
 suggestions still work. This stops the easy shortcut, not a determined student (anyone can retype or take a picture
 of the screen). It can also block assistive tools that type by pasting; set `copyPaste: true` for an assignment if a

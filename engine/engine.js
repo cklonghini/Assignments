@@ -3417,9 +3417,10 @@ function decorate(){
     e.preventDefault(); e.stopPropagation();
     if(tell) tell.remove();
     tell=h('div','cheer nocopy',msg); tell.setAttribute('role','status'); document.body.append(tell);
-    var me=tell; setTimeout(function(){me.classList.add('out');},2200); setTimeout(function(){me.remove();},2800);
+    var me=tell; setTimeout(function(){me.classList.add('out');},4000); setTimeout(function(){me.remove();},4600);
   }
-  var OUT='Copying is turned off for this assignment.', IN='Pasting is turned off. Type your answer in your own words.';
+  var HELP=' If you need help, please reach out to your teacher.';
+  var OUT='Copying is turned off for this assignment.'+HELP, IN='Pasting is turned off. Type your answer in your own words.'+HELP;
   ['copy','cut'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,OUT);},true); });
   ['paste','drop'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,IN);},true); });
   document.addEventListener('beforeinput',function(e){ if(/^insertFrom(Paste|Drop|Yank)/.test(e.inputType||'')) stop(e,IN); },true);
