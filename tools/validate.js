@@ -134,6 +134,8 @@ for (const dir of dirs) {
             (q.cards || []).forEach((c, i) => {
               const isRe = r => Object.prototype.toString.call(r) === '[object RegExp]';
               if (!c.term || !c.def) E(w + ' card ' + (i + 1) + ' needs term and def');
+              if (c.img && (!c.img.src || !exists(c.img.src))) E(w + ' card ' + (i + 1) + ' picture not found: ' + (c.img.src || '(no src)'));
+              if (c.img && !c.img.alt) E(w + ' card ' + (i + 1) + ' picture needs alt text');
               if (!isRe(c.say)) E(w + ' card ' + (i + 1) + ' needs say (a pattern for the word)');
               else if (!c.say.test(plain(c.term))) W(w + ' card ' + (i + 1) + ': the say pattern does not match its own word "' + c.term + '"');
               if (!Array.isArray(c.keys) || !c.keys.every(isRe)) E(w + ' card ' + (i + 1) + ' needs keys (a list of patterns)');

@@ -224,6 +224,11 @@ generously, because speech-to-text spells things in odd ways (`/\bvein|vain|vane
              say: /\barter(y|ies)\b/, keys: [/\baway\b/, /\bheart\b/] } ] }
 ```
 
+`deck: true` (optional) shows the cards one at a time: the next card opens only when the current one turns green, and a
+line above the cards says "Card 3 of 19." The teacher view shows every card. Each card can also have a picture,
+`img: { src: 'media/card-tendon.jpg', alt: '...' }`, shown between the word and the definition (`alt` is required).
+Example: Part 1 of `assignments/explore-skeletal-system/`.
+
 If a student's microphone is blocked or missing, the card shows `micHelp` (a top-level field; leave it out for the
 default message telling students to contact IT). `node tools/validate.js` warns when a card's patterns do not match
 its own word and definition.

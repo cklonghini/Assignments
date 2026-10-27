@@ -61,6 +61,26 @@
       "permanent": false
     },
     {
+      "source": "/skeletal-system",
+      "destination": "/assignments/explore-skeletal-system/",
+      "permanent": false
+    },
+    {
+      "source": "/skeletal-system/",
+      "destination": "/assignments/explore-skeletal-system/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-skeletal-system",
+      "destination": "/assignments/explore-skeletal-system/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-skeletal-system/",
+      "destination": "/assignments/explore-skeletal-system/",
+      "permanent": false
+    },
+    {
       "source": "/species-classification",
       "destination": "/assignments/explore-species-classification/",
       "permanent": false

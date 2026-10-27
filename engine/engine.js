@@ -499,19 +499,34 @@ function speechMatch(c,t){
   return {word:word,pass:word&&got===keys.length&&!wrongWay};
 }
 function speakQ(id,q){
-  var wrap=h('div','scards');
+  var wrap=h('div','scards'), cards=[], cids=[], deck=!!q.deck&&!TEACHER, note=null, shown=-1;
+  /* deck: true shows one card at a time; the next card opens when this one turns green */
+  function step(){
+    if(!deck) return;
+    var n=cids.length, first=n;
+    for(var i=0;i<n;i++){ var r=S.auto[cids[i]]; if(!(r&&r.ok)){ first=i; break; } }
+    cards.forEach(function(el,i){ el.hidden=i>first; });
+    note.textContent=first<n?'Card '+(first+1)+' of '+n+'. Say the word and its definition. The next card opens when this card turns green.'
+      :'All '+n+' cards are done. Nice work!';
+    if(shown>=0&&first>shown&&first<n&&cards[first].scrollIntoView) cards[first].scrollIntoView({behavior:'smooth',block:'nearest'});
+    shown=first;
+  }
   (q.cards||[]).forEach(function(c,i){
     var cid=id+'_'+i;
     AUTO[cid]={sum:c.term};
     ORDER.push({kind:'auto',id:cid,label:c.term,q:CURQ,sub:c.term});
-    wrap.append(speakCard(cid,c,!!q.memory));
+    cids.push(cid);
+    var el=speakCard(cid,c,!!q.memory,function(){ if(note) step(); });
+    cards.push(el); wrap.append(el);
   });
   var box=h('div');
   if(soundOnly) box.append(h('p','whint','This browser can’t turn speech into words, so each card checks that you spoke out loud for a few seconds. Chrome or Edge works best for this part.'));
+  if(deck){ note=h('p','whint sdeck'); note.setAttribute('aria-live','polite'); box.append(note); }
   box.append(wrap);
+  step();
   return box;
 }
-function speakCard(cid,c,memory){
+function speakCard(cid,c,memory,onChange){
   var card=h('div','scard'); mark(card); card.dataset.s='idle';
   var def=h('p','sdef');
   var btn=h('button','btn mic'); btn.type='button'; btn.setAttribute('aria-pressed','false');
@@ -522,7 +537,9 @@ function speakCard(cid,c,memory){
   var lvl=h('div','level'); lvl.hidden=true; var lvlFill=h('i'); lvl.append(lvlFill);
   var heard=h('p','heard'); heard.setAttribute('aria-live','polite');
   var term=h('p','sterm'); term.append(itxt(c.term));
-  card.append(term,def,row,lvl,heard);
+  card.append(term);
+  if(c.img){ var pic=h('img','simg'); pic.src=c.img.src; pic.alt=c.img.alt||''; pic.loading='lazy'; card.append(pic); }
+  card.append(def,row,lvl,heard);
   function rec(){return S.auto[cid]||null;}
   function tell(t,bad){heard.textContent=t; if(bad) heard.dataset.s='bad'; else heard.removeAttribute('data-s');}
   function paint(){
@@ -534,6 +551,7 @@ function speakCard(cid,c,memory){
     else { def.className='sdef'; def.append(itxt(c.def)); }
     if(peek){ peek.hidden=done; peek.textContent=showing?'Hide the definition':'Peek'; }
     if(done) tell('✓ '+(r.how==='sound'?'You said it out loud.':'I heard you say the word and its meaning.')+(r.peek?' (You peeked.)':''));
+    if(onChange) onChange();
   }
   if(peek) peek.addEventListener('click',function(){
     showing=!showing;
