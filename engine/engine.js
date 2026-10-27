@@ -538,7 +538,7 @@ function speakCard(cid,c,memory,onChange){
   var heard=h('p','heard'); heard.setAttribute('aria-live','polite');
   var term=h('p','sterm'); term.append(itxt(c.term));
   card.append(term);
-  if(c.img){ var pic=h('img','simg'); pic.src=c.img.src; pic.alt=c.img.alt||''; pic.loading='lazy'; card.append(pic); }
+  if(c.img){ var pic=h('img','simg'); pic.src=c.img.src; pic.alt=c.img.alt||''; card.append(pic); }
   card.append(def,row,lvl,heard);
   function rec(){return S.auto[cid]||null;}
   function tell(t,bad){heard.textContent=t; if(bad) heard.dataset.s='bad'; else heard.removeAttribute('data-s');}
