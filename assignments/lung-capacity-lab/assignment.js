@@ -1,5 +1,5 @@
 /*
-  Lung Capacity Lab (Anatomy & Physiology)
+  Lung Capacity Lab (Anatomy & Physiology B)
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, Listen buttons, and graphs from it.
   Write *scientific names* between asterisks to show them in italics. Reading boxes and tables use HTML.
@@ -23,7 +23,7 @@ var CLASS = [
 
 window.ASSIGNMENT = {
   title: 'Lung Capacity Lab',
-  course: 'Anatomy & Physiology',
+  course: 'Anatomy & Physiology B',
   storageKey: 'lung-capacity-lab-v2',   // v2: the video and its questions were added
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 18 V34 M32 30 L26 35 M32 30 L38 35" stroke="var(--primary-ink)" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M24 30 C18 31 15 40 15 48 c0 4 3 6 7 5 l5 -2 c2 -1 2 -3 2 -5 V35 c0 -3 -2 -5 -5 -5 z M40 30 C46 31 49 40 49 48 c0 4 -3 6 -7 5 l-5 -2 c-2 -1 -2 -3 -2 -5 V35 c0 -3 2 -5 5 -5 z" fill="var(--primary-ink)"/></svg>',
 
