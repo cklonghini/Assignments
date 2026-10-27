@@ -355,15 +355,15 @@ window.ASSIGNMENT = {
           min: 120,
           starters: [
             'I claim that bones are …',
-            'According to the video, red marrow …',
-            'Another piece of evidence is that osteoclasts and osteoblasts …',
-            'This shows that bone is living because …'
+            'One piece of evidence from the video is …',
+            'Another piece of evidence is …',
+            'This matters because …'
           ],
           ideas: [
-            { done: 'You made a claim about whether bone is living.', q: 'Did you make a claim?', tip: 'Start by saying whether you think bones are a living tissue.', re: /\b(living|alive|live|lives|not dead|dead)\b/ },
-            { done: 'You used bone cells as evidence.', q: 'Did you use bone cells as evidence?', tip: 'What do osteoblasts and osteoclasts do to bone all the time?', re: /osteo|cells?\b.*\b(make|build|break)|remodel/ },
+            { done: 'You made a claim about whether bone is living.', q: 'Did you make a claim?', tip: 'Start by saying whether you think bones are a living tissue.', re: /\b(is|are) (a |not )?(living|alive|dead)\b|\b(living|alive|dead|nonliving|non-living) tissue/ },
+            { done: 'You used bone cells as evidence.', q: 'Did you use bone cells as evidence?', tip: 'What do osteoblasts and osteoclasts do to bone all the time?', re: /osteo(blast|clast|cyte)|bone cells?\b.*\b(make|makes|build|builds|break|breaks)/ },
             { done: 'You used blood or marrow as evidence.', q: 'Did you mention marrow or the blood supply?', tip: 'What does red marrow make? What does “vascular” mean?', re: /marrow|blood|vascular/ },
-            { done: 'You explained change over time (remodeling, growth, or healing).', q: 'Did you explain how bone changes over time?', tip: 'The video says about 5 to 10% of the skeleton is replaced each year. What is that process called?', re: /remodel|replac|rebuil|grow|grows|growth|heal|repair|chang/ },
+            { done: 'You explained change over time (remodeling, growth, or healing).', q: 'Did you explain how bone changes over time?', tip: 'The video says about 5 to 10% of the skeleton is replaced each year. What is that process called?', re: /remodel|replac|rebuil|\bgrows?\b|growth|growing|\bheal|repair/ },
             { done: 'You wrote at least 4 sentences.', q: 'Did you write 4 to 6 full sentences?', tip: 'Add another sentence that expands on your evidence.', sentences: 4 }
           ]
         }
@@ -407,7 +407,7 @@ window.ASSIGNMENT = {
           starters: [
             'First, right after the break, …',
             'According to the video, the bone cells near the break …',
-            'Next, chondrocytes and osteoblasts …',
+            'Next, to hold the bone together, …',
             'After that, osteoclasts …',
             'Finally, …'
           ],
@@ -416,7 +416,7 @@ window.ASSIGNMENT = {
             { done: 'You described the callus.', q: 'Did you explain what holds the bone together?', tip: 'What do chondrocytes and osteoblasts make, inside and outside the break?', re: /callus|callous|cartilage|chondro/ },
             { done: 'You named the cells that remove and rebuild bone.', q: 'Did you name the cells that remove damaged bone and make new bone?', tip: 'Which cell breaks down bone? Which cell makes new bone?', re: /osteoclast.*osteoblast|osteoblast.*osteoclast/ },
             { done: 'You used at least 4 sentences.', q: 'Did you write 4 to 6 full sentences?', tip: 'Add a sentence for each step of healing.', sentences: 4 },
-            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to the video,” “First,” “Next,” or “This shows that.”', re: /for example|for instance|according to|this shows|that shows|shows that|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|first|next|then|after that|finally|because|this means/ },
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to the video,” “First,” “Next,” or “This shows that.”', writing: true, re: /for example|for instance|according to|this shows|that shows|shows that|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|first|next|then|after that|finally|because|this means/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         }
