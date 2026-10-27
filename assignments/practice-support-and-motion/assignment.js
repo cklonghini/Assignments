@@ -1,5 +1,5 @@
 /*
-  Explore - The Skeletal System (Anatomy & Physiology A)
+  Practice - Support and Motion (Anatomy & Physiology A)
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, Listen buttons, and captions from it.
   Video: Amoeba Sisters, "Skeletal System". Captions come from the teacher's transcript (source/transcript.txt,
@@ -9,10 +9,10 @@
   Full guide: docs/ASSIGNMENT_FORMAT.md
 */
 window.ASSIGNMENT = {
-  title: 'Explore - The Skeletal System',
+  title: 'Practice - Support and Motion',
   course: 'Anatomy & Physiology A',
-  storageKey: 'explore-skeletal-system-v1',
-  short: 'skeletal-system',                 // short link: SITE/skeletal-system
+  storageKey: 'practice-support-and-motion-v1',
+  short: 'support-and-motion',              // short link: SITE/support-and-motion
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/>'
     + '<path d="M24 20 a6 6 0 1 1 8 5 v22 a6 6 0 1 1 -8 5 a6 6 0 1 1 -2 -9 l8 -2 v-14 l-8 -2 a6 6 0 1 1 2 -5 z" fill="var(--primary-ink)" transform="rotate(35 32 36)"/></svg>',
