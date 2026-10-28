@@ -101,6 +101,16 @@
       "permanent": false
     },
     {
+      "source": "/osmosis-lab",
+      "destination": "/assignments/osmosis-lab/",
+      "permanent": false
+    },
+    {
+      "source": "/osmosis-lab/",
+      "destination": "/assignments/osmosis-lab/",
+      "permanent": false
+    },
+    {
       "source": "/cardiovascular-practice",
       "destination": "/assignments/practice-the-cardiovascular-system/",
       "permanent": false

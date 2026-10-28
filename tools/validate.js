@@ -113,6 +113,14 @@ for (const dir of dirs) {
               nAuto++;
             });
             break;
+          case 'tonicity':
+            if (!(q.items || []).length) E(w + ' has no items (scenarios)');
+            (q.items || []).forEach((it, i) => {
+              if (!(it.outside >= 0 && it.outside <= 4)) E(w + ' item ' + (i + 1) + ': outside must be a number from 0 to 4');
+              if (it.inside != null && !(it.inside >= 0 && it.inside <= 4)) E(w + ' item ' + (i + 1) + ': inside must be a number from 0 to 4');
+              nAuto += 3;
+            });
+            break;
           case 'choice':
             if (!Array.isArray(q.options) || q.options.length < 2) E(w + ' needs at least 2 options');
             else if (!(q.answer >= 0 && q.answer < q.options.length)) E(w + ': answer must be the number of the correct option, starting at 0');

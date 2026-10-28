@@ -263,6 +263,23 @@ Write types with the real minus sign: `'O−'`, not `'O-'`.
   patients: [ { name: 'Patient 1: Marcus', who: 'Age 17. Broke his leg playing soccer.', type: 'A+' } ] }
 ```
 
+### tonicity: a cell in a solution (interactive, auto-checked, three points per scenario)
+
+A drawing of a cell in a beaker, with pink dots for solute. At the top, a "Try it" slider changes the solute outside
+the cell; arrows show which way water moves and the cell swells or shrinks, with a sentence that says what happened.
+Then each scenario shows a cell in a solution with three menus: the solution is hypotonic, isotonic, or hypertonic;
+water moves into the cell, out of it, or equally; the cell swells, shrinks, or stays the same size. When all three are
+right, the scenario plays the same way. Solute levels go from 0 (none) to 4, inside and outside; the answers come
+from comparing them. Example: Part 2 of `assignments/osmosis-lab/`.
+
+```js
+{ type: 'tonicity', text: 'Move the slider, then work out each cell.',
+  cell: 2,                                   // solute inside every cell (0 to 4), default 2
+  explore: true,                             // the "Try it" slider (default true)
+  items: [ { name: 'Cell 1', who: 'optional line under the name', outside: 0 },
+           { name: 'Cell 2', outside: 4, inside: 3, explain: 'optional; replaces the automatic “Right.” sentence' } ] }
+```
+
 ### numbers: type one or more numbers (auto-checked, one point each)
 
 Each box accepts any number inside `between` (low and high, inclusive). Commas and units are ignored, so

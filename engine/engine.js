@@ -317,7 +317,7 @@ function triesMsg(r,tip){
 function autoSelect(id,sum,options,answer,o){
   o=o||{};
   AUTO[id]={sum:sum};
-  ORDER.push({kind:'auto',id:id,label:sum,q:CURQ,sub:o.label||''});
+  ORDER.push({kind:'auto',id:id,label:sum,q:CURQ,sub:o.sub||o.label||''});
   var wrap=h('div','ctl'); mark(wrap); wrap.dataset.s='idle';
   if(o.label){var l=h('label'); l.append(itxt(o.label)); l.htmlFor='f-'+id; wrap.append(l);}
   var sel=h('select'); sel.id='f-'+id;
@@ -921,6 +921,106 @@ function labQ(id,q){
           ?'The + or − part is right. Look again at the anti-A and anti-B wells. Each clumped well means that marker is there.'
           :'Look at each well. A clumped well means that marker is on the red blood cells. A smooth well means it is not.'));
     }
+    paint();
+    wrap.append(card);
+  });
+  return wrap;
+}
+
+/* tonicity: a cell in a beaker of solution (pink dots are solute). The explorer slider changes the solute outside the
+   cell and shows where water moves. Then each scenario has three menus: what the solution is, which way water moves,
+   and what the cell does. When all three are right, the scenario plays: water arrows and the cell swells or shrinks. */
+var TONI_MENUS=[
+  {label:'The solution outside the cell is',options:['Hypotonic','Isotonic','Hypertonic'],
+   hint:'Compare how crowded the pink solute dots are outside the cell and inside it. “Hypo” rhymes with low, and “iso” means equal.'},
+  {label:'Water moves',options:['Into the cell','Out of the cell','In and out equally (no net movement)'],
+   hint:'Water moves toward the side with the higher solute concentration. Which side has more crowded dots?'},
+  {label:'The cell',options:['Swells','Shrinks','Stays the same size'],
+   hint:'Think about where the water goes. Does the cell gain water, lose water, or neither?'}];
+function toniKind(inside,outside){return outside<inside?0:outside>inside?2:1;}
+function toniSvg(inside,outside,seed,title){
+  var r=rng(seed), cx=120, cy=96, R=40, s='';
+  s+='<svg viewBox="0 0 240 180" role="img" aria-label="'+esc(title)+'">';
+  s+='<path d="M14 18 V164 Q14 172 22 172 H218 Q226 172 226 164 V18" fill="none" stroke="var(--muted)" stroke-width="3"/>';
+  s+='<rect x="16" y="30" width="208" height="140" rx="6" fill="var(--receptor)" opacity=".22"/>';
+  /* solute outside: the same number of dots per area as inside the cell when the levels match */
+  var free=0, ex=(R*1.3+5)*(R*1.3+5);
+  for(var gx=22;gx<218;gx+=2) for(var gy=36;gy<164;gy+=2){ if((gx-cx)*(gx-cx)+(gy-cy)*(gy-cy)>=ex) free+=4; }
+  var n=Math.round(outside*4*free/(Math.PI*(R-6)*(R-6))), tries=0;
+  for(var i=0;i<n&&tries<5000;tries++){
+    var x=22+r()*196, y=36+r()*128, dx=x-cx, dy=y-cy;
+    if(dx*dx+dy*dy<(R*1.3+5)*(R*1.3+5)) continue;
+    s+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.6" fill="var(--ligand)"/>'; i++;
+  }
+  s+='<g class="tcell"><circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="var(--cell)" stroke="var(--ink)" stroke-width="2.5"/>';
+  for(var j=0;j<inside*4;j++){
+    var a=r()*Math.PI*2, d=Math.sqrt(r())*(R-6);
+    s+='<circle cx="'+(cx+Math.cos(a)*d).toFixed(1)+'" cy="'+(cy+Math.sin(a)*d).toFixed(1)+'" r="2.6" fill="var(--ligand)"/>';
+  }
+  s+='</g><g class="tarrows">';
+  [45,135,225,315].forEach(function(deg){
+    var a=deg*Math.PI/180, c=Math.cos(a), sn=Math.sin(a), p1=R+8, p2=R+32;
+    var x1=cx+c*p2, y1=cy+sn*p2, x2=cx+c*p1, y2=cy+sn*p1;
+    s+='<g class="tarrow"><line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>';
+    function head(hx,hy,ux,uy){ /* a triangle at (hx,hy) pointing along (ux,uy) */
+      var px=-uy, py=ux;
+      return '<polygon points="'+[hx+ux*7,hy+uy*7,hx-ux*3+px*6,hy-uy*3+py*6,hx-ux*3-px*6,hy-uy*3-py*6].map(function(v){return v.toFixed(1);}).join(' ')+'" fill="var(--primary)"/>';
+    }
+    s+='<g class="tin">'+head(x2,y2,-c,-sn)+'</g><g class="tout">'+head(x1,y1,c,sn)+'</g></g>';
+  });
+  s+='</g></svg>';
+  return s;
+}
+/* show a finished scenario: dir 0 = water in (swell), 1 = no net movement, 2 = water out (shrink); -1 = still */
+function toniShow(box,dir){
+  box.dataset.flow=dir<0?'':['in','even','out'][dir];
+}
+function toniQ(id,q){
+  var wrap=h('div','toni'), inside=q.cell||2, still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(still) wrap.classList.add('still');
+  wrap.append(hh('p','tlegend','<span class="tdot"></span> solute (such as salt or sugar) <span class="tarr">➜</span> water moving'));
+  if(q.explore!==false){
+    var ex=h('div','texplore'), pic=h('div','tpic'), out=h('p','tdesc'); out.setAttribute('aria-live','polite');
+    var row=h('div','row tslide'), lab=h('label',null,'Solute in the water outside the cell: '), rng1=document.createElement('input');
+    rng1.type='range'; rng1.min=0; rng1.max=4; rng1.step=1; rng1.value=0; rng1.id='f-'+id+'_x'; lab.htmlFor=rng1.id;
+    var lvl=h('b'); row.append(lab,rng1,lvl);
+    var WORD=['none','a little','some','a lot','a huge amount'];
+    var draw=function(){
+      var o=+rng1.value, k=toniKind(inside,o);
+      lvl.textContent=WORD[o];
+      pic.innerHTML=toniSvg(inside,o,KEY+id+'x'+o,'A cell in a beaker of water with '+WORD[o]+' solute outside it');
+      out.textContent=[
+        'The water outside has a lower solute concentration than the inside of the cell. Water moves into the cell, so the cell swells.',
+        'The water outside has the same solute concentration as the inside of the cell. Water moves in and out equally, so the cell stays the same size.',
+        'The water outside has a higher solute concentration than the inside of the cell. Water moves out of the cell, so the cell shrinks.'][k];
+      var box=pic; toniShow(box,-1); void box.offsetWidth;
+      setTimeout(function(){toniShow(box,k);},still?0:60);
+    };
+    rng1.addEventListener('input',draw);
+    ex.append(h('h3','tname','Try it: move the slider'),row,pic,out);
+    wrap.append(ex);
+    draw();
+  }
+  (q.items||[]).forEach(function(it,i){
+    var card=h('div','tcard'); card.dataset.s='idle';
+    var nm=h('h3','tname'); nm.append(itxt(it.name||('Cell '+(i+1)))); card.append(nm);
+    if(it.who) { var w=h('p','pwho'); w.append(itxt(it.who)); card.append(w); }
+    var cin=it.inside==null?inside:it.inside, k=toniKind(cin,it.outside), answers=[TONI_MENUS[0].options[k],TONI_MENUS[1].options[k],TONI_MENUS[2].options[k]];
+    var pic=h('div','tpic'); pic.innerHTML=toniSvg(cin,it.outside,KEY+id+'_'+i,(it.alt||plain(it.name||'A cell'))+': a cell in a beaker of solution');
+    var menus=h('div','sigs'), ids=[];
+    TONI_MENUS.forEach(function(m,mi){
+      var mid=id+'_'+i+'_'+mi; ids.push(mid);
+      menus.append(autoSelect(mid,plain(it.name||('Cell '+(i+1)))+': '+m.label.toLowerCase(),m.options,answers[mi],{label:m.label,sub:plain(it.name||('Cell '+(i+1)))+': '+m.label,hint:(it.hints&&it.hints[mi])||m.hint}));
+    });
+    var msg=h('p','msg ok tok'); msg.setAttribute('aria-live','polite');
+    card.append(pic,menus,msg);
+    var paint=function(){
+      var all=ids.every(function(x){return S.auto[x]&&S.auto[x].ok;});
+      card.dataset.s=all?'ok':'idle';
+      toniShow(pic,all?k:-1);
+      msg.textContent=all?(it.explain||['Right. The solution is hypotonic to the cell, so water moves in and the cell swells.','Right. The solution is isotonic to the cell, so water moves in and out equally and the cell stays the same size.','Right. The solution is hypertonic to the cell, so water moves out and the cell shrinks.'][k]):'';
+    };
+    card.addEventListener('change',function(){setTimeout(paint,0);});
     paint();
     wrap.append(card);
   });
@@ -2200,6 +2300,9 @@ function buildQuestion(q,s,tile){
     o.body.append(labelQ(id,q));
   } else if(t==='order'){
     o.body.append(orderQ(id,q));
+  } else if(t==='tonicity'){
+    ids=[]; (q.items||[]).forEach(function(it,i){for(var m=0;m<3;m++) ids.push(id+'_'+i+'_'+m);});
+    o.body.append(toniQ(id,q));
   } else if(t==='bloodlab'){
     o.body.append(labQ(id,q));
   } else if(t==='multi'){
