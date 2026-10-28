@@ -80,6 +80,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a selfie that shows you are ready: goggles, apron, and gloves on, and your keyboard covered.',
+          easy: 'Take a selfie to show you are ready. Your goggles, apron, and gloves are on. Your keyboard is covered.',
           caption: 'List the safety gear you have on.',
           placeholder: 'For example: I have on my goggles, ...'
         }
@@ -116,6 +117,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'In the video, which vessel does the presenter look for to tell that he is looking at the front of the heart?',
+          easy: 'In the video, the presenter looks for one vessel (blood tube). It tells him he is looking at the front of the heart. Which vessel is it?',
           options: ['The aorta', 'The pulmonary trunk', 'The superior vena cava', 'The pulmonary veins'], answer: 1,
           explain: 'Right. The pulmonary trunk is on the front of the heart and has a slightly different color. Once he finds it, he knows the right ventricle is under it.',
           tip: 'Rewatch the clip from about 0:17. He says what he always uses to help him find the front.'
@@ -123,6 +125,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'The presenter says a heart attack is most likely to happen when one vessel gets clogged. Where does that vessel run?',
+          easy: 'The presenter says a heart attack is most likely when one vessel gets clogged (blocked). Where is that vessel?',
           options: ['In the interventricular sulcus', 'Inside the right atrium', 'Through the tricuspid valve', 'Along the apex'], answer: 0,
           explain: 'Right. The left anterior descending artery runs in the interventricular sulcus. It brings blood to the heart muscle itself.',
           tip: 'Listen to the end of the clip, right after he points out the little groove.'
@@ -130,6 +133,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of your heart with the anterior (front) side facing up and the apex pointing down.',
+          easy: 'Take a photo of your heart. Put the anterior (front) side facing up. Point the apex down.',
           caption: 'What does your photo show? Tell where the apex and the base are.'
         }
       ]
@@ -157,6 +161,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Here is the front of a sheep heart with the labels covered. Choose the name for each number.',
+          easy: 'This is the front of a sheep heart. The labels are covered. Pick the name for each number.',
           img: { src: 'media/label-anterior.jpg', alt: 'The front of a sheep heart. Numbered arrows point to a purple straw (1), the top of the heart (2), green straws (3), the bottom tip (4), and a yellow straw (5).' },
           options: ['Aorta', 'Pulmonary trunk', 'Pulmonary veins', 'Base', 'Apex'],
           items: [
@@ -188,6 +193,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Mark each blood vessel you found with a colored straw or pencil. Take a photo of your heart with your color key next to it.',
+          easy: 'Put a colored straw or pencil in each blood vessel you found. Make a color key that tells which color is in which vessel. Take a photo of your heart with your color key next to it.',
           caption: 'Write your color key. Which color is in which vessel?',
           placeholder: 'For example: The yellow straw is in the pulmonary trunk.'
         }
@@ -211,6 +217,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Here is the inside of a sheep heart with the labels covered. Choose the name for each number.',
+          easy: 'This is the inside of a sheep heart. The labels are covered. Pick the name for each number.',
           img: { src: 'media/label-internal.jpg', alt: 'A sheep heart cut open like a book, showing two halves. Six numbered arrows point to a purple straw, an upper chamber on the right half, a lower chamber on the right half, a lower chamber on the left half, an upper chamber on the left half, and a yellow straw.' },
           options: ['Aorta', 'Pulmonary trunk', 'Right atrium', 'Right ventricle', 'Left atrium', 'Left ventricle'],
           items: [
@@ -246,6 +253,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of your opened heart that shows the walls of both ventricles.',
+          easy: 'Take a photo of your heart after you cut it open. Show the walls of both ventricles.',
           caption: 'Which wall is thicker? Tell where it is in your photo.'
         }
       ]
@@ -276,12 +284,13 @@ window.ASSIGNMENT = {
             { label: 'Has three flaps, between the right atrium and right ventricle', answer: 'Tricuspid (right AV) valve', hint: '“Tri” means three. Which valve is on the right side?' },
             { label: 'Has two flaps, between the left atrium and left ventricle', answer: 'Bicuspid (left AV) valve', hint: '“Bi” means two. Which valve is on the left side?' },
             { label: 'Thin, strong strands that hold the valve flaps down', answer: 'Chordae tendineae', hint: 'Look at the labeled photo above. What are the strings called?' },
-            { label: 'Carrot-shaped muscles that anchor the strands to the bottom of the ventricle', answer: 'Papillary muscles', hint: 'Rewatch the clip from about 0:40. The presenter describes their shape.' }
+            { label: 'Carrot-shaped muscles that anchor the strands to the bottom of the ventricle', easy: 'Carrot-shaped muscles that hold the strands to the bottom of the ventricle', answer: 'Papillary muscles', hint: 'Rewatch the clip from about 0:40. The presenter describes their shape.' }
           ]
         },
         {
           type: 'order',
           text: 'Put these in order, starting at the valve flap and going down to the bottom of the ventricle.',
+          easy: 'Put these in order. Start at the valve flap. End at the bottom of the ventricle.',
           items: ['AV valve flap', 'Chordae tendineae', 'Papillary muscle'],
           tip: 'Think about what holds what. The flap is held by strings, and the strings are held by something at the bottom.',
           explain: 'Right. The flap is held by the chordae tendineae, which are anchored by a papillary muscle.'
@@ -289,6 +298,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'What would happen if the chordae tendineae could not hold the AV valve flaps down?',
+          easy: 'The chordae tendineae (the strings) hold the AV valve flaps down. What would happen if they could not do this?',
           options: ['Blood could flow back up into the atrium when the ventricle squeezes', 'The ventricle wall would get thicker', 'Blood would go straight to the lungs from the vena cava', 'The heart would stop having an apex'], answer: 0,
           explain: 'Right. The strings keep the flaps shut when the ventricle squeezes, so blood can move only one way.',
           tip: 'Read the last sentences of the reading again. What do the strings keep the flaps from doing?'
@@ -296,6 +306,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a close-up photo of the chordae tendineae or an AV valve flap. Gently lift the flap with your probe so the strings show.',
+          easy: 'Use your probe to gently lift an AV valve flap. Take a close-up photo of the flap or the chordae tendineae (the strings). Make sure the strings show.',
           caption: 'What does your photo show? Name the valve or the strings you found.'
         }
       ]
@@ -338,6 +349,7 @@ window.ASSIGNMENT = {
         {
           type: 'order',
           text: 'Put the stops in order to trace the path of blood through the heart.',
+          easy: 'Put the stops in order. Show the path blood takes through the heart.',
           items: ['Superior and inferior vena cava', 'Right atrium', 'Tricuspid valve', 'Right ventricle', 'Pulmonary semilunar valve', 'Pulmonary trunk', 'Lungs', 'Pulmonary veins', 'Left atrium', 'Bicuspid valve', 'Left ventricle', 'Aortic semilunar valve', 'Aorta'],
           tip: 'Follow the path in the reading one sentence at a time. Blood always goes atrium, then valve, then ventricle, then valve, then out.',
           explain: 'Right. Blood goes through the right side to the lungs, comes back to the left side, and then goes out to the body.'
@@ -345,6 +357,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of your probe going through the aortic or pulmonary semilunar valve.',
+          easy: 'Push your probe through a semilunar valve. Use the aortic one or the pulmonary one. Take a photo of your probe in the valve.',
           caption: 'Which valve is your probe in? Which chamber is it coming from?'
         }
       ]
@@ -390,6 +403,7 @@ window.ASSIGNMENT = {
         {
           type: 'multi',
           text: 'Which of these carry oxygen-poor blood? Choose all that are correct.',
+          easy: 'Which of these carry oxygen-poor blood (blood that is low in oxygen)? Pick all the right answers.',
           options: ['Superior vena cava', 'Inferior vena cava', 'Right atrium', 'Right ventricle', 'Pulmonary trunk', 'Pulmonary veins', 'Left atrium', 'Left ventricle', 'Aorta'],
           answers: ['Superior vena cava', 'Inferior vena cava', 'Right atrium', 'Right ventricle', 'Pulmonary trunk'],
           rules: [
@@ -410,36 +424,39 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What structures were you able to find with ease on the outside of the heart? What structures may have been harder to identify? (2 to 4 sentences)',
+          easy: 'Think about the outside of the heart. Which structures (parts) were easy to find? Which structures were harder to find? Write 2 to 4 sentences.',
           starters: ['On the outside of the heart, I easily found the …', 'A structure that was harder to identify was … because …', 'It was easier to find … because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure on the outside of the heart.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 2 and 3. What did you find before you cut?', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter/ },
-            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
-            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
+            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', all: [/eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/, /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|coronary|\bfat\b/] },
+            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', all: [/hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/, /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|coronary|\bfat\b/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
         {
           type: 'written',
           text: 'What structures were you able to find with ease inside the heart, after cutting into it? What structures may have been harder to identify? (2 to 4 sentences)',
+          easy: 'Think about the inside of the heart, after you cut it open. Which structures (parts) were easy to find? Which structures were harder to find? Write 2 to 4 sentences.',
           starters: ['After cutting into the heart, I easily found the …', 'Inside the heart, it was harder to identify … because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure inside the heart.', q: 'Did you name at least one structure inside the heart?', tip: 'Look back at Steps 4 to 6. What did you find after you cut?', re: /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|wall|string/ },
-            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
-            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
+            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', all: [/eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/, /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|walls?\b|strings?|chambers?|muscle/] },
+            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', all: [/hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/, /valve|chordae|tendine|papillary|septum|myocardium|atri(um|a)|ventricle|cusp|flap|walls?\b|strings?|chambers?|muscle/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
         {
           type: 'written',
           text: 'What surprised you about the structure and organization of the heart? (2 to 4 sentences)',
+          easy: 'What surprised you about the structure of the heart (how it is built and put together)? Name the part, and tell why it surprised you. Write 2 to 4 sentences.',
           starters: ['I was surprised that …', 'Before the dissection, I thought …, but …', 'Something I did not expect was …'],
           min: 40,
           ideas: [
-            { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', re: /surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/ },
+            { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', all: [/surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/, /aort|pulmonary|vena cava|cava|auricle|apex|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|walls?\b|chambers?|strings?|coronary|\bfat\b|heart|size|big|small|thick|\bthin(ner)?\b|tough|hard|soft|color|smell|heavy|layers?/] },
             { done: 'You named a part of the heart.', q: 'Did you name the part of the heart that surprised you?', tip: 'Which structure was it? Use its name.', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|wall/ },
-            { done: 'You explained why it surprised you.', q: 'Did you explain why it surprised you?', tip: 'Add a “because” sentence. What did you think before, and what did you see?', re: /because|since|so\b|which|that means|than|instead|bigger|smaller|thick|thin|tough|soft|hard/ },
+            { done: 'You explained why it surprised you.', q: 'Did you explain why it surprised you?', tip: 'Add a “because” sentence. What did you think before, and what did you see?', all: [/because|since|\bso\b|which|that means|than|instead|but/, /thick|\bthin(ner)?\b|tough|soft|harder|firm|big|bigger|small|smaller|tiny|heavy|strong|muscle|\bfat\b|pictures?|diagram/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
@@ -448,12 +465,13 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'your dissection and the video',
           text: 'How was doing this dissection helpful for understanding the heart’s structure AND function? Use evidence from your dissection and the video.',
+          easy: 'How did this dissection help you understand the heart? Write about its structure (how a part is built) AND its function (what a part does). Use evidence from your dissection and the video.',
           starters: ['During my dissection, I observed …', 'This shows that the structure of the … helps it …', 'According to the video, …', 'For example, when I …'],
           min: 60,
           ideas: [
-            { done: 'You wrote about structure (what a part looks like or how it is built).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like how thick a wall was or how a valve flap looked.', re: /structur|shape|thick|thin|wall|look(s|ed)?|saw|see|seeing|felt|feel|size|flap|string|built|layer|chamber/ },
-            { done: 'You wrote about function (what a part does).', q: 'Did you write about function?', tip: 'Tell what a part does, like pumping blood or keeping blood moving one way.', re: /function|job|pump|carr(y|ies|ied)|flow|move|keep|prevent|open|close|one (way|direction)|backward|send|bring|receive/ },
-            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” or “This shows that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened)|in my dissection/ },
+            { done: 'You wrote about structure (what a part looks like or how it is built).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like how thick a wall was or how a valve flap looked.', re: /shape|thick|\bthin(ner)?\b|walls?\b|flaps?|strings?|layers?|chambers?|valves?|cusps?|chordae|tendine|papillary|septum|myocardium|muscle|tough|rubbery|bigger|smaller|size of|built|texture|hollow|tubes?|vessels?|opening/ },
+            { done: 'You wrote about function (what a part does).', q: 'Did you write about function?', tip: 'Tell what a part does, like pumping blood or keeping blood moving one way.', re: /pump|carr(y|ies|ied)|flows?|flowing|prevent|opens?|closes?|one (way|direction)|backward|backflow|sends?|bring|receives?|push|squeez|contract|circulat|oxygen|blood (to|from|out|in)/ },
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” or “This shows that.”',writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened)|in my dissection/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
@@ -461,10 +479,11 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What about the structure and function of the heart do you still find confusing? (2 to 4 sentences)',
+          easy: 'What is still confusing to you about the heart’s structure (how it is built) and function (what it does)? Name the part you are asking about. Write 2 to 4 sentences.',
           starters: ['I am still confused about …', 'One thing I do not understand yet is …', 'A question I still have is …'],
           min: 40,
           ideas: [
-            { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', re: /confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/ },
+            { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', all: [/confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/, /aort|pulmonary|vena cava|cava|auricle|apex|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|walls?\b|chambers?|strings?|coronary|\bfat\b|blood|oxygen|pump|flow|beat|side|circuit|lungs?/] },
             { done: 'You named a part of the heart.', q: 'Did you name the part of the heart you are asking about?', tip: 'Which structure is it? Use its name.', re: /aort|pulmonary|vena cava|cava|auricle|apex|base|sulcus|ventricle|atri(um|a)|vein|arter|valve|chordae|tendine|papillary|septum|myocardium|muscle|wall|blood|oxygen/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]

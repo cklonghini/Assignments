@@ -24,6 +24,17 @@ function load(dir) {
   return sandbox.window.ASSIGNMENT;
 }
 const plain = s => String(s).replace(/\*/g, '').toLowerCase();
+/* answers that say nothing about any topic; a science idea that matches one of these is too loose */
+const FLUFF = [
+  'I think this is important because it helps the body work better.',
+  'The video showed a lot of things about this, and I learned more about it.',
+  'In the video they talked about how it works and what happens in the cell.',
+  'It is different, and it changes things so it can do its job.',
+  'I don\'t know. I watched the video and it was really interesting and cool.',
+  'My teacher said to write two sentences, so here is my answer.',
+  'She looked at it, and it was the same as before. It took some time.',
+  'It was easy to see and hard to understand at first, but I still wonder about it.'
+];
 
 for (const dir of dirs) {
   const errors = [], warnings = [];
@@ -76,7 +87,7 @@ for (const dir of dirs) {
       if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
       groups = (A.parts || []).map((p, pi) => ({ where: 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : ''), title: p.title, clips: p.clips, questions: p.questions || [] }));
     }
-    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0;
+    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nEasy = 0;
     groups.forEach(p => {
       const where = p.where;
       if (!p.title) E(where + ' needs a title');
@@ -87,6 +98,12 @@ for (const dir of dirs) {
         qn++;
         const w = 'Q' + qn;
         if (!q.text) E(w + ' needs text');
+        /* easier wording for the supported version (?support=eagle) */
+        if (q.easy != null) {
+          if (typeof q.easy !== 'string' || !q.easy.trim()) E(w + ': easy must be text (the easier wording of the question)');
+          else if (q.easy.trim() === String(q.text || '').trim()) W(w + ': easy is the same as text');
+          else nEasy++;
+        }
         if (q.img) {
           if (!q.img.src || !exists(q.img.src)) E(w + ' picture not found: ' + (q.img.src || '(no src)'));
           if (!q.img.alt) E(w + ' picture needs alt text (a description for students who cannot see it)');
@@ -142,6 +159,8 @@ for (const dir of dirs) {
             (q.cards || []).forEach((c, i) => {
               const isRe = r => Object.prototype.toString.call(r) === '[object RegExp]';
               if (!c.term || !c.def) E(w + ' card ' + (i + 1) + ' needs term and def');
+              if (c.img && (!c.img.src || !exists(c.img.src))) E(w + ' card ' + (i + 1) + ' picture not found: ' + (c.img.src || '(no src)'));
+              if (c.img && !c.img.alt) E(w + ' card ' + (i + 1) + ' picture needs alt text');
               if (!isRe(c.say)) E(w + ' card ' + (i + 1) + ' needs say (a pattern for the word)');
               else if (!c.say.test(plain(c.term))) W(w + ' card ' + (i + 1) + ': the say pattern does not match its own word "' + c.term + '"');
               if (!Array.isArray(c.keys) || !c.keys.every(isRe)) E(w + ' card ' + (i + 1) + ' needs keys (a list of patterns)');
@@ -229,7 +248,17 @@ for (const dir of dirs) {
             if (!(q.starters || []).length) W(w + ' has no starters, so students get no "sentence starters" help');
             (q.ideas || []).forEach((it, i) => {
               if (!it.done || !it.q || !it.tip) E(w + ' idea ' + (i + 1) + ' needs done, q and tip');
-              if (Object.prototype.toString.call(it.re) !== '[object RegExp]' && !it.sentences && !it.highlight) E(w + ' idea ' + (i + 1) + ' needs re (a pattern), sentences, or highlight');
+              const isRe = r => Object.prototype.toString.call(r) === '[object RegExp]';
+              if (it.all !== undefined && !(Array.isArray(it.all) && it.all.length && it.all.every(isRe))) E(w + ' idea ' + (i + 1) + ': all must be a list of patterns');
+              if (!isRe(it.re) && !it.all && !it.sentences && !it.highlight) E(w + ' idea ' + (i + 1) + ' needs re (a pattern), all (patterns for one sentence), sentences, or highlight');
+              /* a science idea should not light up for an answer that says nothing, or for a sentence starter alone */
+              if (!it.writing && !it.sentences && !it.highlight && (isRe(it.re) || it.all)) {
+                const hit = t => { t = t.toLowerCase(); return it.all ? t.split(/[.!?\n]+/).some(x => it.all.every(r => r.test(x))) : it.re.test(t); };
+                const f = FLUFF.find(hit);
+                if (f) W(w + ' idea ' + (i + 1) + ' ("' + it.done + '") lights up for an answer that says nothing about the topic: "' + f + '". Make the pattern more specific, or use all: [...] to ask for two things in one sentence.');
+                const st = (q.starters || []).find(x => hit(x.replace(/…/g, ' ')));
+                if (st) W(w + ' idea ' + (i + 1) + ' ("' + it.done + '") lights up for the sentence starter alone: "' + st + '"');
+              }
               if (it.highlight && q.type !== 'highlight') W(w + ' idea ' + (i + 1) + ' checks for highlighting but this is not a highlight question');
               if (it.highlight && it.highlight !== true && !['claim', 'evidence', 'expand'].includes(it.highlight)) E(w + ' idea ' + (i + 1) + ': highlight must be true, or claim, evidence or expand');
             });
@@ -254,7 +283,7 @@ for (const dir of dirs) {
     if (nPhoto > 10) W(nPhoto + ' photo questions is a lot. Each photo makes the PDF bigger; aim for 10 or fewer');
     if (groups.reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
     Object.keys(clips).forEach(k => { if (!used.has(k)) W('Clip ' + k + ' is defined but not used in any part'); });
-    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
+    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '; ' + nEasy + ' with easier wording), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
   }
   errors.forEach(m => console.log('  ERROR   ' + m));
   warnings.forEach(m => console.log('  warning ' + m));

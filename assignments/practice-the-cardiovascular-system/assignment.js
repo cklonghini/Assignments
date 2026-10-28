@@ -44,6 +44,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'What are the three main components of the cardiovascular system?',
+          easy: 'What are the three main parts of the cardiovascular system?',
           options: ['The heart, the lungs, and the blood', 'Arteries, veins, and capillaries', 'The heart, the blood vessels, and the blood', 'The heart, the blood vessels, and the lungs'],
           answer: 2,
           explain: 'The cardiovascular system is the heart, the blood vessels, and the blood that the vessels carry through the body.',
@@ -52,19 +53,21 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Define blood flow, blood pressure, and resistance. Match each definition to its key term.',
+          easy: 'Match each meaning to its key term: blood flow, blood pressure, or resistance.',
           options: ['Blood flow', 'Blood pressure', 'Resistance'],
           items: [
-            { label: 'The volume of blood moving through a vessel, an organ, or the whole system in a given time (mL/min)', answer: 'Blood flow',
+            { label: 'The volume of blood moving through a vessel, an organ, or the whole system in a given time (mL/min)', easy: 'How much blood moves through a vessel, an organ, or the whole body in a set amount of time (mL/min)', answer: 'Blood flow',
               hint: 'Look at the units at the end. Which key term on Station 1 is measured in mL/min?' },
-            { label: 'The force per unit area that the blood puts on a vessel wall (mmHg)', answer: 'Blood pressure',
+            { label: 'The force per unit area that the blood puts on a vessel wall (mmHg)', easy: 'How hard the blood pushes on the wall of a vessel (mmHg)', answer: 'Blood pressure',
               hint: 'Look at the units at the end. Which key term on Station 1 is measured in mmHg?' },
-            { label: 'The opposition to flow: how much friction blood meets as it passes through the vessels', answer: 'Resistance',
+            { label: 'The opposition to flow: how much friction blood meets as it passes through the vessels', easy: 'What works against flow: how much friction (rubbing) blood meets as it moves through the vessels', answer: 'Resistance',
               hint: 'Which key term on Station 1 talks about friction?' }
           ]
         },
         {
           type: 'choice',
           text: 'Why does it make sense that blood flow varies throughout different organs?',
+          easy: 'Blood flow is not the same in every organ. Why does that make sense?',
           options: [
             'The heart pumps a different amount of blood every second.',
             'Each organ has its own needs, so blood flow to each organ changes with what it needs.',
@@ -87,6 +90,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'What two factors will increase blood flow? Choose the word that finishes each sentence.',
+          easy: 'Two things make blood flow increase (go up). Choose the word that finishes each sentence.',
           items: [
             { label: 'Blood flow increases when the difference in blood pressure (ΔP) is…', options: ['greater', 'smaller'], answer: 'greater',
               hint: 'Read the two sentences at the bottom of Station 1.' },
@@ -97,6 +101,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'List the three factors that affect resistance. Then explain how you think each one has an effect on resistance. (3 to 5 sentences)',
+          easy: 'Name the three factors (things) that change resistance. Then, for each one, explain how you think it changes resistance. (3 to 5 sentences)',
           starters: ['The three factors that affect resistance are …', 'I think … affects resistance because …', 'When … changes, resistance …'],
           min: 80,
           ideas: [
@@ -155,6 +160,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Differentiate between arteries and veins. Choose Arteries or Veins for each description.',
+          easy: 'Tell arteries and veins apart. For each description, choose Arteries or Veins.',
           options: ['Arteries', 'Veins'],
           hint: 'Read the red and blue paragraphs on Station 2. Start with which way the blood is going: toward the heart or away from it.',
           items: [
@@ -176,6 +182,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'How does the structure of capillaries dictate (decide) their critical function?',
+          easy: 'Structure means how something is built. How does the structure of capillaries help them do their important job?',
           options: [
             'They have thick, muscular walls, so they can push blood back to the heart.',
             'They have valves, so blood can only flow one way.',
@@ -189,6 +196,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'What key role do the venous valves play? Where in our bodies do they play the biggest role, and why does this make sense?',
+          easy: 'Answer three short questions about venous valves. What job do they do? Where in the body do they matter most? Why does that make sense?',
           items: [
             { label: 'What venous valves do', options: ['Push blood out of the heart', 'Keep blood from flowing backward', 'Add oxygen to the blood', 'Make the blood thicker'], answer: 'Keep blood from flowing backward',
               hint: 'Read the last paragraph of Station 2.' },
@@ -219,6 +227,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Label each structure on the outside (external view) of the heart.',
+          easy: 'Name each numbered part on the outside of the heart.',
           img: { src: 'media/label-heart-outside.png', alt: 'The outside view of the heart from the Station 3 card, with its 13 labels replaced by the numbers 1 to 13, going clockwise from the top left.', caption: 'Find the same spot on the Station 3 card and read its label.' },
           options: ['Aorta (aortic arch)', 'Aorta (descending)', 'Apex', 'Auricle of left atrium', 'Auricle of right atrium', 'Inferior vena cava', 'Left coronary artery and great cardiac vein', 'Left pulmonary artery', 'Left pulmonary veins', 'Right coronary artery and anterior cardiac vein', 'Right pulmonary artery', 'Right pulmonary veins', 'Superior vena cava'],
           hint: 'Find the same arrow on the Station 3 card and read its label. Right and left mean the heart’s own right and left, so they are flipped from your view.',
@@ -241,6 +250,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Summarize the location of the heart in the human body. Choose the word or phrase that finishes each sentence.',
+          easy: 'Where is the heart in the body? Choose the word or words that finish each sentence.',
           note: 'Anterior means in front. Posterior means behind.',
           items: [
             { label: 'The heart is in this body cavity:', options: ['abdominal cavity', 'thoracic cavity', 'cranial cavity', 'pelvic cavity'], answer: 'thoracic cavity',
@@ -262,6 +272,7 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'Station 3',
           text: 'When the national anthem is sung or the pledge of allegiance is said, it is customary to place a hand over the heart. What is not completely anatomically accurate about where we are taught to place our hand? Where should we place our hand, based on where the heart is actually located? Use evidence from Station 3, along with transition words that tell where your evidence comes from. For example: “According to Station 3, …” or “The card explains that …” (3 to 5 sentences)',
+          easy: 'During the national anthem or the pledge of allegiance, people put a hand over the heart. What is not quite right about where we are taught to put our hand? Where should we put our hand, based on where the heart really is? Use evidence (facts) from Station 3. Start your evidence with transition words that tell where it comes from. For example: “According to Station 3, …” or “The card explains that …” (3 to 5 sentences)',
           starters: ['We are taught to place our hand …', 'According to Station 3, the heart is actually located …', 'The card explains that …', 'This means we should place our hand …'],
           min: 80,
           ideas: [
@@ -273,16 +284,17 @@ window.ASSIGNMENT = {
               re: /2\/3|two.thirds|1\/3|one.third|tilt|mostly (on the )?left|more (on the |to the )?left|slightly (to the )?left|a little (to the )?left|both sides|right side too/ },
             { done: 'You said where we should place our hand.', q: 'Did you say where we should place our hand instead?',
               tip: 'Finish your answer by telling exactly where a hand should go to be over the heart.',
-              re: /should (place|put|go|be)|place (our|your|my|a|the) hands?|put (our|your|my|a|the) hands?|hands? (should|would|needs to)/ },
+              all: [/should|instead|actually|better|correct|more accurate/, /hands?/, /middle|center|centre|sternum|breast ?bone|chest ?bone|midline|medial|between/] },
             { done: 'You wrote at least 3 sentences.', q: 'Did you write 3 to 5 full sentences?', tip: 'Add a sentence that explains your reasoning.', sentences: 3 },
             { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to Station 3,” or “The card explains that.”',
-              re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|station 3|the card (says|said|shows|explains|states|mentions)|because|such as|proves?|this means|supports?|based on/ },
+              writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|station 3|the card (says|said|shows|explains|states|mentions)|because|such as|proves?|this means|supports?|based on/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         },
         {
           type: 'selects',
           text: 'Explain the roles of the pericardium and the pericardial cavity in the function of the heart. Match each part to its description.',
+          easy: 'What do the pericardium and the pericardial cavity do for the heart? Match each part to its description.',
           options: [
             'Protects the heart and anchors it to surrounding structures',
             'A thin, slippery membrane with 2 layers (parietal and visceral)',
@@ -301,6 +313,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Which layer of the heart is responsible for the contractions that give us a heartbeat and let the heart work as a pump? What type of tissue do you think this layer must be made of?',
+          easy: 'Which layer of the heart contracts to make the heartbeat and pump blood? What type of tissue do you think this layer is made of?',
           items: [
             { label: 'Layer that contracts', options: ['epicardium', 'myocardium', 'endocardium', 'pericardium'], answer: 'myocardium',
               hint: 'Station 3 names the three layers of the heart wall, then tells which one contracts.' },
@@ -332,6 +345,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Label each structure on the inside (internal view) of the heart. The blood vessels are already labeled for you.',
+          easy: 'Name each numbered part on the inside of the heart. The blood vessels already have their labels.',
           img: { src: 'media/label-heart-inside.png', alt: 'The inside view of the heart from the Station 4 card. The blood vessels keep their labels. The chambers, valves, chordae tendineae, septum, and pulmonary trunk are numbered 1 to 11: numbers 1 to 6 down the right side, and 7 to 11 going up the left side.', caption: 'Find the same spot on the Station 4 card and read its label.' },
           options: ['Aortic valve', 'Chordae tendineae', 'Interventricular septum', 'Left atrium', 'Left ventricle', 'Mitral (bicuspid) valve', 'Pulmonary trunk', 'Pulmonary valve', 'Right atrium', 'Right ventricle', 'Tricuspid valve'],
           hint: 'Find the same arrow on the Station 4 card and read its label. Right and left mean the heart’s own right and left, so they are flipped from your view.',
@@ -352,6 +366,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'How does your heart use pressure gradients to circulate your blood?',
+          easy: 'A pressure gradient is a difference in pressure between two places. How does your heart use pressure gradients to move blood around the body?',
           options: [
             'It keeps the pressure the same everywhere so the blood can rest.',
             'It uses low pressure to push blood out and high pressure to pull blood in.',
@@ -365,6 +380,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why would the ventricles need thicker walls for contraction than the atria?',
+          easy: 'The ventricles have thicker walls than the atria. Why do the ventricles need thicker walls to contract?',
           options: [
             'The ventricles receive blood from the body, so they need to stretch more.',
             'The atria do all of the pumping, so they need thin walls to move fast.',
@@ -378,6 +394,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Differentiate between the roles of the superior vena cava and the inferior vena cava.',
+          easy: 'How are the superior vena cava and the inferior vena cava different? Choose one for each description.',
           note: 'Superior means above. Inferior means below.',
           options: ['Superior vena cava', 'Inferior vena cava'],
           hint: 'Read the atria paragraph on Station 4. Find the sentence about the two vena cava veins.',
@@ -390,6 +407,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Differentiate between the roles of the pulmonary trunk and the aorta.',
+          easy: 'How are the pulmonary trunk and the aorta different? Choose one for each description.',
           options: ['Pulmonary trunk', 'Aorta'],
           hint: 'Read the ventricles paragraph on Station 4. Each ventricle sends its blood into a different vessel.',
           items: [
@@ -403,6 +421,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Differentiate between the roles of the atrioventricular (AV) valves and the semilunar (SL) valves.',
+          easy: 'How are the atrioventricular (AV) valves and the semilunar (SL) valves different? Choose one for each description.',
           note: 'Atrio- means atrium. Ventricular means ventricle.',
           options: ['AV valves', 'SL valves'],
           hint: 'Read the bottom of Station 4, including the fun fact.',
@@ -447,6 +466,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Trace the path that blood flows. Choose the next stop for each step.',
+          easy: 'Follow the path of the blood. For each step, choose where the blood goes next.',
           note: '<b>Start:</b> oxygen-poor blood comes back from the body in the superior and inferior vena cava. <b>End:</b> after step 14, the blood goes back into the vena cava and starts again.',
           options: ['Aorta', 'Aortic semilunar valve', 'Body tissues (capillary beds)', 'Left atrium', 'Left ventricle', 'Lungs', 'Mitral valve', 'Pulmonary arteries', 'Pulmonary semilunar valve', 'Pulmonary trunk', 'Pulmonary veins', 'Right atrium', 'Right ventricle', 'Tricuspid valve'],
           hint: 'Follow the bullets on Station 5 in order. Each step goes through one chamber, valve, or vessel. Make sure the step before this one is right first.',
@@ -470,6 +490,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Now summarize the path of blood through the heart, the lungs, and the body in your own words. (4 to 6 sentences)',
+          easy: 'Use your own words to tell the path blood takes. Tell how it moves through the heart, the lungs, and the body. Go in order. (4 to 6 sentences)',
           starters: ['First, blood that is low in oxygen …', 'Next, the blood travels to the lungs, where …', 'Then, …', 'Finally, the blood leaves the heart through …'],
           min: 120,
           ideas: [
@@ -535,6 +556,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Take a peek back at Station 5 (shown again here). Which pathway, green or blue, was describing the systemic circuit? Which was describing the pulmonary circuit?',
+          easy: 'Look back at Station 5 (shown again here). Which pathway, green or blue, shows the systemic circuit? Which one shows the pulmonary circuit?',
           img: { src: 'media/station-card-5.jpg', alt: 'The Station 5 card again, with its green and blue dotted arrows.', caption: 'Station 5 card. Read the green words and the blue words in the text, too.' },
           options: ['Green pathway', 'Blue pathway'],
           hint: 'On Station 5, the green words and arrows describe blood going to one place, and the blue ones describe blood going somewhere else. Which circuit goes to the lungs, and which goes to the rest of the body?',
@@ -546,6 +568,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Describe the role of coronary circulation.',
+          easy: 'What job does coronary circulation do?',
           options: [
             'It carries blood from the heart to the lungs to pick up oxygen.',
             'It supplies the heart muscle itself with oxygen-rich blood and nutrients, and drains away its oxygen-poor blood.',

@@ -62,9 +62,21 @@ lab agreement, and a ready-to-go selfie `photo`.
 - Title format: "Explore - Topic Name" with a dash and capitalized words. The course label sits under the title.
   Exception: hands-on labs have no "Explore - " (for example "Heart Dissection", "Sheep Brain Dissection",
   "Lung Capacity Lab").
+- School branding (Elite Academic Academy) is built into the engine: gold `#c1a01e` and black `#2d2926`, a small eagle and
+  the school name above the title, the logo at the bottom of the page, the eagle in the PDF header, and the eagle as the
+  browser-tab icon. The logo files are in `engine/brand/`. Keep it subtle; do not add logos inside assignments.
 - Students enter first and last name at the top. The yellow "Stay on this page until you finish" box, the sticky
   progress bars (one per part, with only the "Backup saved at" time under them), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
   are part of the engine. Keep them.
+- A "Focus" switch (a focus mask) under the name boxes is an accommodation (for example for students with IEPs): when it is on,
+  every section but the one the student is working on fades out. The browser remembers it for every assignment. Built into the engine.
+- A supported version (an accommodation) is the link plus `?support=eagle`: each question shows its `easy` wording and
+  drop-downs and multiple choice show fewer choices. When you write a question, also write its `easy` wording (same
+  question and answer, plain words, short sentences) unless it is already simple. See "Supported version" in
+  `docs/ASSIGNMENT_FORMAT.md`. Nothing on the page or PDF labels it.
+- Each part's green reading box (`read`) is folded under "Read this before you answer" until the student opens it. On
+  highlight questions the instructions fold under "How to answer this question", and what each highlight color is for
+  shows as a tip when the student points at or taps its button. This is built into the engine.
 - Each part starts with a thick colored line and a banner title so students can see they are moving to a new section.
 - Parts open one at a time. When at least 80% of a part is done (all of a `gate: true` setup part), the student closes it with a button, it folds down, confetti (or seasonal shapes: autumn leaves September 15 to November 30, snowflakes in December and January, hearts in February, clovers and rainbows in March)
   plays, and the next part opens. The Finish and submit section shows only after the last part is closed. The teacher view (`?teacher=tm7k2q` on the link) opens everything. This is built into the engine (see "One part at a time" in `docs/ASSIGNMENT_FORMAT.md`).
@@ -86,12 +98,15 @@ lab agreement, and a ready-to-go selfie `photo`.
 - **Every written question has a "Check my ideas" list** of 3 to 5 key ideas. Each is a short pattern match that
   lights up when the student mentions the idea, plus a tip when they have not. It is not a grade and never shows
   the answer. Add a "wrote at least 2 sentences" idea, and for highlight questions a "used transition words" idea and a "highlighted transition words" idea.
-  Write the patterns generously (include word forms and plain-language ways to say the idea).
+  Write the patterns generously (include word forms and plain-language ways to say the idea), but make each one need
+  the science: use `all: [...]` when an idea is two things in one sentence (the trial and the prediction), mark the
+  transition-word idea `writing: true`, and fix every "lights up for an answer that says nothing" warning from
+  `node tools/validate.js`. Science ideas and writing checks are counted separately on the page.
 - Highlight questions tell students to provide evidence in their response, along with transition words that bring
   attention to that evidence. Once they finish, they go back and highlight those transition words in yellow to show
   where their evidence is. The teacher wants this on the main written prompt that asks for evidence from the video.
 - Highlight questions that ask students to argue a point with evidence use claim-evidence-reasoning colors
-  (`cer: true`): claim in blue, evidence in yellow, expand on your thoughts in green. Use the plain yellow
+  (`cer: true`): claim in blue, evidence in yellow, reasoning/expand on your thoughts in green. Use the plain yellow
   transition-word highlight for answers that describe a process instead of arguing a claim.
 - **Every written question has 2 to 5 sentence starters** (`starters`) written for that question. They help students
   begin, use the video's words, and stop before the answer. Students

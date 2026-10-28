@@ -113,15 +113,16 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Hypotheses: Make a prediction about the relationship between lung capacity and each factor: sex, age, height, and activity level. Tell why you think so. (4 or more sentences)',
+          easy: 'Hypotheses: Make a prediction (a guess you can test) for each factor: sex, age, height, and activity level. For each one, tell how you think it relates to lung capacity. Tell why you think so. Write 4 or more sentences.',
           starters: ['I predict that sex will affect lung capacity because …', 'I think older students will have … lung capacity because …', 'If a person is taller, then I predict …', 'I think people who are more active will … because …'],
           min: 120,
           placeholder: 'Sex: I predict...\nAge: I predict...\nHeight: I predict...\nActivity level: I predict...',
           ideas: [
-            { done: 'You made a prediction about sex.', q: 'Did you make a prediction about sex?', tip: 'Do you think females or males will have a larger lung capacity, or will they be about the same?', re: /\bsex\b|\bmales?\b|females?|gender|\bboys?\b|\bgirls?\b|\bmen\b|\bwomen\b/ },
-            { done: 'You made a prediction about age.', q: 'Did you make a prediction about age?', tip: 'Do you think older or younger students will have a larger lung capacity?', re: /\bage\b|\bolder\b|younger|\bold\b|\byoung\b|years/ },
-            { done: 'You made a prediction about height.', q: 'Did you make a prediction about height?', tip: 'Do you think taller or shorter people will have a larger lung capacity?', re: /height|tall|short/ },
-            { done: 'You made a prediction about activity level.', q: 'Did you make a prediction about activity level?', tip: 'Do you think people who exercise more will have a larger lung capacity?', re: /activ|exercis|sports?|athlet|work ?out|fit/ },
-            { done: 'You told why for your predictions.', q: 'Did you tell why you think so?', tip: 'Add a reason, for example “because bigger bodies have bigger lungs.”', re: /because|since|so that|reason|due to|that is why|this is why/ }
+            { done: 'You made a prediction about sex.', q: 'Did you make a prediction about sex?', tip: 'Do you think females or males will have a larger lung capacity, or will they be about the same?', all: [/\bsex\b|\bmales?\b|females?|gender|\bboys?\b|\bgirls?\b|\bmen\b|\bwomen\b/, /more (lung|air|capacity|volume|vital)|larger|bigger|higher|lower|smaller|greater|less|increase|decrease|(the )?same|no difference|won.?t (matter|affect|change)|doesn.?t (matter|affect)|stronger|weaker/] },
+            { done: 'You made a prediction about age.', q: 'Did you make a prediction about age?', tip: 'Do you think older or younger students will have a larger lung capacity?', all: [/\bage\b|\bolder\b|younger|\bold\b|\byoung\b|years/, /more (lung|air|capacity|volume|vital)|larger|bigger|higher|lower|smaller|greater|less|increase|decrease|(the )?same|no difference|won.?t (matter|affect|change)|doesn.?t (matter|affect)|stronger|weaker/] },
+            { done: 'You made a prediction about height.', q: 'Did you make a prediction about height?', tip: 'Do you think taller or shorter people will have a larger lung capacity?', all: [/height|tall|short/, /more (lung|air|capacity|volume|vital)|larger|bigger|higher|lower|smaller|greater|less|increase|decrease|(the )?same|no difference|won.?t (matter|affect|change)|doesn.?t (matter|affect)|stronger|weaker/] },
+            { done: 'You made a prediction about activity level.', q: 'Did you make a prediction about activity level?', tip: 'Do you think people who exercise more will have a larger lung capacity?', all: [/activ|exercis|sports?|athlet|work ?out|\bfit/, /more (lung|air|capacity|volume|vital)|larger|bigger|higher|lower|smaller|greater|less|increase|decrease|(the )?same|no difference|won.?t (matter|affect|change)|doesn.?t (matter|affect)|stronger|weaker/] },
+            { done: 'You told why for your predictions.', q: 'Did you tell why you think so?', tip: 'Add a reason, for example “because bigger bodies have bigger lungs.”', all: [/because|since|so that|reason|due to|that is why|this is why/, /\blungs\b|bigger|larger|chest|grow|exercis|train|muscles?|breath|oxygen|develop|taller|stronger|size/] }
           ]
         }
       ]
@@ -154,6 +155,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Measuring the diameter: Choose the right answer for each step, the way the video shows it.',
+          easy: 'Measuring the diameter (the distance across the balloon): Pick the right answer for each step. Do it the way the video shows.',
           items: [
             { label: 'Where does the balloon go?', options: ['Flat on the table', 'Held up in the air', 'Taped to the wall'], answer: 'Flat on the table', hint: 'Rewatch the setting up clip. Where does the balloon sit while you measure it?' },
             { label: 'Where does the zero end of the ruler go?', options: ['On the table', 'At the top of the balloon', 'In the middle of the balloon'], answer: 'On the table', hint: 'The ruler stands up beside the balloon. Which end touches the table?' },
@@ -184,6 +186,7 @@ window.ASSIGNMENT = {
         {
           type: 'order',
           text: 'Put the steps for one tidal volume trial in order.',
+          easy: 'Put the steps in order. They are the steps for one tidal volume trial (measuring one normal breath one time).',
           items: [
             'Stretch the balloon five times to loosen it up.',
             'Take a normal breath.',
@@ -198,6 +201,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'When you measure expiratory reserve volume, why must you NOT take a breath in between the normal breath out and blowing into the balloon?',
+          easy: 'When you measure expiratory reserve volume, you first breathe out normally. Then you blow into the balloon. Why must you NOT take a breath in between?',
           options: [
             'A new breath would add air that is not part of the expiratory reserve volume, so the balloon would be too big.',
             'A new breath would pop the balloon.',
@@ -211,6 +215,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Which student should NOT collect personal data for this lab?',
+          easy: 'Which student should NOT measure their own lungs (collect personal data) in this lab?',
           options: [
             'A student who plays on the soccer team',
             'A student who is the shortest in the class',
@@ -242,6 +247,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why does each measurement have three trials that are then averaged?',
+          easy: 'Each measurement is done three times (three trials). Then the three numbers are averaged. Why?',
           options: [
             'So the balloon gets stretched out more each time.',
             'Because one trial could be off by accident, and an average of several trials is more reliable.',
@@ -255,6 +261,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Data Table 1: Find Maya’s average balloon diameter for each lung volume. You can use the calculator.',
+          easy: 'Data Table 1: Find Maya’s average balloon diameter for each lung volume. To find an average, add the three trials. Then divide by 3. You can use the calculator.',
           calculator: true,
           unit: 'cm',
           items: [
@@ -266,6 +273,7 @@ window.ASSIGNMENT = {
         {
           type: 'readgraph',
           text: 'Data Table 2: Use Figure 1 to turn each of Maya’s average diameters into a lung volume. Move the slider to the average diameter you found above, then read the lung volume where the dashed line meets the y-axis. Round to the nearest 50.',
+          easy: 'Data Table 2: Use Figure 1 to change each of Maya’s average diameters into a lung volume. First, move the slider to the average diameter you found above. Then read the lung volume where the dashed line meets the y-axis (the side of the graph). Round to the nearest 50.',
           graph: {
             title: 'Figure 1: The relationship between balloon diameter and lung volume',
             alt: 'Graph of lung volume in cubic centimeters (0 to 8,000) against balloon diameter in centimeters (0 to 25). The curve starts flat and gets steeper as the diameter grows. A dashed line shows the point for the diameter on the slider.',
@@ -285,6 +293,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Vital capacity calculated: Use the formula and Maya’s numbers from Figure 1. Maya is female, so use the average inspiratory reserve volume for an adult female.',
+          easy: 'Vital capacity calculated: Use the formula to find Maya’s vital capacity. Use her numbers from Figure 1. Maya is female. So use the average inspiratory reserve volume for an adult female.',
           calculator: true,
           unit: 'cm³',
           items: [
@@ -294,6 +303,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Vital capacity researched: An online vital capacity calculator uses a person’s sex, age, and height. For Maya it says 3.3 liters. Change this to cm³.',
+          easy: 'Vital capacity researched: An online calculator says Maya’s vital capacity is 3.3 liters. Change 3.3 liters into cm³.',
           calculator: true,
           unit: 'cm³',
           items: [
@@ -303,6 +313,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Compare Maya’s three vital capacities: measured with the balloon, calculated with the formula, and researched online. Which one is the lowest?',
+          easy: 'Look at Maya’s three vital capacities: (1) measured with the balloon, (2) calculated with the formula, and (3) researched online. Which one is the lowest?',
           options: ['Measured with the balloon', 'Calculated with the formula', 'Researched online', 'They are all exactly the same'],
           answer: 0,
           explain: 'The balloon (measured) value is the lowest. It is a little less than the researched value and a few hundred cm³ less than the calculated value.',
@@ -311,6 +322,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Which is the best explanation for why the balloon measurement could come out lower than the other two?',
+          easy: 'The balloon measurement could come out lower than the other two. What is the best reason why?',
           options: [
             'The balloon makes the lungs smaller.',
             'Some air can escape before the balloon is pinched, and a balloon is hard to blow into, so it is easy to stop before the lungs are truly empty.',
@@ -339,6 +351,7 @@ window.ASSIGNMENT = {
         {
           type: 'graph',
           text: 'Build your graph. Choose a factor, then work through the steps. Your graph updates as you go. When it is right, you will see the graphs for the other three factors too. Use the calculator to find averages for a bar graph.',
+          easy: 'Build your graph. First, choose a factor. Then do the steps one at a time. Your graph changes as you go. When it is right, you will see the graphs for the other three factors too. For a bar graph, use the calculator to find averages.',
           calculator: true,
           graph: {
             rows: CLASS,
@@ -392,6 +405,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Which of the four factors were we NOT able to properly investigate as a class, and why?',
+          easy: 'Our class could NOT properly test one of the four factors. Which factor was it, and why?',
           options: [
             'Sex, because there were more males than females.',
             'Height, because everyone was the same height.',
@@ -407,6 +421,7 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the class data and graphs',
           text: 'Analysis: Explain what the class data show. Tell how each factor (sex, height, age, and activity level) relates to vital capacity, and use numbers or patterns from the data and graphs as evidence. Then write out at least three ways the data may not be completely accurate, with a specific way to fix each problem in the future. (6 or more sentences)',
+          easy: 'Analysis: Explain what the class data show. Do all of these: (1) Tell how each factor (sex, height, age, and activity level) relates to vital capacity. (2) Use numbers or patterns from the data and graphs as evidence. (3) Name at least three ways the data may not be completely accurate (right). (4) For each problem, give a specific way to fix it next time. Write 6 or more sentences.',
           starters: ['The class data show that …', 'According to the graph, as height increases, …', 'For example, the average vital capacity for … was …', 'One reason the data may not be accurate is …', 'To fix this in the future, we could …'],
           examples: 'Examples: “According to the data,” “The graph shows that,” “For example,” “One piece of evidence is,” or “This shows that.”',
           min: 250,
@@ -414,10 +429,10 @@ window.ASSIGNMENT = {
             { done: 'You described the trend for sex and height.', q: 'Did you tell how sex and height relate to vital capacity?', tip: 'Look at the sex bar graph and the height scatter plot. Which group had a higher vital capacity?', re: /(\bsex\b|\bmales?\b|females?|\bboys?\b|\bgirls?\b)[\s\S]*(height|tall)|(height|tall)[\s\S]*(\bsex\b|\bmales?\b|females?|\bboys?\b|\bgirls?\b)/ },
             { done: 'You described age and activity level.', q: 'Did you tell what the data show for age and activity level?', tip: 'Look at the age scatter plot and the activity level bar graph. Is there a pattern?', re: /(\bage\b|older|younger)[\s\S]*(activ|exercis)|(activ|exercis)[\s\S]*(\bage\b|older|younger)/ },
             { done: 'You used numbers from the data as evidence.', q: 'Did you use numbers from the data?', tip: 'Give an average or a value from the table, such as the average vital capacity of one group.', re: /\d{3,}|\d,\d{3}/ },
-            { done: 'You named ways the data may not be accurate.', q: 'Did you name ways the data may not be accurate?', tip: 'Think about the balloon: air escaping, the balloon not being perfectly round, or measuring the diameter by eye.', re: /error|inaccura|mistake|escap|leak|not (perfectly )?round|measur(e|ing)|ruler|human|wrong|accurate/ },
-            { done: 'You gave a fix for the problems.', q: 'Did you give a specific fix for each problem?', tip: 'For each error, tell what the class could do differently next time, such as “use a spirometer” or “have the same person measure every balloon.”', re: /fix|solution|solve|prevent|instead|next time|in the future|could use|should|better|spirometer|same person|more trials|retest/ },
+            { done: 'You named ways the data may not be accurate.', q: 'Did you name ways the data may not be accurate?', tip: 'Think about the balloon: air escaping, the balloon not being perfectly round, or measuring the diameter by eye.', re: /error|inaccura|mistake|escap|leak|not (perfectly )?round|ruler|by eye|estimat|balloon|diameter|pop|tied|air (got|gets|getting|came) out|different people|blew|blow/ },
+            { done: 'You gave a fix for the problems.', q: 'Did you give a specific fix for each problem?', tip: 'For each error, tell what the class could do differently next time, such as “use a spirometer” or “have the same person measure every balloon.”', all: [/fix|solution|solve|prevent|instead|next time|in the future|could|should|better/, /spirometer|same person|more trials|retest|repeat|average|measur|ruler|tape|string|round|\btie|pinch|practice|calibrat|digital|tool|device|careful|again|twice|three times/] },
             { done: 'You wrote at least 6 sentences.', q: 'Did you write at least 6 full sentences?', tip: 'There is a lot to cover here. Write one or two sentences for the factors and one for each error and its fix.', sentences: 6 },
-            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to the data,” “The graph shows that,” or “For example.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|the (data|graph|table)s? (says?|shows?|showed)|because|such as|as an example|one example|proves?|this means|supports?/ },
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to the data,” “The graph shows that,” or “For example.”',writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|the (data|graph|table)s? (says?|shows?|showed)|because|such as|as an example|one example|proves?|this means|supports?/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         }
@@ -440,6 +455,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why is a high lung capacity more important for athletes and singers than for the average person?',
+          easy: 'Athletes and singers need a high lung capacity more than most people. Why?',
           options: [
             'Athletes need more oxygen for their working muscles, and singers need a long, steady stream of air.',
             'Athletes and singers need to hold their breath longer to stay calm.',
@@ -475,6 +491,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'How does each disease cause respiratory distress?',
+          easy: 'Respiratory distress means trouble breathing. How does each disease cause it?',
           options: ['The airways swell and get narrow', 'The walls of the alveoli are damaged', 'The alveoli fill with fluid', 'Thick, sticky mucus clogs the airways'],
           items: [
             { label: 'Asthma', answer: 'The airways swell and get narrow', hint: 'Find asthma in the list. What happens to the airways?' },
@@ -488,13 +505,14 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the class data and graphs',
           text: 'Conclusion: Do the class data support your hypotheses from Part 2? Give a possible explanation for the results, and say whether they make sense. Then choose one disease from the reading and explain how it causes respiratory distress and how you think it affects lung capacity. Finally, describe one way this lab could be redesigned to investigate a different question about lung capacity. (5 or more sentences)',
+          easy: 'Conclusion: Answer all of these. (1) Do the class data support your hypotheses (predictions) from Part 2? (2) Give a possible explanation for the results. Do they make sense? (3) Choose one disease from the reading. Explain how it causes respiratory distress (trouble breathing). Tell how you think it affects lung capacity. (4) Describe one way to change this lab to test a different question about lung capacity. Write 5 or more sentences.',
           starters: ['The class data (support / do not support) my hypothesis that …', 'For example, the average vital capacity for … was …', 'A possible explanation for these results is …', 'The disease I chose is … It causes respiratory distress by …', 'To investigate a different question, this lab could be redesigned by …'],
           min: 200,
           ideas: [
-            { done: 'You said whether the data support your hypotheses.', q: 'Did you say whether the data support your hypotheses?', tip: 'Look back at your predictions in Part 2. Were they right, partly right, or wrong?', re: /support|hypothes|predict|correct|right|wrong|agree|match/ },
-            { done: 'You gave an explanation for the results.', q: 'Did you explain why the results came out this way?', tip: 'Why might taller people or males have a larger vital capacity? Think about body size and the size of the lungs and chest.', re: /because|bigger|larger|smaller|body|chest|lungs? (are|is)|size|makes sense|explain/ },
+            { done: 'You said whether the data support your hypotheses.', q: 'Did you say whether the data support your hypotheses?', tip: 'Look back at your predictions in Part 2. Were they right, partly right, or wrong?', re: /(data|results?|it|they|this) (does |do |did )?(not |n.t )?(support|match|agree|prove)|(was|were) (right|correct|wrong|incorrect|partly|partially)|partly|partially/ },
+            { done: 'You gave an explanation for the results.', q: 'Did you explain why the results came out this way?', tip: 'Why might taller people or males have a larger vital capacity? Think about body size and the size of the lungs and chest.', all: [/because|since|due to|reason|explain|explanation|makes sense|likely/, /bigger|larger|smaller|chest|\blungs\b|lungs? (are|is)|size|tall|height|exercis|train|muscles?|develop|grow|alveoli|diaphragm/] },
             { done: 'You described a disease and its effect on lung capacity.', q: 'Did you explain how one disease affects lung capacity?', tip: 'Choose one disease from the reading. Tell what it does to the airways or alveoli, and whether lung capacity would go up or down.', re: /asthma|emphysema|copd|bronchitis|pneumonia|cystic|fibrosis|cancer/ },
-            { done: 'You described a way to redesign the lab.', q: 'Did you describe a new way to investigate lung capacity?', tip: 'What else could you test? For example, compare people who play wind instruments to people who do not, or measure before and after exercise.', re: /redesign|investigate|test|compare|experiment|could (measure|study)|instead|another|different|new/ },
+            { done: 'You described a way to redesign the lab.', q: 'Did you describe a new way to investigate lung capacity?', tip: 'What else could you test? For example, compare people who play wind instruments to people who do not, or measure before and after exercise.', all: [/test|compar|measur|study|experiment|investigat|redesign|look at|see if|whether/, /instruments?|band|wind|trumpet|flute|smok|vap|swim|athlet|sports?|exercis|before and after|altitude|elevation|asthma|disease|age groups?|adults?|kids|children|singers?|singing|run(ning|ners?)?|time of day|posture|sitting|standing|weight|bmi|diet|spirometer|more (people|students)|other (schools?|grades?|classes)|teachers?|parents?|cardio|fitness|yoga/] },
             { done: 'You wrote at least 5 sentences.', q: 'Did you write at least 5 full sentences?', tip: 'There are four things to cover. Give each one at least one full sentence.', sentences: 5 }
           ]
         }

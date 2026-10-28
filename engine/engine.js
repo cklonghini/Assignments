@@ -1,6 +1,8 @@
 /* Shared engine for the Explore assignments. Do not put assignment content here: edit assignment.js instead. */
 (function(){
 'use strict';
+/* school logo files sit next to this script, in engine/brand/ */
+var BRAND=new URL('brand/',(document.currentScript&&document.currentScript.src)||location.href).href;
 /* ------------------------------------------------------------------ */
 /* Page frame: header, stay-on-page warning, progress bars             */
 /* ------------------------------------------------------------------ */
@@ -11,6 +13,8 @@ function injectPage(){
   [['preconnect','https://fonts.googleapis.com',false],['preconnect','https://fonts.gstatic.com',true],
    ['stylesheet','https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:wght@600;800&family=Cabin:wght@700&display=swap',false]
   ].forEach(function(l){var e=document.createElement('link'); e.rel=l[0]; e.href=l[1]; if(l[2]) e.crossOrigin=''; head.appendChild(e);});
+  if(!head.querySelector('link[rel~="icon"]')){ var fav=document.createElement('link'); fav.rel='icon'; fav.type='image/png'; fav.href=BRAND+'favicon.png'; head.appendChild(fav); }
+  var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#2d2926'; head.appendChild(tc);
   var icon=A2.icon||'<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M26 24 L46 36 L26 48 Z" fill="var(--primary-ink)"/></svg>';
   var tracks='', groups=A2.board?(A2.board.categories||[]):(A2.parts||[]);
   groups.forEach(function(p,i){
@@ -20,9 +24,13 @@ function injectPage(){
   /* the only things that open a new tab are the pictures in a part (figureEl) */
   var hasPics=!A2.board&&(A2.parts||[]).some(function(p){return (p.images||[]).length;});
   document.body.insertAdjacentHTML('afterbegin',
-    '<div class="wrap"><header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
+    '<div class="wrap"><div class="brand"><img src="'+BRAND+'eagle.png" alt="">Elite Academic Academy</div>'
+    +'<header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
+    +'<div class="maskrow"><span class="tipwrap" id="maskWrap"><button type="button" class="switch" id="maskSw" role="switch" aria-checked="false" aria-labelledby="maskLbl" aria-describedby="maskHint"><span class="knob"></span></button>'
+    +'<label for="maskSw" id="maskLbl" class="masklbl">Focus</label>'
+    +'<span id="maskHint" class="tip" role="tooltip">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></span></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
@@ -33,7 +41,8 @@ function injectPage(){
     +'<p class="small">This page keeps a backup copy in your browser as you work, but don’t count on it. It disappears if you switch devices, use a private window, or clear your browser data.</p></aside>'
     +'<div class="bar" aria-label="Your progress"><div class="tracks">'+tracks+'</div>'
     +'<div class="statsrow"><span id="sSaved"></span></div></div>'
-    +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript></div>');
+    +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript>'
+    +'<footer class="sitefoot"><img src="'+BRAND+'logo.png" alt="Elite Academic Academy"><p>In a world where you can be anything, Be Elite.</p></footer></div>');
   document.querySelector('h1.display').textContent=A2.title;
   if(/[?&]teacher=tm7k2q(&|$)/.test(location.search)){
     var tv=document.createElement('p'); tv.className='teachview'; tv.setAttribute('role','note');
@@ -57,6 +66,21 @@ injectPage();
 /* Teacher view: the assignment link plus ?teacher=tm7k2q opens every part at once, shows the Finish section, allows
    copy and paste, and saves under its own key so it never mixes with a student's progress on the same computer. */
 var TEACHER=/[?&]teacher=tm7k2q(&|$)/.test(location.search);
+/* Supported version (an accommodation): the assignment link plus ?support=eagle shows each question's easier wording
+   (`easy` in assignment.js) and fewer answer choices. It saves under the same key, so a student can switch links
+   without losing work. Nothing on the page or in the PDF says it is the supported version. */
+var SUPPORT=/[?&]support=eagle(&|$)/.test(location.search);
+/* In the supported version a drop-down or multiple choice question shows the right answer and two wrong ones (plus a
+   choice the student already saved). The wrong ones are picked the same way every time, and the order stays the same. */
+function fewer(id,options,right,keep){
+  if(!SUPPORT||!options||options.length<=3) return options;
+  var wrong=options.filter(function(o){return right.indexOf(o)<0;});
+  if(right.length+2>=options.length) return options;
+  var seed=0; ((A.storageKey||TITLE)+id).split('').forEach(function(c){seed=(seed*31+c.charCodeAt(0))>>>0;});
+  var pick=wrong.map(function(o,i){var x=(seed^((i+1)*2654435761))>>>0; x^=x>>>15; x=(x*2246822507)>>>0; x^=x>>>13; return {o:o,k:x};})
+    .sort(function(a,b){return a.k-b.k;}).slice(0,2).map(function(p){return p.o;});
+  return options.filter(function(o){return right.indexOf(o)>=0||pick.indexOf(o)>=0||(keep&&keep.indexOf(o)>=0);});
+}
 var KEY=(A.storageKey||('assignment-'+TITLE))+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
 function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
@@ -243,7 +267,7 @@ function segsPlain(segs){return (segs||[]).map(function(s){return s[0];}).join('
 /* a highlight is false or a color: 'y' yellow, 'b' blue, 'g' green (true is yellow, from older saves).
    Claim-evidence-reasoning (cer) answers use all three: claim blue, evidence yellow, expand green. */
 var HLC={y:'rgb(255, 255, 0)',b:'rgb(0, 255, 255)',g:'rgb(0, 255, 0)'};
-var CERW={b:'CLAIM',y:'EVIDENCE',g:'EXPAND'};
+var CERW={b:'CLAIM',y:'EVIDENCE',g:'REASONING/EXPAND'};
 function hlCode(x){return x===true?'y':(x||false);}
 function segsText(segs,cer){
   return (segs||[]).map(function(s){
@@ -499,19 +523,34 @@ function speechMatch(c,t){
   return {word:word,pass:word&&got===keys.length&&!wrongWay};
 }
 function speakQ(id,q){
-  var wrap=h('div','scards');
+  var wrap=h('div','scards'), cards=[], cids=[], deck=!!q.deck&&!TEACHER, note=null, shown=-1;
+  /* deck: true shows one card at a time; the next card opens when this one turns green */
+  function step(){
+    if(!deck) return;
+    var n=cids.length, first=n;
+    for(var i=0;i<n;i++){ var r=S.auto[cids[i]]; if(!(r&&r.ok)){ first=i; break; } }
+    cards.forEach(function(el,i){ el.hidden=i>first; });
+    note.textContent=first<n?'Card '+(first+1)+' of '+n+'. Say the word and its definition. The next card opens when this card turns green.'
+      :'All '+n+' cards are done. Nice work!';
+    if(shown>=0&&first>shown&&first<n&&cards[first].scrollIntoView) cards[first].scrollIntoView({behavior:'smooth',block:'nearest'});
+    shown=first;
+  }
   (q.cards||[]).forEach(function(c,i){
     var cid=id+'_'+i;
     AUTO[cid]={sum:c.term};
     ORDER.push({kind:'auto',id:cid,label:c.term,q:CURQ,sub:c.term});
-    wrap.append(speakCard(cid,c,!!q.memory));
+    cids.push(cid);
+    var el=speakCard(cid,c,!!q.memory,function(){ if(note) step(); });
+    cards.push(el); wrap.append(el);
   });
   var box=h('div');
   if(soundOnly) box.append(h('p','whint','This browser can’t turn speech into words, so each card checks that you spoke out loud for a few seconds. Chrome or Edge works best for this part.'));
+  if(deck){ note=h('p','whint sdeck'); note.setAttribute('aria-live','polite'); box.append(note); }
   box.append(wrap);
+  step();
   return box;
 }
-function speakCard(cid,c,memory){
+function speakCard(cid,c,memory,onChange){
   var card=h('div','scard'); mark(card); card.dataset.s='idle';
   var def=h('p','sdef');
   var btn=h('button','btn mic'); btn.type='button'; btn.setAttribute('aria-pressed','false');
@@ -522,7 +561,9 @@ function speakCard(cid,c,memory){
   var lvl=h('div','level'); lvl.hidden=true; var lvlFill=h('i'); lvl.append(lvlFill);
   var heard=h('p','heard'); heard.setAttribute('aria-live','polite');
   var term=h('p','sterm'); term.append(itxt(c.term));
-  card.append(term,def,row,lvl,heard);
+  card.append(term);
+  if(c.img){ var pic=h('img','simg'); pic.src=c.img.src; pic.alt=c.img.alt||''; card.append(pic); }
+  card.append(def,row,lvl,heard);
   function rec(){return S.auto[cid]||null;}
   function tell(t,bad){heard.textContent=t; if(bad) heard.dataset.s='bad'; else heard.removeAttribute('data-s');}
   function paint(){
@@ -534,6 +575,7 @@ function speakCard(cid,c,memory){
     else { def.className='sdef'; def.append(itxt(c.def)); }
     if(peek){ peek.hidden=done; peek.textContent=showing?'Hide the definition':'Peek'; }
     if(done) tell('✓ '+(r.how==='sound'?'You said it out loud.':'I heard you say the word and its meaning.')+(r.peek?' (You peeked.)':''));
+    if(onChange) onChange();
   }
   if(peek) peek.addEventListener('click',function(){
     showing=!showing;
@@ -931,11 +973,11 @@ function labQ(id,q){
    cell and shows where water moves. Then each scenario has three menus: what the solution is, which way water moves,
    and what the cell does. When all three are right, the scenario plays: water arrows and the cell swells or shrinks. */
 var TONI_MENUS=[
-  {label:'The solution outside the cell is',options:['Hypotonic','Isotonic','Hypertonic'],
+  {label:'The solution outside the cell is',options:['Hypotonic','Isotonic','Hypertonic'],ans:['Hypotonic','Isotonic','Hypertonic'],
    hint:'Compare how crowded the pink solute dots are outside the cell and inside it. “Hypo” rhymes with low, and “iso” means equal.'},
-  {label:'Water moves',options:['Into the cell','Out of the cell','In and out equally (no net movement)'],
+  {label:'Water moves',options:['Into the cell','Out of the cell','In and out equally (no net movement)'],ans:['Into the cell','In and out equally (no net movement)','Out of the cell'],
    hint:'Water moves toward the side with the higher solute concentration. Which side has more crowded dots?'},
-  {label:'The cell',options:['Swells','Shrinks','Stays the same size'],
+  {label:'The cell',options:['Swells','Shrinks','Stays the same size'],ans:['Swells','Stays the same size','Shrinks'],
    hint:'Think about where the water goes. Does the cell gain water, lose water, or neither?'}];
 function toniKind(inside,outside){return outside<inside?0:outside>inside?2:1;}
 function toniSvg(inside,outside,seed,title){
@@ -1005,7 +1047,7 @@ function toniQ(id,q){
     var card=h('div','tcard'); card.dataset.s='idle';
     var nm=h('h3','tname'); nm.append(itxt(it.name||('Cell '+(i+1)))); card.append(nm);
     if(it.who) { var w=h('p','pwho'); w.append(itxt(it.who)); card.append(w); }
-    var cin=it.inside==null?inside:it.inside, k=toniKind(cin,it.outside), answers=[TONI_MENUS[0].options[k],TONI_MENUS[1].options[k],TONI_MENUS[2].options[k]];
+    var cin=it.inside==null?inside:it.inside, k=toniKind(cin,it.outside), answers=TONI_MENUS.map(function(m){return m.ans[k];}); /* ans is in the order hypotonic, isotonic, hypertonic */
     var pic=h('div','tpic'); pic.innerHTML=toniSvg(cin,it.outside,KEY+id+'_'+i,(it.alt||plain(it.name||'A cell'))+': a cell in a beaker of solution');
     var menus=h('div','sigs'), ids=[];
     TONI_MENUS.forEach(function(m,mi){
@@ -1148,7 +1190,7 @@ function numbersQ(id,q){
 }
 
 /* Graphs are drawn as SVG with fixed colors on a white page, so the same drawing works in dark mode and in the PDF */
-var GC={ink:'#16213a',muted:'#52607a',grid:'#b9c4d6',minor:'#e3e8f0',line:'#16213a',mark:'#0b5f7a',pick:'#d63f78',bad:'#a8321f'};
+var GC={ink:'#2d2926',muted:'#5f5850',grid:'#c9bfae',minor:'#ece6dc',line:'#2d2926',mark:'#7f6810',pick:'#d63f78',bad:'#a8321f'};
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function nfmt(n){return (Math.round(n*100)/100).toLocaleString('en-US');}
 function steps(min,max,step){var out=[], n=Math.floor((max-min)/step+1e-9); for(var i=0;i<=n;i++) out.push(min+i*step); return out;}
@@ -1900,11 +1942,24 @@ function richField(id){
   if(!segsPlain(st.segs).trim()&&old&&(old.text||'').trim()){ st.segs=[[old.text,false]]; delete S.written[id]; }
   var wrap=h('div','sub'); mark(wrap); wrap.dataset.s='idle';
   var bar=h('div','evbar'); bar.setAttribute('role','group'); bar.setAttribute('aria-label','Highlight tools');
-  var tools=c.cer?[['b','Claim (blue)','btn hl hlb'],['y','Evidence (yellow)','btn hl'],['g','Expand (green)','btn hl hlg']]
-                 :[['y','Highlight selected text yellow','btn hl']];
-  tools.push([false,'Remove highlight','btn ghost']);
+  /* each button's tip (shown on hover, keyboard focus, or a tap) says what that color is for */
+  var tools=c.cer?[['b','Claim (blue)','btn hl hlb','Claim (your opinion): select the words that give your claim, then press this button to highlight them in blue.'],
+                   ['y','Evidence (yellow)','btn hl','Using evidence to support your view: select your evidence, then press this button to highlight it in yellow.'],
+                   ['g','Reasoning/Expand (green)','btn hl hlg','Reasoning/Expand on your thoughts: select where you explain how your evidence supports your claim, then press this button to highlight it in green.']]
+                 :[['y','Highlight selected text yellow','btn hl','Transition words that point to evidence: select them, then press this button to highlight them in yellow. This shows where your evidence is.']];
+  tools.push([false,'Remove highlight','btn ghost','Select highlighted words, then press this button to take the color off.']);
   var bmsg=h('span','msg'); bmsg.setAttribute('aria-live','polite');
-  tools.forEach(function(t){ var b=h('button',t[2],t[1]); b.type='button'; t.push(b); bar.append(b); });
+  tools.forEach(function(t,k){
+    var b=h('button',t[2],t[1]); b.type='button';
+    var tip=h('span','tip',t[3]); tip.id='tip-'+id+'-'+k; tip.setAttribute('role','tooltip'); b.setAttribute('aria-describedby',tip.id);
+    var w=h('span','tipwrap'+(k===tools.length-1?' tipend':'')); w.append(b,tip);
+    /* touch screens have no hover: show the tip for a few seconds after a tap */
+    b.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='mouse') return;
+      w.classList.add('tipon'); clearTimeout(w._t); w._t=setTimeout(function(){w.classList.remove('tipon');},3500);
+    });
+    t.splice(3,1,b); bar.append(w);
+  });
   bar.append(bmsg);
   var ed=h('div','ev'); ed.id='f-'+id; ed.contentEditable='true'; ed.setAttribute('role','textbox'); ed.setAttribute('aria-multiline','true');
   ed.setAttribute('aria-label','Your written response'); ed.spellcheck=true; ed.setAttribute('data-placeholder','Begin your response here...');
@@ -1916,7 +1971,7 @@ function richField(id){
     var all=c.cer?(segsHlWords(st.segs,'b')&&segsHlWords(st.segs,'y')&&segsHlWords(st.segs,'g')):hl;
     cnt.textContent=n+(n===1?' word':' words')+', '+hl+' highlighted';
     msg.textContent=!enough?'Write at least a couple of sentences.':all?'Saved. Your teacher grades this one.'
-      :c.cer?'Saved. Remember to highlight your claim in blue, your evidence in yellow, and where you expand on your thoughts in green.'
+      :c.cer?'Saved. Remember to highlight your claim in blue, your evidence in yellow, and your reasoning (where you expand on your thoughts) in green.'
       :'Saved. Remember to highlight your transition words in yellow.';
     wrap.dataset.s=enough?'ok':'idle';
   }
@@ -1998,19 +2053,69 @@ var GFIX=[
   [/[a-z]{2}[.!?,;:](?=[A-Za-z])/g,function(){return 'Add a space after this punctuation mark.';},2]
 ];
 var GSUB=/^(because|since|although|though|when|while|if|unless|whereas|after|before|even though)\b/i;
-/* a light test for a verb: helping verbs, common irregular verbs, words ending in -ed or -s, or a word after I/we/they */
-var GAUX=/^(is|are|was|were|be|been|am|being|has|have|had|do|does|did|can|could|will|would|shall|should|may|might|must|it's|that's|there's|here's|what's|he's|she's|i'm|i've|we're|they're|you're|we've|they've|don't|doesn't|didn't|can't|won't|isn't|aren't|wasn't|weren't|couldn't|shouldn't|wouldn't|let's)$/;
-var GIRR=/^(went|came|saw|made|took|got|gave|found|felt|thought|knew|left|kept|held|beat|ran|grew|became|began|brought|built|cut|put|set|said|told|showed|lost|meant|sent|spent|stood|understood|wrote|ate|fell|forgot|heard|hit|hurt|led|let|paid|read|sat|spoke|stuck|taught|threw|tore|woke|wore|won|broke|chose|drew|bled|fed|fought|dug|slid|split|spread|shut|need|think|know|want|like|see|feel|believe|learned|learnt|get|go|make|help|keep|use|move|carry|pump|take|give|look|find|work|flow|contain|connect|separate|return|send|receive|supply|deliver|absorb|release|exchange|protect|control|cause|affect|increase|decrease|depend|allow|prevent|stop|form|produce|create|break|fight|clot|bind|fit|attach|enter|leave|travel|pass|reach|push|pull|squeeze|contract|relax|expand|breathe|grow|live|die|eat|react|change|act|seem|appear|mean|show|tell|explain|describe|compare|draw|share|lay|stand|pinch|measure|record|add|divide|place|stay|become|have|call|name|write|say|hear|try|start|begin|end|finish|open|close|hold|turn|lead|follow|include|belong|differ|vary|match|test|check|come|run|sit|learn|understand|remember|notice|observe|discover|identify|classify|support|prove|bring|fill|empty|mix|pour|sink|float|swim|fly|hunt|catch|hide|survive|adapt|evolve|reproduce|digest|filter|wrap|cover|surround|line|lie|rest|sleep|wake|happen|occur|matter|count|weigh|cost|smell|taste|sound|bleed|heal|repair|build|store|transport|transfer|pick|drop)$/;
-function hasVerb(lw){
-  for(var i=0;i<lw.length;i++){
-    var x=lw[i];
-    if(GAUX.test(x)||GIRR.test(x)) return true;
-    if(x.length>3&&/ed$/.test(x)) return true;
-    if(x.length>3&&/[^su]s$/.test(x)&&!/(ss|ous|is|us)$/.test(x)&&i>0) return true;
-    if(/^(i|you|we|they|he|she|it|people|children)$/.test(x)&&lw[i+1]) return true;
-  }
+/* Incomplete sentences without a dictionary: a few word lists and rules that find the main verb of a sentence.
+   A verb only counts when its neighbors say it is a verb ("cells" after "blood" is a noun; "carry" after "cells"
+   is a verb), and a verb inside a "that," "because," or "where" part belongs to that part, not to the sentence. */
+var GAUX=/^(is|are|was|were|be|been|am|being|has|have|had|do|does|did|can|could|will|would|shall|should|may|might|must|it's|that's|there's|here's|what's|he's|she's|i'm|i've|we're|they're|you're|we've|they've|don't|doesn't|didn't|can't|won't|isn't|aren't|wasn't|weren't|couldn't|shouldn't|wouldn't|let's|cannot)$/;
+var GPAST=/^(went|came|saw|made|took|got|gave|found|felt|thought|knew|kept|held|ran|grew|became|began|brought|built|said|told|showed|lost|meant|sent|spent|stood|understood|wrote|ate|fell|forgot|heard|led|paid|sat|spoke|stuck|taught|threw|tore|woke|wore|won|broke|chose|drew|bled|fed|fought|dug|slid|learnt|swam|flew|hid|caught|bought|sought|became|rose|drove|rode|sang|shook)$/;
+var GIRR=/^(need|think|know|want|like|see|feel|believe|learned|get|go|make|help|keep|use|move|carry|pump|take|give|look|find|work|flow|contain|connect|separate|return|send|receive|supply|deliver|absorb|release|exchange|protect|control|cause|affect|increase|decrease|depend|allow|prevent|stop|form|produce|create|break|fight|clot|bind|fit|attach|enter|leave|travel|pass|reach|push|pull|squeeze|contract|relax|expand|breathe|grow|live|die|eat|react|change|act|seem|appear|mean|show|tell|explain|describe|compare|draw|share|lay|stand|pinch|measure|record|add|divide|place|stay|become|have|call|name|write|say|hear|try|start|begin|end|finish|open|close|hold|turn|lead|follow|include|belong|differ|vary|match|test|check|come|run|sit|learn|understand|remember|notice|observe|discover|identify|classify|support|prove|bring|fill|empty|mix|pour|sink|float|swim|fly|hunt|catch|hide|survive|adapt|evolve|reproduce|digest|filter|wrap|cover|surround|line|lie|rest|sleep|wake|happen|occur|matter|count|weigh|cost|smell|taste|sound|bleed|heal|repair|build|store|transport|transfer|pick|drop|flip|grab|predict|guess|hope|agree|compete|cross|join|wash|wipe|clean|capitalize|italicize|underline|stretch|type|label|circle|answer|watch|listen|choose|select|remove|throw|mark|cut|put|set|hit|hurt|let|read|beat|spread|split|shut|left)$/;
+var GPART=/^(called|named|known|located|found|made|used|considered|attached|connected|related|filled|covered|surrounded|shaped|labeled|labelled|found|taped|denatured|oxygenated|deoxygenated)$/;
+var GDET=/^(the|a|an|this|these|those|my|our|your|their|his|its|some|many|each|every|no|any|both|few|several)$/;
+var GDETN=/^(the|a|an|my|our|your|their|his|its|some|many|no|any|both|few|several)$/; /* words that always come before a noun */
+var GPREP=/^(of|in|on|at|to|from|with|by|for|into|onto|through|between|under|over|near|behind|across|toward|towards|around|during|without|about|like|than|as|inside|outside|after|before)$/;
+var GPRON=/^(i|you|we|they|he|she|it|people|children|everyone|someone|scientists|students|doctors|taxonomists)$/;
+var GADVB=/^(also|still|really|just|only|never|always|usually|often|actually|probably|then|even|not|sometimes|mostly|first|now|already|both|all)$/;
+var GPLN=/^(cells|valves|vessels|lungs|arteries|veins|capillaries|enzymes|pennies|chambers|organisms|molecules|proteins|receptors|neurons|neurotransmitters|structures|parts|nutrients|alveoli|atria|ventricles|organs|tissues|genes|species|animals|plants|bacteria|viruses|hormones|substrates|products|reactions|trials|results|data|males|females|lobes|hemispheres|nerves|muscles|bones|walls|layers|types|markers|antigens|antibodies|names|wings|birds|insects|groups|factors|graphs|numbers|seconds|minutes|times|days|years|things|ideas|ways|examples|videos|questions|answers|words|sentences|hands|fingers|thumbs|balls|bodies|humans|kids|friends|levels|areas|sides|problems|errors|steps|fluids|gases|ions|cases|diseases|symptoms|signals|platelets|chordae|folds|grooves|membranes|ligands|messengers|pathways|stages|predictions|hypotheses|chests|heights|ages|balloons|teachers|parents|patients|donors|transfusions|halves)$/;
+var GNADJ=/^(very|more|most|so|too|her|red|white|blue|small|large|big|little|tiny|thick|thin|long|short|high|low|hot|cold|fast|slow|strong|weak|new|old|same|different|other|main|whole|entire|right|first|last|next|important|good|bad|best|better|common|normal|healthy|special|key|major|minor|many|few|two|three|four|several|such|own|certain|human|vital|pulmonary|coronary|competitive|chemical|scientific|common)$/;
+var GSUBW=/^(that|which|who|where|because|since|although|though|while|if|unless|whereas|so)$/;
+function isAdvb(x){return GADVB.test(x)||(x.length>4&&/ly$/.test(x)&&!/^(only|early|family|supply|apply|reply|belly|jelly)$/.test(x));}
+/* is the word at i a verb, judging by the words around it? */
+function verbAt(lw,i){
+  var x=lw[i]; if(!x||x===',') return false;
+  var j=i-1; while(j>=0&&isAdvb(lw[j])) j--;
+  var p=j>=0?lw[j]:'', n=lw[i+1]||'';
+  if(GAUX.test(x)) return true;
+  if(x==='left') return GDET.test(n)||GPRON.test(n)||n===''||n===',';
+  if(GPART.test(x)) return GAUX.test(p)||GPRON.test(p)||GPLN.test(p)||/^(it|them|him|her|me|us)$/.test(n);
+  if(GPAST.test(x)) return true;
+  var nounish=GDETN.test(p)||GPREP.test(p)||GNADJ.test(p);
+  /* a base verb ("carry") counts after a subject, a helping verb, "which," or at the start; not after "the," "to," or "this" */
+  if(GIRR.test(x)) return p===''||p===','||/^(these|those|which|who)$/.test(p)||p==='that'&&j>0&&(GPLN.test(lw[j-1])||/[^su]s$/.test(lw[j-1]))||!(nounish||p==='to'||p==='this'||p==='that');
+  if(i>0&&x.length>3&&/ed$/.test(x)) return !nounish&&j>=0;
+  if(i>0&&x.length>3&&/[^su]s$/.test(x)&&!/(ss|ous|is|us)$/.test(x)&&(!GPLN.test(x)||GDETN.test(n))) return !nounish&&j>=0;
+  /* an unknown word right after "cells" or "which" is most likely the verb: "veins drain," "which cross" */
+  if((GPLN.test(p)||/^(which|who)$/.test(p))&&!GADJ.test(x)&&!GDET.test(x)&&!GPREP.test(x)&&!GPLN.test(x)&&!GSUBW.test(x)&&!/^(and|or|but)$/.test(x)) return true;
+  if(GPRON.test(p)&&p!=='people'&&p!=='children'&&!GADJ.test(x)&&!GDET.test(x)&&!GPREP.test(x)&&!GPLN.test(x)&&!GSUBW.test(x)&&x!==',') return true;
   return false;
 }
+/* is "that," "so," and the like starting a new part of the sentence here? */
+function subAt(lw,i){
+  var x=lw[i], n=lw[i+1]||'';
+  if(!GSUBW.test(x)||n==='to') return false;   /* "where to look" */
+  if(x==='so'&&i===0) return false;              /* "So the reaction was slower." */
+  if(x==='that'&&/^(show|shows|showed|shown|mean|means|meant|think|thought|learn|learned|know|knew|found|predict|predicted|say|says|said|notice|noticed|realize|realized|prove|proves|proved|suggest|suggests|believe|believed)$/.test(lw[i-1]||'')) return n!=='';
+  if(x==='so'||x==='that'||x==='since'||x==='while'||x==='after'||x==='before') return GDET.test(n)||GPRON.test(n)&&n!=='people'||(x==='that'&&i>0&&(GAUX.test(n)||GPAST.test(n)||/[^su]s$/.test(n)&&!GPLN.test(n)&&!GIRR.test(n)||GIRR.test(n)&&(GPLN.test(lw[i-1])||/[^su]s$/.test(lw[i-1]))));
+  if(x==='because') return n!=='of'&&n!=='';
+  return i>0&&n!==''&&n!==',';
+}
+/* finds the main verb, and any part ("so the reaction") that never gets its own verb */
+function sentenceParts(lw){
+  var main=false, open=-1, unfinished=null;
+  for(var i=0;i<lw.length;i++){
+    var x=lw[i];
+    if(x===','){ if(open>=0&&unfinished===null&&i>open+1) unfinished=open; open=-1; continue; }
+    if(subAt(lw,i)){ if(open>=0&&unfinished===null) unfinished=open; open=i; continue; }
+    if(/^(think|believe|predict|guess|hope)$/.test(x)&&verbAt(lw,i)&&(GDET.test(lw[i+1]||'')||GPRON.test(lw[i+1]||''))){ main=true; open=i; continue; }
+    if(verbAt(lw,i)){
+      var j=i-1; while(j>=0&&isAdvb(lw[j])) j--;
+      if(j>=0&&verbAt(lw,j)) continue;   /* "was taped," "can get": one verb, already counted */
+      if(open>=0) open=-1; else main=true;
+    }
+  }
+  if(open>=0&&unfinished===null) unfinished=open;
+  return {main:main,unfinished:unfinished};
+}
+function hasVerb(lw){ for(var i=0;i<lw.length;i++){ if(verbAt(lw,i)) return true; } return false; }
 /* a missing a/an/the, as in "This is just test to see": a linking verb, then a word that is not an adjective, then "to" */
 var GADJ=/^(able|about|enough|going|trying|supposed|used|due|ready|free|sure|likely|easy|hard|good|bad|important|necessary|possible|impossible|difficult|simple|safe|helpful|harmful|best|better|worse|worst|first|last|next|only|right|wrong|key|close|similar|related|connected|attached|meant|made|said|known|thought|found|needed|told|asked|allowed|forced|built|designed|there|here|up|down|back|out|in|on|off|over|still|also|not|just|really|very|so|too|more|less|most|much|able|unable|happy|glad|sad|tired|interesting|amazing|cool|fun|nice|great|weird|strange|crazy|surprising|surprised|confused|confusing|clear|new|old|big|small|large|thick|thin|long|short|high|low|hot|cold|fast|slow|strong|weak|ready|willing|available|responsible|similar|different|same|true|false|common|normal|healthy|unique|special|essential|vital|critical|crucial|useful|harder|easier|bigger|smaller|faster|slower|stronger|weaker|thicker|thinner|higher|lower|larger|longer|shorter|closer|how|what|why|where|when|who|which|that|this|it|them|me|us|him|her|you|i|we|they|he|she|one|ok|okay)$/;
 function missingWord(text,add){
@@ -2022,11 +2127,23 @@ function missingWord(text,add){
     add(at,at+m[2].length,'A small word may be missing before “'+m[2]+'”, such as “a,” “an,” or “the.”');
   }
 }
+var GINC='This may be an incomplete thought. A complete sentence says who or what it is about (the subject) and what they do or are (the verb). Read it aloud to check for a missing word.';
+var GEND=/^(the|a|an|and|or|but|because|than|my|our|your|their|its|very|into|onto|if|when|so)$/;
+/* missing words between other words: "goes the lungs," "pumps blood the body," "the is," "able flip," "of brain" */
+var GMISS=[
+  [/\b(work|works|worked|working|go|goes|went|run|runs|ran|react|reacts|reacted|happen|happens|happened|flip|flips|flipped|move|moves|moved)\s+(faster|slower|better|best|fastest|slowest|worse)\s+(the|a|an)\s/gi,function(m){return 'A word may be missing after “'+m.split(/\s+/)[1]+',” such as “at,” “than,” or “with.”';}],
+  [/\b(I|it|It|they|They|he|He|she|She|we|We)\s+(slower|faster|bigger|smaller|important|harder|easier|thicker|thinner|stronger|weaker|able|unable|tired|surprised|confused|interested|amazed|excited|scared|shocked|worried|bored|different|similar|better|worse|because|the|a|an)\b(?!\s+(me|us|him|her|them|you|it)\b)/g,function(m,t,i){return /\b(make|makes|made|making|keep|keeps|kept|find|finds|found|get|gets|got|let|lets|help|helps|helped|call|called|leave|leaves|left)\s+$/i.test(t.slice(Math.max(0,i-10),i))?null:'A word may be missing after “'+m.split(/\s+/)[0]+',” such as “is,” “was,” or “am.”';}],
+  [/\b(the|The|a|an|An)\s+(the|a|an|to|of|and|or|is|are|was|were|in|on|at|for|with|from|by|it|they|he|she|we|because|but)\b/g,function(m){return 'A word seems to be missing after “'+m.split(/\s+/)[0]+'.”';}],
+  [/\b(able|unable|supposed)\s+(?!to\b)[a-z]+/gi,function(m){return 'A word may be missing after “'+m.split(/\s+/)[0]+',” such as “to.”';}],
+  [/\b(go|goes|went|going|travel|travels|traveled|travelled|traveling|flow|flows|flowed|flowing|come|comes|came|rush|rushes|rushed)\s+(the|a|an|my|your|our|their|his|her)\s+(?!(same|whole|entire|other|wrong|right|next|first|last|rest|way|most|least|best|fastest|slowest|farthest|furthest|longest|opposite)\b)[a-z]+/gi,function(m){return 'A word may be missing after “'+m.split(/\s+/)[0]+',” such as “to,” “into,” or “through.”';}],
+  [/\b(pump(s|ed)?|carr(y|ies|ied)|mov(e|es|ed)|push(es|ed)?|deliver(s|ed)?|transport(s|ed)?|flip(s|ped)?|squeez(e|es|ed)|send(s)?|sent)\s+(?!(the|a|an|this|that|these|those|my|our|your|their|his|her|its|it|them|out|up|back|down|away|in|off|through|throughout|along|all|both|more|less|much|faster|slower|quickly|slowly|again|around|over|only|also|by|from|to|into|of|on|at|for|with|toward|towards|across|between|under|onto|past|than|as|and|or)\b)([a-z]+)\s+(the|a|an)\s+(?!(lot|few|little|bit|day|week|minute|second|year|time|while|whole|entire|same|right|wrong|rest|other|way|most|least|best|first|last|next)\b)[a-z]+/gi,function(m){var x=m.split(/\s+/);return 'A word may be missing between “'+x[1]+'” and “'+x[2]+',” such as “to,” “into,” or “through.”';}],
+  [/\b(of|in|to|into|from|through|at|on|inside|toward|towards)\s+(heart|brain|body|aorta|ventricle|atrium|cell|enzyme|lung|skull|thumb|substrate|receptor|nucleus|membrane|valve|organism|artery|vein|capillary|diaphragm|sternum|cerebrum|cerebellum|niece|tennis ball|chest)\b(?!\s+(temperature|tissue|muscle|disease|rate|cells?|biology|size|parts?|function|signaling|walls?|attack|failure|health|types?|weight|fluids?|stem|membranes?|structures?|division|surface|chambers?|valves?|sounds?|beats?|transplants?|damage|surgery|anatomy|wall|matter)\b)(?=\s*[.,!?;:]|\s*$|\s+(and|or|but|to|is|was|are|were|so|because|which|that|with|of|in|on)\b)/gi,function(m){return 'A small word such as “the” or “a” may be missing before “'+m.split(/\s+/).slice(1).join(' ')+'.”';}]
+];
 function grammarIssues(text){
   var out=[];
   function add(a,b,msg,wide){ if(b>a) out.push({a:a,b:b,msg:msg,wide:!!wide}); }
   missingWord(text,add);
-  GFIX.forEach(function(rule){
+  GMISS.concat(GFIX).forEach(function(rule){
     var re=new RegExp(rule[0].source,rule[0].flags), m;
     while((m=re.exec(text))){ var msg=rule[1](m[0],text,m.index); if(msg) add(m.index+(rule[2]||0),m.index+m[0].length,msg); if(!m[0].length) re.lastIndex++; }
   });
@@ -2044,14 +2161,21 @@ function grammarIssues(text){
     if(!/[.!?]["”’')\]]*$/.test(sen)){
       var lw=sen.match(/\S+$/); add(end-lw[0].length,end,'End this sentence with a period (or a question mark or exclamation point).');
     }
-    var lw=w.map(function(x){return x.toLowerCase().replace(/’/g,"'");});
+    var tk=(core.match(/[A-Za-z’'-]+|[,;:]/g)||[]).map(function(x){return /^[;:]$/.test(x)?',':x.toLowerCase().replace(/’/g,"'");});
+    var last=tk.filter(function(x){return x!==',';}).pop()||'', sp=sentenceParts(tk);
     if(w.length<3) add(st,end,'This looks too short to be a complete sentence. A sentence needs a subject and a verb.',1);
-    else if(!hasVerb(lw)) add(st,end,'This may be an incomplete sentence. Check that it says who or what (the subject) and what they do or are (the verb).',1);
+    else if(/\?["”’')\]]*$/.test(sen)){ if(!hasVerb(tk)) add(st,end,GINC,1); }
+    else if(GEND.test(w[w.length-1])) add(st,end,'This sentence stops before the thought is finished. A word or two may be missing after “'+w[w.length-1]+'.”',1);
     else if(GSUB.test(core)&&core.indexOf(',')<0&&w.length<14) add(st,end,'A sentence that starts with “'+core.match(GSUB)[0]+'” needs two parts with a comma between them, like this: “When the heart contracts, blood moves out.” Check that this sentence has both parts and the comma.',1);
+    else if(/:/.test(core)) {}   /* labels and definitions, such as "Heart: the organ that pumps blood" */
+    else if(!sp.main) add(st,end,GINC,1);
+    else if(sp.unfinished!==null) add(st,end,'The part that starts with “'+tk[sp.unfinished]+'” is an incomplete thought. It needs to say what happens or what something is. Read it aloud to check for a missing word.',1);
     else if(w.length>40) add(st,end,'This sentence is very long ('+w.length+' words). Try splitting it into two or three sentences.',1);
   }
   /* whole-sentence problems and word problems are kept apart, so one never hides the other.
      Within each kind, keep the first problem when two overlap. */
+  /* when a missing-word hint already points inside a sentence, the general "incomplete thought" note is not needed */
+  out=out.filter(function(x){return !(x.wide&&x.msg===GINC&&out.some(function(y){return !y.wide&&y.a>=x.a&&y.b<=x.b&&/missing/.test(y.msg);}));});
   out.sort(function(x,y){return x.a-y.a||(y.wide-x.wide)||y.b-x.b;});
   var keep=[], to={0:-1,1:-1};
   out.forEach(function(x){ var k=x.wide?1:0; if(x.a>=to[k]){ keep.push(x); to[k]=x.b; } });
@@ -2099,32 +2223,49 @@ function grammarCheck(getText){
   return wrap;
 }
 
-/* Looks for key ideas with simple word matching. It never shows the answer and is not graded. */
+/* Looks for key ideas with word matching. It never shows the answer and is not graded.
+   Science ideas (what the answer says) and writing checks (sentences, transition words, highlights) are counted
+   separately, so writing two sentences never counts as a science idea. */
 function sentenceCount(t){return String(t||'').split(/[.!?]+/).filter(function(x){return words(x)>=3;}).length;}
+function sentencesOf(t){return String(t||'').split(/[.!?\n]+/).filter(function(x){return x.trim();});}
 function ideaCheck(getText,getHl,items){ /* getHl returns the answer's highlighted pieces (segs) */
   var wrap=h('div','ideas');
-  wrap.append(h('p','inote','Want a quick check before you move on? This looks for key ideas in your answer. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
+  wrap.append(h('p','inote','Want a quick check before you move on? This looks for the key science ideas in your answer and checks your writing steps. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
   var btn=h('button','btn','Check my ideas'); btn.type='button';
   var note=h('p','msg'); note.setAttribute('aria-live','polite');
-  var list=h('ul');
-  wrap.append(btn,note,list);
-  btn.addEventListener('click',function(){
-    var t=String(getText()||''), low=t.toLowerCase(), hl=getHl?getHl():[];
-    list.textContent='';
-    if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
-    var found=0;
-    items.forEach(function(it){
-      var ok=it.test?it.test(t,hl):it.re.test(low);
+  var groups=h('div','igroups');
+  wrap.append(btn,note,groups);
+  var sci=items.filter(function(it){return !it.writing;}), wr=items.filter(function(it){return it.writing;});
+  function group(title,list,t,hl){
+    var found=0, ul=h('ul');
+    list.forEach(function(it){
+      var ok=it.test(t,hl);
       if(ok) found++;
       var li=h('li'); li.dataset.s=ok?'ok':'todo';
       if(ok) li.append('✓ '+it.done);
       else { li.append('○ '+it.q+' '); var b=h('b',null,'Tip: '); li.append(b,it.tip); }
-      list.append(li);
+      ul.append(li);
     });
-    note.dataset.s=(found===items.length)?'ok':'';
-    note.textContent=(found===items.length)
-      ? 'Nice work. You covered all '+items.length+' ideas. Read your answer one more time to make sure it is clear.'
-      : 'I found '+found+' of '+items.length+' ideas. Add what is missing, then check again.';
+    var box=h('div','igroup'), hd=h('p','ihead');
+    hd.append(h('b',null,title+': '),found+' of '+list.length);
+    var bar=h('span','ibar'); bar.setAttribute('aria-hidden','true');
+    list.forEach(function(x,i){var d=h('i'); if(i<found) d.className='on'; bar.append(d);});
+    hd.append(bar);
+    box.append(hd,ul); groups.append(box);
+    return found;
+  }
+  btn.addEventListener('click',function(){
+    var t=String(getText()||''), hl=getHl?getHl():[];
+    groups.textContent='';
+    if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
+    var fs=sci.length?group('Science ideas',sci,t,hl):0, fw=wr.length?group('Writing',wr,t,hl):0;
+    var allSci=fs===sci.length, allWr=fw===wr.length;
+    note.dataset.s=(allSci&&allWr)?'ok':'';
+    note.textContent=(allSci&&allWr)
+      ? 'Nice work. You covered all the key ideas. Read your answer one more time to make sure it is clear.'
+      : !allSci
+        ? 'I found '+fs+' of '+sci.length+' key science ideas. Use the tips to add what is missing, then check again.'
+        : 'You covered all the key science ideas. Now finish the writing steps below.';
   });
   return wrap;
 }
@@ -2153,6 +2294,66 @@ function watchList(intro,items){
   return hh('div','wfor','<b>Watch for:</b> '+intro+'<ul class="wlist">'+items.map(function(i){return '<li><b>'+i[0]+'</b> '+i[1]+'</li>';}).join('')+'</ul>');
 }
 function learn(markup){return hh('div','learn',markup);}
+/* a part's reading folds into a box the student opens, so the page is not a wall of text */
+function readBox(markup,label){
+  var d=h('details','fold readfold'); d.append(h('summary',null,label||'Read this before you answer'));
+  d.append(learn(markup)); return d;
+}
+
+/* Focus (an accommodation, a focus mask): when it is on, every section but the one the student is working on fades out.
+   A section is one block inside a part (a video, a reading box, a question). Clicking or tabbing into a section
+   brings it into focus; scrolling moves the focus once the current section leaves the middle of the screen.
+   The setting is kept in this browser for every assignment, so a student turns it on once. */
+function focusMask(){
+  var sw=$('#maskSw'), MK='eaa-focus-mask', cur=null, on=false, raf=0;
+  function units(){ return [].filter.call(document.querySelectorAll('#app>.task>*:not(h2):not(.lrow),#app>:not(.task)'),function(e){return e.offsetParent!==null||e.getClientRects().length;}); }
+  function unitOf(el){
+    while(el&&el.parentElement){
+      var pa=el.parentElement;
+      if(pa.id==='app') return el.classList.contains('task')?null:el;
+      if(pa.classList.contains('task')&&pa.parentElement&&pa.parentElement.id==='app') return el.tagName==='H2'||el.classList.contains('lrow')?null:el;
+      el=pa;
+    }
+    return null;
+  }
+  function pick(u){
+    if(!u||u===cur) return;
+    if(cur) cur.classList.remove('mfocus');
+    cur=u; cur.classList.add('mfocus');
+  }
+  function band(u){ var r=u.getBoundingClientRect(), H=window.innerHeight; return r.bottom>H*0.25&&r.top<H*0.6; }
+  function fromScroll(){
+    raf=0;
+    if(!on) return;
+    var fu=unitOf(document.activeElement);
+    if(fu&&band(fu)){ pick(fu); return; }
+    if(cur&&cur.isConnected&&band(cur)) return;
+    var line=window.innerHeight*0.4, best=null, bd=1e9;
+    units().forEach(function(u){
+      var r=u.getBoundingClientRect(), d=r.top<=line&&r.bottom>=line?0:Math.min(Math.abs(r.top-line),Math.abs(r.bottom-line));
+      if(d<bd){bd=d; best=u;}
+    });
+    pick(best);
+  }
+  function set(v,keep){
+    on=v; sw.setAttribute('aria-checked',v?'true':'false');
+    document.body.classList.toggle('masking',v);
+    if(v) fromScroll(); else if(cur){ cur.classList.remove('mfocus'); cur=null; }
+    if(keep){ try{ v?localStorage.setItem(MK,'1'):localStorage.removeItem(MK); }catch(e){} }
+  }
+  sw.addEventListener('click',function(){ set(!on,true); });
+  /* the switch's how-to shows on hover or keyboard focus; touch screens get it for a few seconds after a tap */
+  var mw=$('#maskWrap');
+  mw.addEventListener('pointerdown',function(e){
+    if(e.pointerType==='mouse') return;
+    mw.classList.add('tipon'); clearTimeout(mw._t); mw._t=setTimeout(function(){mw.classList.remove('tipon');},3500);
+  });
+  document.addEventListener('focusin',function(e){ if(on) pick(unitOf(e.target)); });
+  document.addEventListener('pointerdown',function(e){ if(on) pick(unitOf(e.target)); },true);
+  window.addEventListener('scroll',function(){ if(on&&!raf) raf=requestAnimationFrame(fromScroll); },{passive:true});
+  var saved=false; try{ saved=localStorage.getItem(MK)==='1'; }catch(e){}
+  if(saved) set(true,false);
+}
 
 /* ------------------------------------------------------------------ */
 /* Parts                                                               */
@@ -2234,7 +2435,7 @@ function videoSection(){
       else if(nHl===1) after+=', and in one of them you will use transition words to point to your evidence and highlight them in yellow';
       else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
       after+='.';
-      if(nCer) after+=' In '+(nCer===nW?(nW===1?'it':'each one'):(nCer===1?'one of them':'some of them'))+', you will make a claim, support it with evidence, and expand on your thoughts, then highlight each part in its own color.';
+      if(nCer) after+=' In '+(nCer===nW?(nW===1?'it':'each one'):(nCer===1?'one of them':'some of them'))+', you will make a claim, support it with evidence, and give your reasoning (expand on your thoughts), then highlight each part in its own color.';
     }
     after+=photoSentence(qs);
     if(GATED) after+=' Each part opens when you finish the one before it.';
@@ -2247,11 +2448,15 @@ function videoSection(){
   return s;
 }
 
-/* turns the ideas written in assignment.js into checks that ideaCheck can run */
+/* turns the ideas written in assignment.js into checks that ideaCheck can run.
+   re: the pattern is somewhere in the answer. all: every pattern is in the same sentence, so an idea can ask for
+   two things together (the coenzyme AND faster, the lungs AND oxygen). sentences, highlight and writing: true are
+   writing checks, listed apart from the science ideas. */
 function ideasFrom(list){
   return (list||[]).map(function(it){
-    var o={done:it.done,q:it.q,tip:it.tip};
-    if(it.re){ o.re=it.re; }
+    var o={done:it.done,q:it.q,tip:it.tip,writing:!!(it.writing||it.sentences||it.highlight)};
+    if(it.all){ var pats=it.all; o.test=function(t){return sentencesOf(t.toLowerCase()).some(function(x){return pats.every(function(r){return r.test(x);});});}; }
+    else if(it.re){ var re=it.re; o.test=function(t){return re.test(t.toLowerCase());}; }
     else if(it.sentences){ var k=it.sentences; o.test=function(t){return sentenceCount(t)>=k;}; }
     else if(it.highlight){ var col={claim:'b',evidence:'y',expand:'g'}[it.highlight]; o.test=function(t,segs){return segsHlWords(segs,col)>0;}; }
     else { o.test=function(){return false;}; }
@@ -2260,6 +2465,7 @@ function ideasFrom(list){
 }
 
 function buildQuestion(q,s,tile){
+  if(SUPPORT&&q.easy) q=Object.assign({},q,{text:q.easy});
   var num=++QN, id='q'+num, o=qEl(num,q.text), t=q.type, ids=[id];
   if(tile) CURQ.tile=tile;
   if(q.img){
@@ -2274,13 +2480,15 @@ function buildQuestion(q,s,tile){
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
     var grid=h('div','sigs');
     q.items.forEach(function(it,i){
-      var sel=autoSelect(id+'_'+i,'Q'+num+' '+plain(it.label).replace(/:/g,''),it.options||q.options,it.answer,{label:it.label,hint:it.hint||q.hint});
+      var sid=id+'_'+i, ops=fewer(sid,it.options||q.options,[it.answer],[(S.auto[sid]||{}).v]);
+      var sel=autoSelect(sid,'Q'+num+' '+plain(it.label).replace(/:/g,''),ops,it.answer,{label:(SUPPORT&&it.easy)||it.label,hint:it.hint||q.hint});
       if(it.sci||q.sci) sel.classList.add('sci');
       grid.append(sel);
     });
     o.body.append(grid);
   } else if(t==='choice'){
-    o.body.append(choiceQ(id,'Q'+num,q.options,q.answer,q.explain,q.tip));
+    var cops=fewer(id,q.options,[q.options[q.answer]],[(S.auto[id]||{}).v]);
+    o.body.append(choiceQ(id,'Q'+num,cops,cops.indexOf(q.options[q.answer]),q.explain,q.tip));
   } else if(t==='typed'){
     var exp=q.expected;
     /* accept: a list of right answers, ignoring capital letters and an end period */
@@ -2306,6 +2514,7 @@ function buildQuestion(q,s,tile){
   } else if(t==='bloodlab'){
     o.body.append(labQ(id,q));
   } else if(t==='multi'){
+    if(SUPPORT) q=Object.assign({},q,{options:fewer(id,q.options,q.answers,(S.auto[id]||{}).picks)});
     o.body.append(multiQ(id,q));
   } else if(t==='numbers'){
     ids=q.items.map(function(it,i){return id+'_'+i;});
@@ -2326,18 +2535,19 @@ function buildQuestion(q,s,tile){
   } else if(t==='highlight'){
     ids=[];
     R[id]={min:q.min||40,cer:!!q.cer};
-    var intro=q.cer?[
-      h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
-      h('p','intro','Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then expand on your thoughts to explain how your evidence supports your claim.'),
-      hh('p','intro','Once you have finished, highlight parts of your response using these colors. Select the words, then press the matching button.'),
-      hh('ul','cerlist','<li><b>Claim (your opinion):</b> highlight your claim in <span class="chip chipb">blue</span></li>'
-        +'<li><b>Using evidence to support your view:</b> highlight your use of evidence in <span class="chip">yellow</span></li>'
-        +'<li><b>Expand on your thoughts:</b> highlight your use of this skill in <span class="chip chipg">green</span></li>')
+    /* the how-to folds into a box; what each color means is shown when the student points at that highlight button */
+    var how=h('details','fold howfold'), howin=h('div','howbox');
+    how.append(h('summary',null,'How to answer this question'), howin);
+    (q.cer?[
+      h('p',null,'Respond to the question in the space below. Remember to answer the question fully.'),
+      h('p',null,'Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then give your reasoning: expand on your thoughts to explain how your evidence supports your claim.'),
+      h('p',null,'Once you have finished, highlight parts of your response. Select the words, then press the matching color button. Point at a button to see what it is for.')
     ]:[
-      h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
-      h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
-      hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.')
-    ];
+      h('p',null,'Respond to the question in the space below. Remember to answer the question fully.'),
+      h('p',null,'Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
+      h('p',null,'Once you have finished, go back and highlight those transition words in yellow. Select the words, then press the yellow button.')
+    ]).forEach(function(e){howin.append(e);});
+    var intro=[how];
     intro.forEach(function(e){o.body.append(e);});
     o.body.append(
       q.starters&&q.starters.length?startersEl(id,q.starters):'',
@@ -2348,7 +2558,7 @@ function buildQuestion(q,s,tile){
     if(q.cer) ideas=ideas.concat([
       {done:'You highlighted your claim in blue.',q:'Did you highlight your claim in blue?',tip:'Select the sentence that gives your answer, then press the blue Claim button.',highlight:'claim'},
       {done:'You highlighted your evidence in yellow.',q:'Did you highlight your evidence in yellow?',tip:'Select the facts or examples you used to support your claim, then press the yellow Evidence button.',highlight:'evidence'},
-      {done:'You highlighted where you expand on your thoughts in green.',q:'Did you highlight where you expand on your thoughts in green?',tip:'Select the sentences that explain how your evidence supports your claim, then press the green Expand button.',highlight:'expand'}]);
+      {done:'You highlighted your reasoning in green.',q:'Did you highlight your reasoning (where you expand on your thoughts) in green?',tip:'Select the sentences that explain how your evidence supports your claim, then press the green Reasoning/Expand button.',highlight:'expand'}]);
     if(ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return (S.rich[id]||{}).segs;},ideasFrom(ideas)));
   } else if(t==='agree'){
     ids=[];
@@ -2372,7 +2582,7 @@ function buildPart(p,n){
   var inVid=(p.questions||[]).filter(function(q){return q.at!=null;});
   if(inVid.length&&first) s.append(videoStops(first,inVid));
   (p.images||[]).forEach(function(im){ s.append(figureEl(im)); });
-  if(p.read) s.append(learn(p.read));
+  if(p.read) s.append(readBox(p.read,p.readLabel));
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
   (p.questions||[]).forEach(function(q){ if(!(q.at!=null&&first)) buildQuestion(q,s); });
   if(GATED) gateEls(s,n);
@@ -2528,7 +2738,7 @@ function celebrate(text){
   document.body.append(c);
   var season=seasonShapes();
   if(season){ fallingShapes(c,ctx,W0,H0,season); return; }
-  var cols=['#f4c430','#e8505b','#14b1ab','#5b8def','#9b5de5','#3ac569','#ff8c42'], bits=[];
+  var cols=['#c1a01e','#dcbc3c','#2d2926','#8a7012','#ecd98f','#5f5850','#f4c430'], bits=[];
   for(var i=0;i<160;i++){
     var left=i%2===0;
     bits.push({x:left?0:W0, y:H0*0.75, vx:(left?1:-1)*(4+Math.random()*9), vy:-(9+Math.random()*10),
@@ -2884,7 +3094,7 @@ function buildSummary(){
   p.res.forEach(function(r){L.push(r[0]+': '+r[1]);});
   var anyCer=Object.keys(R).some(function(k){return R[k].cer;}), anyHl=Object.keys(R).some(function(k){return !R[k].cer;});
   if(anyHl) L.push('(Text inside [[double brackets]] was highlighted in yellow as transition words that point to evidence.)');
-  if(anyCer) L.push('(In claim-evidence answers, [CLAIM: …] was highlighted blue, [EVIDENCE: …] yellow, and [EXPAND: …] green.)');
+  if(anyCer) L.push('(In claim-evidence answers, [CLAIM: …] was highlighted blue, [EVIDENCE: …] yellow, and [REASONING/EXPAND: …] green.)');
   L.push('');
   p.groups.forEach(function(g){
     L.push((g.num!==''?g.num+'. ':'')+plain(g.text));
@@ -2916,7 +3126,7 @@ async function headingPng(lines,pt){
   x.font=font;
   var w=Math.ceil(Math.max.apply(null,lines.map(function(t){return x.measureText(t).width;}))+4*scale);
   c.width=w; c.height=Math.ceil(lh*lines.length*scale+2*scale);
-  x=c.getContext('2d'); x.font=font; x.fillStyle='#16213a'; x.textBaseline='alphabetic';
+  x=c.getContext('2d'); x.font=font; x.fillStyle='#2d2926'; x.textBaseline='alphabetic';
   lines.forEach(function(t,i){ x.fillText(t,0,(i*lh+pt)*scale); });
   var blob=await new Promise(function(r){c.toBlob(r,'image/png');});
   return {bytes:new Uint8Array(await blob.arrayBuffer()),w:w/scale,h:c.height/scale};
@@ -2945,7 +3155,7 @@ async function buildPdf(){
   doc.setAuthor(pdfSafe(fullName()));
   var F=await doc.embedFont(L.StandardFonts.Helvetica), FB=await doc.embedFont(L.StandardFonts.HelveticaBold), FI=await doc.embedFont(L.StandardFonts.HelveticaOblique), FBI=await doc.embedFont(L.StandardFonts.HelveticaBoldOblique);
   var W0=612, PH=792, M=54, CW=W0-2*M, y=0, page=null;
-  var INK=L.rgb(22/255,33/255,58/255), MUTED=L.rgb(82/255,96/255,122/255), TEAL=L.rgb(11/255,95/255,122/255), LINE=L.rgb(211/255,219/255,232/255), RESP=L.rgb(10/255,80/255,105/255), YEL=L.rgb(1,0.93,0), HLP={y:YEL,b:L.rgb(0,1,1),g:L.rgb(0,1,0)};
+  var INK=L.rgb(45/255,41/255,38/255), MUTED=L.rgb(95/255,88/255,80/255), GOLD=L.rgb(193/255,160/255,30/255), LINE=L.rgb(224/255,216/255,202/255), RESP=L.rgb(110/255,90/255,12/255), YEL=L.rgb(1,0.93,0), HLP={y:YEL,b:L.rgb(0,1,1),g:L.rgb(0,1,0)};
   function newPage(){ page=doc.addPage([W0,PH]); y=M; }
   function room(n){ if(!page||y+n>PH-M) newPage(); }
   function wrap(t,font,size,width){
@@ -3058,9 +3268,16 @@ async function buildPdf(){
   var hd=await headingPng([TITLE,COURSE,fullName()||'(name not entered)'],14);
   var img=await doc.embedPng(hd.bytes);
   page.drawImage(img,{x:M,y:PH-M-hd.h,width:hd.w,height:hd.h});
+  /* school eagle and name in the top right corner (left out if the picture cannot load) */
+  try{
+    var eg=await doc.embedPng(new Uint8Array(await (await fetch(BRAND+'eagle.png')).arrayBuffer())), eh=40, ew=eh*eg.width/eg.height;
+    var bn='ELITE ACADEMIC ACADEMY', bw=FB.widthOfTextAtSize(bn,7);
+    page.drawImage(eg,{x:W0-M-bw/2-ew/2,y:PH-M-eh,width:ew,height:eh});
+    page.drawText(bn,{x:W0-M-bw,y:PH-M-eh-10,size:7,font:FB,color:RESP});
+  }catch(e){}
   y=M+hd.h+6;
   text('Date completed: '+p.date,11,F,0,MUTED);
-  y+=6; rule(TEAL,2); y+=14;
+  y+=6; rule(GOLD,2); y+=14;
 
   room(20);
   var ry=y;
@@ -3197,7 +3414,7 @@ function finishEl(){
   });
 
   var txtd=h('details','backup'); txtd.append(h('summary',null,'Can’t download? Copy my answers as text'));
-  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted transition words will be marked with [[double brackets]]'+(Object.keys(R).some(function(k){return R[k].cer;})?', and your claim, evidence, and expanding will be marked [CLAIM: …], [EVIDENCE: …], and [EXPAND: …]':'')+'.'));
+  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted transition words will be marked with [[double brackets]]'+(Object.keys(R).some(function(k){return R[k].cer;})?', and your claim, evidence, and expanding will be marked [CLAIM: …], [EVIDENCE: …], and [REASONING/EXPAND: …]':'')+'.'));
   var tr=h('div','row');
   var tmake=h('button','btn ghost','Show my answers as text'); tmake.type='button';
   tr.append(tmake); txtd.append(tr);
@@ -3373,7 +3590,7 @@ function decorate(){
   app.querySelectorAll('.stbox').forEach(function(el){
     el.prepend(listenBtn(function(){return [].map.call(el.querySelectorAll('li span'),function(x){return x.innerText;}).join('. ');}));
   });
-  app.querySelectorAll('.wfor,.learn').forEach(function(el){
+  app.querySelectorAll('.wfor,.learn,.howbox').forEach(function(el){
     el.prepend(listenBtn(function(){return el.innerText;}));
   });
   /* pictures with their words: a Listen button right under the picture */
@@ -3430,9 +3647,10 @@ function decorate(){
     e.preventDefault(); e.stopPropagation();
     if(tell) tell.remove();
     tell=h('div','cheer nocopy',msg); tell.setAttribute('role','status'); document.body.append(tell);
-    var me=tell; setTimeout(function(){me.classList.add('out');},2200); setTimeout(function(){me.remove();},2800);
+    var me=tell; setTimeout(function(){me.classList.add('out');},4000); setTimeout(function(){me.remove();},4600);
   }
-  var OUT='Copying is turned off for this assignment.', IN='Pasting is turned off. Type your answer in your own words.';
+  var HELP=' If you need help, please reach out to your teacher.';
+  var OUT='Copying is turned off for this assignment.'+HELP, IN='Pasting is turned off. Type your answer in your own words.'+HELP;
   ['copy','cut'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,OUT);},true); });
   ['paste','drop'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,IN);},true); });
   document.addEventListener('beforeinput',function(e){ if(/^insertFrom(Paste|Drop|Yank)/.test(e.inputType||'')) stop(e,IN); },true);
@@ -3472,6 +3690,7 @@ function render(){
   el.addEventListener('input',function(){S[k]=el.value;commit();});
 });
 render();
+focusMask();
 
 /* Time on task. Counts time while the student is active:
    - on this page: interacted in the last 3 minutes, or a video is playing;

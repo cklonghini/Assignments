@@ -98,6 +98,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Match each description to the correct word: the heart and blood vessels.',
+          easy: 'These are about the heart and blood vessels. Read each meaning. Pick the word that matches it.',
           options: ['Artery', 'Atrium', 'Blood vessel', 'Capillary', 'Heart', 'Heart valves', 'Pulmonary artery', 'Pulmonary vein', 'Vein', 'Ventricle'],
           items: [
             { label: 'Carries blood away from the heart', answer: 'Artery', hint: 'The video says to think “A” for away.' },
@@ -115,6 +116,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Match each description to the correct word: the blood and the whole system.',
+          easy: 'These are about blood and the whole body system. Read each meaning. Pick the word that matches it.',
           options: ['Circulatory system', 'Platelet', 'Red blood cell', 'Urea', 'White blood cell'],
           items: [
             { label: 'Carries oxygen throughout the body', answer: 'Red blood cell', hint: 'Which blood cell does the transporting of gases?' },
@@ -150,7 +152,7 @@ window.ASSIGNMENT = {
           text: 'Match each part of blood to what it does.',
           options: ['Plasma', 'Platelets', 'Red blood cells', 'White blood cells'],
           items: [
-            { label: 'The liquid portion, with water, proteins, salts, and lipids', answer: 'Plasma', hint: 'Which part is not a cell at all?' },
+            { label: 'The liquid portion, with water, proteins, salts, and lipids', easy: 'The liquid part of blood. It holds water, proteins, salts, and lipids (fats).', answer: 'Plasma', hint: 'Which part is not a cell at all?' },
             { label: 'Transport gases like oxygen', answer: 'Red blood cells', hint: 'Which cells carry the iron-containing protein?' },
             { label: 'Fight infections', answer: 'White blood cells', hint: 'Which cells protect your body from germs?' },
             { label: 'Cell fragments that help blood clot', answer: 'Platelets', hint: 'The video says these are not whole cells. They are pieces of cells.' }
@@ -167,6 +169,7 @@ window.ASSIGNMENT = {
         {
           type: 'multi',
           text: 'Which of these are jobs of blood that the video names? Choose every one that fits.',
+          easy: 'The video names some jobs that blood does. Which ones are they? Pick every one that is right.',
           options: ['Keeps a certain pH', 'Keeps a certain temperature', 'Transports hormones, nutrients, and gases', 'Digests food', 'Builds bones'],
           answers: ['Keeps a certain pH', 'Keeps a certain temperature', 'Transports hormones, nutrients, and gases'],
           rules: [{ any: ['Digests food', 'Builds bones'], tip: 'Check each choice against the reading. Are any of the ones you chose jobs of a different body system?' }],
@@ -187,6 +190,7 @@ window.ASSIGNMENT = {
         {
           type: 'label',
           text: 'Label the heart. Drag each label to the box with the matching number, then press “Check my labels.” The heart is drawn as if you are facing the person, so the heart’s right side is on your left.',
+          easy: 'Label the parts of the heart. Drag each label to the box with the same number. Then press “Check my labels.” The picture shows the heart as if you are facing the person. So the heart’s right side is on your left.',
           viewBox: '-150 0 1092 1006',
           image: { src: 'media/heart-diagram.webp', width: 792, height: 1006 },
           alt: 'Cutaway drawing of the human heart with 11 numbered parts',
@@ -210,11 +214,12 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Arteries, veins, or capillaries? Match each description.',
+          easy: 'Read each sentence. Is it about arteries, veins, or capillaries? Pick one for each.',
           options: ['Arteries', 'Capillaries', 'Veins'],
           items: [
             { label: 'Generally carry blood away from the heart', answer: 'Arteries', hint: 'The video gives a memory trick: think of the first letter.' },
             { label: 'Generally carry blood to the heart', answer: 'Veins', hint: 'This is the opposite of the vessels that carry blood away.' },
-            { label: 'Where oxygen is delivered to tissues and carbon dioxide is picked up', answer: 'Capillaries', hint: 'Which vessels are the smallest? The exchange happens at their level.' }
+            { label: 'Where oxygen is delivered to tissues and carbon dioxide is picked up', easy: 'Where oxygen is dropped off to the body’s tissues and carbon dioxide is picked up', answer: 'Capillaries', hint: 'Which vessels are the smallest? The exchange happens at their level.' }
           ]
         },
         {
@@ -238,6 +243,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Is the blood in each place oxygen-rich or oxygen-poor?',
+          easy: 'Look at each place. Does the blood there have a lot of oxygen (oxygen-rich) or only a little oxygen (oxygen-poor)?',
           options: ['Oxygen-poor', 'Oxygen-rich'],
           items: [
             { label: 'Blood leaving the toe on its way to the heart', answer: 'Oxygen-poor', hint: 'The toe has used up oxygen. The video says this blood is deoxygenated.' },
@@ -251,6 +257,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'How does the heart muscle itself get oxygen and glucose?',
+          easy: 'The heart is a muscle. It needs its own oxygen and glucose (sugar). How does the heart muscle get them?',
           options: ['Coronary arteries branch off the aorta and deliver blood to capillaries in the heart', 'It soaks up oxygen from the blood inside its chambers', 'The pulmonary vein delivers it straight to the heart muscle', 'The heart muscle doesn’t need oxygen'],
           answer: 0,
           explain: 'Coronary arteries branch off the aorta and deliver blood into capillaries, which bring oxygen and glucose to the heart.',
@@ -259,6 +266,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',
           text: 'Follow the blood from the video’s toe all the way through the heart and lungs and back out to the body. Name the vessels, chambers, and valves it passes through, and tell where it picks up oxygen. Use evidence from the video, along with transition words that tell where your evidence comes from. For example: “According to the video, …” or “In the video, the narrator explains that …” (3 to 5 sentences)',
+          easy: 'Follow the blood that starts in the toe in the video. It goes through the heart and the lungs, and then back out to the body. Name the vessels (tubes), chambers, and valves it goes through. Tell where the blood picks up oxygen. Use evidence from the video. Start your evidence with transition words that tell where it comes from. For example: “According to the video, …” or “In the video, the narrator explains that …” (3 to 5 sentences)',
           starters: ['The blood starts in the toe and travels …', 'According to the video, the blood enters the heart through …', 'Next, the blood passes through …', 'In the video, the narrator explains that the blood picks up oxygen when …', 'Finally, the blood leaves the heart through …'],
           min: 150,
           ideas: [
@@ -267,7 +275,7 @@ window.ASSIGNMENT = {
             { done: 'You told where and how the blood picks up oxygen.', q: 'Did you say where the blood becomes oxygenated?', tip: 'Rewatch the part about the red blood cells taking on one gas and releasing another.', re: /(lungs?[^.!?]*(oxygen|o2)|(oxygen|o2)[^.!?]*lungs?)/ },
             { done: 'You told how the blood leaves for the body.', q: 'Did you name the major artery that carries blood out to the body?', tip: 'Listen for the last stop before the blood heads out to the body.', re: /aort/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Follow the blood one stop at a time, with a sentence for each part of the trip.', sentences: 2 },
-            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to the video,” or “In the video, the narrator explains that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|the narrator (says|said|explains|explained)|because|such as|as an example|one example|proves?|this means|supports?/ },
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to the video,” or “In the video, the narrator explains that.”',writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|the narrator (says|said|explains|explained)|because|such as|as an example|one example|proves?|this means|supports?/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         }
@@ -291,6 +299,7 @@ window.ASSIGNMENT = {
         {
           type: 'bloodlab',
           text: 'Test each patient’s blood. Add all three serums, look for clumping, then choose the blood type.',
+          easy: 'Test each patient’s blood. First, add all three serums (test drops). Next, look for clumping. Then pick the blood type.',
           patients: [
             { name: 'Patient 1: Marcus', who: 'Age 17. Broke his leg playing soccer.', type: 'A+' },
             { name: 'Patient 2: Mrs. Lee', who: 'Age 64. Having knee surgery next week.', type: 'O−' },
@@ -308,6 +317,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Look at the table. Which blood type is the rarest?',
+          easy: 'Look at the table. Which blood type is the rarest (the fewest people have it)?',
           options: ['O−', 'B−', 'AB−', 'AB+'], answer: 2,
           explain: 'Fewer than 1 out of 100 people have AB− blood.',
           tip: 'Look for the smallest number in the table.'
@@ -315,6 +325,7 @@ window.ASSIGNMENT = {
         {
           type: 'multi',
           text: 'Priya is type B−. She needs blood after a car accident. Which donor bags are safe for her? Choose every safe bag.',
+          easy: 'Priya has type B− blood. She needs blood after a car accident. Which donor bags (bags of blood given by other people) are safe for her? Pick every safe bag.',
           options: ['O−', 'O+', 'A−', 'B−', 'B+', 'AB−'],
           answers: ['O−', 'B−'],
           rules: [
@@ -327,6 +338,7 @@ window.ASSIGNMENT = {
         {
           type: 'multi',
           text: 'Mr. Chen is type A+. Which donor bags are safe for him? Choose every safe bag.',
+          easy: 'Mr. Chen has type A+ blood. Which donor bags (bags of blood given by other people) are safe for him? Pick every safe bag.',
           options: ['O−', 'O+', 'A−', 'A+', 'B+', 'AB+'],
           answers: ['O−', 'O+', 'A−', 'A+'],
           rules: [{ any: ['B+', 'AB+'], tip: 'Check each bag for the B marker. Does Mr. Chen’s own blood have it?' }],
@@ -338,13 +350,14 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the blood types video and your blood typing lab',
           text: 'Why does it matter that people have different blood types? Use what you learned from the blood types video and your lab. Explain how blood typing keeps patients safe, and how your blood type connects to the idea that each of us is unique. (3 to 5 sentences)',
+          easy: 'Why does it matter that people have different blood types? Use the blood types video and your lab. Explain how blood typing keeps patients safe. Then explain how your blood type shows that each of us is unique (one of a kind). (3 to 5 sentences)',
           starters: ['Blood types matter because …', 'In the blood types video, …', 'In my blood typing lab, …', 'This shows that …'],
           min: 150,
           ideas: [
             { done: 'You explained what makes blood types different.', q: 'Did you say what makes one blood type different from another?', tip: 'Think about what sits on the surface of red blood cells.', re: /marker|antigen|\btype (a|b|ab|o)\b|\brh\b|surface/ },
             { done: 'You told what happens when blood doesn’t match.', q: 'Did you explain what happens if a patient gets the wrong type?', tip: 'What does the immune system do to markers it doesn’t know? What did you see in the wells?', re: /clump|attack|immune|antibod|reject|invader|dangerous|harm|die|kill/ },
             { done: 'You connected blood typing to keeping patients safe.', q: 'Did you say how testing and matching keeps patients safe?', tip: 'Think about what hospitals do before a transfusion.', re: /match|test|transfusion|donor|donat|safe|compatib/ },
-            { done: 'You connected blood type to being unique.', q: 'Did you connect blood type to each of us being unique?', tip: 'Reread the last paragraph of the reading. Where does your blood type come from, and how many blood group markers are there?', re: /unique|different|individual|one of a kind|inherit|parents?|genes?|dna|special/ },
+            { done: 'You connected blood type to being unique.', q: 'Did you connect blood type to each of us being unique?', tip: 'Reread the last paragraph of the reading. Where does your blood type come from, and how many blood group markers are there?', re: /unique|individual|one of a kind|inherit|parents?|genes?\b|dna|no two|everyone (is|has)|each (of us|person)|special|own (blood|type)/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Give each idea its own sentence.', sentences: 2 }
           ]
         }

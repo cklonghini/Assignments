@@ -102,13 +102,18 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
   intro: 'Optional plain-text paragraph at the top of the part.',
   clips: ['domains', 'kingdoms'],           // clip names, shown in this order
   images: [ { src: 'media/station-card-1.jpg', alt: '...', caption: 'Station 1 card.', text: '<p>...</p>' } ],
-  read: '<p><b>Read:</b> ...</p>',          // optional green reading box (HTML)
+  read: '<p><b>Read:</b> ...</p>',          // optional green reading box (HTML), folded until the student opens it
+  readLabel: 'Open the lab steps',          // optional: the reading box's label (default 'Read this before you answer')
   tableHtml: '<table>...</table>',          // optional table shown after the reading (HTML)
   questions: [ ... ]
 }
 ```
 
 Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
+
+**Focus:** every page has a "Focus" switch at the top (an accommodation). When it is on, every block of a part
+(a video, the reading box, a question) fades out except the one the student clicked, tabbed into, or scrolled to. Nothing
+in `assignment.js` turns it on or off; the student's browser remembers the setting for every assignment.
 
 `gate: true` (optional, one part only): every later part, and the Finish section with the PDF download, stays hidden
 until everything in this part and every part before it is done (every question answered right, every written or
@@ -129,10 +134,26 @@ says it is the teacher view. Answers entered there are saved under their own key
 Students never see this unless they are given the link. The code is in `engine/engine.js`, so it keeps honest
 students out but is not a password.
 
+## Supported version (?support=eagle)
+
+An accommodation for students who need it (for example students with IEPs). Give that student the assignment link
+with `?support=eagle` on the end. Everyone else uses the plain link.
+
+- A question with `easy: '...'` shows that easier wording instead of `text`. A `selects` item can also have `easy`
+  (it replaces that item's `label`). Same question, same answer: the easy version asks for exactly what `text` asks
+  for, in plain words and short sentences, and gives away no more than `text` does. Skip questions that are already
+  simple. Do not give `agree` questions an `easy`.
+- Drop-downs, multiple choice, and choose-all questions show fewer choices on their own: the right answer(s) and two
+  wrong ones (picked the same way every time, in the original order). Questions with 3 or fewer choices stay the same.
+- Nothing on the page or in the PDF says it is the supported version (the teacher's choice). The PDF shows the easier
+  wording the student saw. Progress saves under the same key, so a student can switch links without losing work.
+- Teacher preview of it: `?teacher=tm7k2q&support=eagle`.
+- `node tools/validate.js` counts the questions with easier wording.
+
 ## Copy and paste are off
 
 So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
-into any box. A short message says copying or pasting is turned off. The Finish section still copies (the "Copy my
+into any box. A short message says copying or pasting is turned off and that students can reach out to their teacher if they need help. The Finish section still copies (the "Copy my
 answers as text" fallback and the backup code), and the restore box still takes a pasted code. Spell-check
 suggestions still work. This stops the easy shortcut, not a determined student (anyone can retype or take a picture
 of the screen). It can also block assistive tools that type by pasting; set `copyPaste: true` for an assignment if a
@@ -223,6 +244,11 @@ generously, because speech-to-text spells things in odd ways (`/\bvein|vain|vane
   cards: [ { term: 'Artery', def: 'A blood vessel that carries blood away from the heart.',
              say: /\barter(y|ies)\b/, keys: [/\baway\b/, /\bheart\b/] } ] }
 ```
+
+`deck: true` (optional) shows the cards one at a time: the next card opens only when the current one turns green, and a
+line above the cards says "Card 3 of 19." The teacher view shows every card. Each card can also have a picture,
+`img: { src: 'media/card-tendon.jpg', alt: '...' }`, shown between the word and the definition (`alt` is required).
+Example: Part 1 of `assignments/practice-support-and-motion/`.
 
 If a student's microphone is blocked or missing, the card shows `micHelp` (a top-level field; leave it out for the
 default message telling students to contact IT). `node tools/validate.js` warns when a card's patterns do not match
@@ -349,9 +375,17 @@ Every written and highlight box also has a **Check my writing** button. It runs 
 anywhere) and marks capital letters at the start of sentences, a capital "I", missing end punctuation, missing
 apostrophes (dont, cant, im), repeated words, spacing around punctuation, mix-ups (their is, more then, should of,
 alot, a/an, to/too/two), vague words (thing, things, stuff), a missing "a" or "the" in patterns like "is just test to
-see", sentences with no verb (fragments such as "For example, the right ventricle."), very short and very long
-sentences, and sentences that start with "Because," "When," "If," and similar words but have no comma. It suggests
-pressing "Listen to my answer," because missing words are easier to hear than to see. It shows the student's writing with each problem highlighted and a tip for each.
+see", incomplete thoughts and missing words, very short and very long sentences, and sentences that start with "Because," "When," "If," and similar words but have no comma. It suggests
+pressing "Listen to my answer," because missing words are easier to hear than to see.
+
+Incomplete thoughts are found without a dictionary or an outside service: a few word lists and rules find each
+sentence's main verb from the words around it ("cells" after "blood" is a noun, "carry" after "cells" is a verb).
+It flags a sentence with no main verb ("The left ventricle thicker than the right."), a part after "that," "so," or
+"because" that never says what happens ("This shows that the coenzyme."), a sentence that ends on "the," "and," or
+"because," and common missing words: "goes the lungs," "pumps blood the body," "It slower," "I surprised," "able
+flip," "the is," and "back of brain." It cannot catch every missing word, and it skips labels and definitions with a
+colon. When you change these rules, test them against broken sentences and against the readings and explanations in
+`assignments/`, so good writing is not flagged. It shows the student's writing with each problem highlighted and a tip for each.
 It does not fix anything for them. Spelling is left to the browser's red underline.
 
 ### highlight: a written response where students point to their evidence with transition words and highlight those words in yellow
@@ -360,17 +394,18 @@ Same fields as `written` (`text`, `min`, `starters`, `ideas`). The engine adds t
 For an assignment with no video, set `examples` to replace the example transition words (the default list includes
 "According to the video").
 The instructions tell students to provide evidence along with transition words that bring attention to it (for example
-"According to the video," "This shows that"), then go back and highlight those transition words in yellow.
+"According to the video," "This shows that"), then go back and highlight those transition words in yellow. The instructions sit in a folded "How to answer this
+question" box, and what each highlight color is for shows as a tip when the student points at (or taps) its button.
 Give these questions a "used transition words" idea (a pattern for common evidence transitions) and a "highlighted" idea.
 The highlighted words are marked with `[[double brackets]]` in the Canvas text-entry fallback and in yellow on the PDF.
 
 **Claim, evidence, reasoning:** add `cer: true` to a highlight question that asks students to argue a point with
-evidence. Students then make a claim, support it with evidence, and expand on their thoughts, and highlight each part
-in its own color with three buttons: claim in blue, evidence in yellow, expand in green (the teacher's colors). `from`
+evidence. Students then make a claim, support it with evidence, and give their reasoning (expand on their thoughts), and highlight each part
+in its own color with three buttons: claim in blue, evidence in yellow, reasoning/expand in green (the teacher's colors). `from`
 names the evidence source in the instructions (default `'the video'`, for example `'Station 3'` or `'your dissection
 and the video'`). The engine adds three "Check my ideas" items (claim, evidence, and expand highlighted) and drops any
 `highlight: true` idea. The PDF shows the three colors, and the text fallback marks them `[CLAIM: …]`, `[EVIDENCE: …]`,
-`[EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
+`[REASONING/EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
 A question changed from `written` to `highlight` keeps any answer a student already typed: it moves into the new box.
 
 ### photo: the student adds a photo of their own work (teacher graded)
@@ -411,8 +446,25 @@ statement with [x] or [ ], the signature, and the date the student agreed.
   re: /dna|genetic|genes?\b/ }                    // found when the student's answer matches (case ignored)
 ```
 
-Instead of `re`, an idea can use `sentences: 2` (found when the answer has at least 2 sentences) or
-`highlight: true` (found when the student highlighted something; highlight questions only).
+Instead of `re`, an idea can use:
+
+- `all: [/pattern/, /pattern/]`: found only when **every** pattern is in the **same sentence**. Use it when the idea
+  is two things together: the trial and the prediction (`all: [/coenzyme|niece/, /fast|slow|same/]`), the structure
+  and "easy to find", the lungs and oxygen. A sentence that only names the topic does not count.
+- `sentences: 2`: found when the answer has at least 2 sentences.
+- `highlight: true` (or `'claim'`, `'evidence'`, `'expand'`): found when the student highlighted something
+  (highlight questions only).
+
+Add `writing: true` to an idea that checks how the answer is written rather than what it says (the "used
+transition words" idea). Students see two lists after "Check my ideas": **Science ideas** (each `re` or `all` idea)
+and **Writing** (`sentences`, `highlight`, and `writing: true` ideas), each with its own count. Only science ideas
+count toward "I found 2 of 3 key science ideas", so writing two sentences never counts as an idea.
+
+**Write patterns that need the science, not filler.** `node tools/validate.js` warns when a science idea lights up
+for an answer that says nothing (it tries sentences like "I think this is important because it helps the body work
+better") or for a sentence starter typed alone. Leave out everyday words such as because, more, help, change,
+different, look, she, her, still, and things; use `\b` around short words (`\bthin\b` so "think" does not match);
+and ask for the part the student must add, not the words the starter already gives them.
 
 ## What the teacher sees
 
@@ -448,6 +500,9 @@ board: {
 - `ref: 12` (optional) is printed on the PDF as "test question 12" so the teacher can match the key.
 
 ## Extra question fields (any assignment)
+
+- `easy: 'Simpler wording of the same question.'` is shown instead of `text` in the supported version (see
+  "Supported version" above). Write one for every question that is not already simple.
 
 - `img: { src: 'media/heart.png', alt: 'Description that does not give the answer', caption: 'optional' }` shows a
   picture under the question. `alt` is required.

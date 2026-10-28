@@ -60,6 +60,7 @@ window.ASSIGNMENT = {
           at: 85,
           type: 'choice',
           text: 'The video says the movement of water molecules across a cell membrane is passive transport. What does that mean?',
+          easy: 'The video says water crossing a cell membrane is passive transport. What does passive transport mean?',
           options: ['It does not require energy', 'It requires energy from the cell', 'Only salt can cross the membrane', 'Water can never cross the membrane'], answer: 0,
           explain: 'Right. Passive transport does not require energy. Water molecules are so small that they can travel through the cell membrane, or through protein channels called aquaporins.',
           tip: 'Rewind to about 1:18 and listen for what passive transport “means.”'
@@ -68,6 +69,7 @@ window.ASSIGNMENT = {
           at: 199,
           type: 'choice',
           text: 'In the U-tube, salt is dumped into side B. The membrane lets water through but not salt. Which way does the water move at first?',
+          easy: 'Salt is added to side B of the U-tube. Only water can cross the membrane. Which way does the water move first?',
           options: ['Toward side B, where there is more salt', 'Toward side A, where there is no salt', 'It does not move at all', 'The salt moves to side A instead'], answer: 0,
           explain: 'Right. Side B has a higher solute concentration, so water moves to side B. The water level on side B gets higher.',
           tip: 'Rewind to about 1:58. The video says to look to the side with the greater solute concentration.'
@@ -76,6 +78,7 @@ window.ASSIGNMENT = {
           at: 250,
           type: 'selects',
           text: 'Side B of the U-tube has more salt than side A. Choose the word the video uses for each side.',
+          easy: 'Side B has more salt. Side A has less salt. Pick the word for each side.',
           options: ['Hypertonic', 'Hypotonic'],
           items: [
             { label: 'Side B (higher solute concentration)', answer: 'Hypertonic', hint: 'Rewind to about 3:35. Listen for the word that “means higher solute concentration.”' },
@@ -86,6 +89,7 @@ window.ASSIGNMENT = {
           at: 334.4,
           type: 'choice',
           text: 'Suppose pure water ran through an IV into someone’s blood. What does the video say would happen to the red blood cells?',
+          easy: 'What would pure water in an IV do to red blood cells?',
           options: ['They would swell and possibly burst', 'They would shrink', 'They would stay the same size', 'They would turn into salt'], answer: 0,
           explain: 'Right. The red blood cells have more solutes than pure water, so water moves into the cells. They swell and could burst. That is why IV fluid is isotonic to blood plasma: equal concentration, so no swelling or shrinking.',
           tip: 'Rewind to about 4:58. Where does the water go, and what happens to a cell that fills with water?'
@@ -113,6 +117,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'At the end of the clip, the video explains how plants get water into their roots. Why does water move from rain-soaked soil into the root hair cells?',
+          easy: 'Why does water move from wet soil into root hair cells?',
           options: ['The root hair cells have a higher solute concentration than the soil', 'The soil has a higher solute concentration than the root hair cells', 'The root hair cells use energy to pump water in', 'The soil and the root cells are isotonic'], answer: 0,
           explain: 'Right. The root hair cells are hypertonic compared to the hypotonic soil, so water travels into the root cells.',
           tip: 'Rewind to about 7:01. Which has more solutes: the root hair cells or the saturated soil?'
@@ -135,6 +140,7 @@ window.ASSIGNMENT = {
         {
           type: 'tonicity',
           text: 'Interactive diagram. First, move the slider to change how much solute is in the water outside the cell, and watch what the water does. Then, for each cell below, choose the answers in all three menus. When all three are right, the cell shows what happens.',
+          easy: 'Move the slider and watch the water. Then pick all three answers for each cell. When all three are right, the cell moves.',
           cell: 2,
           items: [
             { name: 'Cell 1', who: 'A red blood cell in pure water (like the IV example)', outside: 0 },
@@ -160,6 +166,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why does a hospital IV hold a solution that is isotonic to blood plasma instead of pure water?',
+          easy: 'Why do hospitals use IV fluid that is isotonic to blood, and not pure water?',
           options: ['So the red blood cells do not swell or shrink', 'So the red blood cells take in as much water as they can', 'So the red blood cells shrink and fit through the vein', 'Because pure water costs more'], answer: 0,
           explain: 'Right. Isotonic means equal concentration, so water moves in and out equally and the red blood cells keep their size.',
           tip: 'Rewatch the clip from 5:18 to the end. What does “isotonic” mean, and what does that do to the cells?'
@@ -208,6 +215,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Variables. Choose the independent variable (what you change on purpose) and the dependent variable (what you measure) for this experiment.',
+          easy: 'Pick the independent variable (what you change) and the dependent variable (what you measure).',
           options: ['The amount of salt in the water', 'The size of the gummy bear', 'The size of the cups', 'The time in the solution'],
           items: [
             { label: 'Independent variable', answer: 'The amount of salt in the water', hint: 'What is different from cup A to cup D? Look at the table.' },
@@ -224,19 +232,21 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Hypothesis. Before your gummy bears go in the water, predict what will happen to the gummy bear in each cup (A plain water, B low salt, C medium salt, D high salt) after about 24 hours. Explain why, using the word osmosis. (2 to 4 sentences)',
+          easy: 'Hypothesis. Before the gummy bears go in the water, predict what will happen in each cup (A plain water, B low salt, C medium salt, D high salt). Tell why. Use the word osmosis. (2 to 4 sentences)',
           starters: ['If a gummy bear is placed in plain water, then …', 'I think the gummy bear in cup D (high salt) will …', 'This will happen because during osmosis, water moves toward …', 'Compared to the gummy bear, the salt water in cup D is …'],
           min: 60,
           ideas: [
-            { done: 'You made a prediction with If… then….', q: 'Did you write your prediction as “If…, then…”?', tip: 'A hypothesis often reads: “If (what you change), then (what you think will happen).”', re: /\bif\b[\s\S]*\bthen\b|\bi (think|predict)|\bwill\b/ },
-            { done: 'You predicted what happens in plain water.', q: 'Did you predict what happens to the gummy bear in plain water (cup A)?', tip: 'Think about the interactive diagram. What does a cell do in a solution with a lower solute concentration?', re: /(plain|pure|no salt|cup a|\ba\b)[\s\S]*(grow|bigger|swell|larger|expand|gain|increase|absorb)|(grow|bigger|swell|larger|expand|gain|increase|absorb)[\s\S]*(plain|pure|no salt|cup a)/ },
-            { done: 'You predicted what happens in salty water.', q: 'Did you predict what happens in the salty cups (B, C, or D)?', tip: 'Does more salt in the water help the gummy bear gain water, or not? Say what you think happens in cup D.', re: /salt|cup [bcd]|\b[bcd]\b/ },
-            { done: 'You explained it with water moving.', q: 'Did you explain why, using osmosis and water moving?', tip: 'Use the rule from the video: water moves to the side with the greater solute concentration.', re: /osmosis|water (will )?(move|moves|moving|go|goes|travel|enter|leave|flow)|solute|concentration|hypotonic|hypertonic/ },
+            { done: 'You predicted what happens in plain water.', q: 'Did you predict what happens to the gummy bear in plain water (cup A)?', tip: 'Think about the interactive diagram. What does a cell do in a solution with a lower solute concentration?', all: [/plain|pure|no salt|cup a\b|\b0 ?%/, /grow|bigger|swell|larger|expand|gain|increase|absorb|take in|takes in|soak/] },
+            { done: 'You predicted what happens in salty water.', q: 'Did you predict what happens in the salty cups (B, C, or D)?', tip: 'Does more salt in the water help the gummy bear gain water, or not? Say what you think happens in cup D.', all: [/salt|cup [bcd]\b/, /shrink|smaller|lose|lost|stay the same|same size|not grow|won.?t grow|grow less|less water|barely|a little/] },
+            { done: 'You explained it with water and solute concentration.', q: 'Did you explain why, using where the solute (salt or sugar) is?', tip: 'Use the rule from the video: water moves to the side with the greater solute concentration. Is that the gummy bear or the water?', all: [/water/, /solute|sugar|concentration|hypotonic|hypertonic|more salt|less salt|saltier/] },
+            { done: 'You wrote your prediction as If… then….', q: 'Did you write your prediction as “If…, then…”?', tip: 'A hypothesis often reads: “If (what you change), then (what you think will happen).”', writing: true, re: /\bif\b[\s\S]*\bthen\b/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence that explains why.', sentences: 2 }
           ]
         },
         {
           type: 'numbers',
           text: 'Starting measurements. Measure each gummy bear from the top of its head to the bottom of its feet, before it goes in the water. (No kit? Use the measurements from the lab video.)',
+          easy: 'Measure each gummy bear from head to feet in millimeters (mm) before it goes in the water. (No kit? Use the measurements from the lab video.)',
           unit: 'mm',
           items: [
             { label: 'Cup A (0%) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' },
@@ -260,6 +270,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of your experiment: your four labeled cups with one gummy bear in each. (No kit? Add a screenshot of the experiment from one of the videos.)',
+          easy: 'Take a photo of your four labeled cups with a gummy bear in each. (No kit? Add a screenshot from one of the videos.)',
           caption: 'Write the date and time you put the gummy bears in the water.',
           placeholder: 'For example: I started on Monday at 3:15 p.m.'
         }
@@ -285,6 +296,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Measurements after 24 hours. Measure each gummy bear again, the same way. (No kit? Use the measurements from the lab video.)',
+          easy: 'Measure each gummy bear again, the same way, in millimeters. (No kit? Use the measurements from the lab video.)',
           unit: 'mm',
           items: [
             { label: 'Cup A (0%) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' },
@@ -296,12 +308,14 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of your gummy bears after 24 hours, lined up in front of their cups. (No kit? Add a screenshot of the gummy bears after 24 hours from one of the videos.)',
+          easy: 'Take a photo of your gummy bears in front of their cups. (No kit? Add a screenshot from one of the videos.)',
           caption: 'What do you notice? Which gummy bear changed the most?',
           placeholder: 'For example: The gummy bear from cup … looks …'
         },
         {
           type: 'selects',
           text: 'Use the reading. Choose the word that describes the cup’s solution, compared to the gummy bear.',
+          easy: 'Use the reading. Pick the word for each cup’s water, compared to the gummy bear.',
           options: ['Hypotonic', 'Isotonic', 'Hypertonic'],
           items: [
             { label: 'If the gummy bear got bigger, its cup was', answer: 'Hypotonic', hint: 'A bear that got bigger took in water. Water moves toward more solute, so which side had less solute?' },
@@ -312,6 +326,7 @@ window.ASSIGNMENT = {
         {
           type: 'multi',
           text: 'Sources of error. Which of these could make your results less accurate? Choose all that are correct.',
+          easy: 'Which of these could make your results less accurate? Choose all that are correct.',
           options: ['Measuring the gummy bears in a different way before and after', 'Not blotting the gummy bears dry before measuring', 'Salt that did not fully dissolve', 'Leaving some bears in the water longer than others', 'Using the same amount of water in every cup'],
           answers: ['Measuring the gummy bears in a different way before and after', 'Not blotting the gummy bears dry before measuring', 'Salt that did not fully dissolve', 'Leaving some bears in the water longer than others'],
           rules: [{ any: ['Using the same amount of water in every cup'], tip: 'Keeping something the same in every cup is a constant. Constants make a test fair. Do they cause error?' }],
@@ -321,6 +336,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Connect to cells. A tiny single-celled protozoan that lives in fresh water is put into salty water. What happens?',
+          easy: 'A tiny one-celled living thing from fresh water is put in salty water. What happens?',
           options: ['Water moves out of its cell, and it shrinks', 'Water moves into its cell, and it swells', 'Nothing happens, because salt cannot cross a membrane', 'Salt moves into the cell, and it swells'], answer: 0,
           explain: 'Right. The salty water has a higher solute concentration than the protozoan, so the water is hypertonic to it. Water moves out of its cell and it shrinks, like a gummy bear that loses water.',
           tip: 'This is the opposite of the fish in the clip. Use the “Connect to cells” paragraph: which side has the greater solute concentration now?'
@@ -330,12 +346,13 @@ window.ASSIGNMENT = {
           cer: true,
           from: 'your measurements',
           text: 'In which cup did your gummy bear gain the most water, and in which cup did it gain the least water or lose water? Use your measurements as evidence, and explain your results using osmosis and the words hypotonic or hypertonic.',
+          easy: 'Which cup’s gummy bear gained the most water? Which gained the least water or lost water? Use your measurements as evidence. Explain why using osmosis and the words hypotonic or hypertonic.',
           starters: ['The gummy bear in cup … gained the most water.', 'It started at … mm and ended at … mm.', 'This shows that …', 'This happened because the water in cup … was … compared to the gummy bear, so water moved …', 'My hypothesis was … because …'],
           min: 80,
           ideas: [
             { done: 'You named the cups.', q: 'Did you say which cup gained the most and which gained the least?', tip: 'Name the cups by letter or by how much salt they had.', re: /cup [abcd]|plain water|no salt|(low|medium|high) salt|0%|[135] ?%/ },
             { done: 'You used your measurements.', q: 'Did you use your numbers as evidence?', tip: 'Give the starting and ending size of a gummy bear in millimeters.', re: /\d/ },
-            { done: 'You told which way the water moved.', q: 'Did you tell which way the water moved?', tip: 'Did water move into the gummy bear or out of it? Use the rule: water moves toward the greater solute concentration.', re: /water (moved|moves|move|went|goes|traveled|travels|entered|enters|left|leaves|came|flowed)|into the (gummy )?bear|out of the (gummy )?bear|absorb|gained water|lost water|took in/ },
+            { done: 'You told which way the water moved.', q: 'Did you tell which way the water moved?', tip: 'Did water move into the gummy bear or out of it? Use the rule: water moves toward the greater solute concentration.', all: [/water/, /into|out of|entered|enters|left the|leaves|absorb|lost water|took in|soaked/] },
             { done: 'You used hypotonic or hypertonic.', q: 'Did you use the words hypotonic or hypertonic?', tip: 'Compare each cup’s water to the gummy bear. Which word fits a cup with less solute than the bear?', re: /hypotonic|hypertonic|isotonic/ },
             { done: 'You talked about solute or salt concentration.', q: 'Did you explain it with solute (or salt and sugar) concentration?', tip: 'The gummy bear is full of sugar. How does that compare to the salt in each cup?', re: /solute|concentration|sugar|salt/ },
             { done: 'You wrote at least 3 sentences.', q: 'Did you write at least 3 full sentences?', tip: 'Add a sentence that explains how your evidence supports your claim.', sentences: 3 }

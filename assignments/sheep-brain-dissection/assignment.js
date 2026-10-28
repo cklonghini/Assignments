@@ -55,6 +55,7 @@ window.ASSIGNMENT = {
           at: 93,
           type: 'choice',
           text: 'The video says the central nervous system (CNS) consists of which parts?',
+          easy: 'The video tells what makes up the central nervous system (CNS). Which parts make up the CNS?',
           options: ['The brain and spinal cord', 'The nerves throughout the body', 'The heart and blood vessels', 'The skin and the muscles'], answer: 0,
           explain: 'Right. The CNS is the brain and spinal cord. Everything else, such as the nerves throughout the body, is the peripheral nervous system (PNS).',
           tip: 'Rewind to about 1:05 and listen for what the CNS “consists of.”'
@@ -63,6 +64,7 @@ window.ASSIGNMENT = {
           at: 141,
           type: 'multi',
           text: 'The video talks about the term “brainstem.” Which structures does it say the brainstem includes? Choose all that are correct.',
+          easy: 'The video talks about the brainstem. Which parts does it say are in the brainstem? Pick all the right answers.',
           options: ['Medulla', 'Pons', 'Midbrain', 'Cerebellum', 'Cerebrum'],
           answers: ['Medulla', 'Pons', 'Midbrain'],
           rules: [{ any: ['Cerebellum', 'Cerebrum'], tip: 'Not that one. Rewind to about 2:12 and listen to the exact list of structures the brainstem includes.' }],
@@ -75,23 +77,24 @@ window.ASSIGNMENT = {
           text: 'Match each part of the brain to what the video says it does.',
           options: ['Medulla', 'Cerebellum', 'Midbrain', 'Thalamus', 'Hypothalamus'],
           items: [
-            { label: 'Regulates breathing, blood pressure, and heart rate', answer: 'Medulla', hint: 'Rewind to about 1:46. This part of the hindbrain is named first.' },
+            { label: 'Regulates breathing, blood pressure, and heart rate', easy: 'Controls breathing, blood pressure, and heart rate', answer: 'Medulla', hint: 'Rewind to about 1:46. This part of the hindbrain is named first.' },
             { label: 'Balance and movement coordination', answer: 'Cerebellum', hint: 'Rewind to about 2:03.' },
             { label: 'Alertness and the sleep/wake cycle', answer: 'Midbrain', hint: 'Rewind to about 2:07. This area is deep in the brain.' },
-            { label: 'Involved with sensory and motor information', answer: 'Thalamus', hint: 'Rewind to about 2:38. Listen to the structures in the forebrain.' },
-            { label: 'Major control of the endocrine system', answer: 'Hypothalamus', hint: 'Rewind to about 2:43. The video mentions its endocrine system video.' }
+            { label: 'Involved with sensory and motor information', easy: 'Helps with sense (sensory) and movement (motor) information', answer: 'Thalamus', hint: 'Rewind to about 2:38. Listen to the structures in the forebrain.' },
+            { label: 'Major control of the endocrine system', easy: 'Main control of the endocrine system (the glands that make hormones)', answer: 'Hypothalamus', hint: 'Rewind to about 2:43. The video mentions its endocrine system video.' }
           ]
         },
         {
           at: 282,
           type: 'selects',
           text: 'The autonomic nervous system (ANS) is divided into the sympathetic and parasympathetic systems. Which system matches each description?',
+          easy: 'The autonomic nervous system (ANS) has two parts: sympathetic and parasympathetic. Which part matches each description?',
           options: ['Sympathetic', 'Parasympathetic'],
           items: [
             { label: 'Fight or flight', answer: 'Sympathetic', hint: 'The video says the shorter word of the two helps it remember this one.' },
             { label: 'Rest and digest', answer: 'Parasympathetic', hint: 'Rewind to about 4:28. Is it the longer word or the shorter word?' },
-            { label: 'Your heart races and your breathing rate increases', answer: 'Sympathetic', hint: 'Think about running from a bear, or the copy machine. Which response is that?' },
-            { label: 'Your heart rate decreases and digestion occurs', answer: 'Parasympathetic', hint: 'Rewind to about 4:33.' }
+            { label: 'Your heart races and your breathing rate increases', easy: 'Your heart races and you breathe faster', answer: 'Sympathetic', hint: 'Think about running from a bear, or the copy machine. Which response is that?' },
+            { label: 'Your heart rate decreases and digestion occurs', easy: 'Your heart slows down and your body digests food', answer: 'Parasympathetic', hint: 'Rewind to about 4:33.' }
           ]
         },
         {
@@ -100,11 +103,11 @@ window.ASSIGNMENT = {
           text: 'Match each part to its description from the video.',
           options: ['Cell body', 'Dendrites', 'Axon', 'Synapse', 'Myelin sheath'],
           items: [
-            { label: 'Has the nucleus and most other organelles', answer: 'Cell body', hint: 'Rewind to about 4:57.' },
-            { label: 'Branched structures where signals are received', answer: 'Dendrites', hint: 'Rewind to about 5:02.' },
+            { label: 'Has the nucleus and most other organelles', easy: 'Holds the nucleus and most of the other organelles (cell parts)', answer: 'Cell body', hint: 'Rewind to about 4:57.' },
+            { label: 'Branched structures where signals are received', easy: 'Branches that receive (take in) signals', answer: 'Dendrites', hint: 'Rewind to about 5:02.' },
             { label: 'The fiber that carries a signal away to another cell', answer: 'Axon', hint: 'The video says, “I like to think away _____.”' },
-            { label: 'The junction where a neuron communicates with another cell', answer: 'Synapse', hint: 'Rewind to about 5:10.' },
-            { label: 'Made by glial cells; goes around the axon and insulates it', answer: 'Myelin sheath', hint: 'Rewind to about 5:54.' }
+            { label: 'The junction where a neuron communicates with another cell', easy: 'The meeting point where a neuron passes a message to another cell', answer: 'Synapse', hint: 'Rewind to about 5:10.' },
+            { label: 'Made by glial cells; goes around the axon and insulates it', easy: 'Made by glial cells. It wraps around the axon and insulates (covers and protects) it.', answer: 'Myelin sheath', hint: 'Rewind to about 5:54.' }
           ]
         }
       ]
@@ -166,6 +169,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a selfie that shows you are ready: apron, goggles, and gloves on, and your keyboard covered with plastic wrap or the supply bag.',
+          easy: 'Take a selfie to show you are ready. Your apron, goggles, and gloves are on. Your keyboard is covered with plastic wrap or the supply bag.',
           caption: 'List the safety gear you have on.',
           placeholder: 'For example: I have on my apron, ...'
         }
@@ -193,6 +197,7 @@ window.ASSIGNMENT = {
         {
           type: 'typed',
           text: 'What is the name of the outermost layer of the meninges? (two words)',
+          easy: 'The meninges are layers of tissue that cover the brain. What is the name of the outermost (most outside) layer? (two words)',
           accept: ['dura mater', 'dura matter'],
           tip: 'Look for the bold words in the reading, right after “outermost layer.”',
           aria: 'The outermost layer of the meninges'
@@ -200,11 +205,12 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What does the dura mater look and feel like as you remove it? (2 to 3 sentences)',
+          easy: 'Think about the dura mater as you take it off. What does it look like? What does it feel like? Write 2 to 3 sentences.',
           starters: ['The dura mater looks …', 'When I touched it, it felt …', 'As I removed it, I noticed …'],
           min: 30,
           ideas: [
-            { done: 'You told what the dura mater looks like.', q: 'Did you tell what it looks like?', tip: 'Describe its color, how thick it is, or whether it is shiny or see-through.', re: /look|color|colou?r|white|gray|grey|clear|see.?through|shiny|thin|thick|dark|tan|yellow|brown|pale/ },
-            { done: 'You told what the dura mater feels like.', q: 'Did you tell what it feels like?', tip: 'Describe how it feels in your gloved fingers. Is it tough, stretchy, slippery, or rubbery?', re: /feel|felt|tough|stretch|slipp|slim|rubber|smooth|rough|soft|hard|firm|strong|tear|tore|peel|stuck|sticky|leather|plastic|wet/ },
+            { done: 'You told what the dura mater looks like.', q: 'Did you tell what it looks like?', tip: 'Describe its color, how thick it is, or whether it is shiny or see-through.', re: /colou?r|white|gr[ae]y|clear|see.?through|transparent|shiny|\bthin(ner)?\b|thick|dark|\btan\b|yellow|brown|pale|pink|cloudy|wet|glossy/ },
+            { done: 'You told what the dura mater feels like.', q: 'Did you tell what it feels like?', tip: 'Describe how it feels in your gloved fingers. Is it tough, stretchy, slippery, or rubbery?', re: /tough|stretch|slipp|slim|rubber|smooth|rough|soft|firm|strong|tears?\b|tore|peel|stuck|sticky|leather|plastic|thick|wet|squish|gooey|chewy|crunch|tight/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 3 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         }
@@ -235,6 +241,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Here is the dorsal (top) view of a sheep brain with the labels covered. Choose the name for each number.',
+          easy: 'This is the dorsal (top) view of a sheep brain. The labels are covered. Pick the name for each number.',
           img: { src: 'media/label-dorsal.jpg', alt: 'A sheep brain seen from the top. Brackets mark three sections from top to bottom (1, 4, and 5). Two yellow arrows point to a fold (2) and a groove (3) on the large front part. Pink arrows point to the groove down the middle (6) and the gap between the large front part and the middle section (7).' },
           options: ['Cerebrum', 'Gyrus', 'Sulcus', 'Cerebellum', 'Spinal cord', 'Longitudinal fissure', 'Transverse fissure'],
           items: [
@@ -250,6 +257,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'In the video, which way does the sheep brain face when it is first placed in the dissecting tray?',
+          easy: 'In the video, the sheep brain is first put in the tray. Which way does it face?',
           options: ['Dorsal surface up', 'Ventral surface up', 'Cut side up', 'Standing on the spinal cord'], answer: 0,
           explain: 'Right. The brain starts dorsal surface up, so you see the top of the cerebrum and the longitudinal fissure first.',
           tip: 'Rewatch the start of the clip. Listen to how the brain is placed in the tray.'
@@ -257,6 +265,7 @@ window.ASSIGNMENT = {
         {
           type: 'multi',
           text: 'The video lists the parts to find on the outside of the brain. Which of these does it name? Choose all that are correct.',
+          easy: 'The video names parts to find on the outside of the brain. Which of these does it name? Pick all the right answers.',
           options: ['Cerebrum', 'Cerebellum', 'Spinal cord', 'Olfactory bulb', 'Optic nerve', 'Arbor vitae', 'Gray matter'],
           answers: ['Cerebrum', 'Cerebellum', 'Spinal cord', 'Olfactory bulb', 'Optic nerve'],
           rules: [{ any: ['Arbor vitae', 'Gray matter'], tip: 'That one is inside the brain. You can only see it after you cut. Listen to the list in the clip again.' }],
@@ -278,6 +287,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of the dorsal (top) side of your brain, with the cerebrum at the top and the spinal cord at the bottom.',
+          easy: 'Take a photo of the dorsal (top) side of your brain. Put the cerebrum at the top. Put the spinal cord at the bottom.',
           caption: 'Describe the hemispheres and the longitudinal fissure you observe.'
         }
       ]
@@ -300,6 +310,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Here is the side of a sheep brain with the labels covered. Choose the name for each number.',
+          easy: 'This is the side of a sheep brain. The labels are covered. Pick the name for each number.',
           img: { src: 'media/label-lateral.jpg', alt: 'A sheep brain seen from the side, held in gloved hands, with the front on the left. Colored arrows point to the front (1, red), the top middle (2, yellow), the back of the large part (3, light blue), the round part behind it (4, brown), the low front side (5, purple), and the narrow end (6, dark purple).' },
           options: ['Frontal lobe', 'Parietal lobe', 'Occipital lobe', 'Temporal lobe', 'Cerebellum', 'Spinal cord'],
           items: [
@@ -334,6 +345,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of the side of your brain, with the front on the left.',
+          easy: 'Turn your brain so you see its side. Put the front on the left. Take a photo.',
           caption: 'Which lobes could you identify? Describe the gyri and sulci you see.'
         }
       ]
@@ -370,6 +382,7 @@ window.ASSIGNMENT = {
         {
           type: 'multi',
           text: 'After the brain is bisected, which structures does the video say to identify inside? Choose all that are correct.',
+          easy: 'In the video, the brain is bisected (cut into two halves). Which parts does the video say to find inside? Pick all the right answers.',
           options: ['Arbor vitae', 'Brain stem', 'Ventricles', 'Olfactory bulb', 'Optic nerve'],
           answers: ['Arbor vitae', 'Brain stem', 'Ventricles'],
           rules: [{ any: ['Olfactory bulb', 'Optic nerve'], tip: 'That one was on the outside list, before the cut. Listen to the list after “Once bisected.”' }],
@@ -397,6 +410,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of the two halves of your brain laid open side by side.',
+          easy: 'Open your brain into its two halves. Lay the halves side by side. Take a photo.',
           caption: 'What do you notice about the two halves? Did you find the arbor vitae or any ventricles? Describe what you found.'
         }
       ]
@@ -423,6 +437,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Here is half of a sheep brain with the labels covered. Choose the name for each number.',
+          easy: 'This is half of a sheep brain. The labels are covered. Pick the name for each number.',
           img: { src: 'media/label-midline.jpg', alt: 'Half of a sheep brain seen from the cut side, front on the left. Brackets mark the large part on the left (1), the round part on the right (2), the long stalk along the bottom (9), and the narrow end (8). Smaller brackets along the bottom mark two parts near the middle (3 above 4) and three parts along the stalk (5, 6, and 7).' },
           options: ['Cerebrum', 'Cerebellum', 'Thalamus', 'Hypothalamus', 'Midbrain', 'Pons', 'Medulla oblongata', 'Spinal cord', 'Brain stem'],
           items: [
@@ -440,6 +455,7 @@ window.ASSIGNMENT = {
         {
           type: 'order',
           text: 'Put these in order, starting at the top of the brain stem and going down to the spinal cord.',
+          easy: 'Put these in order. Start at the top of the brain stem. End at the spinal cord.',
           items: ['Midbrain', 'Pons', 'Medulla oblongata', 'Spinal cord'],
           tip: 'Read the first paragraph of the reading again. It lists the sections from the top down.',
           explain: 'Right. Midbrain, then pons, then medulla oblongata, and then the spinal cord.'
@@ -447,6 +463,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Which part of the diencephalon contains each gland?',
+          easy: 'The diencephalon has three parts. Which part has each gland in it?',
           options: ['Thalamus', 'Hypothalamus', 'Epithalamus'],
           items: [
             { label: 'Pituitary gland', answer: 'Hypothalamus', hint: 'Read the list in the reading. Which part has the pituitary gland with it?' },
@@ -456,6 +473,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why could you not see the diencephalon from the outside of the brain?',
+          easy: 'You could not see the diencephalon from the outside of the brain. Why not?',
           options: ['It is surrounded by the cerebrum', 'It is inside the spinal cord', 'It is removed with the dura mater', 'It is only in human brains'], answer: 0,
           explain: 'Right. The diencephalon sits deep in the middle, between the cerebrum and the brain stem, with the cerebrum all around it.',
           tip: 'Read the second paragraph of the reading again.'
@@ -463,6 +481,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of the cut side of one half of your brain, with the front on the left.',
+          easy: 'Take one half of your brain. Show the cut side. Put the front on the left. Take a photo.',
           caption: 'Which brain stem and diencephalon structures could you identify?'
         }
       ]
@@ -491,6 +510,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'In the video, where do you cut to see the white and gray matter?',
+          easy: 'In the video, one last cut shows the white matter and the gray matter. Where does that cut go?',
           options: ['Across the frontal lobe', 'Down the medial longitudinal fissure', 'Through the cerebellum', 'Along the spinal cord'], answer: 0,
           explain: 'Right. The last cut goes across the frontal lobe.',
           tip: 'Rewatch the short clip. It names the lobe you cut across.'
@@ -500,8 +520,8 @@ window.ASSIGNMENT = {
           text: 'Choose gray matter or white matter for each description.',
           options: ['Gray matter', 'White matter'],
           items: [
-            { label: 'Mostly made of nonmyelinated neurons', answer: 'Gray matter', hint: 'Read the reading again. Which one has no myelin?' },
-            { label: 'Mainly made of myelinated axons', answer: 'White matter', hint: 'Read the reading again. Which one has myelin?' },
+            { label: 'Mostly made of nonmyelinated neurons', easy: 'Mostly made of nonmyelinated neurons (neurons with no myelin)', answer: 'Gray matter', hint: 'Read the reading again. Which one has no myelin?' },
+            { label: 'Mainly made of myelinated axons', easy: 'Mainly made of myelinated axons (axons covered in myelin)', answer: 'White matter', hint: 'Read the reading again. Which one has myelin?' },
             { label: 'The darker layer along the outside edge of the slice', answer: 'Gray matter', hint: 'Read the second paragraph of the reading. Which one is darker?' },
             { label: 'The lighter tissue inside the slice', answer: 'White matter', hint: 'Read the second paragraph of the reading. Which one is lighter?' },
             { label: 'The arbor vitae inside the cerebellum is made of this', answer: 'White matter', hint: 'Look back at the reading in Step 6.' }
@@ -517,6 +537,7 @@ window.ASSIGNMENT = {
         {
           type: 'photo',
           text: 'Take a photo of the cut side of your frontal lobe slice.',
+          easy: 'Look at the slice you cut from the frontal lobe. Take a photo of its cut side.',
           caption: 'Describe the difference between the gray matter and the white matter you observe.'
         }
       ]
@@ -551,6 +572,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'The cerebrum and cerebellum: choose the job of each structure.',
+          easy: 'These parts are in the cerebrum and the cerebellum. Use the guide. Pick the job of each part.',
           options: ['Reasoning, planning, and problem-solving', 'Touch, temperature, and pain', 'Vision', 'Hearing and forming memories', 'Balance, posture, and coordinating movement'],
           items: [
             { label: 'Frontal lobe', answer: 'Reasoning, planning, and problem-solving', hint: 'Find the frontal lobe row in the guide.' },
@@ -563,6 +585,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'The diencephalon, brain stem, and more: choose the job of each structure.',
+          easy: 'These parts are in the diencephalon, the brain stem, and more. Use the guide. Pick the job of each part.',
           options: ['Relay station that passes signals to the cerebral cortex', 'Regulates body temperature, hunger, thirst, and sleep', 'The “master gland” that releases hormones', 'Makes melatonin for the sleep-wake cycle', 'Controls heart rate, breathing, and blood pressure', 'Make and circulate cerebrospinal fluid', 'Carries signals between the brain and the body'],
           items: [
             { label: 'Thalamus', answer: 'Relay station that passes signals to the cerebral cortex', hint: 'Find the thalamus row in the guide.' },
@@ -577,6 +600,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'After a fall, a person has trouble keeping their balance and walking smoothly. Which part of the brain was most likely hurt?',
+          easy: 'A person falls. Now they have trouble keeping their balance and walking smoothly. Which part of the brain was most likely hurt?',
           options: ['Cerebellum', 'Occipital lobe', 'Pineal gland', 'Temporal lobe'], answer: 0,
           explain: 'Right. The cerebellum coordinates movement, balance, and posture.',
           tip: 'Look through the guide for the part that handles balance and posture.'
@@ -584,6 +608,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'A person has an injury at the back of the cerebrum. Which problem are they most likely to have?',
+          easy: 'A person hurt the back of their cerebrum. Which problem will they most likely have?',
           options: ['Trouble seeing', 'Trouble hearing', 'Trouble feeling hot and cold', 'Trouble with hunger and thirst'], answer: 0,
           explain: 'Right. The occipital lobe is at the back of the cerebrum, and it processes what you see.',
           tip: 'First, think back to Step 5. Which lobe is at the back? Then find its row in the guide.'
@@ -599,37 +624,40 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What structures were you able to find with ease on the outside of the sheep’s brain? What structures were harder to identify, and why do you think that was? (2 to 4 sentences)',
+          easy: 'Think about the outside of the sheep’s brain. Which structures (parts) were easy to find? Which structures were harder to find? Why do you think they were harder? Write 2 to 4 sentences.',
           starters: ['On the outside of the sheep’s brain, I easily found the …', 'It was harder to identify … because …', 'I think this was because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure on the outside of the brain.', q: 'Did you name at least one structure on the outside?', tip: 'Look back at Steps 4 and 5. What did you find before you cut?', re: /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|frontal|pariet|occipit|tempor|gyr|sulc|meninge|dura/ },
-            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
-            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
-            { done: 'You explained why.', q: 'Did you explain why it was harder?', tip: 'Add a “because” sentence. Was it small, hidden, the same color, or different from the photo?', re: /because|since|so\b|small|tiny|hidden|same colou?r|look(ed)? (the )?same|blend|different|didn.?t look|covered|flat|stretch/ },
+            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', all: [/eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/, /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|frontal|pariet|occipit|tempor|gyr|sulc|meninge|dura|pia|arachnoid|olfactory|optic|cranial nerve/] },
+            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', all: [/hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/, /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|frontal|pariet|occipit|tempor|gyr|sulc|meninge|dura|pia|arachnoid|olfactory|optic|cranial nerve/] },
+            { done: 'You explained why.', q: 'Did you explain why it was harder?', tip: 'Add a “because” sentence. Was it small, hidden, the same color, or different from the photo?', all: [/because|since|\bso\b/, /small|tiny|hidden|same colou?r|look(ed)? (the )?same|blend|looked different|different (colou?r|from)|didn.?t look|covered|flat|stretch|under|behind|inside|torn|damaged|removed|soft|squish/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
         {
           type: 'written',
           text: 'What structures were you able to find with ease inside the brain, after making the midsagittal cut? What structures were harder to identify? (2 to 4 sentences)',
+          easy: 'Think about the inside of the brain, after your midsagittal cut (the cut down the middle). Which structures (parts) were easy to find? Which structures were harder to find? Write 2 to 4 sentences.',
           starters: ['After making the midsagittal cut, I easily found the …', 'Inside the brain, it was harder to identify … because …'],
           min: 40,
           ideas: [
             { done: 'You named a structure inside the brain.', q: 'Did you name at least one structure inside the brain?', tip: 'Look back at Steps 6 to 8. What did you find after you cut?', re: /arbor|vitae|ventricle|choroid|corpus|callosum|thalam|hypothal|epithal|pituitar|pineal|midbrain|pons|medulla|brain ?stem|diencephal|gray|grey|white matter|cerebell|cerebr/ },
-            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', re: /eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/ },
-            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', re: /hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/ },
+            { done: 'You told which structures were easy to find.', q: 'Did you tell which structures were easy to find?', tip: 'Which part did you find first, or right away?', all: [/eas(y|ier|iest|ily)|simple|quick(ly)?|right away|obvious|clear(ly)?|no problem|first/, /arbor|vitae|ventricle|choroid|corpus|callosum|thalam|hypothal|epithal|pituitar|pineal|midbrain|pons|medulla|brain ?stem|diencephal|gr[ae]y matter|white matter|cerebell|cerebr|fornix|septum/] },
+            { done: 'You told which structures were harder to find.', q: 'Did you tell which structures were harder to find?', tip: 'Which part took you the longest, or which one were you not sure about?', all: [/hard|difficult|tough|tricky|confus|struggl|couldn.?t|could not|not sure|unsure|took (a while|longer|me)|challeng/, /arbor|vitae|ventricle|choroid|corpus|callosum|thalam|hypothal|epithal|pituitar|pineal|midbrain|pons|medulla|brain ?stem|diencephal|gr[ae]y matter|white matter|cerebell|cerebr|fornix|septum/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
         {
           type: 'written',
           text: 'What surprised you about the structure and organization of the brain? (2 to 4 sentences)',
+          easy: 'What surprised you about the structure of the brain (how it is built and put together)? Name the part, and tell why it surprised you. Write 2 to 4 sentences.',
           starters: ['I was surprised that …', 'Before the dissection, I thought …, but …', 'Something I did not expect was …'],
           min: 40,
           ideas: [
-            { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', re: /surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/ },
+            { done: 'You told what surprised you.', q: 'Did you say what surprised you?', tip: 'Start with “I was surprised that…” or “I didn’t expect…”', all: [/surpris|didn.?t (know|expect|think|realize)|did not (know|expect|think|realize)|expect|thought|amaz|interest|shock|never knew|cool|weird|strange/, /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|gyr|sulc|meninge|dura|arbor|vitae|ventricle|choroid|corpus|callosum|thalam|pituitar|pineal|midbrain|pons|medulla|diencephal|gr[ae]y matter|white matter|cortex|gland|folds?\b|grooves?|brain|size|big|small|thick|\bthin(ner)?\b|tough|hard|soft|squish|color|smell|heavy|layers?/] },
             { done: 'You named a part of the brain.', q: 'Did you name the part of the brain that surprised you?', tip: 'Which structure was it? Use its name.', re: /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|gyr|sulc|meninge|dura|arbor|vitae|ventricle|choroid|corpus|callosum|thalam|pituitar|pineal|midbrain|pons|medulla|diencephal|gray|grey|white matter|fold|groove/ },
-            { done: 'You explained why it surprised you.', q: 'Did you explain why it surprised you?', tip: 'Add a “because” sentence. What did you think before, and what did you see?', re: /because|since|so\b|which|that means|than|instead|bigger|smaller|thick|thin|tough|soft|hard|small|big|tiny|firm/ },
+            { done: 'You explained why it surprised you.', q: 'Did you explain why it surprised you?', tip: 'Add a “because” sentence. What did you think before, and what did you see?', all: [/because|since|\bso\b|which|that means|than|instead|but/, /thick|\bthin(ner)?\b|tough|soft|harder|firm|big|bigger|small|smaller|tiny|heavy|squish|folds?|pictures?|diagram/] },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         },
@@ -638,12 +666,13 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'your own dissection and the video',
           text: 'How did doing this dissection help you understand the brain’s structure better than only looking at diagrams or photos? Use evidence from your own dissection and the video.',
+          easy: 'How did this dissection help you understand the brain’s structure (what its parts look like and where they are)? How was it better than only looking at diagrams or photos? Use evidence from your own dissection and the video.',
           starters: ['During my dissection, I could see …', 'Unlike a diagram, the real brain …', 'According to the video, …', 'For example, when I …'],
           min: 60,
           ideas: [
-            { done: 'You wrote about the brain’s structure (what a part looks like, feels like, or where it is).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like the folds, the arbor vitae, or the gray and white matter.', re: /structur|shape|fold|groove|gyr|sulc|lobe|layer|inside|outside|size|look(s|ed)?|saw|see|seeing|felt|feel|texture|colou?r|where|located|location|position|arbor|matter|half|halves/ },
-            { done: 'You compared the dissection to diagrams or photos.', q: 'Did you compare your dissection to diagrams or photos?', tip: 'Tell what was different about seeing and touching a real brain, compared to a picture.', re: /diagram|photo|picture|drawing|image|textbook|screen|real|in person|hands.?on|3.?d|three.?dimension|touch|hold|held|compar|instead|than|different/ },
-            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” “When I cut,” or “This shows that.”', re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened|held|touched|removed|found)|in my dissection/ },
+            { done: 'You wrote about the brain’s structure (what a part looks like, feels like, or where it is).', q: 'Did you write about structure?', tip: 'Describe something you saw or felt, like the folds, the arbor vitae, or the gray and white matter.', re: /shape|folds?|grooves?|gyr|sulc|lobe|layers?|texture|colou?r|located|location|position|arbor|matter|halves|hemispher|cerebell|cerebr|brain ?stem|ventricle|corpus|callosum|thalam|pons|medulla|meninge|dura|squish|soft|firm|bumpy|wrinkl/ },
+            { done: 'You compared the dissection to diagrams or photos.', q: 'Did you compare your dissection to diagrams or photos?', tip: 'Tell what was different about seeing and touching a real brain, compared to a picture.', all: [/diagram|photo|picture|drawing|image|textbook|screen|model/, /in person|hands.?on|3.?d|three.?dimension|touch|hold|held|feel|felt|could see|saw|size|texture|depth|layers?|inside|squish|soft|firm|colou?r|smell|turn|rotate|cut|flat|better|easier|clearer/] },
+            { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “For example,” “According to the video,” “When I cut,” or “This shows that.”',writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|in the video|the video (says|said|shows|showed|explains|explained|mentions|mentioned)|because|such as|as an example|one example|proves?|this means|supports?|when i (cut|saw|looked|felt|opened|held|touched|removed|found)|in my dissection/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
@@ -651,12 +680,13 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What parts of the brain are still confusing for you? Be specific about what you are unsure of. (2 to 4 sentences)',
+          easy: 'Which parts of the brain are still confusing to you? Be specific. Tell exactly what you are unsure of, such as where a part is or what it does. Write 2 to 4 sentences.',
           starters: ['I am still confused about …', 'I am not sure whether …', 'A question I still have is …'],
           min: 40,
           ideas: [
-            { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', re: /confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/ },
+            { done: 'You named something that is still confusing.', q: 'Did you name something that is still confusing to you?', tip: 'It is OK to be confused! Start with “I am still not sure about…”', all: [/confus|still|unsure|not sure|don.?t (get|understand|know)|do not (get|understand|know)|wonder|question|hard to|unclear|mix(ed)? up/, /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|gyr|sulc|meninge|dura|arbor|vitae|ventricle|choroid|corpus|callosum|thalam|pituitar|pineal|midbrain|pons|medulla|diencephal|gr[ae]y matter|white matter|cortex|gland|folds?\b|grooves?|nerve|signal|control|function|job/] },
             { done: 'You named a part of the brain.', q: 'Did you name the part of the brain you are asking about?', tip: 'Which structure is it? Use its name.', re: /cerebr|cerebell|brain ?stem|spinal|hemispher|fissure|lobe|gyr|sulc|meninge|dura|arbor|vitae|ventricle|choroid|corpus|callosum|thalam|pituitar|pineal|midbrain|pons|medulla|diencephal|gray|grey|white matter|cortex|gland/ },
-            { done: 'You were specific about what you are unsure of.', q: 'Did you say exactly what you are unsure of?', tip: 'Is it where the part is, what it looks like, or what it does?', re: /where|locat|find|found|look|what it does|function|job|does|work|differen|tell apart|between|which/ },
+            { done: 'You were specific about what you are unsure of.', q: 'Did you say exactly what you are unsure of?', tip: 'Is it where the part is, what it looks like, or what it does?', re: /where (it|they|the)|locat|tell (them |it )?apart|difference between|what (it|they|the \w+) (does|do)|what its (job|function) is|function of|connects?|fit together/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence.', sentences: 2 }
           ]
         }
