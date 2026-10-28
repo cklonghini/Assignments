@@ -66,6 +66,21 @@ injectPage();
 /* Teacher view: the assignment link plus ?teacher=tm7k2q opens every part at once, shows the Finish section, allows
    copy and paste, and saves under its own key so it never mixes with a student's progress on the same computer. */
 var TEACHER=/[?&]teacher=tm7k2q(&|$)/.test(location.search);
+/* Supported version (an accommodation): the assignment link plus ?support=eagle shows each question's easier wording
+   (`easy` in assignment.js) and fewer answer choices. It saves under the same key, so a student can switch links
+   without losing work. Nothing on the page or in the PDF says it is the supported version. */
+var SUPPORT=/[?&]support=eagle(&|$)/.test(location.search);
+/* In the supported version a drop-down or multiple choice question shows the right answer and two wrong ones (plus a
+   choice the student already saved). The wrong ones are picked the same way every time, and the order stays the same. */
+function fewer(id,options,right,keep){
+  if(!SUPPORT||!options||options.length<=3) return options;
+  var wrong=options.filter(function(o){return right.indexOf(o)<0;});
+  if(right.length+2>=options.length) return options;
+  var seed=0; ((A.storageKey||TITLE)+id).split('').forEach(function(c){seed=(seed*31+c.charCodeAt(0))>>>0;});
+  var pick=wrong.map(function(o,i){var x=(seed^((i+1)*2654435761))>>>0; x^=x>>>15; x=(x*2246822507)>>>0; x^=x>>>13; return {o:o,k:x};})
+    .sort(function(a,b){return a.k-b.k;}).slice(0,2).map(function(p){return p.o;});
+  return options.filter(function(o){return right.indexOf(o)>=0||pick.indexOf(o)>=0||(keep&&keep.indexOf(o)>=0);});
+}
 var KEY=(A.storageKey||('assignment-'+TITLE))+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
 function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
@@ -2350,6 +2365,7 @@ function ideasFrom(list){
 }
 
 function buildQuestion(q,s,tile){
+  if(SUPPORT&&q.easy) q=Object.assign({},q,{text:q.easy});
   var num=++QN, id='q'+num, o=qEl(num,q.text), t=q.type, ids=[id];
   if(tile) CURQ.tile=tile;
   if(q.img){
@@ -2364,13 +2380,15 @@ function buildQuestion(q,s,tile){
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
     var grid=h('div','sigs');
     q.items.forEach(function(it,i){
-      var sel=autoSelect(id+'_'+i,'Q'+num+' '+plain(it.label).replace(/:/g,''),it.options||q.options,it.answer,{label:it.label,hint:it.hint||q.hint});
+      var sid=id+'_'+i, ops=fewer(sid,it.options||q.options,[it.answer],[(S.auto[sid]||{}).v]);
+      var sel=autoSelect(sid,'Q'+num+' '+plain(it.label).replace(/:/g,''),ops,it.answer,{label:(SUPPORT&&it.easy)||it.label,hint:it.hint||q.hint});
       if(it.sci||q.sci) sel.classList.add('sci');
       grid.append(sel);
     });
     o.body.append(grid);
   } else if(t==='choice'){
-    o.body.append(choiceQ(id,'Q'+num,q.options,q.answer,q.explain,q.tip));
+    var cops=fewer(id,q.options,[q.options[q.answer]],[(S.auto[id]||{}).v]);
+    o.body.append(choiceQ(id,'Q'+num,cops,cops.indexOf(q.options[q.answer]),q.explain,q.tip));
   } else if(t==='typed'){
     var exp=q.expected;
     /* accept: a list of right answers, ignoring capital letters and an end period */
@@ -2393,6 +2411,7 @@ function buildQuestion(q,s,tile){
   } else if(t==='bloodlab'){
     o.body.append(labQ(id,q));
   } else if(t==='multi'){
+    if(SUPPORT) q=Object.assign({},q,{options:fewer(id,q.options,q.answers,(S.auto[id]||{}).picks)});
     o.body.append(multiQ(id,q));
   } else if(t==='numbers'){
     ids=q.items.map(function(it,i){return id+'_'+i;});

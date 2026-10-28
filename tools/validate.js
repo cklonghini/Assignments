@@ -87,7 +87,7 @@ for (const dir of dirs) {
       if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
       groups = (A.parts || []).map((p, pi) => ({ where: 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : ''), title: p.title, clips: p.clips, questions: p.questions || [] }));
     }
-    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0;
+    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nEasy = 0;
     groups.forEach(p => {
       const where = p.where;
       if (!p.title) E(where + ' needs a title');
@@ -98,6 +98,12 @@ for (const dir of dirs) {
         qn++;
         const w = 'Q' + qn;
         if (!q.text) E(w + ' needs text');
+        /* easier wording for the supported version (?support=eagle) */
+        if (q.easy != null) {
+          if (typeof q.easy !== 'string' || !q.easy.trim()) E(w + ': easy must be text (the easier wording of the question)');
+          else if (q.easy.trim() === String(q.text || '').trim()) W(w + ': easy is the same as text');
+          else nEasy++;
+        }
         if (q.img) {
           if (!q.img.src || !exists(q.img.src)) E(w + ' picture not found: ' + (q.img.src || '(no src)'));
           if (!q.img.alt) E(w + ' picture needs alt text (a description for students who cannot see it)');
@@ -269,7 +275,7 @@ for (const dir of dirs) {
     if (nPhoto > 10) W(nPhoto + ' photo questions is a lot. Each photo makes the PDF bigger; aim for 10 or fewer');
     if (groups.reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
     Object.keys(clips).forEach(k => { if (!used.has(k)) W('Clip ' + k + ' is defined but not used in any part'); });
-    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
+    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '; ' + nEasy + ' with easier wording), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
   }
   errors.forEach(m => console.log('  ERROR   ' + m));
   warnings.forEach(m => console.log('  warning ' + m));

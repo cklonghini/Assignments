@@ -70,6 +70,10 @@ lab agreement, and a ready-to-go selfie `photo`.
   are part of the engine. Keep them.
 - A "Focus" switch (a focus mask) under the name boxes is an accommodation (for example for students with IEPs): when it is on,
   every section but the one the student is working on fades out. The browser remembers it for every assignment. Built into the engine.
+- A supported version (an accommodation) is the link plus `?support=eagle`: each question shows its `easy` wording and
+  drop-downs and multiple choice show fewer choices. When you write a question, also write its `easy` wording (same
+  question and answer, plain words, short sentences) unless it is already simple. See "Supported version" in
+  `docs/ASSIGNMENT_FORMAT.md`. Nothing on the page or PDF labels it.
 - Each part's green reading box (`read`) is folded under "Read this before you answer" until the student opens it. On
   highlight questions the instructions fold under "How to answer this question", and what each highlight color is for
   shows as a tip when the student points at or taps its button. This is built into the engine.

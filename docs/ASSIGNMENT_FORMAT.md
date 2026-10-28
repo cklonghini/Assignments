@@ -134,6 +134,22 @@ says it is the teacher view. Answers entered there are saved under their own key
 Students never see this unless they are given the link. The code is in `engine/engine.js`, so it keeps honest
 students out but is not a password.
 
+## Supported version (?support=eagle)
+
+An accommodation for students who need it (for example students with IEPs). Give that student the assignment link
+with `?support=eagle` on the end. Everyone else uses the plain link.
+
+- A question with `easy: '...'` shows that easier wording instead of `text`. A `selects` item can also have `easy`
+  (it replaces that item's `label`). Same question, same answer: the easy version asks for exactly what `text` asks
+  for, in plain words and short sentences, and gives away no more than `text` does. Skip questions that are already
+  simple. Do not give `agree` questions an `easy`.
+- Drop-downs, multiple choice, and choose-all questions show fewer choices on their own: the right answer(s) and two
+  wrong ones (picked the same way every time, in the original order). Questions with 3 or fewer choices stay the same.
+- Nothing on the page or in the PDF says it is the supported version (the teacher's choice). The PDF shows the easier
+  wording the student saw. Progress saves under the same key, so a student can switch links without losing work.
+- Teacher preview of it: `?teacher=tm7k2q&support=eagle`.
+- `node tools/validate.js` counts the questions with easier wording.
+
 ## Copy and paste are off
 
 So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
@@ -467,6 +483,9 @@ board: {
 - `ref: 12` (optional) is printed on the PDF as "test question 12" so the teacher can match the key.
 
 ## Extra question fields (any assignment)
+
+- `easy: 'Simpler wording of the same question.'` is shown instead of `text` in the supported version (see
+  "Supported version" above). Write one for every question that is not already simple.
 
 - `img: { src: 'media/heart.png', alt: 'Description that does not give the answer', caption: 'optional' }` shows a
   picture under the question. `alt` is required.
