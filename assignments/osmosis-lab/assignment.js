@@ -4,7 +4,8 @@
   progress bars, PDF printout, and Listen buttons from it.
   Students do the gummy bear osmosis lab at home with the kit that was mailed to them. Built like the other labs
   (sheep-brain-dissection, heart-dissection), with a lighter setup step: no apron or goggles, just a setup check,
-  a hypothesis, and a photo. There are no Orbeez in this lab, only gummy bears.
+  a hypothesis, and a photo. There are no Orbeez in this lab, only gummy bears. The teacher changed the handout's four salt
+  cups to three cups: plain water, salt water, and sugar water (students use any sugar or syrup from home).
   Part 1 is the Amoeba Sisters video "Osmosis and Water Potential (Updated)" with questions inside it. The video is cut
   to 0:00-7:16. The water potential section after that (pressure potential, potato cores, turgor pressure) is left out
   because this lab does not use it. Captions come from the teacher's pasted transcript (source/osmosis-amoeba-sisters.vtt).
@@ -21,7 +22,7 @@ var KIT = '<p><b>No lab kit?</b> If you did not get your lab kit, or something i
 window.ASSIGNMENT = {
   title: 'Osmosis Lab',
   course: 'Biology A',
-  storageKey: 'osmosis-lab-v1',
+  storageKey: 'osmosis-lab-v2',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
     + '<circle cx="20" cy="11" r="7" fill="var(--ligand)"/><circle cx="44" cy="11" r="7" fill="var(--ligand)"/>'
@@ -35,7 +36,7 @@ window.ASSIGNMENT = {
   /* No full video at the top yet. The teacher's lab video will go here (afterPart: 2) when it is ready. */
   start: {
     heading: 'How this lab works',
-    intro: 'In this lab you will use gummy bears to see osmosis in action. Part 1: watch an Amoeba Sisters video about osmosis and answer the questions that pop up in it. Part 2: use an interactive diagram to see what happens to a cell in hypotonic, isotonic, and hypertonic solutions. Part 3: set up your gummy bear experiment and write your hypothesis. Part 4: come back about 24 hours later, measure your gummy bears again, and explain your results.',
+    intro: 'In this lab you will use gummy bears to see osmosis in action. Part 1: watch an Amoeba Sisters video about osmosis and answer the questions that pop up in it. Part 2: use an interactive diagram to see what happens to a cell in hypotonic, isotonic, and hypertonic solutions. Part 3: set up your gummy bear experiment in plain water, salt water, and sugar water, and write your hypothesis. You will need some sugar or syrup from home. Part 4: come back about 24 hours later, measure your gummy bears again, and explain your results.',
     after: 'No lab kit? If you did not get your lab kit, or something is missing from it, let your teacher of record (TOR) know right away so they can get a kit to you. You still do this lab: watch all of the videos, and anywhere you are asked for a photo, add a screenshot of one of the pictures from the videos instead.'
   },
 
@@ -181,64 +182,64 @@ window.ASSIGNMENT = {
       intro: 'Do this part when you are ready to start your experiment. You will set up your cups, make a hypothesis, measure your gummy bears, and put them in the water. Part 4 opens when you finish this part.',
       read: KIT
         + '<p><b>Watch the lab video first.</b> <i>Coming soon: your teacher will add the lab video here. Watch the whole video before you start your experiment.</i> You may hear about Orbeez in the video. This lab uses only gummy bears, so skip anything about Orbeez.</p>'
-        + '<p><b>Purpose:</b> Find out how water moves across a semipermeable barrier by watching how gummy bears change size in water with different amounts of salt.</p>'
+        + '<p><b>Purpose:</b> Find out how water moves across a semipermeable barrier by watching how gummy bears change size in plain water, salt water, and sugar water.</p>'
         + '<p><b>Check your kit.</b> You need:</p><ul>'
-        + '<li>4 gummy bears</li><li>4 clear cups</li><li>Water and table salt</li><li>A ruler with millimeters (mm)</li><li>A marker</li><li>Paper towels and a spoon</li></ul>'
-        + '<p><b>Make your solutions.</b> Label the cups A, B, C, and D with the marker. Put 1 cup (240 mL) of room-temperature water in each cup. Add the salt from the table below, and stir until it dissolves. These amounts are close enough for this lab.</p>'
+        + '<li>3 gummy bears (if your kit has more, you only need 3)</li><li>3 clear cups</li><li>Water and table salt</li><li>A ruler with millimeters (mm)</li><li>A marker</li><li>Paper towels and a spoon</li></ul>'
+        + '<p><b>Sugar from home:</b> You will need some sugar from your own house. It is not in the kit. You can use any kind of sugar you have, such as white sugar or brown sugar. It can also be a syrup, such as pancake syrup, maple syrup, corn syrup, or honey.</p>'
+        + '<p><b>Make your solutions.</b> Label the cups A, B, and C with the marker. Put 1 cup (240 mL) of room-temperature water in each cup. Add what the table below says, and stir until it dissolves. These amounts are close enough for this lab.</p>'
         + '<p><b>Do it:</b> Follow these steps in order.</p><ol>'
-        + '<li>Label your cups and make your four solutions.</li>'
+        + '<li>Label your cups and make your three solutions.</li>'
         + '<li>Write your hypothesis below, before anything goes in the water.</li>'
         + '<li>Measure each gummy bear from the top of its head to the bottom of its feet, in millimeters. Write down which bear goes in which cup. Use the gummy bears straight from the bag.</li>'
         + '<li>Put one gummy bear in each cup. Write down the date and time.</li>'
-        + '<li>Take a photo of your four cups with a gummy bear in each one.</li>'
+        + '<li>Take a photo of your three cups with a gummy bear in each one.</li>'
         + '<li>Leave the cups somewhere safe for about 24 hours. Then come back for Part 4.</li></ol>'
-        + '<p><b>Stay safe:</b> Do not eat the gummy bears or drink the salt water. Clean up any spills, and wash your hands when you finish.</p>',
-      tableHtml: '<table><caption>Salt for each cup (per 1 cup, or 240 mL, of water)</caption>'
-        + '<thead><tr><th scope="col">Cup</th><th scope="col">Solution</th><th scope="col">Salt to add</th></tr></thead><tbody>'
-        + '<tr><td>A</td><td>0% (plain water)</td><td>No salt</td></tr>'
-        + '<tr><td>B</td><td>Low (about 1%)</td><td>½ teaspoon</td></tr>'
-        + '<tr><td>C</td><td>Medium (about 3%)</td><td>1¼ teaspoons</td></tr>'
-        + '<tr><td>D</td><td>High (about 5%)</td><td>2 teaspoons</td></tr></tbody></table>',
+        + '<p><b>Stay safe:</b> Do not eat the gummy bears or drink the solutions. Clean up any spills, and wash your hands when you finish.</p>',
+      tableHtml: '<table><caption>What goes in each cup (per 1 cup, or 240 mL, of water)</caption>'
+        + '<thead><tr><th scope="col">Cup</th><th scope="col">Solution</th><th scope="col">What to add</th></tr></thead><tbody>'
+        + '<tr><td>A</td><td>Plain water</td><td>Nothing</td></tr>'
+        + '<tr><td>B</td><td>Salt water</td><td>2 teaspoons of salt</td></tr>'
+        + '<tr><td>C</td><td>Sugar water</td><td>4 tablespoons (¼ cup) of sugar, or 4 tablespoons of syrup</td></tr></tbody></table>',
       questions: [
         {
           type: 'selects',
-          text: 'How much salt goes in each cup? Use the table.',
-          options: ['No salt', '½ teaspoon', '1¼ teaspoons', '2 teaspoons'],
-          hint: 'Find the cup’s row in the table, and read across to the “Salt to add” column.',
+          text: 'What goes in each cup? Use the table.',
+          options: ['Nothing', '2 teaspoons of salt', '4 tablespoons of sugar or syrup'],
+          hint: 'Find the cup’s row in the table, and read across to the “What to add” column.',
           items: [
-            { label: 'Cup A (0%)', answer: 'No salt' },
-            { label: 'Cup B (Low)', answer: '½ teaspoon' },
-            { label: 'Cup C (Medium)', answer: '1¼ teaspoons' },
-            { label: 'Cup D (High)', answer: '2 teaspoons' }
+            { label: 'Cup A (plain water)', answer: 'Nothing' },
+            { label: 'Cup B (salt water)', answer: '2 teaspoons of salt' },
+            { label: 'Cup C (sugar water)', answer: '4 tablespoons of sugar or syrup' }
           ]
         },
         {
           type: 'selects',
           text: 'Variables. Choose the independent variable (what you change on purpose) and the dependent variable (what you measure) for this experiment.',
           easy: 'Pick the independent variable (what you change) and the dependent variable (what you measure).',
-          options: ['The amount of salt in the water', 'The size of the gummy bear', 'The size of the cups', 'The time in the solution'],
+          options: ['What is dissolved in the water (nothing, salt, or sugar)', 'The size of the gummy bear', 'The size of the cups', 'The time in the solution'],
           items: [
-            { label: 'Independent variable', answer: 'The amount of salt in the water', hint: 'What is different from cup A to cup D? Look at the table.' },
+            { label: 'Independent variable', answer: 'What is dissolved in the water (nothing, salt, or sugar)', hint: 'What is different from cup A to cup C? Look at the table.' },
             { label: 'Dependent variable', answer: 'The size of the gummy bear', hint: 'What do you measure with your ruler before and after?' }
           ]
         },
         {
           type: 'choice',
           text: 'Which of these should stay the same (be a constant) in every cup?',
-          options: ['The amount of water and the time in the solution', 'The amount of salt', 'Nothing needs to stay the same', 'Only the color of the gummy bear'], answer: 0,
-          explain: 'Right. Constants include the same model (gummy bears), the same amount of water, the same time in the solution, the same temperature, and the same cup size. Only the salt changes.',
+          options: ['The amount of water and the time in the solution', 'What is dissolved in the water', 'Nothing needs to stay the same', 'Only the color of the gummy bear'], answer: 0,
+          explain: 'Right. Constants include the same model (gummy bears), the same amount of water, the same time in the solution, the same temperature, and the same cup size. Only what is dissolved in the water changes.',
           tip: 'A fair test changes only one thing. Which answer is the one thing that does change from cup to cup? It cannot be a constant.'
         },
         {
           type: 'written',
-          text: 'Hypothesis. Before your gummy bears go in the water, predict what will happen to the gummy bear in each cup (A plain water, B low salt, C medium salt, D high salt) after about 24 hours. Explain why, using the word osmosis. (2 to 4 sentences)',
-          easy: 'Hypothesis. Before the gummy bears go in the water, predict what will happen in each cup (A plain water, B low salt, C medium salt, D high salt). Tell why. Use the word osmosis. (2 to 4 sentences)',
-          starters: ['If a gummy bear is placed in plain water, then …', 'I think the gummy bear in cup D (high salt) will …', 'This will happen because during osmosis, water moves toward …', 'Compared to the gummy bear, the salt water in cup D is …'],
+          text: 'Hypothesis. Before your gummy bears go in the water, predict what will happen to the gummy bear in each cup (A plain water, B salt water, C sugar water) after about 24 hours. Explain why, using the word osmosis. (2 to 4 sentences)',
+          easy: 'Hypothesis. Before the gummy bears go in the water, predict what will happen in each cup (A plain water, B salt water, C sugar water). Tell why. Use the word osmosis. (2 to 4 sentences)',
+          starters: ['If a gummy bear is placed in plain water, then …', 'I think the gummy bear in the salt water (cup B) will …', 'In the sugar water (cup C), I think the gummy bear will …', 'This will happen because during osmosis, water moves toward …'],
           min: 60,
           ideas: [
-            { done: 'You predicted what happens in plain water.', q: 'Did you predict what happens to the gummy bear in plain water (cup A)?', tip: 'Think about the interactive diagram. What does a cell do in a solution with a lower solute concentration?', all: [/plain|pure|no salt|cup a\b|\b0 ?%/, /grow|bigger|swell|larger|expand|gain|increase|absorb|take in|takes in|soak/] },
-            { done: 'You predicted what happens in salty water.', q: 'Did you predict what happens in the salty cups (B, C, or D)?', tip: 'Does more salt in the water help the gummy bear gain water, or not? Say what you think happens in cup D.', all: [/salt|cup [bcd]\b/, /shrink|smaller|lose|lost|stay the same|same size|not grow|won.?t grow|grow less|less water|barely|a little/] },
-            { done: 'You explained it with water and solute concentration.', q: 'Did you explain why, using where the solute (salt or sugar) is?', tip: 'Use the rule from the video: water moves to the side with the greater solute concentration. Is that the gummy bear or the water?', all: [/water/, /solute|sugar|concentration|hypotonic|hypertonic|more salt|less salt|saltier/] },
+            { done: 'You predicted what happens in plain water.', q: 'Did you predict what happens to the gummy bear in plain water (cup A)?', tip: 'Think about the interactive diagram. What does a cell do in a solution with a lower solute concentration?', all: [/plain|pure|cup a\b/, /grow|bigger|swell|larger|expand|gain|increase|absorb|take in|takes in|soak/] },
+            { done: 'You predicted what happens in salt water.', q: 'Did you predict what happens in the salt water (cup B)?', tip: 'Salt is a solute. Will the gummy bear gain more water, less water, or lose water than in plain water?', all: [/salt|cup b\b/, /grow|bigger|swell|larger|gain|shrink|smaller|lose|lost|stay the same|same size|not grow|won.?t grow|less|barely|a little/] },
+            { done: 'You predicted what happens in sugar water.', q: 'Did you predict what happens in the sugar water (cup C)?', tip: 'The gummy bear is full of sugar, and so is cup C. Compare them. Will the gummy bear gain water, lose water, or stay about the same?', all: [/sugar|syrup|cup c\b/, /grow|bigger|swell|larger|gain|shrink|smaller|lose|lost|stay the same|same size|not grow|won.?t grow|less|barely|a little/] },
+            { done: 'You explained it with water and solute concentration.', q: 'Did you explain why, using where the solute (salt or sugar) is?', tip: 'Use the rule from the video: water moves to the side with the greater solute concentration. Is that the gummy bear or the water?', all: [/water/, /solute|concentration|hypotonic|hypertonic|isotonic|more sugar|less sugar|more salt|less salt|saltier|sweeter/] },
             { done: 'You wrote your prediction as If… then….', q: 'Did you write your prediction as “If…, then…”?', tip: 'A hypothesis often reads: “If (what you change), then (what you think will happen).”', writing: true, re: /\bif\b[\s\S]*\bthen\b/ },
             { done: 'You wrote at least 2 sentences.', q: 'Did you write 2 to 4 full sentences?', tip: 'Add another sentence that explains why.', sentences: 2 }
           ]
@@ -249,10 +250,9 @@ window.ASSIGNMENT = {
           easy: 'Measure each gummy bear from head to feet in millimeters (mm) before it goes in the water. (No kit? Use the measurements from the lab video.)',
           unit: 'mm',
           items: [
-            { label: 'Cup A (0%) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' },
-            { label: 'Cup B (Low) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' },
-            { label: 'Cup C (Medium) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' },
-            { label: 'Cup D (High) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' }
+            { label: 'Cup A (plain water) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' },
+            { label: 'Cup B (salt water) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' },
+            { label: 'Cup C (sugar water) gummy bear', between: [5, 60], tip: 'Measure in millimeters (mm), not centimeters. A gummy bear is about 2 centimeters tall, and 1 centimeter is 10 millimeters.' }
           ]
         },
         {
@@ -260,8 +260,8 @@ window.ASSIGNMENT = {
           text: 'Check your setup. Check each box to show you did it.',
           items: [
             'I watched the lab video.',
-            'My 4 cups are labeled A (0%), B (Low), C (Medium), and D (High).',
-            'Each cup has 1 cup (240 mL) of room-temperature water, with the right amount of salt stirred in until it dissolved.',
+            'My 3 cups are labeled A (plain water), B (salt water), and C (sugar water).',
+            'Each cup has 1 cup (240 mL) of room-temperature water. I stirred the salt into cup B and the sugar or syrup into cup C until it dissolved.',
             'I measured each gummy bear before it went in the water.',
             'I put one gummy bear in each cup, and I wrote down the date and time.',
             'My cups are in a safe place where no one will eat or drink them, and I will come back in about 24 hours.'
@@ -269,10 +269,10 @@ window.ASSIGNMENT = {
         },
         {
           type: 'photo',
-          text: 'Take a photo of your experiment: your four labeled cups with one gummy bear in each. (No kit? Add a screenshot of the experiment from one of the videos.)',
-          easy: 'Take a photo of your four labeled cups with a gummy bear in each. (No kit? Add a screenshot from one of the videos.)',
-          caption: 'Write the date and time you put the gummy bears in the water.',
-          placeholder: 'For example: I started on Monday at 3:15 p.m.'
+          text: 'Take a photo of your experiment: your three labeled cups with one gummy bear in each. (No kit? Add a screenshot of the experiment from one of the videos.)',
+          easy: 'Take a photo of your three labeled cups with a gummy bear in each. (No kit? Add a screenshot from one of the videos.)',
+          caption: 'Write the date and time you put the gummy bears in the water. Also tell what kind of sugar or syrup you used.',
+          placeholder: 'For example: I started on Monday at 3:15 p.m. I used …'
         }
       ]
     },
@@ -289,7 +289,7 @@ window.ASSIGNMENT = {
         + '<li>Use the spoon to take out one gummy bear at a time. Gently blot it on a paper towel.</li>'
         + '<li>Measure it the same way as before: from the top of its head to the bottom of its feet, in millimeters. Be gentle, because it may be soft.</li>'
         + '<li>Line up your gummy bears in front of their cups and take a photo.</li>'
-        + '<li>Clean up: throw the gummy bears away (do not eat them), pour the salt water down the sink, rinse the cups, and wash your hands.</li></ol>'
+        + '<li>Clean up: throw the gummy bears away (do not eat them), pour the salt water and sugar water down the sink, rinse the cups, and wash your hands.</li></ol>'
         + '<p><b>Read:</b> A gummy bear that got bigger took in water. Its cup was hypotonic to it. A gummy bear that got smaller lost water. Its cup was hypertonic to it. A gummy bear that stayed the same size was in a solution that was about isotonic to it.</p>'
         + '<p><b>Connect to cells:</b> In the clip, a saltwater fish goes into fresh water, and water goes into its cells. It works the other way, too. When a living thing from fresh water is put in salty water, the salty water is the side with the greater solute concentration, so water leaves its cells.</p>',
       questions: [
@@ -299,10 +299,9 @@ window.ASSIGNMENT = {
           easy: 'Measure each gummy bear again, the same way, in millimeters. (No kit? Use the measurements from the lab video.)',
           unit: 'mm',
           items: [
-            { label: 'Cup A (0%) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' },
-            { label: 'Cup B (Low) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' },
-            { label: 'Cup C (Medium) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' },
-            { label: 'Cup D (High) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' }
+            { label: 'Cup A (plain water) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' },
+            { label: 'Cup B (salt water) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' },
+            { label: 'Cup C (sugar water) gummy bear', between: [3, 120], tip: 'Measure in millimeters (mm) from the top of the head to the bottom of the feet. 1 centimeter is 10 millimeters.' }
           ]
         },
         {
@@ -327,11 +326,11 @@ window.ASSIGNMENT = {
           type: 'multi',
           text: 'Sources of error. Which of these could make your results less accurate? Choose all that are correct.',
           easy: 'Which of these could make your results less accurate? Choose all that are correct.',
-          options: ['Measuring the gummy bears in a different way before and after', 'Not blotting the gummy bears dry before measuring', 'Salt that did not fully dissolve', 'Leaving some bears in the water longer than others', 'Using the same amount of water in every cup'],
-          answers: ['Measuring the gummy bears in a different way before and after', 'Not blotting the gummy bears dry before measuring', 'Salt that did not fully dissolve', 'Leaving some bears in the water longer than others'],
+          options: ['Measuring the gummy bears in a different way before and after', 'Not blotting the gummy bears dry before measuring', 'Salt or sugar that did not fully dissolve', 'Leaving some bears in the water longer than others', 'Using the same amount of water in every cup'],
+          answers: ['Measuring the gummy bears in a different way before and after', 'Not blotting the gummy bears dry before measuring', 'Salt or sugar that did not fully dissolve', 'Leaving some bears in the water longer than others'],
           rules: [{ any: ['Using the same amount of water in every cup'], tip: 'Keeping something the same in every cup is a constant. Constants make a test fair. Do they cause error?' }],
           tip: 'There are more. Think about each step: making the solutions, timing, and measuring.',
-          explain: 'Right. Each of these can change your numbers. To reduce error next time, measure the same way every time, blot each bear the same way, stir until the salt dissolves, and take every bear out at the same time.'
+          explain: 'Right. Each of these can change your numbers. To reduce error next time, measure the same way every time, blot each bear the same way, stir until the salt or sugar dissolves, and take every bear out at the same time.'
         },
         {
           type: 'choice',
@@ -345,16 +344,16 @@ window.ASSIGNMENT = {
           type: 'highlight',
           cer: true,
           from: 'your measurements',
-          text: 'In which cup did your gummy bear gain the most water, and in which cup did it gain the least water or lose water? Use your measurements as evidence, and explain your results using osmosis and the words hypotonic or hypertonic.',
-          easy: 'Which cup’s gummy bear gained the most water? Which gained the least water or lost water? Use your measurements as evidence. Explain why using osmosis and the words hypotonic or hypertonic.',
+          text: 'In which cup did your gummy bear gain the most water, and in which cup did it gain the least water or lose water? Compare plain water, salt water, and sugar water. Use your measurements as evidence, and explain your results using osmosis and the words hypotonic or hypertonic.',
+          easy: 'Which cup’s gummy bear gained the most water? Which gained the least water or lost water? Compare all three cups. Use your measurements as evidence. Explain why using osmosis and the words hypotonic or hypertonic.',
           starters: ['The gummy bear in cup … gained the most water.', 'It started at … mm and ended at … mm.', 'This shows that …', 'This happened because the water in cup … was … compared to the gummy bear, so water moved …', 'My hypothesis was … because …'],
           min: 80,
           ideas: [
-            { done: 'You named the cups.', q: 'Did you say which cup gained the most and which gained the least?', tip: 'Name the cups by letter or by how much salt they had.', re: /cup [abcd]|plain water|no salt|(low|medium|high) salt|0%|[135] ?%/ },
+            { done: 'You named the cups.', q: 'Did you say which cup gained the most and which gained the least?', tip: 'Name the cups by letter or by what was in the water.', re: /cup [abc]\b|plain water|salt water|salty|sugar water|sugary|syrup/ },
             { done: 'You used your measurements.', q: 'Did you use your numbers as evidence?', tip: 'Give the starting and ending size of a gummy bear in millimeters.', re: /\d/ },
             { done: 'You told which way the water moved.', q: 'Did you tell which way the water moved?', tip: 'Did water move into the gummy bear or out of it? Use the rule: water moves toward the greater solute concentration.', all: [/water/, /into|out of|entered|enters|left the|leaves|absorb|lost water|took in|soaked/] },
             { done: 'You used hypotonic or hypertonic.', q: 'Did you use the words hypotonic or hypertonic?', tip: 'Compare each cup’s water to the gummy bear. Which word fits a cup with less solute than the bear?', re: /hypotonic|hypertonic|isotonic/ },
-            { done: 'You talked about solute or salt concentration.', q: 'Did you explain it with solute (or salt and sugar) concentration?', tip: 'The gummy bear is full of sugar. How does that compare to the salt in each cup?', re: /solute|concentration|sugar|salt/ },
+            { done: 'You talked about solute or salt concentration.', q: 'Did you explain it with solute (or salt and sugar) concentration?', tip: 'The gummy bear is full of sugar. How does that compare to the salt water and the sugar water?', re: /solute|concentration|sugar|salt/ },
             { done: 'You wrote at least 3 sentences.', q: 'Did you write at least 3 full sentences?', tip: 'Add a sentence that explains how your evidence supports your claim.', sentences: 3 }
           ]
         }
