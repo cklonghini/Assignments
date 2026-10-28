@@ -30,12 +30,16 @@ window.ASSIGNMENT = {
         title: 'Blood Basics',
         tiles: [
           { ref: 3, type: 'choice', text: 'Which ion allows hemoglobin to readily bind with oxygen?',
+            easy: 'Which ion helps hemoglobin bind (attach) to oxygen easily?',
             options: ['Fe2+', 'Na+', 'K+', 'Ca2+'], answer: 0 },
           { ref: 1, type: 'choice', text: 'Which of the following statements about mature red blood cells is NOT true?',
+            easy: 'Read the statements about mature (fully grown) red blood cells. Which one is NOT true?',
             options: ['Life span of around 120 days', 'No nuclei', 'Contain hemoglobin', 'Divide to make new cells when old ones need to be replaced'], answer: 3 },
           { ref: 11, type: 'choice', text: 'The amount of strain or force placed on the blood vessels as the blood moves through them is known as',
+            easy: 'The force (push) that blood puts on the blood vessel walls as it moves through them is called',
             options: ['pulse.', 'diastole.', 'tidal volume.', 'blood pressure.'], answer: 3 },
           { ref: 23, type: 'selects', text: 'Define hematopoiesis. Then name the two other organ systems that play a role in it.',
+            easy: 'What does hematopoiesis mean? Then name the two other organ systems that help with it.',
             items: [
               { label: 'Hematopoiesis means', options: ['blood cell formation', 'blood clot formation', 'blood flow through the heart', 'the breakdown of old red blood cells'], answer: 'blood cell formation' },
               { label: 'Where blood cells are made', options: ['Red bone marrow', 'Liver', 'Heart', 'Lungs'], answer: 'Red bone marrow' },
@@ -43,6 +47,7 @@ window.ASSIGNMENT = {
               { label: 'The organ system that controls it with the hormone EPO', options: ['Skeletal system', 'Endocrine system', 'Nervous system', 'Digestive system', 'Respiratory system'], answer: 'Endocrine system' }
             ] },
           { ref: 21, type: 'written', text: 'Explain how the unique shape of erythrocytes (red blood cells) enables them to best carry out their function. (2 to 4 sentences)',
+            easy: 'Red blood cells (erythrocytes) have a special shape. Explain how this shape helps them do their job well. (2 to 4 sentences)',
             starters: ['The shape of a red blood cell is …', 'This shape helps it … because …'],
             min: 60,
             ideas: [
@@ -59,6 +64,7 @@ window.ASSIGNMENT = {
           { ref: 2, type: 'choice', text: 'If your blood type is O-, that means',
             options: ['you have no agglutinogens on your red blood cells.', 'you have the rhesus antigens.', 'you only have anti-A antibodies in your blood plasma.', 'all of the above.'], answer: 0 },
           { ref: 22, type: 'choice', text: 'You are a doctor treating a patient with liver failure due to chronic alcoholism. One result is reduced synthesis of plasma proteins, like fibrin. What issue can you expect to arise because of this?',
+            easy: 'You are a doctor. Your patient’s liver is failing from drinking alcohol for a long time. Because of this, their body makes less of some plasma proteins, like fibrin. What problem would you expect?',
             options: ['Their blood will not clot well, so bleeding will be hard to stop.', 'Their body will make too many red blood cells.', 'Their red blood cells will not be able to carry oxygen.', 'Their heart will beat too fast.'], answer: 0 },
           { ref: '25 a-b', type: 'selects', text: 'Assume you are blood type A.',
             items: [
@@ -66,6 +72,7 @@ window.ASSIGNMENT = {
               { label: 'b. What antibodies do you have in your plasma?', options: ['Anti-A antibodies', 'Anti-B antibodies', 'Both anti-A and anti-B antibodies', 'No antibodies'], answer: 'Anti-B antibodies' }
             ] },
           { ref: 24, type: 'selects', text: 'List and describe the steps in the process of hemostasis. First put the steps in order. Then match each step to what happens.',
+            easy: 'This question is about the steps of hemostasis. First, put the steps in order. Then match each step to what happens in it.',
             options: HEMOSTASIS,
             items: [
               { label: 'Step 1', answer: 'Vascular spasm' },
@@ -76,6 +83,7 @@ window.ASSIGNMENT = {
               { label: 'The blood vessel narrows (vasoconstriction) to slow blood flow to the damaged area', answer: 'Vascular spasm' }
             ] },
           { ref: '25 c-d', type: 'written', text: 'Assume you are blood type A. (c) What would happen if you received a blood transfusion from someone with type B blood, and why? (d) Who can you donate blood to, and why? Label your answers c and d.',
+            easy: 'Pretend you have type A blood. Answer two parts. (c) You get a blood transfusion (blood put into your body) from someone with type B blood. What would happen, and why? (d) Who can you give your blood to, and why? Label your answers c and d.',
             starters: ['c. If I received type B blood, …', 'This happens because …', 'd. I can donate blood to … because …'],
             min: 80,
             ideas: [
@@ -93,10 +101,13 @@ window.ASSIGNMENT = {
           { ref: 6, type: 'choice', text: 'The purpose of the serous fluid in the pericardial cavity is',
             options: ['to carry critical nutrients like oxygen to the heart.', 'to provide Ca2+ ions needed for muscle contraction.', 'to decrease friction between the layers of the heart as it contracts.', 'to lubricate the walls of the blood vessels to decrease resistance to blood flow.'], answer: 2 },
           { ref: 8, type: 'choice', text: 'Which of the following is true for both cardiac and skeletal muscle tissues?',
+            easy: 'Which choice is true for BOTH cardiac muscle and skeletal muscle?',
             options: ['Striated', 'Branched', 'Contract as a unit', 'Can spontaneously depolarize without input from the nervous system'], answer: 0 },
           { ref: 12, type: 'choice', text: 'Which of the following statements about the valves of the heart is FALSE?',
+            easy: 'Read the statements about the heart valves. Which one is FALSE (not true)?',
             options: ['The tricuspid valve is the semilunar valve on the right side of the heart.', 'The aortic valve prevents backflow into the left ventricle.', 'The mitral valve has two cusps between the left atrium and left ventricle.', 'The pulmonary valve guards the base of the pulmonary trunk.'], answer: 0 },
           { ref: 29, type: 'selects', text: 'Label parts A to F in the figure using the word bank. Not all words will be used.',
+            easy: 'Use the word bank to name parts A to F in the picture. You will not use every word.',
             img: { src: 'media/heart.png', alt: 'Drawing of the inside of the heart with six labels, A through F, each with an arrow pointing to a different part.' },
             options: WORD_BANK,
             items: [
@@ -108,6 +119,7 @@ window.ASSIGNMENT = {
               { label: 'F', answer: 'Left atrium' }
             ] },
           { ref: 27, type: 'written', text: 'Explain the function of the myocardium and why it needs to be thicker in one of the ventricles than the other. Be sure to clearly state which ventricle it is thicker in. (2 to 4 sentences)',
+            easy: 'What job does the myocardium do? The myocardium is thicker in one ventricle than in the other. Which ventricle is it thicker in? Why does it need to be thicker there? (2 to 4 sentences)',
             starters: ['The function of the myocardium is …', 'It is thicker in the … ventricle because …'],
             min: 60,
             ideas: [
@@ -123,14 +135,19 @@ window.ASSIGNMENT = {
         title: 'Heartbeat & Pressure',
         tiles: [
           { ref: 10, type: 'choice', text: 'Which statement below correctly matches the structure with its function?',
+            easy: 'Which statement correctly matches the body part with its job?',
             options: ['Veins carry blood away from the heart.', 'The atria are the high pressure receiving chambers of the heart.', 'The sinoatrial node initiates the action potential that causes the heart to beat.', 'Contractile cardiac muscle cells can trigger their own action potentials without neural input.'], answer: 2 },
           { ref: 9, type: 'choice', text: 'Which of the following statements about AEDs is FALSE?',
+            easy: 'Read the statements about AEDs. Which one is FALSE (not true)?',
             options: ['They are tools used for someone experiencing sudden cardiac arrest.', 'An AED can be used to restart a heart with no electrical activity.', 'They get the cardiac cells contracting in sync again.', 'They work by stopping the heart for a second in order to reset it.'], answer: 1 },
           { ref: 13, type: 'choice', text: 'In order to increase blood flow, there needs to be a(n) _____ in the pressure gradient and a(n) _____ in the resistance.',
+            easy: 'To increase blood flow, there needs to be a(n) _____ in the pressure gradient (the difference in pressure) and a(n) _____ in the resistance.',
             options: MORE_LESS, answer: 2 },
           { ref: 7, type: 'choice', text: 'Which of the following accurately reflects the order of events that causes the heart to pump out blood?',
+            easy: 'Which choice shows the right order of events that makes the heart pump out blood?',
             options: ['Electrical event → distribution → mechanical event → pressure change → fluid movement', 'Electrical event → pressure change → mechanical event → distribution → fluid movement', 'Mechanical event → distribution → electrical event → pressure change → fluid movement', 'Mechanical event → pressure change → electrical event → distribution → fluid movement'], answer: 0 },
           { ref: 31, type: 'written', text: 'Describe the purpose of an electrocardiogram (EKG). Then describe what the EKG tracing would look like for a heart beating at a high frequency, a heart beating at a low frequency, and a heart that isn’t beating at all.',
+            easy: 'What is an electrocardiogram (EKG) used for? Then describe what the EKG tracing (the picture it records) would look like for each of these: a heart beating at a high frequency (fast), a heart beating at a low frequency (slow), and a heart that isn’t beating at all.',
             starters: ['An EKG is used to …', 'For a heart beating at a high frequency, the tracing would …', 'For a heart beating at a low frequency, …', 'For a heart that is not beating, …'],
             min: 80,
             ideas: [
@@ -150,6 +167,7 @@ window.ASSIGNMENT = {
           { ref: 5, type: 'choice', text: 'The _____ side of the heart is the _____ circuit and pumps oxygen-rich blood to the _____.',
             options: SIDES, answer: 2 },
           { ref: 26, type: 'selects', text: 'List the three types of circuits that blood flows through in the heart and their roles. Match each circuit to its role.',
+            easy: 'Blood flows through three types of circuits (loops) in the heart. Match each circuit to its job.',
             options: ['Pumps oxygen-poor blood through the right side of the heart to the lungs', 'Pumps oxygen-rich blood through the left side of the heart out to the rest of the body', 'Supplies the heart with its own oxygen-rich blood', 'Carries blood from the stomach and intestines to the liver'],
             items: [
               { label: 'Pulmonary circulation', answer: 'Pumps oxygen-poor blood through the right side of the heart to the lungs' },
@@ -157,6 +175,7 @@ window.ASSIGNMENT = {
               { label: 'Coronary circulation', answer: 'Supplies the heart with its own oxygen-rich blood' }
             ] },
           { ref: 35, type: 'written', text: 'Explain the purpose of the different blood vessels in the picture that connect to the alveoli: the artery, the capillary network, and the vein.',
+            easy: 'Look at the picture. Three blood vessels connect to the alveoli: the artery, the capillary network, and the vein. Explain the job of each one.',
             starters: ['The artery carries …', 'The capillary network is where …', 'The vein carries …'],
             img: { src: 'media/alveoli.png', alt: 'Drawing of clusters of alveoli. An artery and a vein connect to a capillary network that wraps around the alveoli.' },
             min: 80,
@@ -167,6 +186,7 @@ window.ASSIGNMENT = {
               TWO_SENTENCES
             ] },
           { ref: 30, type: 'written', text: 'List three factors that cause resistance to the flow of blood through the vessels. Explain which has the greatest impact and why.',
+            easy: 'Name three factors (things) that cause resistance to blood flow in the vessels. Which one has the greatest effect? Explain why.',
             starters: ['Three factors that cause resistance are …', 'The factor with the greatest impact is … because …'],
             min: 80,
             ideas: [
@@ -186,11 +206,13 @@ window.ASSIGNMENT = {
           { ref: 18, type: 'choice', text: 'The left lung has ___ lobes and the right lung has ___ lobes.',
             options: ['2; 2', '3; 3', '2; 3', '3; 2'], answer: 2 },
           { ref: 20, type: 'choice', text: 'The structure indicated by the arrow in the picture is the',
+            easy: 'The part the arrow points to in the picture is the',
             img: { src: 'media/airway.png', alt: 'Drawing of the head, neck, and chest showing the airway and lungs. An arrow points to a structure in the neck.' },
             options: ['larynx.', 'esophagus.', 'pharynx.', 'trachea.'], answer: 0 },
           { ref: 15, type: 'choice', text: 'The amount of air that moves in and out of the lungs when you take a normal breath is the',
             options: ['vital capacity.', 'tidal volume.', 'residual volume.', 'lung capacity.'], answer: 1 },
           { ref: 32, type: 'selects', text: 'Define the functional roles of the conducting and respiratory zones. Then sort each structure into the zone it is a part of.',
+            easy: 'What job does the conducting zone do? What job does the respiratory zone do? Then sort each body part into its zone.',
             items: [
               { label: 'Role of the conducting zone', options: ['Warms, humidifies, and filters air as it travels into the body', 'Gas exchange'], answer: 'Warms, humidifies, and filters air as it travels into the body' },
               { label: 'Role of the respiratory zone', options: ['Warms, humidifies, and filters air as it travels into the body', 'Gas exchange'], answer: 'Gas exchange' },
@@ -213,10 +235,13 @@ window.ASSIGNMENT = {
           { ref: 19, type: 'choice', text: 'When the diaphragm contracts, volume inside the lungs _____ and pressure inside the lungs _____.',
             options: MORE_LESS, answer: 2 },
           { ref: 33, type: 'typed', text: 'The overall function of the respiratory system is to supply oxygen to our cells for what critical process? Type your answer.',
+            easy: 'The respiratory system brings oxygen to our cells. Our cells need this oxygen for a very important process. What is that process? Type your answer.',
             accept: ['cellular respiration', 'cell respiration', 'aerobic respiration', 'aerobic cellular respiration'], aria: 'The critical process' },
           { ref: 17, type: 'choice', text: 'Which of the following statements about gas exchange is FALSE?',
+            easy: 'Read the statements about gas exchange. Which one is FALSE (not true)?',
             options: ['Our blood plays a central role.', 'Exchange happens in the alveoli and our body tissues.', 'Simple diffusion is the method of transport.', 'In the alveoli, CO2 moves into the blood and O2 moves out of it.'], answer: 3 },
           { ref: 34, type: 'written', text: 'Explain the relationship between pressure and volume changes that cause air to flow into and out of the lungs. (2 to 4 sentences)',
+            easy: 'Changes in pressure and volume make air flow into and out of the lungs. Explain how pressure and volume are connected, and how this moves air. (2 to 4 sentences)',
             starters: ['When you breathe in, the volume …', 'As the volume changes, the pressure …', 'Air flows into the lungs when …'],
             min: 60,
             ideas: [
@@ -233,6 +258,7 @@ window.ASSIGNMENT = {
     final: {
       title: 'Final round', points: 1000, ref: 28, type: 'selects',
       text: 'Use the word bank to describe the pathway that blood travels through each part of the heart. Oxygen-poor blood enters the heart through the superior and inferior vena cava. Choose where it goes at each step, until oxygen-rich blood leaves the heart to head out to the body.',
+      easy: 'Follow the path blood takes through each part of the heart. Oxygen-poor blood comes into the heart through the superior and inferior vena cava. For each step, use the word bank to choose where the blood goes next. Keep going until oxygen-rich blood leaves the heart to go out to the body.',
       options: WORD_BANK,
       items: [
         { label: 'Step 1', answer: 'Right atrium' },
