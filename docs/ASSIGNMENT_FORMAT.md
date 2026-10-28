@@ -111,7 +111,7 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 
 Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
 
-**Focus mask:** every page has a "Focus mask" switch at the top (an accommodation). When it is on, every block of a part
+**Focus:** every page has a "Focus" switch at the top (an accommodation). When it is on, every block of a part
 (a video, the reading box, a question) fades out except the one the student clicked, tabbed into, or scrolled to. Nothing
 in `assignment.js` turns it on or off; the student's browser remembers the setting for every assignment.
 

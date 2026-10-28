@@ -29,7 +29,7 @@ function injectPage(){
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
     +'<div class="maskrow"><span class="tipwrap" id="maskWrap"><button type="button" class="switch" id="maskSw" role="switch" aria-checked="false" aria-labelledby="maskLbl" aria-describedby="maskHint"><span class="knob"></span></button>'
-    +'<label for="maskSw" id="maskLbl" class="masklbl">Focus mask</label>'
+    +'<label for="maskSw" id="maskLbl" class="masklbl">Focus</label>'
     +'<span id="maskHint" class="tip" role="tooltip">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></span></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
@@ -2185,7 +2185,7 @@ function readBox(markup,label){
   d.append(learn(markup)); return d;
 }
 
-/* Focus mask (an accommodation): when it is on, every section but the one the student is working on fades out.
+/* Focus (an accommodation, a focus mask): when it is on, every section but the one the student is working on fades out.
    A section is one block inside a part (a video, a reading box, a question). Clicking or tabbing into a section
    brings it into focus; scrolling moves the focus once the current section leaves the middle of the screen.
    The setting is kept in this browser for every assignment, so a student turns it on once. */
