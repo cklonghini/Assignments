@@ -102,7 +102,8 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
   intro: 'Optional plain-text paragraph at the top of the part.',
   clips: ['domains', 'kingdoms'],           // clip names, shown in this order
   images: [ { src: 'media/station-card-1.jpg', alt: '...', caption: 'Station 1 card.', text: '<p>...</p>' } ],
-  read: '<p><b>Read:</b> ...</p>',          // optional green reading box (HTML)
+  read: '<p><b>Read:</b> ...</p>',          // optional green reading box (HTML), folded until the student opens it
+  readLabel: 'Open the lab steps',          // optional: the reading box's label (default 'Read this before you answer')
   tableHtml: '<table>...</table>',          // optional table shown after the reading (HTML)
   questions: [ ... ]
 }
@@ -356,7 +357,8 @@ Same fields as `written` (`text`, `min`, `starters`, `ideas`). The engine adds t
 For an assignment with no video, set `examples` to replace the example transition words (the default list includes
 "According to the video").
 The instructions tell students to provide evidence along with transition words that bring attention to it (for example
-"According to the video," "This shows that"), then go back and highlight those transition words in yellow.
+"According to the video," "This shows that"), then go back and highlight those transition words in yellow. The instructions sit in a folded "How to answer this
+question" box, and what each highlight color is for shows as a tip when the student points at (or taps) its button.
 Give these questions a "used transition words" idea (a pattern for common evidence transitions) and a "highlighted" idea.
 The highlighted words are marked with `[[double brackets]]` in the Canvas text-entry fallback and in yellow on the PDF.
 

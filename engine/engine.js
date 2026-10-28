@@ -1824,11 +1824,24 @@ function richField(id){
   if(!segsPlain(st.segs).trim()&&old&&(old.text||'').trim()){ st.segs=[[old.text,false]]; delete S.written[id]; }
   var wrap=h('div','sub'); mark(wrap); wrap.dataset.s='idle';
   var bar=h('div','evbar'); bar.setAttribute('role','group'); bar.setAttribute('aria-label','Highlight tools');
-  var tools=c.cer?[['b','Claim (blue)','btn hl hlb'],['y','Evidence (yellow)','btn hl'],['g','Expand (green)','btn hl hlg']]
-                 :[['y','Highlight selected text yellow','btn hl']];
-  tools.push([false,'Remove highlight','btn ghost']);
+  /* each button's tip (shown on hover, keyboard focus, or a tap) says what that color is for */
+  var tools=c.cer?[['b','Claim (blue)','btn hl hlb','Claim (your opinion): select the words that give your claim, then press this button to highlight them in blue.'],
+                   ['y','Evidence (yellow)','btn hl','Using evidence to support your view: select your evidence, then press this button to highlight it in yellow.'],
+                   ['g','Expand (green)','btn hl hlg','Expand on your thoughts: select where you explain how your evidence supports your claim, then press this button to highlight it in green.']]
+                 :[['y','Highlight selected text yellow','btn hl','Transition words that point to evidence: select them, then press this button to highlight them in yellow. This shows where your evidence is.']];
+  tools.push([false,'Remove highlight','btn ghost','Select highlighted words, then press this button to take the color off.']);
   var bmsg=h('span','msg'); bmsg.setAttribute('aria-live','polite');
-  tools.forEach(function(t){ var b=h('button',t[2],t[1]); b.type='button'; t.push(b); bar.append(b); });
+  tools.forEach(function(t,k){
+    var b=h('button',t[2],t[1]); b.type='button';
+    var tip=h('span','tip',t[3]); tip.id='tip-'+id+'-'+k; tip.setAttribute('role','tooltip'); b.setAttribute('aria-describedby',tip.id);
+    var w=h('span','tipwrap'+(k===tools.length-1?' tipend':'')); w.append(b,tip);
+    /* touch screens have no hover: show the tip for a few seconds after a tap */
+    b.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='mouse') return;
+      w.classList.add('tipon'); clearTimeout(w._t); w._t=setTimeout(function(){w.classList.remove('tipon');},3500);
+    });
+    t.splice(3,1,b); bar.append(w);
+  });
   bar.append(bmsg);
   var ed=h('div','ev'); ed.id='f-'+id; ed.contentEditable='true'; ed.setAttribute('role','textbox'); ed.setAttribute('aria-multiline','true');
   ed.setAttribute('aria-label','Your written response'); ed.spellcheck=true; ed.setAttribute('data-placeholder','Begin your response here...');
@@ -2163,6 +2176,11 @@ function watchList(intro,items){
   return hh('div','wfor','<b>Watch for:</b> '+intro+'<ul class="wlist">'+items.map(function(i){return '<li><b>'+i[0]+'</b> '+i[1]+'</li>';}).join('')+'</ul>');
 }
 function learn(markup){return hh('div','learn',markup);}
+/* a part's reading folds into a box the student opens, so the page is not a wall of text */
+function readBox(markup,label){
+  var d=h('details','fold readfold'); d.append(h('summary',null,label||'Read this before you answer'));
+  d.append(learn(markup)); return d;
+}
 
 /* ------------------------------------------------------------------ */
 /* Parts                                                               */
@@ -2337,18 +2355,19 @@ function buildQuestion(q,s,tile){
   } else if(t==='highlight'){
     ids=[];
     R[id]={min:q.min||40,cer:!!q.cer};
-    var intro=q.cer?[
-      h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
-      h('p','intro','Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then expand on your thoughts to explain how your evidence supports your claim.'),
-      hh('p','intro','Once you have finished, highlight parts of your response using these colors. Select the words, then press the matching button.'),
-      hh('ul','cerlist','<li><b>Claim (your opinion):</b> highlight your claim in <span class="chip chipb">blue</span></li>'
-        +'<li><b>Using evidence to support your view:</b> highlight your use of evidence in <span class="chip">yellow</span></li>'
-        +'<li><b>Expand on your thoughts:</b> highlight your use of this skill in <span class="chip chipg">green</span></li>')
+    /* the how-to folds into a box; what each color means is shown when the student points at that highlight button */
+    var how=h('details','fold howfold'), howin=h('div','howbox');
+    how.append(h('summary',null,'How to answer this question'), howin);
+    (q.cer?[
+      h('p',null,'Respond to the question in the space below. Remember to answer the question fully.'),
+      h('p',null,'Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then expand on your thoughts to explain how your evidence supports your claim.'),
+      h('p',null,'Once you have finished, highlight parts of your response. Select the words, then press the matching color button. Point at a button to see what it is for.')
     ]:[
-      h('p','intro','Respond to the question in the space below. Remember to answer the question fully.'),
-      h('p','intro','Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
-      hh('p','intro','Once you have finished, go back and highlight those transition words using this color: <span class="chip">Transition words that point to evidence</span>. This shows where you put your evidence in. Select the words, then press the yellow button.')
-    ];
+      h('p',null,'Respond to the question in the space below. Remember to answer the question fully.'),
+      h('p',null,'Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
+      h('p',null,'Once you have finished, go back and highlight those transition words in yellow. Select the words, then press the yellow button.')
+    ]).forEach(function(e){howin.append(e);});
+    var intro=[how];
     intro.forEach(function(e){o.body.append(e);});
     o.body.append(
       q.starters&&q.starters.length?startersEl(id,q.starters):'',
@@ -2383,7 +2402,7 @@ function buildPart(p,n){
   var inVid=(p.questions||[]).filter(function(q){return q.at!=null;});
   if(inVid.length&&first) s.append(videoStops(first,inVid));
   (p.images||[]).forEach(function(im){ s.append(figureEl(im)); });
-  if(p.read) s.append(learn(p.read));
+  if(p.read) s.append(readBox(p.read,p.readLabel));
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
   (p.questions||[]).forEach(function(q){ if(!(q.at!=null&&first)) buildQuestion(q,s); });
   if(GATED) gateEls(s,n);
@@ -3391,7 +3410,7 @@ function decorate(){
   app.querySelectorAll('.stbox').forEach(function(el){
     el.prepend(listenBtn(function(){return [].map.call(el.querySelectorAll('li span'),function(x){return x.innerText;}).join('. ');}));
   });
-  app.querySelectorAll('.wfor,.learn').forEach(function(el){
+  app.querySelectorAll('.wfor,.learn,.howbox').forEach(function(el){
     el.prepend(listenBtn(function(){return el.innerText;}));
   });
   /* pictures with their words: a Listen button right under the picture */
