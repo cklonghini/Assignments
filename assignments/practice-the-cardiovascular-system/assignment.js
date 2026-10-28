@@ -273,10 +273,10 @@ window.ASSIGNMENT = {
               re: /2\/3|two.thirds|1\/3|one.third|tilt|mostly (on the )?left|more (on the |to the )?left|slightly (to the )?left|a little (to the )?left|both sides|right side too/ },
             { done: 'You said where we should place our hand.', q: 'Did you say where we should place our hand instead?',
               tip: 'Finish your answer by telling exactly where a hand should go to be over the heart.',
-              re: /should (place|put|go|be)|place (our|your|my|a|the) hands?|put (our|your|my|a|the) hands?|hands? (should|would|needs to)/ },
+              all: [/should|instead|actually|better|correct|more accurate/, /hands?/, /middle|center|centre|sternum|breast ?bone|chest ?bone|midline|medial|between/] },
             { done: 'You wrote at least 3 sentences.', q: 'Did you write 3 to 5 full sentences?', tip: 'Add a sentence that explains your reasoning.', sentences: 3 },
             { done: 'You used transition words to point to your evidence.', q: 'Did you use transition words to point to your evidence?', tip: 'Introduce your evidence with words like “According to Station 3,” or “The card explains that.”',
-              re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|station 3|the card (says|said|shows|explains|states|mentions)|because|such as|proves?|this means|supports?|based on/ },
+              writing: true, re: /for example|for instance|according to|this shows|that shows|which shows|shows that|evidence|station 3|the card (says|said|shows|explains|states|mentions)|because|such as|proves?|this means|supports?|based on/ },
             { done: 'You highlighted your transition words in yellow.', q: 'Did you highlight your transition words in yellow?', tip: 'Go back and select the transition words that point to your evidence, then press the yellow button.', highlight: true }
           ]
         },

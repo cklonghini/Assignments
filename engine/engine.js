@@ -505,19 +505,34 @@ function speechMatch(c,t){
   return {word:word,pass:word&&got===keys.length&&!wrongWay};
 }
 function speakQ(id,q){
-  var wrap=h('div','scards');
+  var wrap=h('div','scards'), cards=[], cids=[], deck=!!q.deck&&!TEACHER, note=null, shown=-1;
+  /* deck: true shows one card at a time; the next card opens when this one turns green */
+  function step(){
+    if(!deck) return;
+    var n=cids.length, first=n;
+    for(var i=0;i<n;i++){ var r=S.auto[cids[i]]; if(!(r&&r.ok)){ first=i; break; } }
+    cards.forEach(function(el,i){ el.hidden=i>first; });
+    note.textContent=first<n?'Card '+(first+1)+' of '+n+'. Say the word and its definition. The next card opens when this card turns green.'
+      :'All '+n+' cards are done. Nice work!';
+    if(shown>=0&&first>shown&&first<n&&cards[first].scrollIntoView) cards[first].scrollIntoView({behavior:'smooth',block:'nearest'});
+    shown=first;
+  }
   (q.cards||[]).forEach(function(c,i){
     var cid=id+'_'+i;
     AUTO[cid]={sum:c.term};
     ORDER.push({kind:'auto',id:cid,label:c.term,q:CURQ,sub:c.term});
-    wrap.append(speakCard(cid,c,!!q.memory));
+    cids.push(cid);
+    var el=speakCard(cid,c,!!q.memory,function(){ if(note) step(); });
+    cards.push(el); wrap.append(el);
   });
   var box=h('div');
   if(soundOnly) box.append(h('p','whint','This browser can’t turn speech into words, so each card checks that you spoke out loud for a few seconds. Chrome or Edge works best for this part.'));
+  if(deck){ note=h('p','whint sdeck'); note.setAttribute('aria-live','polite'); box.append(note); }
   box.append(wrap);
+  step();
   return box;
 }
-function speakCard(cid,c,memory){
+function speakCard(cid,c,memory,onChange){
   var card=h('div','scard'); mark(card); card.dataset.s='idle';
   var def=h('p','sdef');
   var btn=h('button','btn mic'); btn.type='button'; btn.setAttribute('aria-pressed','false');
@@ -528,7 +543,9 @@ function speakCard(cid,c,memory){
   var lvl=h('div','level'); lvl.hidden=true; var lvlFill=h('i'); lvl.append(lvlFill);
   var heard=h('p','heard'); heard.setAttribute('aria-live','polite');
   var term=h('p','sterm'); term.append(itxt(c.term));
-  card.append(term,def,row,lvl,heard);
+  card.append(term);
+  if(c.img){ var pic=h('img','simg'); pic.src=c.img.src; pic.alt=c.img.alt||''; card.append(pic); }
+  card.append(def,row,lvl,heard);
   function rec(){return S.auto[cid]||null;}
   function tell(t,bad){heard.textContent=t; if(bad) heard.dataset.s='bad'; else heard.removeAttribute('data-s');}
   function paint(){
@@ -540,6 +557,7 @@ function speakCard(cid,c,memory){
     else { def.className='sdef'; def.append(itxt(c.def)); }
     if(peek){ peek.hidden=done; peek.textContent=showing?'Hide the definition':'Peek'; }
     if(done) tell('✓ '+(r.how==='sound'?'You said it out loud.':'I heard you say the word and its meaning.')+(r.peek?' (You peeked.)':''));
+    if(onChange) onChange();
   }
   if(peek) peek.addEventListener('click',function(){
     showing=!showing;
@@ -1904,19 +1922,69 @@ var GFIX=[
   [/[a-z]{2}[.!?,;:](?=[A-Za-z])/g,function(){return 'Add a space after this punctuation mark.';},2]
 ];
 var GSUB=/^(because|since|although|though|when|while|if|unless|whereas|after|before|even though)\b/i;
-/* a light test for a verb: helping verbs, common irregular verbs, words ending in -ed or -s, or a word after I/we/they */
-var GAUX=/^(is|are|was|were|be|been|am|being|has|have|had|do|does|did|can|could|will|would|shall|should|may|might|must|it's|that's|there's|here's|what's|he's|she's|i'm|i've|we're|they're|you're|we've|they've|don't|doesn't|didn't|can't|won't|isn't|aren't|wasn't|weren't|couldn't|shouldn't|wouldn't|let's)$/;
-var GIRR=/^(went|came|saw|made|took|got|gave|found|felt|thought|knew|left|kept|held|beat|ran|grew|became|began|brought|built|cut|put|set|said|told|showed|lost|meant|sent|spent|stood|understood|wrote|ate|fell|forgot|heard|hit|hurt|led|let|paid|read|sat|spoke|stuck|taught|threw|tore|woke|wore|won|broke|chose|drew|bled|fed|fought|dug|slid|split|spread|shut|need|think|know|want|like|see|feel|believe|learned|learnt|get|go|make|help|keep|use|move|carry|pump|take|give|look|find|work|flow|contain|connect|separate|return|send|receive|supply|deliver|absorb|release|exchange|protect|control|cause|affect|increase|decrease|depend|allow|prevent|stop|form|produce|create|break|fight|clot|bind|fit|attach|enter|leave|travel|pass|reach|push|pull|squeeze|contract|relax|expand|breathe|grow|live|die|eat|react|change|act|seem|appear|mean|show|tell|explain|describe|compare|draw|share|lay|stand|pinch|measure|record|add|divide|place|stay|become|have|call|name|write|say|hear|try|start|begin|end|finish|open|close|hold|turn|lead|follow|include|belong|differ|vary|match|test|check|come|run|sit|learn|understand|remember|notice|observe|discover|identify|classify|support|prove|bring|fill|empty|mix|pour|sink|float|swim|fly|hunt|catch|hide|survive|adapt|evolve|reproduce|digest|filter|wrap|cover|surround|line|lie|rest|sleep|wake|happen|occur|matter|count|weigh|cost|smell|taste|sound|bleed|heal|repair|build|store|transport|transfer|pick|drop)$/;
-function hasVerb(lw){
-  for(var i=0;i<lw.length;i++){
-    var x=lw[i];
-    if(GAUX.test(x)||GIRR.test(x)) return true;
-    if(x.length>3&&/ed$/.test(x)) return true;
-    if(x.length>3&&/[^su]s$/.test(x)&&!/(ss|ous|is|us)$/.test(x)&&i>0) return true;
-    if(/^(i|you|we|they|he|she|it|people|children)$/.test(x)&&lw[i+1]) return true;
-  }
+/* Incomplete sentences without a dictionary: a few word lists and rules that find the main verb of a sentence.
+   A verb only counts when its neighbors say it is a verb ("cells" after "blood" is a noun; "carry" after "cells"
+   is a verb), and a verb inside a "that," "because," or "where" part belongs to that part, not to the sentence. */
+var GAUX=/^(is|are|was|were|be|been|am|being|has|have|had|do|does|did|can|could|will|would|shall|should|may|might|must|it's|that's|there's|here's|what's|he's|she's|i'm|i've|we're|they're|you're|we've|they've|don't|doesn't|didn't|can't|won't|isn't|aren't|wasn't|weren't|couldn't|shouldn't|wouldn't|let's|cannot)$/;
+var GPAST=/^(went|came|saw|made|took|got|gave|found|felt|thought|knew|kept|held|ran|grew|became|began|brought|built|said|told|showed|lost|meant|sent|spent|stood|understood|wrote|ate|fell|forgot|heard|led|paid|sat|spoke|stuck|taught|threw|tore|woke|wore|won|broke|chose|drew|bled|fed|fought|dug|slid|learnt|swam|flew|hid|caught|bought|sought|became|rose|drove|rode|sang|shook)$/;
+var GIRR=/^(need|think|know|want|like|see|feel|believe|learned|get|go|make|help|keep|use|move|carry|pump|take|give|look|find|work|flow|contain|connect|separate|return|send|receive|supply|deliver|absorb|release|exchange|protect|control|cause|affect|increase|decrease|depend|allow|prevent|stop|form|produce|create|break|fight|clot|bind|fit|attach|enter|leave|travel|pass|reach|push|pull|squeeze|contract|relax|expand|breathe|grow|live|die|eat|react|change|act|seem|appear|mean|show|tell|explain|describe|compare|draw|share|lay|stand|pinch|measure|record|add|divide|place|stay|become|have|call|name|write|say|hear|try|start|begin|end|finish|open|close|hold|turn|lead|follow|include|belong|differ|vary|match|test|check|come|run|sit|learn|understand|remember|notice|observe|discover|identify|classify|support|prove|bring|fill|empty|mix|pour|sink|float|swim|fly|hunt|catch|hide|survive|adapt|evolve|reproduce|digest|filter|wrap|cover|surround|line|lie|rest|sleep|wake|happen|occur|matter|count|weigh|cost|smell|taste|sound|bleed|heal|repair|build|store|transport|transfer|pick|drop|flip|grab|predict|guess|hope|agree|compete|cross|join|wash|wipe|clean|capitalize|italicize|underline|stretch|type|label|circle|answer|watch|listen|choose|select|remove|throw|mark|cut|put|set|hit|hurt|let|read|beat|spread|split|shut|left)$/;
+var GPART=/^(called|named|known|located|found|made|used|considered|attached|connected|related|filled|covered|surrounded|shaped|labeled|labelled|found|taped|denatured|oxygenated|deoxygenated)$/;
+var GDET=/^(the|a|an|this|these|those|my|our|your|their|his|its|some|many|each|every|no|any|both|few|several)$/;
+var GDETN=/^(the|a|an|my|our|your|their|his|its|some|many|no|any|both|few|several)$/; /* words that always come before a noun */
+var GPREP=/^(of|in|on|at|to|from|with|by|for|into|onto|through|between|under|over|near|behind|across|toward|towards|around|during|without|about|like|than|as|inside|outside|after|before)$/;
+var GPRON=/^(i|you|we|they|he|she|it|people|children|everyone|someone|scientists|students|doctors|taxonomists)$/;
+var GADVB=/^(also|still|really|just|only|never|always|usually|often|actually|probably|then|even|not|sometimes|mostly|first|now|already|both|all)$/;
+var GPLN=/^(cells|valves|vessels|lungs|arteries|veins|capillaries|enzymes|pennies|chambers|organisms|molecules|proteins|receptors|neurons|neurotransmitters|structures|parts|nutrients|alveoli|atria|ventricles|organs|tissues|genes|species|animals|plants|bacteria|viruses|hormones|substrates|products|reactions|trials|results|data|males|females|lobes|hemispheres|nerves|muscles|bones|walls|layers|types|markers|antigens|antibodies|names|wings|birds|insects|groups|factors|graphs|numbers|seconds|minutes|times|days|years|things|ideas|ways|examples|videos|questions|answers|words|sentences|hands|fingers|thumbs|balls|bodies|humans|kids|friends|levels|areas|sides|problems|errors|steps|fluids|gases|ions|cases|diseases|symptoms|signals|platelets|chordae|folds|grooves|membranes|ligands|messengers|pathways|stages|predictions|hypotheses|chests|heights|ages|balloons|teachers|parents|patients|donors|transfusions|halves)$/;
+var GNADJ=/^(very|more|most|so|too|her|red|white|blue|small|large|big|little|tiny|thick|thin|long|short|high|low|hot|cold|fast|slow|strong|weak|new|old|same|different|other|main|whole|entire|right|first|last|next|important|good|bad|best|better|common|normal|healthy|special|key|major|minor|many|few|two|three|four|several|such|own|certain|human|vital|pulmonary|coronary|competitive|chemical|scientific|common)$/;
+var GSUBW=/^(that|which|who|where|because|since|although|though|while|if|unless|whereas|so)$/;
+function isAdvb(x){return GADVB.test(x)||(x.length>4&&/ly$/.test(x)&&!/^(only|early|family|supply|apply|reply|belly|jelly)$/.test(x));}
+/* is the word at i a verb, judging by the words around it? */
+function verbAt(lw,i){
+  var x=lw[i]; if(!x||x===',') return false;
+  var j=i-1; while(j>=0&&isAdvb(lw[j])) j--;
+  var p=j>=0?lw[j]:'', n=lw[i+1]||'';
+  if(GAUX.test(x)) return true;
+  if(x==='left') return GDET.test(n)||GPRON.test(n)||n===''||n===',';
+  if(GPART.test(x)) return GAUX.test(p)||GPRON.test(p)||GPLN.test(p)||/^(it|them|him|her|me|us)$/.test(n);
+  if(GPAST.test(x)) return true;
+  var nounish=GDETN.test(p)||GPREP.test(p)||GNADJ.test(p);
+  /* a base verb ("carry") counts after a subject, a helping verb, "which," or at the start; not after "the," "to," or "this" */
+  if(GIRR.test(x)) return p===''||p===','||/^(these|those|which|who)$/.test(p)||p==='that'&&j>0&&(GPLN.test(lw[j-1])||/[^su]s$/.test(lw[j-1]))||!(nounish||p==='to'||p==='this'||p==='that');
+  if(i>0&&x.length>3&&/ed$/.test(x)) return !nounish&&j>=0;
+  if(i>0&&x.length>3&&/[^su]s$/.test(x)&&!/(ss|ous|is|us)$/.test(x)&&(!GPLN.test(x)||GDETN.test(n))) return !nounish&&j>=0;
+  /* an unknown word right after "cells" or "which" is most likely the verb: "veins drain," "which cross" */
+  if((GPLN.test(p)||/^(which|who)$/.test(p))&&!GADJ.test(x)&&!GDET.test(x)&&!GPREP.test(x)&&!GPLN.test(x)&&!GSUBW.test(x)&&!/^(and|or|but)$/.test(x)) return true;
+  if(GPRON.test(p)&&p!=='people'&&p!=='children'&&!GADJ.test(x)&&!GDET.test(x)&&!GPREP.test(x)&&!GPLN.test(x)&&!GSUBW.test(x)&&x!==',') return true;
   return false;
 }
+/* is "that," "so," and the like starting a new part of the sentence here? */
+function subAt(lw,i){
+  var x=lw[i], n=lw[i+1]||'';
+  if(!GSUBW.test(x)||n==='to') return false;   /* "where to look" */
+  if(x==='so'&&i===0) return false;              /* "So the reaction was slower." */
+  if(x==='that'&&/^(show|shows|showed|shown|mean|means|meant|think|thought|learn|learned|know|knew|found|predict|predicted|say|says|said|notice|noticed|realize|realized|prove|proves|proved|suggest|suggests|believe|believed)$/.test(lw[i-1]||'')) return n!=='';
+  if(x==='so'||x==='that'||x==='since'||x==='while'||x==='after'||x==='before') return GDET.test(n)||GPRON.test(n)&&n!=='people'||(x==='that'&&i>0&&(GAUX.test(n)||GPAST.test(n)||/[^su]s$/.test(n)&&!GPLN.test(n)&&!GIRR.test(n)||GIRR.test(n)&&(GPLN.test(lw[i-1])||/[^su]s$/.test(lw[i-1]))));
+  if(x==='because') return n!=='of'&&n!=='';
+  return i>0&&n!==''&&n!==',';
+}
+/* finds the main verb, and any part ("so the reaction") that never gets its own verb */
+function sentenceParts(lw){
+  var main=false, open=-1, unfinished=null;
+  for(var i=0;i<lw.length;i++){
+    var x=lw[i];
+    if(x===','){ if(open>=0&&unfinished===null&&i>open+1) unfinished=open; open=-1; continue; }
+    if(subAt(lw,i)){ if(open>=0&&unfinished===null) unfinished=open; open=i; continue; }
+    if(/^(think|believe|predict|guess|hope)$/.test(x)&&verbAt(lw,i)&&(GDET.test(lw[i+1]||'')||GPRON.test(lw[i+1]||''))){ main=true; open=i; continue; }
+    if(verbAt(lw,i)){
+      var j=i-1; while(j>=0&&isAdvb(lw[j])) j--;
+      if(j>=0&&verbAt(lw,j)) continue;   /* "was taped," "can get": one verb, already counted */
+      if(open>=0) open=-1; else main=true;
+    }
+  }
+  if(open>=0&&unfinished===null) unfinished=open;
+  return {main:main,unfinished:unfinished};
+}
+function hasVerb(lw){ for(var i=0;i<lw.length;i++){ if(verbAt(lw,i)) return true; } return false; }
 /* a missing a/an/the, as in "This is just test to see": a linking verb, then a word that is not an adjective, then "to" */
 var GADJ=/^(able|about|enough|going|trying|supposed|used|due|ready|free|sure|likely|easy|hard|good|bad|important|necessary|possible|impossible|difficult|simple|safe|helpful|harmful|best|better|worse|worst|first|last|next|only|right|wrong|key|close|similar|related|connected|attached|meant|made|said|known|thought|found|needed|told|asked|allowed|forced|built|designed|there|here|up|down|back|out|in|on|off|over|still|also|not|just|really|very|so|too|more|less|most|much|able|unable|happy|glad|sad|tired|interesting|amazing|cool|fun|nice|great|weird|strange|crazy|surprising|surprised|confused|confusing|clear|new|old|big|small|large|thick|thin|long|short|high|low|hot|cold|fast|slow|strong|weak|ready|willing|available|responsible|similar|different|same|true|false|common|normal|healthy|unique|special|essential|vital|critical|crucial|useful|harder|easier|bigger|smaller|faster|slower|stronger|weaker|thicker|thinner|higher|lower|larger|longer|shorter|closer|how|what|why|where|when|who|which|that|this|it|them|me|us|him|her|you|i|we|they|he|she|one|ok|okay)$/;
 function missingWord(text,add){
@@ -1928,11 +1996,23 @@ function missingWord(text,add){
     add(at,at+m[2].length,'A small word may be missing before “'+m[2]+'”, such as “a,” “an,” or “the.”');
   }
 }
+var GINC='This may be an incomplete thought. A complete sentence says who or what it is about (the subject) and what they do or are (the verb). Read it aloud to check for a missing word.';
+var GEND=/^(the|a|an|and|or|but|because|than|my|our|your|their|its|very|into|onto|if|when|so)$/;
+/* missing words between other words: "goes the lungs," "pumps blood the body," "the is," "able flip," "of brain" */
+var GMISS=[
+  [/\b(work|works|worked|working|go|goes|went|run|runs|ran|react|reacts|reacted|happen|happens|happened|flip|flips|flipped|move|moves|moved)\s+(faster|slower|better|best|fastest|slowest|worse)\s+(the|a|an)\s/gi,function(m){return 'A word may be missing after “'+m.split(/\s+/)[1]+',” such as “at,” “than,” or “with.”';}],
+  [/\b(I|it|It|they|They|he|He|she|She|we|We)\s+(slower|faster|bigger|smaller|important|harder|easier|thicker|thinner|stronger|weaker|able|unable|tired|surprised|confused|interested|amazed|excited|scared|shocked|worried|bored|different|similar|better|worse|because|the|a|an)\b(?!\s+(me|us|him|her|them|you|it)\b)/g,function(m,t,i){return /\b(make|makes|made|making|keep|keeps|kept|find|finds|found|get|gets|got|let|lets|help|helps|helped|call|called|leave|leaves|left)\s+$/i.test(t.slice(Math.max(0,i-10),i))?null:'A word may be missing after “'+m.split(/\s+/)[0]+',” such as “is,” “was,” or “am.”';}],
+  [/\b(the|The|a|an|An)\s+(the|a|an|to|of|and|or|is|are|was|were|in|on|at|for|with|from|by|it|they|he|she|we|because|but)\b/g,function(m){return 'A word seems to be missing after “'+m.split(/\s+/)[0]+'.”';}],
+  [/\b(able|unable|supposed)\s+(?!to\b)[a-z]+/gi,function(m){return 'A word may be missing after “'+m.split(/\s+/)[0]+',” such as “to.”';}],
+  [/\b(go|goes|went|going|travel|travels|traveled|travelled|traveling|flow|flows|flowed|flowing|come|comes|came|rush|rushes|rushed)\s+(the|a|an|my|your|our|their|his|her)\s+(?!(same|whole|entire|other|wrong|right|next|first|last|rest|way|most|least|best|fastest|slowest|farthest|furthest|longest|opposite)\b)[a-z]+/gi,function(m){return 'A word may be missing after “'+m.split(/\s+/)[0]+',” such as “to,” “into,” or “through.”';}],
+  [/\b(pump(s|ed)?|carr(y|ies|ied)|mov(e|es|ed)|push(es|ed)?|deliver(s|ed)?|transport(s|ed)?|flip(s|ped)?|squeez(e|es|ed)|send(s)?|sent)\s+(?!(the|a|an|this|that|these|those|my|our|your|their|his|her|its|it|them|out|up|back|down|away|in|off|through|throughout|along|all|both|more|less|much|faster|slower|quickly|slowly|again|around|over|only|also|by|from|to|into|of|on|at|for|with|toward|towards|across|between|under|onto|past|than|as|and|or)\b)([a-z]+)\s+(the|a|an)\s+(?!(lot|few|little|bit|day|week|minute|second|year|time|while|whole|entire|same|right|wrong|rest|other|way|most|least|best|first|last|next)\b)[a-z]+/gi,function(m){var x=m.split(/\s+/);return 'A word may be missing between “'+x[1]+'” and “'+x[2]+',” such as “to,” “into,” or “through.”';}],
+  [/\b(of|in|to|into|from|through|at|on|inside|toward|towards)\s+(heart|brain|body|aorta|ventricle|atrium|cell|enzyme|lung|skull|thumb|substrate|receptor|nucleus|membrane|valve|organism|artery|vein|capillary|diaphragm|sternum|cerebrum|cerebellum|niece|tennis ball|chest)\b(?!\s+(temperature|tissue|muscle|disease|rate|cells?|biology|size|parts?|function|signaling|walls?|attack|failure|health|types?|weight|fluids?|stem|membranes?|structures?|division|surface|chambers?|valves?|sounds?|beats?|transplants?|damage|surgery|anatomy|wall|matter)\b)(?=\s*[.,!?;:]|\s*$|\s+(and|or|but|to|is|was|are|were|so|because|which|that|with|of|in|on)\b)/gi,function(m){return 'A small word such as “the” or “a” may be missing before “'+m.split(/\s+/).slice(1).join(' ')+'.”';}]
+];
 function grammarIssues(text){
   var out=[];
   function add(a,b,msg,wide){ if(b>a) out.push({a:a,b:b,msg:msg,wide:!!wide}); }
   missingWord(text,add);
-  GFIX.forEach(function(rule){
+  GMISS.concat(GFIX).forEach(function(rule){
     var re=new RegExp(rule[0].source,rule[0].flags), m;
     while((m=re.exec(text))){ var msg=rule[1](m[0],text,m.index); if(msg) add(m.index+(rule[2]||0),m.index+m[0].length,msg); if(!m[0].length) re.lastIndex++; }
   });
@@ -1950,14 +2030,21 @@ function grammarIssues(text){
     if(!/[.!?]["”’')\]]*$/.test(sen)){
       var lw=sen.match(/\S+$/); add(end-lw[0].length,end,'End this sentence with a period (or a question mark or exclamation point).');
     }
-    var lw=w.map(function(x){return x.toLowerCase().replace(/’/g,"'");});
+    var tk=(core.match(/[A-Za-z’'-]+|[,;:]/g)||[]).map(function(x){return /^[;:]$/.test(x)?',':x.toLowerCase().replace(/’/g,"'");});
+    var last=tk.filter(function(x){return x!==',';}).pop()||'', sp=sentenceParts(tk);
     if(w.length<3) add(st,end,'This looks too short to be a complete sentence. A sentence needs a subject and a verb.',1);
-    else if(!hasVerb(lw)) add(st,end,'This may be an incomplete sentence. Check that it says who or what (the subject) and what they do or are (the verb).',1);
+    else if(/\?["”’')\]]*$/.test(sen)){ if(!hasVerb(tk)) add(st,end,GINC,1); }
+    else if(GEND.test(w[w.length-1])) add(st,end,'This sentence stops before the thought is finished. A word or two may be missing after “'+w[w.length-1]+'.”',1);
     else if(GSUB.test(core)&&core.indexOf(',')<0&&w.length<14) add(st,end,'A sentence that starts with “'+core.match(GSUB)[0]+'” needs two parts with a comma between them, like this: “When the heart contracts, blood moves out.” Check that this sentence has both parts and the comma.',1);
+    else if(/:/.test(core)) {}   /* labels and definitions, such as "Heart: the organ that pumps blood" */
+    else if(!sp.main) add(st,end,GINC,1);
+    else if(sp.unfinished!==null) add(st,end,'The part that starts with “'+tk[sp.unfinished]+'” is an incomplete thought. It needs to say what happens or what something is. Read it aloud to check for a missing word.',1);
     else if(w.length>40) add(st,end,'This sentence is very long ('+w.length+' words). Try splitting it into two or three sentences.',1);
   }
   /* whole-sentence problems and word problems are kept apart, so one never hides the other.
      Within each kind, keep the first problem when two overlap. */
+  /* when a missing-word hint already points inside a sentence, the general "incomplete thought" note is not needed */
+  out=out.filter(function(x){return !(x.wide&&x.msg===GINC&&out.some(function(y){return !y.wide&&y.a>=x.a&&y.b<=x.b&&/missing/.test(y.msg);}));});
   out.sort(function(x,y){return x.a-y.a||(y.wide-x.wide)||y.b-x.b;});
   var keep=[], to={0:-1,1:-1};
   out.forEach(function(x){ var k=x.wide?1:0; if(x.a>=to[k]){ keep.push(x); to[k]=x.b; } });
@@ -2005,32 +2092,49 @@ function grammarCheck(getText){
   return wrap;
 }
 
-/* Looks for key ideas with simple word matching. It never shows the answer and is not graded. */
+/* Looks for key ideas with word matching. It never shows the answer and is not graded.
+   Science ideas (what the answer says) and writing checks (sentences, transition words, highlights) are counted
+   separately, so writing two sentences never counts as a science idea. */
 function sentenceCount(t){return String(t||'').split(/[.!?]+/).filter(function(x){return words(x)>=3;}).length;}
+function sentencesOf(t){return String(t||'').split(/[.!?\n]+/).filter(function(x){return x.trim();});}
 function ideaCheck(getText,getHl,items){ /* getHl returns the answer's highlighted pieces (segs) */
   var wrap=h('div','ideas');
-  wrap.append(h('p','inote','Want a quick check before you move on? This looks for key ideas in your answer. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
+  wrap.append(h('p','inote','Want a quick check before you move on? This looks for the key science ideas in your answer and checks your writing steps. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
   var btn=h('button','btn','Check my ideas'); btn.type='button';
   var note=h('p','msg'); note.setAttribute('aria-live','polite');
-  var list=h('ul');
-  wrap.append(btn,note,list);
-  btn.addEventListener('click',function(){
-    var t=String(getText()||''), low=t.toLowerCase(), hl=getHl?getHl():[];
-    list.textContent='';
-    if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
-    var found=0;
-    items.forEach(function(it){
-      var ok=it.test?it.test(t,hl):it.re.test(low);
+  var groups=h('div','igroups');
+  wrap.append(btn,note,groups);
+  var sci=items.filter(function(it){return !it.writing;}), wr=items.filter(function(it){return it.writing;});
+  function group(title,list,t,hl){
+    var found=0, ul=h('ul');
+    list.forEach(function(it){
+      var ok=it.test(t,hl);
       if(ok) found++;
       var li=h('li'); li.dataset.s=ok?'ok':'todo';
       if(ok) li.append('✓ '+it.done);
       else { li.append('○ '+it.q+' '); var b=h('b',null,'Tip: '); li.append(b,it.tip); }
-      list.append(li);
+      ul.append(li);
     });
-    note.dataset.s=(found===items.length)?'ok':'';
-    note.textContent=(found===items.length)
-      ? 'Nice work. You covered all '+items.length+' ideas. Read your answer one more time to make sure it is clear.'
-      : 'I found '+found+' of '+items.length+' ideas. Add what is missing, then check again.';
+    var box=h('div','igroup'), hd=h('p','ihead');
+    hd.append(h('b',null,title+': '),found+' of '+list.length);
+    var bar=h('span','ibar'); bar.setAttribute('aria-hidden','true');
+    list.forEach(function(x,i){var d=h('i'); if(i<found) d.className='on'; bar.append(d);});
+    hd.append(bar);
+    box.append(hd,ul); groups.append(box);
+    return found;
+  }
+  btn.addEventListener('click',function(){
+    var t=String(getText()||''), hl=getHl?getHl():[];
+    groups.textContent='';
+    if(words(t)<5){ note.removeAttribute('data-s'); note.textContent='Write your answer first, then check it.'; return; }
+    var fs=sci.length?group('Science ideas',sci,t,hl):0, fw=wr.length?group('Writing',wr,t,hl):0;
+    var allSci=fs===sci.length, allWr=fw===wr.length;
+    note.dataset.s=(allSci&&allWr)?'ok':'';
+    note.textContent=(allSci&&allWr)
+      ? 'Nice work. You covered all the key ideas. Read your answer one more time to make sure it is clear.'
+      : !allSci
+        ? 'I found '+fs+' of '+sci.length+' key science ideas. Use the tips to add what is missing, then check again.'
+        : 'You covered all the key science ideas. Now finish the writing steps below.';
   });
   return wrap;
 }
@@ -2153,11 +2257,15 @@ function videoSection(){
   return s;
 }
 
-/* turns the ideas written in assignment.js into checks that ideaCheck can run */
+/* turns the ideas written in assignment.js into checks that ideaCheck can run.
+   re: the pattern is somewhere in the answer. all: every pattern is in the same sentence, so an idea can ask for
+   two things together (the coenzyme AND faster, the lungs AND oxygen). sentences, highlight and writing: true are
+   writing checks, listed apart from the science ideas. */
 function ideasFrom(list){
   return (list||[]).map(function(it){
-    var o={done:it.done,q:it.q,tip:it.tip};
-    if(it.re){ o.re=it.re; }
+    var o={done:it.done,q:it.q,tip:it.tip,writing:!!(it.writing||it.sentences||it.highlight)};
+    if(it.all){ var pats=it.all; o.test=function(t){return sentencesOf(t.toLowerCase()).some(function(x){return pats.every(function(r){return r.test(x);});});}; }
+    else if(it.re){ var re=it.re; o.test=function(t){return re.test(t.toLowerCase());}; }
     else if(it.sentences){ var k=it.sentences; o.test=function(t){return sentenceCount(t)>=k;}; }
     else if(it.highlight){ var col={claim:'b',evidence:'y',expand:'g'}[it.highlight]; o.test=function(t,segs){return segsHlWords(segs,col)>0;}; }
     else { o.test=function(){return false;}; }
@@ -3340,9 +3448,10 @@ function decorate(){
     e.preventDefault(); e.stopPropagation();
     if(tell) tell.remove();
     tell=h('div','cheer nocopy',msg); tell.setAttribute('role','status'); document.body.append(tell);
-    var me=tell; setTimeout(function(){me.classList.add('out');},2200); setTimeout(function(){me.remove();},2800);
+    var me=tell; setTimeout(function(){me.classList.add('out');},4000); setTimeout(function(){me.remove();},4600);
   }
-  var OUT='Copying is turned off for this assignment.', IN='Pasting is turned off. Type your answer in your own words.';
+  var HELP=' If you need help, please reach out to your teacher.';
+  var OUT='Copying is turned off for this assignment.'+HELP, IN='Pasting is turned off. Type your answer in your own words.'+HELP;
   ['copy','cut'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,OUT);},true); });
   ['paste','drop'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,IN);},true); });
   document.addEventListener('beforeinput',function(e){ if(/^insertFrom(Paste|Drop|Yank)/.test(e.inputType||'')) stop(e,IN); },true);

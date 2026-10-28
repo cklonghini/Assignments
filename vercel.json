@@ -101,6 +101,26 @@
       "permanent": false
     },
     {
+      "source": "/support-and-motion",
+      "destination": "/assignments/practice-support-and-motion/",
+      "permanent": false
+    },
+    {
+      "source": "/support-and-motion/",
+      "destination": "/assignments/practice-support-and-motion/",
+      "permanent": false
+    },
+    {
+      "source": "/practice-support-and-motion",
+      "destination": "/assignments/practice-support-and-motion/",
+      "permanent": false
+    },
+    {
+      "source": "/practice-support-and-motion/",
+      "destination": "/assignments/practice-support-and-motion/",
+      "permanent": false
+    },
+    {
       "source": "/cardiovascular-practice",
       "destination": "/assignments/practice-the-cardiovascular-system/",
       "permanent": false
