@@ -28,8 +28,9 @@ function injectPage(){
     +'<header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
-    +'<div class="maskrow"><button type="button" class="switch" id="maskSw" role="switch" aria-checked="false" aria-labelledby="maskLbl" aria-describedby="maskHint"><span class="knob"></span></button>'
-    +'<span id="maskLbl" class="masklbl">Focus mask</span><span id="maskHint" class="whint">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></div>'
+    +'<div class="maskrow"><span class="tipwrap" id="maskWrap"><button type="button" class="switch" id="maskSw" role="switch" aria-checked="false" aria-labelledby="maskLbl" aria-describedby="maskHint"><span class="knob"></span></button>'
+    +'<label for="maskSw" id="maskLbl" class="masklbl">Focus mask</label>'
+    +'<span id="maskHint" class="tip" role="tooltip">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></span></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
@@ -2226,6 +2227,12 @@ function focusMask(){
     if(keep){ try{ v?localStorage.setItem(MK,'1'):localStorage.removeItem(MK); }catch(e){} }
   }
   sw.addEventListener('click',function(){ set(!on,true); });
+  /* the switch's how-to shows on hover or keyboard focus; touch screens get it for a few seconds after a tap */
+  var mw=$('#maskWrap');
+  mw.addEventListener('pointerdown',function(e){
+    if(e.pointerType==='mouse') return;
+    mw.classList.add('tipon'); clearTimeout(mw._t); mw._t=setTimeout(function(){mw.classList.remove('tipon');},3500);
+  });
   document.addEventListener('focusin',function(e){ if(on) pick(unitOf(e.target)); });
   document.addEventListener('pointerdown',function(e){ if(on) pick(unitOf(e.target)); },true);
   window.addEventListener('scroll',function(){ if(on&&!raf) raf=requestAnimationFrame(fromScroll); },{passive:true});
