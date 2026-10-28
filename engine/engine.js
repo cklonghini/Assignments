@@ -2190,12 +2190,12 @@ function readBox(markup,label){
    The setting is kept in this browser for every assignment, so a student turns it on once. */
 function focusMask(){
   var sw=$('#maskSw'), MK='eaa-focus-mask', cur=null, on=false, raf=0;
-  function units(){ return [].filter.call(document.querySelectorAll('#app>.task>*:not(h2),#app>:not(.task)'),function(e){return e.offsetParent!==null||e.getClientRects().length;}); }
+  function units(){ return [].filter.call(document.querySelectorAll('#app>.task>*:not(h2):not(.lrow),#app>:not(.task)'),function(e){return e.offsetParent!==null||e.getClientRects().length;}); }
   function unitOf(el){
     while(el&&el.parentElement){
       var pa=el.parentElement;
       if(pa.id==='app') return el.classList.contains('task')?null:el;
-      if(pa.classList.contains('task')&&pa.parentElement&&pa.parentElement.id==='app') return el.tagName==='H2'?null:el;
+      if(pa.classList.contains('task')&&pa.parentElement&&pa.parentElement.id==='app') return el.tagName==='H2'||el.classList.contains('lrow')?null:el;
       el=pa;
     }
     return null;

@@ -494,6 +494,6 @@ details.readfold>summary:hover{background:rgba(23,112,63,.08)}
 .switch[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
 .switch[aria-checked="true"] .knob{left:25px;background:var(--gold)}
 .switch:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-body.masking #app>.task>*:not(h2):not(.mfocus),body.masking #app>:not(.task):not(.mfocus){opacity:.1;filter:grayscale(1);transition:opacity .2s}
+body.masking #app>.task>*:not(h2):not(.lrow):not(.mfocus),body.masking #app>:not(.task):not(.mfocus){opacity:.1;filter:grayscale(1);transition:opacity .2s}
 body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--gold);border-radius:8px}
 @media print{body.masking #app *{opacity:1!important;filter:none!important}}
