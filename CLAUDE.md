@@ -68,6 +68,8 @@ lab agreement, and a ready-to-go selfie `photo`.
 - Students enter first and last name at the top. The yellow "Stay on this page until you finish" box, the sticky
   progress bars (one per part, with only the "Backup saved at" time under them), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
   are part of the engine. Keep them.
+- A "Focus mask" switch under the name boxes is an accommodation (for example for students with IEPs): when it is on,
+  every section but the one the student is working on fades out. The browser remembers it for every assignment. Built into the engine.
 - Each part's green reading box (`read`) is folded under "Read this before you answer" until the student opens it. On
   highlight questions the instructions fold under "How to answer this question", and what each highlight color is for
   shows as a tip when the student points at or taps its button. This is built into the engine.

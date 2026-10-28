@@ -111,6 +111,10 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 
 Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
 
+**Focus mask:** every page has a "Focus mask" switch at the top (an accommodation). When it is on, every block of a part
+(a video, the reading box, a question) fades out except the one the student clicked, tabbed into, or scrolled to. Nothing
+in `assignment.js` turns it on or off; the student's browser remembers the setting for every assignment.
+
 `gate: true` (optional, one part only): every later part, and the Finish section with the PDF download, stays hidden
 until everything in this part and every part before it is done (every question answered right, every written or
 photo box filled in). A note under the part says which parts are locked.

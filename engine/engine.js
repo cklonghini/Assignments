@@ -28,6 +28,8 @@ function injectPage(){
     +'<header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
+    +'<div class="maskrow"><button type="button" class="switch" id="maskSw" role="switch" aria-checked="false" aria-labelledby="maskLbl" aria-describedby="maskHint"><span class="knob"></span></button>'
+    +'<span id="maskLbl" class="masklbl">Focus mask</span><span id="maskHint" class="whint">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
@@ -2182,6 +2184,55 @@ function readBox(markup,label){
   d.append(learn(markup)); return d;
 }
 
+/* Focus mask (an accommodation): when it is on, every section but the one the student is working on fades out.
+   A section is one block inside a part (a video, a reading box, a question). Clicking or tabbing into a section
+   brings it into focus; scrolling moves the focus once the current section leaves the middle of the screen.
+   The setting is kept in this browser for every assignment, so a student turns it on once. */
+function focusMask(){
+  var sw=$('#maskSw'), MK='eaa-focus-mask', cur=null, on=false, raf=0;
+  function units(){ return [].filter.call(document.querySelectorAll('#app>.task>*:not(h2),#app>:not(.task)'),function(e){return e.offsetParent!==null||e.getClientRects().length;}); }
+  function unitOf(el){
+    while(el&&el.parentElement){
+      var pa=el.parentElement;
+      if(pa.id==='app') return el.classList.contains('task')?null:el;
+      if(pa.classList.contains('task')&&pa.parentElement&&pa.parentElement.id==='app') return el.tagName==='H2'?null:el;
+      el=pa;
+    }
+    return null;
+  }
+  function pick(u){
+    if(!u||u===cur) return;
+    if(cur) cur.classList.remove('mfocus');
+    cur=u; cur.classList.add('mfocus');
+  }
+  function band(u){ var r=u.getBoundingClientRect(), H=window.innerHeight; return r.bottom>H*0.25&&r.top<H*0.6; }
+  function fromScroll(){
+    raf=0;
+    if(!on) return;
+    var fu=unitOf(document.activeElement);
+    if(fu&&band(fu)){ pick(fu); return; }
+    if(cur&&cur.isConnected&&band(cur)) return;
+    var line=window.innerHeight*0.4, best=null, bd=1e9;
+    units().forEach(function(u){
+      var r=u.getBoundingClientRect(), d=r.top<=line&&r.bottom>=line?0:Math.min(Math.abs(r.top-line),Math.abs(r.bottom-line));
+      if(d<bd){bd=d; best=u;}
+    });
+    pick(best);
+  }
+  function set(v,keep){
+    on=v; sw.setAttribute('aria-checked',v?'true':'false');
+    document.body.classList.toggle('masking',v);
+    if(v) fromScroll(); else if(cur){ cur.classList.remove('mfocus'); cur=null; }
+    if(keep){ try{ v?localStorage.setItem(MK,'1'):localStorage.removeItem(MK); }catch(e){} }
+  }
+  sw.addEventListener('click',function(){ set(!on,true); });
+  document.addEventListener('focusin',function(e){ if(on) pick(unitOf(e.target)); });
+  document.addEventListener('pointerdown',function(e){ if(on) pick(unitOf(e.target)); },true);
+  window.addEventListener('scroll',function(){ if(on&&!raf) raf=requestAnimationFrame(fromScroll); },{passive:true});
+  var saved=false; try{ saved=localStorage.getItem(MK)==='1'; }catch(e){}
+  if(saved) set(true,false);
+}
+
 /* ------------------------------------------------------------------ */
 /* Parts                                                               */
 /* ------------------------------------------------------------------ */
@@ -3510,6 +3561,7 @@ function render(){
   el.addEventListener('input',function(){S[k]=el.value;commit();});
 });
 render();
+focusMask();
 
 /* Time on task. Counts time while the student is active:
    - on this page: interacted in the last 3 minutes, or a video is playing;
