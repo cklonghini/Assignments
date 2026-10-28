@@ -102,7 +102,7 @@ lab agreement, and a ready-to-go selfie `photo`.
   attention to that evidence. Once they finish, they go back and highlight those transition words in yellow to show
   where their evidence is. The teacher wants this on the main written prompt that asks for evidence from the video.
 - Highlight questions that ask students to argue a point with evidence use claim-evidence-reasoning colors
-  (`cer: true`): claim in blue, evidence in yellow, expand on your thoughts in green. Use the plain yellow
+  (`cer: true`): claim in blue, evidence in yellow, reasoning/expand on your thoughts in green. Use the plain yellow
   transition-word highlight for answers that describe a process instead of arguing a claim.
 - **Every written question has 2 to 5 sentence starters** (`starters`) written for that question. They help students
   begin, use the video's words, and stop before the answer. Students

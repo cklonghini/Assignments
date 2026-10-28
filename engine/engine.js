@@ -252,7 +252,7 @@ function segsPlain(segs){return (segs||[]).map(function(s){return s[0];}).join('
 /* a highlight is false or a color: 'y' yellow, 'b' blue, 'g' green (true is yellow, from older saves).
    Claim-evidence-reasoning (cer) answers use all three: claim blue, evidence yellow, expand green. */
 var HLC={y:'rgb(255, 255, 0)',b:'rgb(0, 255, 255)',g:'rgb(0, 255, 0)'};
-var CERW={b:'CLAIM',y:'EVIDENCE',g:'EXPAND'};
+var CERW={b:'CLAIM',y:'EVIDENCE',g:'REASONING/EXPAND'};
 function hlCode(x){return x===true?'y':(x||false);}
 function segsText(segs,cer){
   return (segs||[]).map(function(s){
@@ -1830,7 +1830,7 @@ function richField(id){
   /* each button's tip (shown on hover, keyboard focus, or a tap) says what that color is for */
   var tools=c.cer?[['b','Claim (blue)','btn hl hlb','Claim (your opinion): select the words that give your claim, then press this button to highlight them in blue.'],
                    ['y','Evidence (yellow)','btn hl','Using evidence to support your view: select your evidence, then press this button to highlight it in yellow.'],
-                   ['g','Expand (green)','btn hl hlg','Expand on your thoughts: select where you explain how your evidence supports your claim, then press this button to highlight it in green.']]
+                   ['g','Reasoning/Expand (green)','btn hl hlg','Reasoning/Expand on your thoughts: select where you explain how your evidence supports your claim, then press this button to highlight it in green.']]
                  :[['y','Highlight selected text yellow','btn hl','Transition words that point to evidence: select them, then press this button to highlight them in yellow. This shows where your evidence is.']];
   tools.push([false,'Remove highlight','btn ghost','Select highlighted words, then press this button to take the color off.']);
   var bmsg=h('span','msg'); bmsg.setAttribute('aria-live','polite');
@@ -1856,7 +1856,7 @@ function richField(id){
     var all=c.cer?(segsHlWords(st.segs,'b')&&segsHlWords(st.segs,'y')&&segsHlWords(st.segs,'g')):hl;
     cnt.textContent=n+(n===1?' word':' words')+', '+hl+' highlighted';
     msg.textContent=!enough?'Write at least a couple of sentences.':all?'Saved. Your teacher grades this one.'
-      :c.cer?'Saved. Remember to highlight your claim in blue, your evidence in yellow, and where you expand on your thoughts in green.'
+      :c.cer?'Saved. Remember to highlight your claim in blue, your evidence in yellow, and your reasoning (where you expand on your thoughts) in green.'
       :'Saved. Remember to highlight your transition words in yellow.';
     wrap.dataset.s=enough?'ok':'idle';
   }
@@ -2320,7 +2320,7 @@ function videoSection(){
       else if(nHl===1) after+=', and in one of them you will use transition words to point to your evidence and highlight them in yellow';
       else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
       after+='.';
-      if(nCer) after+=' In '+(nCer===nW?(nW===1?'it':'each one'):(nCer===1?'one of them':'some of them'))+', you will make a claim, support it with evidence, and expand on your thoughts, then highlight each part in its own color.';
+      if(nCer) after+=' In '+(nCer===nW?(nW===1?'it':'each one'):(nCer===1?'one of them':'some of them'))+', you will make a claim, support it with evidence, and give your reasoning (expand on your thoughts), then highlight each part in its own color.';
     }
     after+=photoSentence(qs);
     if(GATED) after+=' Each part opens when you finish the one before it.';
@@ -2418,7 +2418,7 @@ function buildQuestion(q,s,tile){
     how.append(h('summary',null,'How to answer this question'), howin);
     (q.cer?[
       h('p',null,'Respond to the question in the space below. Remember to answer the question fully.'),
-      h('p',null,'Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then expand on your thoughts to explain how your evidence supports your claim.'),
+      h('p',null,'Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then give your reasoning: expand on your thoughts to explain how your evidence supports your claim.'),
       h('p',null,'Once you have finished, highlight parts of your response. Select the words, then press the matching color button. Point at a button to see what it is for.')
     ]:[
       h('p',null,'Respond to the question in the space below. Remember to answer the question fully.'),
@@ -2436,7 +2436,7 @@ function buildQuestion(q,s,tile){
     if(q.cer) ideas=ideas.concat([
       {done:'You highlighted your claim in blue.',q:'Did you highlight your claim in blue?',tip:'Select the sentence that gives your answer, then press the blue Claim button.',highlight:'claim'},
       {done:'You highlighted your evidence in yellow.',q:'Did you highlight your evidence in yellow?',tip:'Select the facts or examples you used to support your claim, then press the yellow Evidence button.',highlight:'evidence'},
-      {done:'You highlighted where you expand on your thoughts in green.',q:'Did you highlight where you expand on your thoughts in green?',tip:'Select the sentences that explain how your evidence supports your claim, then press the green Expand button.',highlight:'expand'}]);
+      {done:'You highlighted your reasoning in green.',q:'Did you highlight your reasoning (where you expand on your thoughts) in green?',tip:'Select the sentences that explain how your evidence supports your claim, then press the green Reasoning/Expand button.',highlight:'expand'}]);
     if(ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return (S.rich[id]||{}).segs;},ideasFrom(ideas)));
   } else if(t==='agree'){
     ids=[];
@@ -2972,7 +2972,7 @@ function buildSummary(){
   p.res.forEach(function(r){L.push(r[0]+': '+r[1]);});
   var anyCer=Object.keys(R).some(function(k){return R[k].cer;}), anyHl=Object.keys(R).some(function(k){return !R[k].cer;});
   if(anyHl) L.push('(Text inside [[double brackets]] was highlighted in yellow as transition words that point to evidence.)');
-  if(anyCer) L.push('(In claim-evidence answers, [CLAIM: …] was highlighted blue, [EVIDENCE: …] yellow, and [EXPAND: …] green.)');
+  if(anyCer) L.push('(In claim-evidence answers, [CLAIM: …] was highlighted blue, [EVIDENCE: …] yellow, and [REASONING/EXPAND: …] green.)');
   L.push('');
   p.groups.forEach(function(g){
     L.push((g.num!==''?g.num+'. ':'')+plain(g.text));
@@ -3292,7 +3292,7 @@ function finishEl(){
   });
 
   var txtd=h('details','backup'); txtd.append(h('summary',null,'Can’t download? Copy my answers as text'));
-  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted transition words will be marked with [[double brackets]]'+(Object.keys(R).some(function(k){return R[k].cer;})?', and your claim, evidence, and expanding will be marked [CLAIM: …], [EVIDENCE: …], and [EXPAND: …]':'')+'.'));
+  txtd.append(h('p','intro','Only use this if the PDF won’t download. Copy the text, then paste it into the Text Entry box on the Canvas assignment. Your highlighted transition words will be marked with [[double brackets]]'+(Object.keys(R).some(function(k){return R[k].cer;})?', and your claim, evidence, and expanding will be marked [CLAIM: …], [EVIDENCE: …], and [REASONING/EXPAND: …]':'')+'.'));
   var tr=h('div','row');
   var tmake=h('button','btn ghost','Show my answers as text'); tmake.type='button';
   tr.append(tmake); txtd.append(tr);

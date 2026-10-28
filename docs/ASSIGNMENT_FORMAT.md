@@ -367,12 +367,12 @@ Give these questions a "used transition words" idea (a pattern for common eviden
 The highlighted words are marked with `[[double brackets]]` in the Canvas text-entry fallback and in yellow on the PDF.
 
 **Claim, evidence, reasoning:** add `cer: true` to a highlight question that asks students to argue a point with
-evidence. Students then make a claim, support it with evidence, and expand on their thoughts, and highlight each part
-in its own color with three buttons: claim in blue, evidence in yellow, expand in green (the teacher's colors). `from`
+evidence. Students then make a claim, support it with evidence, and give their reasoning (expand on their thoughts), and highlight each part
+in its own color with three buttons: claim in blue, evidence in yellow, reasoning/expand in green (the teacher's colors). `from`
 names the evidence source in the instructions (default `'the video'`, for example `'Station 3'` or `'your dissection
 and the video'`). The engine adds three "Check my ideas" items (claim, evidence, and expand highlighted) and drops any
 `highlight: true` idea. The PDF shows the three colors, and the text fallback marks them `[CLAIM: …]`, `[EVIDENCE: …]`,
-`[EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
+`[REASONING/EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
 A question changed from `written` to `highlight` keeps any answer a student already typed: it moves into the new box.
 
 ### photo: the student adds a photo of their own work (teacher graded)
