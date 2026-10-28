@@ -167,6 +167,7 @@ window.ASSIGNMENT = {
           at: 37.8,
           type: 'selects',
           text: 'The video names connective tissue in the skeletal system. What does each one generally connect?',
+          easy: 'The video names connective tissues in the skeletal system. What does each one usually connect?',
           options: ['Bone to bone', 'Muscle to bone'],
           items: [
             { label: 'Ligaments', answer: 'Bone to bone', hint: 'Rewind to about 0:30. Ligaments are named first.' },
@@ -211,7 +212,7 @@ window.ASSIGNMENT = {
           options: ['Osteoblasts', 'Osteocytes', 'Osteoclasts'],
           items: [
             { label: 'Make bone', answer: 'Osteoblasts', hint: 'Rewind to about 4:32. These cells are named first.' },
-            { label: 'Maintain bone structure; most of the bone cells', answer: 'Osteocytes', hint: 'Rewind to about 4:36. These cells are what the bone-making cells mature into.' },
+            { label: 'Maintain bone structure; most of the bone cells', easy: 'Keep bone healthy (maintain it); most bone cells are this kind', answer: 'Osteocytes', hint: 'Rewind to about 4:36. These cells are what the bone-making cells mature into.' },
             { label: 'Break down bone, using lysosomes', answer: 'Osteoclasts', hint: 'Rewind to about 4:44. Think of the wrecking ball.' }
           ]
         },
@@ -219,6 +220,7 @@ window.ASSIGNMENT = {
           at: 513.8,
           type: 'choice',
           text: 'In osteogenesis imperfecta, bones are brittle and break easily. Which protein does the video say is affected?',
+          easy: 'Osteogenesis imperfecta is a condition where bones are brittle (weak) and break easily. The video says it affects a protein. Which protein?',
           options: ['Collagen', 'Hemoglobin', 'Calcium', 'Chitin'], answer: 0,
           explain: 'Right. Osteogenesis imperfecta affects how collagen is made. The video reminds you that collagen is the major protein in bone.',
           tip: 'Rewind to about 8:13. The video says, “If you recall from the very beginning of our video…”'
@@ -242,6 +244,7 @@ window.ASSIGNMENT = {
         {
           type: 'label',
           text: 'Label the skeleton. Drag each label to the box with the matching number, then press “Check my labels.” The skeleton is facing you.',
+          easy: 'Label the skeleton. Drag each label to the box with the same number. Then press “Check my labels.” The skeleton is facing you.',
           viewBox: '-250 0 1010 1080',
           image: { src: 'media/skeleton-diagram.jpg', width: 510, height: 1080 },
           alt: 'Drawing of a whole human skeleton, facing forward, with 11 numbered parts',
@@ -314,7 +317,7 @@ window.ASSIGNMENT = {
           options: ['Osteoblast', 'Osteocyte', 'Osteoclast', 'Chondroblast', 'Chondrocyte'],
           items: [
             { label: 'Makes bone', answer: 'Osteoblast', hint: 'Think “B” for build.' },
-            { label: 'Maintains bone; most of the cells in bone', answer: 'Osteocyte', hint: 'Bone-making cells mature into these.' },
+            { label: 'Maintains bone; most of the cells in bone', easy: 'Keeps bone healthy (maintains it); most cells in bone are this kind', answer: 'Osteocyte', hint: 'Bone-making cells mature into these.' },
             { label: 'Breaks down bone', answer: 'Osteoclast', hint: 'These cells have many lysosomes.' },
             { label: 'Makes cartilage', answer: 'Chondroblast', hint: 'Near the end of the clip, listen for the cells that make the connective tissue cartilage.' },
             { label: 'Maintains cartilage', answer: 'Chondrocyte', hint: 'Cartilage-making cells mature into these.' }
@@ -323,6 +326,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why does the body break down bone in bone remodeling?',
+          easy: 'In bone remodeling, the body breaks down some bone. Why does it do this?',
           options: [
             'To remove old or damaged bone so it can be replaced, and to release minerals like calcium',
             'Because bones stop being alive after early adulthood',
@@ -336,6 +340,7 @@ window.ASSIGNMENT = {
           type: 'highlight',
           cer: true,
           text: 'The video says that bones are a LIVING tissue. Do you agree? Make a claim, support it with at least two pieces of evidence from the video, and expand on your thinking. (4 to 6 sentences)',
+          easy: 'The video says that bones are a LIVING tissue. Do you agree? (1) Make a claim: are bones living or not? (2) Give at least two pieces of evidence from the video. (3) Explain your thinking: tell why your evidence supports your claim. Write 4 to 6 sentences.',
           min: 120,
           starters: [
             'I claim that bones are …',
@@ -380,6 +385,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why does a fracture hematoma form after a bone breaks?',
+          easy: 'A fracture hematoma (a collection of blood) forms where a bone breaks. Why does it form?',
           options: ['Bones are very vascular, so blood collects at the break', 'Yellow marrow turns into blood', 'Cartilage melts at the break', 'Osteoclasts make blood cells'], answer: 0,
           explain: 'Right. Bones have a rich blood supply, so a break causes blood to collect at the site.',
           tip: 'The clip says the hematoma forms “because again bones are very…” What word finishes that?'
@@ -387,6 +393,7 @@ window.ASSIGNMENT = {
         {
           type: 'highlight',
           text: 'Maya broke her arm playing soccer. Explain how her bone heals, step by step, from the day it breaks until new bone is made. Name the cells that help at each step. (4 to 6 sentences)',
+          easy: 'Maya broke her arm playing soccer. Explain how her bone heals. Go step by step, from the day it breaks until new bone is made. At each step, name the cells that help. Write 4 to 6 sentences.',
           min: 120,
           starters: [
             'First, right after the break, …',

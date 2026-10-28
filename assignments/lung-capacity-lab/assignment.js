@@ -113,6 +113,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Hypotheses: Make a prediction about the relationship between lung capacity and each factor: sex, age, height, and activity level. Tell why you think so. (4 or more sentences)',
+          easy: 'Hypotheses: Make a prediction (a guess you can test) for each factor: sex, age, height, and activity level. For each one, tell how you think it relates to lung capacity. Tell why you think so. Write 4 or more sentences.',
           starters: ['I predict that sex will affect lung capacity because …', 'I think older students will have … lung capacity because …', 'If a person is taller, then I predict …', 'I think people who are more active will … because …'],
           min: 120,
           placeholder: 'Sex: I predict...\nAge: I predict...\nHeight: I predict...\nActivity level: I predict...',
@@ -154,6 +155,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Measuring the diameter: Choose the right answer for each step, the way the video shows it.',
+          easy: 'Measuring the diameter (the distance across the balloon): Pick the right answer for each step. Do it the way the video shows.',
           items: [
             { label: 'Where does the balloon go?', options: ['Flat on the table', 'Held up in the air', 'Taped to the wall'], answer: 'Flat on the table', hint: 'Rewatch the setting up clip. Where does the balloon sit while you measure it?' },
             { label: 'Where does the zero end of the ruler go?', options: ['On the table', 'At the top of the balloon', 'In the middle of the balloon'], answer: 'On the table', hint: 'The ruler stands up beside the balloon. Which end touches the table?' },
@@ -184,6 +186,7 @@ window.ASSIGNMENT = {
         {
           type: 'order',
           text: 'Put the steps for one tidal volume trial in order.',
+          easy: 'Put the steps in order. They are the steps for one tidal volume trial (measuring one normal breath one time).',
           items: [
             'Stretch the balloon five times to loosen it up.',
             'Take a normal breath.',
@@ -198,6 +201,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'When you measure expiratory reserve volume, why must you NOT take a breath in between the normal breath out and blowing into the balloon?',
+          easy: 'When you measure expiratory reserve volume, you first breathe out normally. Then you blow into the balloon. Why must you NOT take a breath in between?',
           options: [
             'A new breath would add air that is not part of the expiratory reserve volume, so the balloon would be too big.',
             'A new breath would pop the balloon.',
@@ -211,6 +215,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Which student should NOT collect personal data for this lab?',
+          easy: 'Which student should NOT measure their own lungs (collect personal data) in this lab?',
           options: [
             'A student who plays on the soccer team',
             'A student who is the shortest in the class',
@@ -242,6 +247,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why does each measurement have three trials that are then averaged?',
+          easy: 'Each measurement is done three times (three trials). Then the three numbers are averaged. Why?',
           options: [
             'So the balloon gets stretched out more each time.',
             'Because one trial could be off by accident, and an average of several trials is more reliable.',
@@ -255,6 +261,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Data Table 1: Find Maya’s average balloon diameter for each lung volume. You can use the calculator.',
+          easy: 'Data Table 1: Find Maya’s average balloon diameter for each lung volume. To find an average, add the three trials. Then divide by 3. You can use the calculator.',
           calculator: true,
           unit: 'cm',
           items: [
@@ -266,6 +273,7 @@ window.ASSIGNMENT = {
         {
           type: 'readgraph',
           text: 'Data Table 2: Use Figure 1 to turn each of Maya’s average diameters into a lung volume. Move the slider to the average diameter you found above, then read the lung volume where the dashed line meets the y-axis. Round to the nearest 50.',
+          easy: 'Data Table 2: Use Figure 1 to change each of Maya’s average diameters into a lung volume. First, move the slider to the average diameter you found above. Then read the lung volume where the dashed line meets the y-axis (the side of the graph). Round to the nearest 50.',
           graph: {
             title: 'Figure 1: The relationship between balloon diameter and lung volume',
             alt: 'Graph of lung volume in cubic centimeters (0 to 8,000) against balloon diameter in centimeters (0 to 25). The curve starts flat and gets steeper as the diameter grows. A dashed line shows the point for the diameter on the slider.',
@@ -285,6 +293,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Vital capacity calculated: Use the formula and Maya’s numbers from Figure 1. Maya is female, so use the average inspiratory reserve volume for an adult female.',
+          easy: 'Vital capacity calculated: Use the formula to find Maya’s vital capacity. Use her numbers from Figure 1. Maya is female. So use the average inspiratory reserve volume for an adult female.',
           calculator: true,
           unit: 'cm³',
           items: [
@@ -294,6 +303,7 @@ window.ASSIGNMENT = {
         {
           type: 'numbers',
           text: 'Vital capacity researched: An online vital capacity calculator uses a person’s sex, age, and height. For Maya it says 3.3 liters. Change this to cm³.',
+          easy: 'Vital capacity researched: An online calculator says Maya’s vital capacity is 3.3 liters. Change 3.3 liters into cm³.',
           calculator: true,
           unit: 'cm³',
           items: [
@@ -303,6 +313,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Compare Maya’s three vital capacities: measured with the balloon, calculated with the formula, and researched online. Which one is the lowest?',
+          easy: 'Look at Maya’s three vital capacities: (1) measured with the balloon, (2) calculated with the formula, and (3) researched online. Which one is the lowest?',
           options: ['Measured with the balloon', 'Calculated with the formula', 'Researched online', 'They are all exactly the same'],
           answer: 0,
           explain: 'The balloon (measured) value is the lowest. It is a little less than the researched value and a few hundred cm³ less than the calculated value.',
@@ -311,6 +322,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Which is the best explanation for why the balloon measurement could come out lower than the other two?',
+          easy: 'The balloon measurement could come out lower than the other two. What is the best reason why?',
           options: [
             'The balloon makes the lungs smaller.',
             'Some air can escape before the balloon is pinched, and a balloon is hard to blow into, so it is easy to stop before the lungs are truly empty.',
@@ -339,6 +351,7 @@ window.ASSIGNMENT = {
         {
           type: 'graph',
           text: 'Build your graph. Choose a factor, then work through the steps. Your graph updates as you go. When it is right, you will see the graphs for the other three factors too. Use the calculator to find averages for a bar graph.',
+          easy: 'Build your graph. First, choose a factor. Then do the steps one at a time. Your graph changes as you go. When it is right, you will see the graphs for the other three factors too. For a bar graph, use the calculator to find averages.',
           calculator: true,
           graph: {
             rows: CLASS,
@@ -392,6 +405,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Which of the four factors were we NOT able to properly investigate as a class, and why?',
+          easy: 'Our class could NOT properly test one of the four factors. Which factor was it, and why?',
           options: [
             'Sex, because there were more males than females.',
             'Height, because everyone was the same height.',
@@ -407,6 +421,7 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the class data and graphs',
           text: 'Analysis: Explain what the class data show. Tell how each factor (sex, height, age, and activity level) relates to vital capacity, and use numbers or patterns from the data and graphs as evidence. Then write out at least three ways the data may not be completely accurate, with a specific way to fix each problem in the future. (6 or more sentences)',
+          easy: 'Analysis: Explain what the class data show. Do all of these: (1) Tell how each factor (sex, height, age, and activity level) relates to vital capacity. (2) Use numbers or patterns from the data and graphs as evidence. (3) Name at least three ways the data may not be completely accurate (right). (4) For each problem, give a specific way to fix it next time. Write 6 or more sentences.',
           starters: ['The class data show that …', 'According to the graph, as height increases, …', 'For example, the average vital capacity for … was …', 'One reason the data may not be accurate is …', 'To fix this in the future, we could …'],
           examples: 'Examples: “According to the data,” “The graph shows that,” “For example,” “One piece of evidence is,” or “This shows that.”',
           min: 250,
@@ -440,6 +455,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why is a high lung capacity more important for athletes and singers than for the average person?',
+          easy: 'Athletes and singers need a high lung capacity more than most people. Why?',
           options: [
             'Athletes need more oxygen for their working muscles, and singers need a long, steady stream of air.',
             'Athletes and singers need to hold their breath longer to stay calm.',
@@ -475,6 +491,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'How does each disease cause respiratory distress?',
+          easy: 'Respiratory distress means trouble breathing. How does each disease cause it?',
           options: ['The airways swell and get narrow', 'The walls of the alveoli are damaged', 'The alveoli fill with fluid', 'Thick, sticky mucus clogs the airways'],
           items: [
             { label: 'Asthma', answer: 'The airways swell and get narrow', hint: 'Find asthma in the list. What happens to the airways?' },
@@ -488,6 +505,7 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the class data and graphs',
           text: 'Conclusion: Do the class data support your hypotheses from Part 2? Give a possible explanation for the results, and say whether they make sense. Then choose one disease from the reading and explain how it causes respiratory distress and how you think it affects lung capacity. Finally, describe one way this lab could be redesigned to investigate a different question about lung capacity. (5 or more sentences)',
+          easy: 'Conclusion: Answer all of these. (1) Do the class data support your hypotheses (predictions) from Part 2? (2) Give a possible explanation for the results. Do they make sense? (3) Choose one disease from the reading. Explain how it causes respiratory distress (trouble breathing). Tell how you think it affects lung capacity. (4) Describe one way to change this lab to test a different question about lung capacity. Write 5 or more sentences.',
           starters: ['The class data (support / do not support) my hypothesis that …', 'For example, the average vital capacity for … was …', 'A possible explanation for these results is …', 'The disease I chose is … It causes respiratory distress by …', 'To investigate a different question, this lab could be redesigned by …'],
           min: 200,
           ideas: [

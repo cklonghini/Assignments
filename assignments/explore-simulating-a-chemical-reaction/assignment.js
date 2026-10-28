@@ -48,6 +48,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Hypothesis: Make a prediction about how you think each factor will affect the rate of a chemical reaction. Write one prediction for each trial: baseline, denatured, coenzyme, and competitive inhibitor. (4 or more sentences)',
+          easy: 'Hypothesis (your best guess): How will each factor change the rate (speed) of the chemical reaction? Write one prediction for each of the 4 trials: baseline, denatured, coenzyme, and competitive inhibitor. (4 or more sentences)',
           starters: ['In the baseline trial, I predict that the reaction rate will …', 'If the enzyme is denatured, I think the rate will … because …', 'When a coenzyme is added, I predict that …', 'With a competitive inhibitor, I think the reaction will … because …'],
           min: 80,
           placeholder: 'Baseline: I predict...\nDenatured: I predict...\nCoenzyme: I predict...\nCompetitive inhibitor: I predict...',
@@ -85,6 +86,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Match each part of the real reaction to what represented it in the model.',
+          easy: 'In the model, everyday things stand for the parts of a real reaction. Match each part to what stood for it in the model.',
           options: ['Flipping a penny heads up onto the desk', 'Mrs. Kinzy’s hand', 'The pennies', 'The tennis ball'],
           items: [
             { label: 'What represented the enzyme in the model?', answer: 'Mrs. Kinzy’s hand',
@@ -106,6 +108,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'In this experiment, how could you measure the rate of the reaction?',
+          easy: 'The rate is how fast a reaction happens. In this experiment, how could you measure the rate?',
           options: ['Count how many pennies get flipped in a set amount of time', 'Count how many fingers are on the hand', 'Measure how heavy the pennies are', 'Check the year printed on each penny'],
           answer: 0,
           explain: 'Rate means how fast. Counting how many pennies are flipped in a set time measures how fast the reaction goes.',
@@ -156,6 +159,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Describe how taping my thumb acted as a denatured enzyme. (2 to 4 sentences)',
+          easy: 'In the video, I taped my thumb. Explain how this was like a denatured enzyme. (2 to 4 sentences)',
           starters: ['Taping my thumb acted like a denatured enzyme because …', 'When my thumb was taped, …', 'As a result, the rate of the reaction …'],
           min: 40,
           ideas: [
@@ -195,6 +199,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Many coenzymes come from which part of your diet?',
+          easy: 'Many coenzymes come from the food you eat. Which part of your food do they come from?',
           options: ['Water', 'Vitamins', 'Salt', 'Sugar'],
           answer: 1,
           explain: 'Many coenzymes are made from vitamins, which is one reason vitamins are important.',
@@ -203,6 +208,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'In the coenzyme trial, during which time period were all 100 pennies flipped?',
+          easy: 'Look at the coenzyme trial table. In which time period were all 100 pennies flipped?',
           options: ['21 to 30 seconds', '41 to 50 seconds', '71 to 80 seconds', 'They never all got flipped'],
           answer: 1,
           explain: 'The table first reaches 100 in the 41 to 50 second row. That is less than half the time of the full trial.',
@@ -211,6 +217,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Describe how having Mrs. Kinzy’s niece flip pennies with her acted as a coenzyme. (2 to 4 sentences)',
+          easy: 'Mrs. Kinzy’s niece helped her flip the pennies. Explain how this was like a coenzyme. (2 to 4 sentences)',
           starters: ['Mrs. Kinzy’s niece acted like a coenzyme because …', 'With her niece helping, …', 'This shows that a coenzyme …'],
           min: 40,
           ideas: [
@@ -258,6 +265,7 @@ window.ASSIGNMENT = {
         {
           type: 'typed',
           text: 'Holding the tennis ball, how many pennies had Mrs. Kinzy flipped by the end of the 81 to 90 second time period? Type the number.',
+          easy: 'Look at the tennis ball trial. How many pennies did Mrs. Kinzy flip by the end of the 81 to 90 second time period? Type the number.',
           expected: '40',
           aria: 'Pennies flipped in the competitive inhibitor trial',
           tip: 'Find the 81 to 90 row in the Trial 4 table.'
@@ -265,6 +273,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Describe how holding the tennis ball acted as a competitive inhibitor. (2 to 4 sentences)',
+          easy: 'In the video, I held a tennis ball while I flipped pennies. Explain how this was like a competitive inhibitor. (2 to 4 sentences)',
           starters: ['Holding the tennis ball acted like a competitive inhibitor because …', 'While my hand was holding the tennis ball, …', 'This is similar to an inhibitor that …'],
           min: 40,
           ideas: [
@@ -297,6 +306,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Use the data table. Compared to the baseline trial, was each reaction faster or slower?',
+          easy: 'Use the data table. Compare each trial to the baseline trial. Was each reaction faster or slower?',
           options: ['Faster', 'Slower'],
           hint: 'Compare each column to the Baseline column in the same rows.',
           items: [
@@ -316,6 +326,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Real World Connection: Most enzymes in the human body work best at 37°C (98.6°F). What do you think this means then when you are sick? (2 to 4 sentences)',
+          easy: 'Real World Connection: Most enzymes in your body work best at 37°C (98.6°F). That is normal body temperature. What do you think this means when you are sick? (2 to 4 sentences)',
           starters: ['If most enzymes work best at 37°C, then when I have a fever …', 'Because of this, my enzymes might …', 'This could explain why, when I am sick, …'],
           min: 40,
           ideas: [
@@ -335,6 +346,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'In relation to your answer to the last question, pretend scientists discover an enzyme in the human body that works best at 39°C (102.2°F). What processes do you think this enzyme is most likely involved in? (2 to 4 sentences)',
+          easy: 'Think about your answer to the last question. Now pretend scientists find an enzyme in the human body that works best at 39°C (102.2°F). What body processes (jobs) do you think this enzyme most likely helps with? (2 to 4 sentences)',
           starters: ['An enzyme that works best at 39°C would be most active when …', 'I think this enzyme is involved in … because …', 'This would help the body …'],
           min: 40,
           ideas: [
