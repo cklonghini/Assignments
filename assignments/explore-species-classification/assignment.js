@@ -70,6 +70,7 @@ window.ASSIGNMENT = {
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the video',
           text: 'Scientists have changed how living things are classified over time. Why is it not enough to group organisms only by how they look, and how does DNA evidence help? Use at least one idea from the video. (2 to 4 sentences)',
+          easy: 'Scientists have changed how they group living things. Answer two questions. 1. Why is it not enough to group living things only by how they look? 2. How does DNA evidence help? Use at least one idea from the video. (2 to 4 sentences)',
           starters: ['Grouping organisms only by how they look is not enough because …', 'According to the video, …', 'For example, two organisms can look alike but …', 'This shows that DNA evidence …'],
           min: 40,
           ideas: [
@@ -98,6 +99,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Put the levels in order, from the broadest group to the most specific group.',
+          easy: 'Put the 8 levels in order. Start with the biggest group (the most organisms). End with the smallest group (the fewest organisms).',
           note: 'Spot 1 is the broadest (most organisms)',
           options: ['Class', 'Domain', 'Family', 'Genus', 'Kingdom', 'Order', 'Phylum', 'Species'],
           hint: 'Think about which level holds the most organisms and which holds the fewest.',
@@ -111,6 +113,7 @@ window.ASSIGNMENT = {
         {
           type: 'mnemonic',
           text: 'Make your own memory trick. Write a silly sentence where each word starts with the first letter of a level, in order: D, K, P, C, O, F, G, S. The video shares one. Make yours different if you can.',
+          easy: 'Make your own memory trick. Write a silly sentence with 8 words. Each word starts with these letters, in this order: D, K, P, C, O, F, G, S. The video shows one. Try to make yours different.',
           words: ['Domain', 'Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species']
         }
       ]
@@ -129,6 +132,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Pick the domain for each organism. For the organisms in domain Eukarya, also pick the kingdom.',
+          easy: 'Pick the domain for each living thing. If it is in domain Eukarya, also pick its kingdom.',
           items: [
             { label: 'Human: domain', options: ['Archaea', 'Bacteria', 'Eukarya'], answer: 'Eukarya', hint: 'Is it a prokaryote or a eukaryote? Reread the reading above.' },
             { label: 'Human: kingdom', options: ['Animalia', 'Fungi', 'Plantae', 'Protista'], answer: 'Animalia', hint: 'Think about how it gets food and how many cells it has.' },
@@ -165,6 +169,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'The sea otter is *Enhydra lutris*. What is its species (the specific epithet)?',
+          easy: 'The sea otter\'s scientific name is *Enhydra lutris*. What is its species name (also called the specific epithet)?',
           options: ['*Enhydra*', '*lutris*', '*Enhydra lutris*', 'Mustelidae'], answer: 1,
           explain: 'The second word is the species (the specific epithet). The first word is the genus.',
           tip: 'A scientific name has two words. Which one is the genus? The species is the other one.'
@@ -172,6 +177,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'When you write a scientific name by hand, how do you show it is a scientific name?',
+          easy: 'You write a scientific name with a pen or pencil. How do you show that it is a scientific name?',
           options: ['Circle it', 'Underline it', 'Write it in all capitals', 'Put it in quotation marks'], answer: 1,
           explain: 'Typed names are italicized. Handwritten names are underlined.',
           tip: 'Typed names are in italics. What can you do with a pen or pencil to mark a name the same way?'
@@ -179,6 +185,7 @@ window.ASSIGNMENT = {
         {
           type: 'choice',
           text: 'Why do scientists use scientific names instead of only common names?',
+          easy: 'A common name is an everyday name, like “mountain lion.” Why do scientists use scientific names and not only common names?',
           options: ['Scientific names are standardized and the same worldwide', 'Common names are not allowed in science', 'Every organism has only one common name', 'Scientific names are always shorter'], answer: 0,
           explain: 'Common names change from place to place. A scientific name points to one specific organism everywhere.',
           tip: 'Think about the big cat in the video that has three common names. What does its scientific name do that those names do not?'
@@ -186,6 +193,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'The white oak is *Quercus alba*. Choose the genus and the species.',
+          easy: 'The white oak tree\'s scientific name is *Quercus alba*. Which word is the genus? Which word is the species?',
           sci: true,
           options: ['Quercus', 'alba'],
           items: [
@@ -196,6 +204,7 @@ window.ASSIGNMENT = {
         {
           type: 'typed',
           text: 'This sea otter name is written incorrectly: *enhydra Lutris*. Type it correctly (capitalization matters).',
+          easy: 'This sea otter name has mistakes: *enhydra Lutris*. Type it the right way. Watch your capital letters.',
           expected: 'Enhydra lutris',
           aria: 'Corrected sea otter name',
           caseTip: 'your letters are right. Check which words should start with a capital letter and which should not.',
@@ -205,6 +214,7 @@ window.ASSIGNMENT = {
           type: 'highlight',
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           text: 'Carl Linnaeus developed the binomial nomenclature system for naming species, which is still in use today. Discuss the advantages of using scientific names over common names when identifying species. Provide examples from the video, such as the mountain lion (also called a cougar or a puma), to explain why scientific names are important for consistency in classification.',
+          easy: 'Carl Linnaeus made binomial nomenclature (a two-part naming system). Scientists still use it today. Explain why scientific names are better than common names for naming a species. Use examples from the video, like the mountain lion (also called a cougar or a puma). Explain why scientific names help everyone name living things the same way.',
           starters: ['One advantage of scientific names is …', 'According to the video, the mountain lion …', 'For example, …', 'This shows that scientific names …'],
           min: 40,
           ideas: [
@@ -252,6 +262,7 @@ window.ASSIGNMENT = {
           explain: 'The genus is the first word of the scientific name, *Balaenoptera musculus*.',
           tip: 'Find the blue whale row, then look under the Genus column.' },
         { type: 'choice', text: 'Which organisms share the MOST levels of classification with each other?',
+          easy: 'Use the table. Which two animals are in the most of the same groups (levels)?',
           options: ['Blue whale and great white shark', 'Orca and great white shark', 'Bottlenose dolphin and orca', 'Blue whale and bottlenose dolphin'], answer: 2,
           explain: 'The dolphin and orca share the same class and family. The others share fewer levels.',
           tip: 'Compare the rows. For each pair, count how many columns have the same word.' },

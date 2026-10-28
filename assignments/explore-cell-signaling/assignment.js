@@ -36,6 +36,7 @@ window.ASSIGNMENT = {
           at: 74,
           type: 'typed',
           text: 'The video says we will be talking a lot about one kind of molecule. What is the name of the molecule that a signal molecule can bind to?',
+          easy: 'A signal molecule can bind (attach) to another molecule. The video says we will talk about this molecule a lot. What is its name?',
           accept: ['receptor', 'receptors', 'a receptor', 'the receptor', 'receptor protein', 'receptor proteins', 'a receptor protein'],
           okMsg: 'Correct. A receptor is a molecule, such as a protein, where a signal molecule can bind. Many receptors are on the surface of the cell membrane.',
           tip: 'Rewind to about 1:06 and listen for the word the video says we will be talking a lot about. (A ligand is the signal molecule itself.)',
@@ -45,6 +46,7 @@ window.ASSIGNMENT = {
           at: 117.5,
           type: 'choice',
           text: 'The video says the signal molecule can be considered a ligand. What does it say a ligand is?',
+          easy: 'The video says a signal molecule can be called a ligand. What is a ligand?',
           options: ['The smaller molecule that binds to a typically larger molecule, such as a receptor', 'A large protein in the cell membrane that catches signals', 'The change a cell makes after it gets a signal', 'A connection between two cells that touch'],
           answer: 0,
           tip: 'Rewind to about 1:34. Listen for what “ligand” basically means, and whether it is smaller or larger than the molecule it binds.',
@@ -54,6 +56,7 @@ window.ASSIGNMENT = {
           at: 157,
           type: 'order',
           text: 'The video gives the general sequence of cell signaling. Put the three stages in order.',
+          easy: 'The video tells the steps of cell signaling. Put the 3 stages in order, from first to last.',
           items: ['Reception', 'Transduction', 'Response'],
           tip: 'Rewind to about 2:01. Listen for the stage the video calls “first.” What has to happen before the receptor can be activated?',
           explain: 'Right. First reception (a signal molecule binds a receptor), then transduction (the receptor gets activated), then a response.'
@@ -62,6 +65,7 @@ window.ASSIGNMENT = {
           at: 200.5,
           type: 'choice',
           text: 'The video says gap junctions in animal cells and plasmodesmata in plant cells are connections between two close together cells. What do they allow?',
+          easy: 'Gap junctions (in animal cells) and plasmodesmata (in plant cells) connect two cells that are close together. What do they let happen?',
           options: ['Ions or other small molecules can pass between the cells without crossing the cell membrane.', 'Hormones can travel through the bloodstream to cells far away.', 'A cell can send a signal back to itself.', 'Neurotransmitters can cross a synapse between two neurons.'],
           answer: 0,
           tip: 'Rewind to about 3:02. These connections are for cells that are very close. Listen for what is able to pass.',
@@ -73,7 +77,7 @@ window.ASSIGNMENT = {
           text: 'Match each type of cell signaling to what the video says about it.',
           options: ['autocrine', 'endocrine', 'paracrine', 'synaptic'],
           items: [
-            { label: 'A signal molecule diffuses to a nearby cell. The cells are close but need not be connected.', answer: 'paracrine', hint: 'Rewind to about 3:21. This is the first type of local signaling the video names.' },
+            { label: 'A signal molecule diffuses to a nearby cell. The cells are close but need not be connected.', easy: 'A signal molecule spreads (diffuses) to a cell nearby. The cells are close, but they do not have to touch.', answer: 'paracrine', hint: 'Rewind to about 3:21. This is the first type of local signaling the video names.' },
             { label: 'Neurotransmitters carry the signal across a synapse.', answer: 'synaptic', hint: 'Rewind to about 3:40. The video calls this another example of local signaling.' },
             { label: 'A cell talks to a target cell far away. Signals such as hormones may be carried in the bloodstream.', answer: 'endocrine', hint: 'Rewind to about 3:50. Listen for the long-distance type.' },
             { label: 'A cell signals itself, such as a cell releasing its own growth factor.', answer: 'autocrine', hint: 'Rewind to about 4:02. The molecule binds to a receptor on the same cell that made it.' }
@@ -82,6 +86,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Summarize the three stages of cell signaling: reception, transduction, and response. Write at least one sentence for each stage.',
+          easy: 'Explain the 3 stages of cell signaling in your own words. Write at least one sentence for each stage: 1. reception, 2. transduction, 3. response.',
           starters: ['During reception, a signal molecule …', 'During transduction, the receptor …', 'During the response, the cell …'],
           min: 120,
           ideas: [
@@ -94,6 +99,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'What is the difference between intracellular and intercellular signaling? (2 to 3 sentences)',
+          easy: 'Intracellular signaling and intercellular signaling sound alike. Explain how they are different. (2 to 3 sentences)',
           starters: ['Intercellular signaling happens …', 'Intracellular signaling happens …', 'The difference is that …'],
           min: 60,
           ideas: [
@@ -181,7 +187,7 @@ window.ASSIGNMENT = {
             { label: 'A cell releasing a signaling factor signals to itself.', answer: 'autocrine', hint: 'Which type of signaling sends the message back to the same cell?' },
             { label: 'Two cells signal over a long distance from each other.', answer: 'endocrine', hint: 'Think about hormones traveling through the bloodstream.' },
             { label: 'Two cells signal to each other over a short distance.', answer: 'paracrine', hint: 'Think about a signal that only travels to nearby cells. Synaptic signaling is only for neurons.' },
-            { label: 'Two or more cells next to each other can signal to each other through spaces in their cellular membranes.', answer: 'gap junctions', hint: 'These are channels that connect neighboring cells.' }
+            { label: 'Two or more cells next to each other can signal to each other through spaces in their cellular membranes.', easy: 'Cells right next to each other send signals through openings in their cell membranes.', answer: 'gap junctions', hint: 'These are channels that connect neighboring cells.' }
           ]
         },
         {
@@ -220,6 +226,7 @@ window.ASSIGNMENT = {
         {
           type: 'written',
           text: 'Think of something you do when you are feeling down and record it below. (This would be an example of higher dopamine levels and a cell signaling response in your body!)',
+          easy: 'What is one thing you do when you feel sad or down? Write it below. (Doing this raises your dopamine levels. It is an example of a cell signaling response in your body!)',
           starters: ['When I am feeling down, I …', 'This helps me feel better because …'],
           min: 30,
           ideas: [
@@ -245,6 +252,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Muscle cell: click the info icon on the cell to learn more, then click the cell to begin the interactive. Choose the answers below.',
+          easy: 'Muscle cell: 1. Click the info icon on the cell and read about it. 2. Click the cell to start the interactive. 3. Choose your answers below.',
           items: [
             { label: 'Cell description', options: 'DESCS', answer: 'Contains proteins that allow it to contract', hint: 'Click the info icon on the cell in the interactive and read its description.' },
             { label: 'Response to Light', options: 'RESP', answer: 'Does not respond', hint: 'In the interactive, drop light on the muscle cell and watch what happens.' },
@@ -256,6 +264,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Photoreceptor: click the info icon on the cell to learn more, then click the cell to begin the interactive. Choose the answers below.',
+          easy: 'Photoreceptor: 1. Click the info icon on the cell and read about it. 2. Click the cell to start the interactive. 3. Choose your answers below.',
           items: [
             { label: 'Cell description', options: 'DESCS', answer: 'Specialized cell type in the retina of the eye', hint: 'Click the info icon on the cell in the interactive and read its description.' },
             { label: 'Response to Light', options: 'RESP', answer: 'Generates a signal that travels to a neighboring cell', hint: 'In the interactive, drop light on the photoreceptor and watch what happens.' },
@@ -267,6 +276,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Cancer: click the info icon on the cell to learn more, then click the cell to begin the interactive. Choose the answers below.',
+          easy: 'Cancer: 1. Click the info icon on the cell and read about it. 2. Click the cell to start the interactive. 3. Choose your answers below.',
           items: [
             { label: 'Cell description', options: 'DESCS', answer: 'Genetically changed skin cell with altered behavior', hint: 'Click the info icon on the cell in the interactive and read its description.' },
             { label: 'Response to Light', options: 'RESP', answer: 'UV light damages the cell’s DNA, possibly causing growth or mutation', hint: 'In the interactive, drop light on the cancer cell and watch what happens.' },
@@ -278,6 +288,7 @@ window.ASSIGNMENT = {
         {
           type: 'selects',
           text: 'Leaf parenchyma: click the info icon on the cell to learn more, then click the cell to begin the interactive. Choose the answers below.',
+          easy: 'Leaf parenchyma (a cell in a plant leaf): 1. Click the info icon on the cell and read about it. 2. Click the cell to start the interactive. 3. Choose your answers below.',
           items: [
             { label: 'Cell description', options: 'DESCS', answer: 'Produces sugar in plant leaves', hint: 'Click the info icon on the cell in the interactive and read its description.' },
             { label: 'Response to Light', options: 'RESP', answer: 'Undergoes photosynthesis', hint: 'In the interactive, drop light on the leaf parenchyma cell and watch what happens.' },
