@@ -1,6 +1,8 @@
 /* Shared engine for the Explore assignments. Do not put assignment content here: edit assignment.js instead. */
 (function(){
 'use strict';
+/* school logo files sit next to this script, in engine/brand/ */
+var BRAND=new URL('brand/',(document.currentScript&&document.currentScript.src)||location.href).href;
 /* ------------------------------------------------------------------ */
 /* Page frame: header, stay-on-page warning, progress bars             */
 /* ------------------------------------------------------------------ */
@@ -11,6 +13,8 @@ function injectPage(){
   [['preconnect','https://fonts.googleapis.com',false],['preconnect','https://fonts.gstatic.com',true],
    ['stylesheet','https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:wght@600;800&family=Cabin:wght@700&display=swap',false]
   ].forEach(function(l){var e=document.createElement('link'); e.rel=l[0]; e.href=l[1]; if(l[2]) e.crossOrigin=''; head.appendChild(e);});
+  if(!head.querySelector('link[rel~="icon"]')){ var fav=document.createElement('link'); fav.rel='icon'; fav.type='image/png'; fav.href=BRAND+'favicon.png'; head.appendChild(fav); }
+  var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#2d2926'; head.appendChild(tc);
   var icon=A2.icon||'<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M26 24 L46 36 L26 48 Z" fill="var(--primary-ink)"/></svg>';
   var tracks='', groups=A2.board?(A2.board.categories||[]):(A2.parts||[]);
   groups.forEach(function(p,i){
@@ -20,7 +24,8 @@ function injectPage(){
   /* the only things that open a new tab are the pictures in a part (figureEl) */
   var hasPics=!A2.board&&(A2.parts||[]).some(function(p){return (p.images||[]).length;});
   document.body.insertAdjacentHTML('afterbegin',
-    '<div class="wrap"><header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
+    '<div class="wrap"><div class="brand"><img src="'+BRAND+'eagle.png" alt="">Elite Academic Academy</div>'
+    +'<header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
@@ -33,7 +38,8 @@ function injectPage(){
     +'<p class="small">This page keeps a backup copy in your browser as you work, but don’t count on it. It disappears if you switch devices, use a private window, or clear your browser data.</p></aside>'
     +'<div class="bar" aria-label="Your progress"><div class="tracks">'+tracks+'</div>'
     +'<div class="statsrow"><span id="sSaved"></span></div></div>'
-    +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript></div>');
+    +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript>'
+    +'<footer class="sitefoot"><img src="'+BRAND+'logo.png" alt="Elite Academic Academy"><p>In a world where you can be anything, Be Elite.</p></footer></div>');
   document.querySelector('h1.display').textContent=A2.title;
   if(/[?&]teacher=tm7k2q(&|$)/.test(location.search)){
     var tv=document.createElement('p'); tv.className='teachview'; tv.setAttribute('role','note');
@@ -1048,7 +1054,7 @@ function numbersQ(id,q){
 }
 
 /* Graphs are drawn as SVG with fixed colors on a white page, so the same drawing works in dark mode and in the PDF */
-var GC={ink:'#16213a',muted:'#52607a',grid:'#b9c4d6',minor:'#e3e8f0',line:'#16213a',mark:'#0b5f7a',pick:'#d63f78',bad:'#a8321f'};
+var GC={ink:'#2d2926',muted:'#5f5850',grid:'#c9bfae',minor:'#ece6dc',line:'#2d2926',mark:'#7f6810',pick:'#d63f78',bad:'#a8321f'};
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function nfmt(n){return (Math.round(n*100)/100).toLocaleString('en-US');}
 function steps(min,max,step){var out=[], n=Math.floor((max-min)/step+1e-9); for(var i=0;i<=n;i++) out.push(min+i*step); return out;}
@@ -2425,7 +2431,7 @@ function celebrate(text){
   document.body.append(c);
   var season=seasonShapes();
   if(season){ fallingShapes(c,ctx,W0,H0,season); return; }
-  var cols=['#f4c430','#e8505b','#14b1ab','#5b8def','#9b5de5','#3ac569','#ff8c42'], bits=[];
+  var cols=['#c1a01e','#dcbc3c','#2d2926','#8a7012','#ecd98f','#5f5850','#f4c430'], bits=[];
   for(var i=0;i<160;i++){
     var left=i%2===0;
     bits.push({x:left?0:W0, y:H0*0.75, vx:(left?1:-1)*(4+Math.random()*9), vy:-(9+Math.random()*10),
@@ -2813,7 +2819,7 @@ async function headingPng(lines,pt){
   x.font=font;
   var w=Math.ceil(Math.max.apply(null,lines.map(function(t){return x.measureText(t).width;}))+4*scale);
   c.width=w; c.height=Math.ceil(lh*lines.length*scale+2*scale);
-  x=c.getContext('2d'); x.font=font; x.fillStyle='#16213a'; x.textBaseline='alphabetic';
+  x=c.getContext('2d'); x.font=font; x.fillStyle='#2d2926'; x.textBaseline='alphabetic';
   lines.forEach(function(t,i){ x.fillText(t,0,(i*lh+pt)*scale); });
   var blob=await new Promise(function(r){c.toBlob(r,'image/png');});
   return {bytes:new Uint8Array(await blob.arrayBuffer()),w:w/scale,h:c.height/scale};
@@ -2842,7 +2848,7 @@ async function buildPdf(){
   doc.setAuthor(pdfSafe(fullName()));
   var F=await doc.embedFont(L.StandardFonts.Helvetica), FB=await doc.embedFont(L.StandardFonts.HelveticaBold), FI=await doc.embedFont(L.StandardFonts.HelveticaOblique), FBI=await doc.embedFont(L.StandardFonts.HelveticaBoldOblique);
   var W0=612, PH=792, M=54, CW=W0-2*M, y=0, page=null;
-  var INK=L.rgb(22/255,33/255,58/255), MUTED=L.rgb(82/255,96/255,122/255), TEAL=L.rgb(11/255,95/255,122/255), LINE=L.rgb(211/255,219/255,232/255), RESP=L.rgb(10/255,80/255,105/255), YEL=L.rgb(1,0.93,0), HLP={y:YEL,b:L.rgb(0,1,1),g:L.rgb(0,1,0)};
+  var INK=L.rgb(45/255,41/255,38/255), MUTED=L.rgb(95/255,88/255,80/255), GOLD=L.rgb(193/255,160/255,30/255), LINE=L.rgb(224/255,216/255,202/255), RESP=L.rgb(110/255,90/255,12/255), YEL=L.rgb(1,0.93,0), HLP={y:YEL,b:L.rgb(0,1,1),g:L.rgb(0,1,0)};
   function newPage(){ page=doc.addPage([W0,PH]); y=M; }
   function room(n){ if(!page||y+n>PH-M) newPage(); }
   function wrap(t,font,size,width){
@@ -2955,9 +2961,16 @@ async function buildPdf(){
   var hd=await headingPng([TITLE,COURSE,fullName()||'(name not entered)'],14);
   var img=await doc.embedPng(hd.bytes);
   page.drawImage(img,{x:M,y:PH-M-hd.h,width:hd.w,height:hd.h});
+  /* school eagle and name in the top right corner (left out if the picture cannot load) */
+  try{
+    var eg=await doc.embedPng(new Uint8Array(await (await fetch(BRAND+'eagle.png')).arrayBuffer())), eh=40, ew=eh*eg.width/eg.height;
+    var bn='ELITE ACADEMIC ACADEMY', bw=FB.widthOfTextAtSize(bn,7);
+    page.drawImage(eg,{x:W0-M-bw/2-ew/2,y:PH-M-eh,width:ew,height:eh});
+    page.drawText(bn,{x:W0-M-bw,y:PH-M-eh-10,size:7,font:FB,color:RESP});
+  }catch(e){}
   y=M+hd.h+6;
   text('Date completed: '+p.date,11,F,0,MUTED);
-  y+=6; rule(TEAL,2); y+=14;
+  y+=6; rule(GOLD,2); y+=14;
 
   room(20);
   var ry=y;

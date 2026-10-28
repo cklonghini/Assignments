@@ -62,6 +62,9 @@ lab agreement, and a ready-to-go selfie `photo`.
 - Title format: "Explore - Topic Name" with a dash and capitalized words. The course label sits under the title.
   Exception: hands-on labs have no "Explore - " (for example "Heart Dissection", "Sheep Brain Dissection",
   "Lung Capacity Lab").
+- School branding (Elite Academic Academy) is built into the engine: gold `#c1a01e` and black `#2d2926`, a small eagle and
+  the school name above the title, the logo at the bottom of the page, the eagle in the PDF header, and the eagle as the
+  browser-tab icon. The logo files are in `engine/brand/`. Keep it subtle; do not add logos inside assignments.
 - Students enter first and last name at the top. The yellow "Stay on this page until you finish" box, the sticky
   progress bars (one per part, with only the "Backup saved at" time under them), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
   are part of the engine. Keep them.
