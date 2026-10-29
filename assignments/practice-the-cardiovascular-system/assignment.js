@@ -12,6 +12,16 @@ window.ASSIGNMENT = {
   title: 'Practice - The Cardiovascular System',
   course: 'Anatomy & Physiology B',
   storageKey: 'practice-the-cardiovascular-system-v1',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How does the heart pump blood through the blood vessels to the lungs and the rest of the body?',
+    goals: [
+      'Tell the difference between arteries, veins, and capillaries.',
+      'Name the chambers and valves on the inside of the heart.',
+      'Trace the path of blood through the heart, the lungs, and the body.',
+      'Tell the difference between pulmonary circulation and systemic circulation.'
+    ]
+  },
   short: 'cardiovascular-practice',                 // short link: SITE/cardiovascular-practice
   partWord: 'Station',            // headings and progress bars say "Station 1" instead of "Part 1"
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 52 C16 41 13 33 13 27 a9.5 9.5 0 0 1 19 -3 a9.5 9.5 0 0 1 19 3 c0 6 -3 14 -19 25 z" fill="var(--primary-ink)"/></svg>',
@@ -20,7 +30,8 @@ window.ASSIGNMENT = {
   start: {
     heading: 'Discovery stations',
     intro: 'Read each station card, then answer the questions under it.',
-    after: 'Select a card to open it full size in a new tab. If the card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” You will also answer three written questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.'
+    after: 'Select a card to open it full size in a new tab. If the card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” You will also answer three written questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.',
+    easyAfter: 'Select a card to open it full size in a new tab. If the card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” You will also answer one written question.'
   },
 
   parts: [
@@ -52,6 +63,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Define blood flow, blood pressure, and resistance. Match each definition to its key term.',
           easy: 'Match each meaning to its key term: blood flow, blood pressure, or resistance.',
           options: ['Blood flow', 'Blood pressure', 'Resistance'],
@@ -66,6 +78,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Why does it make sense that blood flow varies throughout different organs?',
           easy: 'Blood flow is not the same in every organ. Why does that make sense?',
           options: [
@@ -89,6 +102,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'What two factors will increase blood flow? Choose the word that finishes each sentence.',
           easy: 'Two things make blood flow increase (go up). Choose the word that finishes each sentence.',
           items: [
@@ -100,6 +114,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'List the three factors that affect resistance. Then explain how you think each one has an effect on resistance. (3 to 5 sentences)',
           easy: 'Name the three factors (things) that change resistance. Then, for each one, explain how you think it changes resistance. (3 to 5 sentences)',
           starters: ['The three factors that affect resistance are …', 'I think … affects resistance because …', 'When … changes, resistance …'],
@@ -140,6 +155,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'selects',
+          support: false,
           text: 'All blood vessels begin and end at the ______.',
           items: [
             { label: 'All blood vessels begin and end at the…', options: ['lungs', 'heart', 'capillaries', 'brain'], answer: 'heart',
@@ -173,6 +189,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Where are capillary beds located?',
           options: ['Only in the lungs', 'Inside the chambers of the heart', 'In our organs and tissues, between the arterioles and the venules', 'Between the aorta and the vena cava'],
           answer: 2,
@@ -195,6 +212,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'What key role do the venous valves play? Where in our bodies do they play the biggest role, and why does this make sense?',
           easy: 'Answer three short questions about venous valves. What job do they do? Where in the body do they matter most? Why does that make sense?',
           items: [
@@ -226,6 +244,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'selects',
+          support: false,
           text: 'Label each structure on the outside (external view) of the heart.',
           easy: 'Name each numbered part on the outside of the heart.',
           img: { src: 'media/label-heart-outside.png', alt: 'The outside view of the heart from the Station 3 card, with its 13 labels replaced by the numbers 1 to 13, going clockwise from the top left.', caption: 'Find the same spot on the Station 3 card and read its label.' },
@@ -269,6 +288,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          support: false,
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'Station 3',
           text: 'When the national anthem is sung or the pledge of allegiance is said, it is customary to place a hand over the heart. What is not completely anatomically accurate about where we are taught to place our hand? Where should we place our hand, based on where the heart is actually located? Use evidence from Station 3, along with transition words that tell where your evidence comes from. For example: “According to Station 3, …” or “The card explains that …” (3 to 5 sentences)',
@@ -293,6 +313,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Explain the roles of the pericardium and the pericardial cavity in the function of the heart. Match each part to its description.',
           easy: 'What do the pericardium and the pericardial cavity do for the heart? Match each part to its description.',
           options: [
@@ -379,6 +400,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Why would the ventricles need thicker walls for contraction than the atria?',
           easy: 'The ventricles have thicker walls than the atria. Why do the ventricles need thicker walls to contract?',
           options: [
@@ -393,6 +415,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Differentiate between the roles of the superior vena cava and the inferior vena cava.',
           easy: 'How are the superior vena cava and the inferior vena cava different? Choose one for each description.',
           note: 'Superior means above. Inferior means below.',
@@ -555,6 +578,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Take a peek back at Station 5 (shown again here). Which pathway, green or blue, was describing the systemic circuit? Which was describing the pulmonary circuit?',
           easy: 'Look back at Station 5 (shown again here). Which pathway, green or blue, shows the systemic circuit? Which one shows the pulmonary circuit?',
           img: { src: 'media/station-card-5.jpg', alt: 'The Station 5 card again, with its green and blue dotted arrows.', caption: 'Station 5 card. Read the green words and the blue words in the text, too.' },
@@ -581,6 +605,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Match each part of coronary circulation to its job. (You labeled these on the outside of the heart. Look back at numbers 7 and 11 in Question 13.)',
           options: [
             'Supply oxygenated blood and nutrients to the atria and ventricles',
@@ -596,6 +621,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'What can happen if a coronary artery gets blocked?',
           options: ['A heart attack', 'Varicose veins', 'The lungs stop working', 'Nothing, because the heart gets blood from inside its chambers'],
           answer: 0,

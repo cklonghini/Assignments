@@ -8,6 +8,16 @@ window.ASSIGNMENT = {
   title: 'Explore - Species Classification',
   course: 'Marine Science A',
   storageKey: 'explore-species-classification-v3',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How do scientists sort and name living things?',
+    goals: [
+      'Put the eight levels of classification in order, from Domain to Species.',
+      'Sort organisms into the three domains and the four kingdoms of Eukarya.',
+      'Write a scientific name the right way and tell the genus from the species.',
+      'Explain why scientists use DNA evidence, not just looks, to group organisms.'
+    ]
+  },
 
   /* header icon (optional). Leave this out to get a plain play-button icon. */
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
@@ -20,7 +30,8 @@ window.ASSIGNMENT = {
   video: {
     title: 'Taxonomy',
     src: 'media/taxonomy-video.mp4',
-    seconds: 324
+    seconds: 324,
+    support: false
   },
 
   /* short clips, one or two per part. from/to are the times in the full video (they are shown to students). */
@@ -112,6 +123,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'mnemonic',
+          support: false,
           text: 'Make your own memory trick. Write a silly sentence where each word starts with the first letter of a level, in order: D, K, P, C, O, F, G, S. The video shares one. Make yours different if you can.',
           easy: 'Make your own memory trick. Write a silly sentence with 8 words. Each word starts with these letters, in this order: D, K, P, C, O, F, G, S. The video shows one. Try to make yours different.',
           words: ['Domain', 'Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species']
@@ -168,6 +180,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'The sea otter is *Enhydra lutris*. What is its species (the specific epithet)?',
           easy: 'The sea otter\'s scientific name is *Enhydra lutris*. What is its species name (also called the specific epithet)?',
           options: ['*Enhydra*', '*lutris*', '*Enhydra lutris*', 'Mustelidae'], answer: 1,
@@ -176,6 +189,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'When you write a scientific name by hand, how do you show it is a scientific name?',
           easy: 'You write a scientific name with a pen or pencil. How do you show that it is a scientific name?',
           options: ['Circle it', 'Underline it', 'Write it in all capitals', 'Put it in quotation marks'], answer: 1,
@@ -203,6 +217,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'typed',
+          support: false,
           text: 'This sea otter name is written incorrectly: *enhydra Lutris*. Type it correctly (capitalization matters).',
           easy: 'This sea otter name has mistakes: *enhydra Lutris*. Type it the right way. Watch your capital letters.',
           expected: 'Enhydra lutris',
@@ -212,6 +227,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          support: false,
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           text: 'Carl Linnaeus developed the binomial nomenclature system for naming species, which is still in use today. Discuss the advantages of using scientific names over common names when identifying species. Provide examples from the video, such as the mountain lion (also called a cougar or a puma), to explain why scientific names are important for consistency in classification.',
           easy: 'Carl Linnaeus made binomial nomenclature (a two-part naming system). Scientists still use it today. Explain why scientific names are better than common names for naming a species. Use examples from the video, like the mountain lion (also called a cougar or a puma). Explain why scientific names help everyone name living things the same way.',
@@ -253,11 +269,11 @@ window.ASSIGNMENT = {
           options: ['Orca and great white shark', 'Bottlenose dolphin and orca', 'Blue whale and great white shark', 'Blue whale and orca'], answer: 1,
           explain: 'The dolphin and the orca are both in the family Delphinidae.',
           tip: 'Look at the Family column in the table. Which two rows match?' },
-        { type: 'choice', text: 'Which organism is NOT in class Mammalia?',
+        { type: 'choice', support: false, text: 'Which organism is NOT in class Mammalia?',
           options: ['Blue whale', 'Orca', 'Great white shark', 'Bottlenose dolphin'], answer: 2,
           explain: 'The great white shark is in class Chondrichthyes (cartilaginous fish).',
           tip: 'Check the Class column. Which row is different from the rest?' },
-        { type: 'choice', text: 'What is the genus of the blue whale?',
+        { type: 'choice', support: false, text: 'What is the genus of the blue whale?',
           options: ['*Balaenoptera*', '*musculus*', 'Balaenopteridae', 'Mammalia'], answer: 0,
           explain: 'The genus is the first word of the scientific name, *Balaenoptera musculus*.',
           tip: 'Find the blue whale row, then look under the Genus column.' },
@@ -266,7 +282,7 @@ window.ASSIGNMENT = {
           options: ['Blue whale and great white shark', 'Orca and great white shark', 'Bottlenose dolphin and orca', 'Blue whale and bottlenose dolphin'], answer: 2,
           explain: 'The dolphin and orca share the same class and family. The others share fewer levels.',
           tip: 'Compare the rows. For each pair, count how many columns have the same word.' },
-        { type: 'choice', text: 'True or false: the bottlenose dolphin and the orca are in the same genus.',
+        { type: 'choice', support: false, text: 'True or false: the bottlenose dolphin and the orca are in the same genus.',
           options: ['True', 'False'], answer: 1,
           explain: 'They share a family (Delphinidae) but have different genera: *Tursiops* and *Orcinus*.',
           tip: 'Look at the Genus column for both animals. Are the words the same?' }

@@ -2402,7 +2402,8 @@ function startSection(){
   s.append(h('p','intro',V.intro||'Work through each part in order.'));
   var after=V.after;
   if(after==null){
-    after='Each part gives you something to read and then lets you practice and check your work. Select a picture to open it full size in a new tab.';
+    var pics=(A.parts||[]).some(function(p){return (p.images||[]).length;}), clips=(A.parts||[]).some(function(p){return (p.clips||[]).length;});
+    after='Each part gives you '+(clips?'a short video, something to read, and then lets you':'something to read and then lets you')+' practice and check your work.'+(pics?' Select a picture to open it full size in a new tab.':'');
     if(nW) after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s')+'.';
     after+=photoSentence(qs);
     if(GATED) after+=' Each part opens when you finish the one before it.';

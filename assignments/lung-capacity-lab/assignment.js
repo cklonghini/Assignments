@@ -25,12 +25,23 @@ window.ASSIGNMENT = {
   title: 'Lung Capacity Lab',
   course: 'Anatomy & Physiology B',
   storageKey: 'lung-capacity-lab-v2',   // v2: the video and its questions were added
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'What is lung capacity, and what factors affect it?',
+    goals: [
+      'Name the lung volumes and add them up to find vital capacity.',
+      'Use a balloon’s diameter and Figure 1 to find a lung volume.',
+      'Use the class graphs to tell how sex, height, age, and activity level affect vital capacity.',
+      'Explain how lung capacity connects to gas exchange and how a disease can cause respiratory distress.'
+    ]
+  },
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 18 V34 M32 30 L26 35 M32 30 L38 35" stroke="var(--primary-ink)" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M24 30 C18 31 15 40 15 48 c0 4 3 6 7 5 l5 -2 c2 -1 2 -3 2 -5 V35 c0 -3 -2 -5 -5 -5 z M40 30 C46 31 49 40 49 48 c0 4 -3 6 -7 5 l-5 -2 c-2 -1 -2 -3 -2 -5 V35 c0 -3 2 -5 5 -5 z" fill="var(--primary-ink)"/></svg>',
 
   /* the full balloon demo at the top. Its captions are media/balloon-demo.vtt.
      Made from the teacher's seven demo segments (source/balloon-demo/), joined into one video. */
   video: {
     title: 'Measuring Lung Volume with a Balloon',
+    support: false,
     src: 'media/balloon-demo.mp4',
     seconds: 294,
     intro: 'Guiding question: What is lung capacity, and what types of factors affect it? In this lab you will investigate how sex, age, height, and activity level affect lung capacity in humans. Please watch the video Measuring Lung Volume with a Balloon, and then work through the parts below.',
@@ -39,10 +50,10 @@ window.ASSIGNMENT = {
 
   /* short clips cut from the full video. from/to are the times in the full video (they are shown to students). */
   clips: {
-    setup:   { src: 'media/clip-setup.mp4',   from: 0.0,     to: 72.93,   seconds: 73,  title: 'Safety, and setting up the balloon and ruler' },
+    setup:   { support: false, src: 'media/clip-setup.mp4',   from: 0.0,     to: 72.93,   seconds: 73,  title: 'Safety, and setting up the balloon and ruler' },
     measure: { src: 'media/clip-measure.mp4', from: 72.93,   to: 211.315, seconds: 139, title: 'Measuring tidal volume, expiratory reserve volume, and vital capacity' },
     figure1: { src: 'media/clip-figure1.mp4', from: 211.315, to: 267.571, seconds: 57,  title: 'Averaging the trials and using Figure 1' },
-    low:     { src: 'media/clip-low.mp4',     from: 267.571, to: 293.8,   seconds: 27,  title: 'Why the balloon number can come out low' }
+    low:     { support: false, src: 'media/clip-low.mp4',     from: 267.571, to: 293.8,   seconds: 27,  title: 'Why the balloon number can come out low' }
   },
 
   parts: [
@@ -85,6 +96,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Why is it important to understand someone’s lung capacity?',
           options: [
             'It tells you how fast their heart beats.',
@@ -141,6 +153,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'choice',
+          support: false,
           text: 'In the video, why do you stretch the balloon five times before you start?',
           options: [
             'It loosens the rubber, so the balloon is easier to blow up.',
@@ -154,6 +167,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Measuring the diameter: Choose the right answer for each step, the way the video shows it.',
           easy: 'Measuring the diameter (the distance across the balloon): Pick the right answer for each step. Do it the way the video shows.',
           items: [
@@ -165,6 +179,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'In the video, about how wide was the balloon (its diameter) for each lung volume?',
           options: ['About 10 cm', 'About 12 cm', 'About 18 cm'],
           items: [
@@ -185,6 +200,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'order',
+          support: false,
           text: 'Put the steps for one tidal volume trial in order.',
           easy: 'Put the steps in order. They are the steps for one tidal volume trial (measuring one normal breath one time).',
           items: [
@@ -200,6 +216,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'When you measure expiratory reserve volume, why must you NOT take a breath in between the normal breath out and blowing into the balloon?',
           easy: 'When you measure expiratory reserve volume, you first breathe out normally. Then you blow into the balloon. Why must you NOT take a breath in between?',
           options: [
@@ -214,6 +231,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Which student should NOT collect personal data for this lab?',
           easy: 'Which student should NOT measure their own lungs (collect personal data) in this lab?',
           options: [
@@ -302,6 +320,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'numbers',
+          support: false,
           text: 'Vital capacity researched: An online vital capacity calculator uses a person’s sex, age, and height. For Maya it says 3.3 liters. Change this to cm³.',
           easy: 'Vital capacity researched: An online calculator says Maya’s vital capacity is 3.3 liters. Change 3.3 liters into cm³.',
           calculator: true,
@@ -312,6 +331,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Compare Maya’s three vital capacities: measured with the balloon, calculated with the formula, and researched online. Which one is the lowest?',
           easy: 'Look at Maya’s three vital capacities: (1) measured with the balloon, (2) calculated with the formula, and (3) researched online. Which one is the lowest?',
           options: ['Measured with the balloon', 'Calculated with the formula', 'Researched online', 'They are all exactly the same'],
@@ -321,6 +341,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Which is the best explanation for why the balloon measurement could come out lower than the other two?',
           easy: 'The balloon measurement could come out lower than the other two. What is the best reason why?',
           options: [
@@ -418,6 +439,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          support: false,
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the class data and graphs',
           text: 'Analysis: Explain what the class data show. Tell how each factor (sex, height, age, and activity level) relates to vital capacity, and use numbers or patterns from the data and graphs as evidence. Then write out at least three ways the data may not be completely accurate, with a specific way to fix each problem in the future. (6 or more sentences)',
@@ -454,6 +476,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'choice',
+          support: false,
           text: 'Why is a high lung capacity more important for athletes and singers than for the average person?',
           easy: 'Athletes and singers need a high lung capacity more than most people. Why?',
           options: [
@@ -481,6 +504,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'multi',
+          support: false,
           text: 'Which of these can help someone’s lungs work at their best? Choose every correct answer.',
           options: ['Regular aerobic exercise', 'Smoking or vaping', 'Singing or playing a wind instrument', 'Breathing polluted air', 'Deep breathing exercises'],
           answers: ['Regular aerobic exercise', 'Singing or playing a wind instrument', 'Deep breathing exercises'],

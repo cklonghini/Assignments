@@ -14,6 +14,16 @@ window.ASSIGNMENT = {
   title: 'Heart Dissection',
   course: 'Anatomy & Physiology B',
   storageKey: 'heart-dissection-v3',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How does the way each part of the heart is built help it move blood through the body?',
+    goals: [
+      'Find and label the four chambers and the big blood vessels of the heart.',
+      'Explain why the left ventricle has a thicker wall than the right ventricle.',
+      'Explain how the valves and the chordae tendineae keep blood moving one way.',
+      'Trace the path of blood through the heart, to the lungs, and out to the body.'
+    ]
+  },
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
@@ -30,7 +40,7 @@ window.ASSIGNMENT = {
   /* one clip per step, cut along the video's own chapters. from/to are times in the full video. */
   clips: {
     orient:    { src: 'media/clip-orient.mp4',    from: 0.0,   to: 65.0,  seconds: 66,  title: 'Front or back? The pulmonary trunk and the interventricular sulcus' },
-    auricles:  { src: 'media/clip-auricles.mp4',  from: 63.0,  to: 137.0, seconds: 75,  title: 'The auricles and the aorta' },
+    auricles:  { src: 'media/clip-auricles.mp4',  from: 63.0,  to: 137.0, seconds: 75,  title: 'The auricles and the aorta', support: false },
     posterior: { src: 'media/clip-posterior.mp4', from: 137.0, to: 247.0, seconds: 111, title: 'The back of the heart: vena cava and pulmonary veins' },
     walls:     { src: 'media/clip-walls.mp4',     from: 247.0, to: 291.0, seconds: 45,  title: 'Opening the heart: the myocardium and the ventricle walls' },
     avvalves:  { src: 'media/clip-avvalves.mp4',  from: 291.0, to: 350.0, seconds: 60,  title: 'AV valves, chordae tendineae, and papillary muscles' },
@@ -116,6 +126,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'In the video, which vessel does the presenter look for to tell that he is looking at the front of the heart?',
           easy: 'In the video, the presenter looks for one vessel (blood tube). It tells him he is looking at the front of the heart. Which vessel is it?',
           options: ['The aorta', 'The pulmonary trunk', 'The superior vena cava', 'The pulmonary veins'], answer: 1,
@@ -124,6 +135,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'The presenter says a heart attack is most likely to happen when one vessel gets clogged. Where does that vessel run?',
           easy: 'The presenter says a heart attack is most likely when one vessel gets clogged (blocked). Where is that vessel?',
           options: ['In the interventricular sulcus', 'Inside the right atrium', 'Through the tricuspid valve', 'Along the apex'], answer: 0,
@@ -174,6 +186,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'What is an auricle?',
           options: ['The ear-shaped flap on the outside of an atrium', 'The groove between the two ventricles', 'A valve between two chambers', 'The pointed tip of the heart'], answer: 0,
           explain: 'Right. Auricle means ear. It is the floppy part of the atrium that you can see from the outside.',
@@ -245,6 +258,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'typed',
+          support: false,
           text: 'What is the name for heart muscle? It is the thick wall between the ventricles. (one word)',
           accept: ['myocardium'],
           tip: 'Look for the bold word in the reading. It starts with “myo,” which means muscle.',
@@ -289,6 +303,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'order',
+          support: false,
           text: 'Put these in order, starting at the valve flap and going down to the bottom of the ventricle.',
           easy: 'Put these in order. Start at the valve flap. End at the bottom of the ventricle.',
           items: ['AV valve flap', 'Chordae tendineae', 'Papillary muscle'],
@@ -402,6 +417,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'multi',
+          support: false,
           text: 'Which of these carry oxygen-poor blood? Choose all that are correct.',
           easy: 'Which of these carry oxygen-poor blood (blood that is low in oxygen)? Pick all the right answers.',
           options: ['Superior vena cava', 'Inferior vena cava', 'Right atrium', 'Right ventricle', 'Pulmonary trunk', 'Pulmonary veins', 'Left atrium', 'Left ventricle', 'Aorta'],
@@ -423,6 +439,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'written',
+          support: false,
           text: 'What structures were you able to find with ease on the outside of the heart? What structures may have been harder to identify? (2 to 4 sentences)',
           easy: 'Think about the outside of the heart. Which structures (parts) were easy to find? Which structures were harder to find? Write 2 to 4 sentences.',
           starters: ['On the outside of the heart, I easily found the …', 'A structure that was harder to identify was … because …', 'It was easier to find … because …'],
@@ -436,6 +453,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'What structures were you able to find with ease inside the heart, after cutting into it? What structures may have been harder to identify? (2 to 4 sentences)',
           easy: 'Think about the inside of the heart, after you cut it open. Which structures (parts) were easy to find? Which structures were harder to find? Write 2 to 4 sentences.',
           starters: ['After cutting into the heart, I easily found the …', 'Inside the heart, it was harder to identify … because …'],
@@ -449,6 +467,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'What surprised you about the structure and organization of the heart? (2 to 4 sentences)',
           easy: 'What surprised you about the structure of the heart (how it is built and put together)? Name the part, and tell why it surprised you. Write 2 to 4 sentences.',
           starters: ['I was surprised that …', 'Before the dissection, I thought …, but …', 'Something I did not expect was …'],
@@ -478,6 +497,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'What about the structure and function of the heart do you still find confusing? (2 to 4 sentences)',
           easy: 'What is still confusing to you about the heart’s structure (how it is built) and function (what it does)? Name the part you are asking about. Write 2 to 4 sentences.',
           starters: ['I am still confused about …', 'One thing I do not understand yet is …', 'A question I still have is …'],

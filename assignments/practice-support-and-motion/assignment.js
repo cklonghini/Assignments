@@ -12,6 +12,16 @@ window.ASSIGNMENT = {
   title: 'Practice - Support and Motion',
   course: 'Anatomy & Physiology A',
   storageKey: 'practice-support-and-motion-v2',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How do your bones support your body, help it move, and stay alive?',
+    goals: [
+      'Name the main bones of the axial skeleton and the appendicular skeleton.',
+      'Match the words for joints and movement, like ligament, tendon, flexion, and extension.',
+      'Explain why bone is a living tissue, using marrow, bone cells, and remodeling.',
+      'Put the steps of healing a broken bone in order.'
+    ]
+  },
   short: 'support-and-motion',              // short link: SITE/support-and-motion
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/>'
@@ -21,7 +31,9 @@ window.ASSIGNMENT = {
   start: {
     heading: 'How this assignment works',
     intro: 'First you will practice this unit’s vocabulary words out loud. Then you will watch the Amoeba Sisters video “Skeletal System.” The video stops on its own 6 times for a question.',
-    after: 'After the video, you will label a skeleton and write two short responses. Work from top to bottom. Each part opens when you finish the one before it.'
+    easyIntro: 'First you will practice this unit’s vocabulary words out loud. Then you will watch the Amoeba Sisters video “Skeletal System.” The video stops on its own 2 times for a question.',
+    after: 'After the video, you will label a skeleton and write two short responses. Work from top to bottom. Each part opens when you finish the one before it.',
+    easyAfter: 'After the video, you will label a skeleton and write one short response. Work from top to bottom. Each part opens when you finish the one before it.'
   },
 
   /* Short clips, one or two per part. from/to are the times in the full video (they are shown to students). */
@@ -30,7 +42,7 @@ window.ASSIGNMENT = {
     whole:      { src: 'media/skeletal-system-video.mp4', from: 0, to: 544.2, seconds: 545, title: 'Skeletal System (Amoeba Sisters)',
                   of: 'Skeletal System', whole: true },
     skeleton:   { src: 'media/clip-skeleton.mp4', from: 96.85, to: 143.85, seconds: 48, title: 'The axial skeleton and the appendicular skeleton' },
-    shapes:     { src: 'media/clip-shapes.mp4', from: 143.85, to: 221.85, seconds: 79, title: 'Classifying bones by shape' },
+    shapes:     { support: false, src: 'media/clip-shapes.mp4', from: 143.85, to: 221.85, seconds: 79, title: 'Classifying bones by shape' },
     inside:     { src: 'media/clip-inside.mp4', from: 221.85, to: 405.85, seconds: 185, title: 'Inside bones: marrow, bone cells, remodeling, and cartilage' },
     fracture:   { src: 'media/clip-fracture.mp4', from: 405.85, to: 521.85, seconds: 117, title: 'When a bone breaks, and conditions that affect bone' }
   },
@@ -161,11 +173,13 @@ window.ASSIGNMENT = {
     {
       title: 'Watch the video',
       intro: 'Watch the whole video. It stops on its own 6 times, and a question pops up. Answer each question to keep watching. You can rewind if you need to hear something again. Captions are on.',
+      easyIntro: 'Watch the whole video. It stops on its own 2 times, and a question pops up. Answer each question to keep watching. You can rewind if you need to hear something again. Captions are on.',
       clips: ['whole'],
       questions: [
         {
           at: 37.8,
           type: 'selects',
+          support: false,
           text: 'The video names connective tissue in the skeletal system. What does each one generally connect?',
           easy: 'The video names connective tissues in the skeletal system. What does each one usually connect?',
           options: ['Bone to bone', 'Muscle to bone'],
@@ -200,6 +214,7 @@ window.ASSIGNMENT = {
         {
           at: 242.3,
           type: 'choice',
+          support: false,
           text: 'According to the video, where are blood cells made?',
           options: ['Red marrow', 'Yellow marrow', 'Compact bone tissue', 'Cartilage'], answer: 0,
           explain: 'Right. Red marrow makes red blood cells, white blood cells, and platelets. Yellow marrow stores fat.',
@@ -208,6 +223,7 @@ window.ASSIGNMENT = {
         {
           at: 326.6,
           type: 'selects',
+          support: false,
           text: 'Match each bone cell to what the video says it does.',
           options: ['Osteoblasts', 'Osteocytes', 'Osteoclasts'],
           items: [
@@ -219,6 +235,7 @@ window.ASSIGNMENT = {
         {
           at: 513.8,
           type: 'choice',
+          support: false,
           text: 'In osteogenesis imperfecta, bones are brittle and break easily. Which protein does the video say is affected?',
           easy: 'Osteogenesis imperfecta is a condition where bones are brittle (weak) and break easily. The video says it affects a protein. Which protein?',
           options: ['Collagen', 'Hemoglobin', 'Calcium', 'Chitin'], answer: 0,
@@ -266,6 +283,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Sort the bones you labeled. Is each one part of the axial skeleton or the appendicular skeleton?',
           options: ['Axial skeleton', 'Appendicular skeleton'],
           items: [
@@ -278,6 +296,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Classify each bone by its shape.',
           options: ['Long bone', 'Short bone', 'Sesamoid bone', 'Flat bone', 'Irregular bone'],
           items: [
@@ -384,6 +403,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Why does a fracture hematoma form after a bone breaks?',
           easy: 'A fracture hematoma (a collection of blood) forms where a bone breaks. Why does it form?',
           options: ['Bones are very vascular, so blood collects at the break', 'Yellow marrow turns into blood', 'Cartilage melts at the break', 'Osteoclasts make blood cells'], answer: 0,
@@ -392,6 +412,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'highlight',
+          support: false,
           text: 'Maya broke her arm playing soccer. Explain how her bone heals, step by step, from the day it breaks until new bone is made. Name the cells that help at each step. (4 to 6 sentences)',
           easy: 'Maya broke her arm playing soccer. Explain how her bone heals. Go step by step, from the day it breaks until new bone is made. At each step, name the cells that help. Write 4 to 6 sentences.',
           min: 120,

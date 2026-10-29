@@ -17,6 +17,16 @@ window.ASSIGNMENT = {
   title: 'Sheep Brain Dissection',
   course: 'Anatomy & Physiology A',
   storageKey: 'sheep-brain-dissection-v3',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'What are the main parts of the brain, where are they, and what does each one do?',
+    goals: [
+      'Find and label the cerebrum, its four lobes, the cerebellum, the brain stem, and the spinal cord.',
+      'Find the arbor vitae, the ventricles, and the three sections of the brain stem after the midsagittal cut.',
+      'Tell gray matter from white matter.',
+      'Match the main parts of the brain to their jobs.'
+    ]
+  },
   partWord: 'Step',
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
@@ -49,6 +59,7 @@ window.ASSIGNMENT = {
     {
       title: 'Before the lab: the nervous system',
       intro: 'Before you start the lab, watch this video about the nervous system. The video stops on its own 5 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again.',
+      easyIntro: 'Before you start the lab, watch this video about the nervous system. The video stops on its own 2 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again.',
       clips: ['nervous'],
       questions: [
         {
@@ -74,6 +85,7 @@ window.ASSIGNMENT = {
         {
           at: 171,
           type: 'selects',
+          support: false,
           text: 'Match each part of the brain to what the video says it does.',
           options: ['Medulla', 'Cerebellum', 'Midbrain', 'Thalamus', 'Hypothalamus'],
           items: [
@@ -87,6 +99,7 @@ window.ASSIGNMENT = {
         {
           at: 282,
           type: 'selects',
+          support: false,
           text: 'The autonomic nervous system (ANS) is divided into the sympathetic and parasympathetic systems. Which system matches each description?',
           easy: 'The autonomic nervous system (ANS) has two parts: sympathetic and parasympathetic. Which part matches each description?',
           options: ['Sympathetic', 'Parasympathetic'],
@@ -100,6 +113,7 @@ window.ASSIGNMENT = {
         {
           at: 377,
           type: 'selects',
+          support: false,
           text: 'Match each part to its description from the video.',
           options: ['Cell body', 'Dendrites', 'Axon', 'Synapse', 'Myelin sheath'],
           items: [
@@ -187,6 +201,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'multi',
+          support: false,
           text: 'Which two structures make up the central nervous system? Choose all that are correct.',
           options: ['The brain', 'The heart', 'The spinal cord', 'The lungs', 'The skull'],
           answers: ['The brain', 'The spinal cord'],
@@ -204,6 +219,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'What does the dura mater look and feel like as you remove it? (2 to 3 sentences)',
           easy: 'Think about the dura mater as you take it off. What does it look like? What does it feel like? Write 2 to 3 sentences.',
           starters: ['The dura mater looks …', 'When I touched it, it felt …', 'As I removed it, I noticed …'],
@@ -256,6 +272,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'In the video, which way does the sheep brain face when it is first placed in the dissecting tray?',
           easy: 'In the video, the sheep brain is first put in the tray. Which way does it face?',
           options: ['Dorsal surface up', 'Ventral surface up', 'Cut side up', 'Standing on the spinal cord'], answer: 0,
@@ -264,6 +281,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'multi',
+          support: false,
           text: 'The video lists the parts to find on the outside of the brain. Which of these does it name? Choose all that are correct.',
           easy: 'The video names parts to find on the outside of the brain. Which of these does it name? Pick all the right answers.',
           options: ['Cerebrum', 'Cerebellum', 'Spinal cord', 'Olfactory bulb', 'Optic nerve', 'Arbor vitae', 'Gray matter'],
@@ -324,6 +342,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Where is each lobe?',
           options: ['At the front', 'On top, behind the front lobe', 'At the back, closest to the cerebellum', 'Low on the side'],
           items: [
@@ -335,6 +354,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Choose the word for each part of the brain’s surface.',
           options: ['Gyrus', 'Sulcus'],
           items: [
@@ -381,6 +401,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'multi',
+          support: false,
           text: 'After the brain is bisected, which structures does the video say to identify inside? Choose all that are correct.',
           easy: 'In the video, the brain is bisected (cut into two halves). Which parts does the video say to find inside? Pick all the right answers.',
           options: ['Arbor vitae', 'Brain stem', 'Ventricles', 'Olfactory bulb', 'Optic nerve'],
@@ -402,6 +423,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'The arbor vitae is made of white matter. What does it do?',
           options: ['Carries sensory and motor information to and from the cerebellum', 'Makes cerebrospinal fluid', 'Connects the left and right hemispheres', 'Covers the outside of the brain'], answer: 0,
           explain: 'Right. The arbor vitae carries signals to and from the cerebellum.',
@@ -454,6 +476,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'order',
+          support: false,
           text: 'Put these in order, starting at the top of the brain stem and going down to the spinal cord.',
           easy: 'Put these in order. Start at the top of the brain stem. End at the spinal cord.',
           items: ['Midbrain', 'Pons', 'Medulla oblongata', 'Spinal cord'],
@@ -462,6 +485,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Which part of the diencephalon contains each gland?',
           easy: 'The diencephalon has three parts. Which part has each gland in it?',
           options: ['Thalamus', 'Hypothalamus', 'Epithalamus'],
@@ -472,6 +496,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Why could you not see the diencephalon from the outside of the brain?',
           easy: 'You could not see the diencephalon from the outside of the brain. Why not?',
           options: ['It is surrounded by the cerebrum', 'It is inside the spinal cord', 'It is removed with the dura mater', 'It is only in human brains'], answer: 0,
@@ -509,6 +534,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'choice',
+          support: false,
           text: 'In the video, where do you cut to see the white and gray matter?',
           easy: 'In the video, one last cut shows the white matter and the gray matter. Where does that cut go?',
           options: ['Across the frontal lobe', 'Down the medial longitudinal fissure', 'Through the cerebellum', 'Along the spinal cord'], answer: 0,
@@ -529,6 +555,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'order',
+          support: false,
           text: 'Put the clean-up steps in order.',
           items: ['Take your last photo', 'Throw away the specimen, tools, gloves, and apron', 'Wipe down your work space', 'Wash your hands with soap and water', 'Take the plastic wrap off your keyboard'],
           tip: 'Read the clean-up list again. Your hands should be clean before you touch your keyboard.',
@@ -607,6 +634,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'A person has an injury at the back of the cerebrum. Which problem are they most likely to have?',
           easy: 'A person hurt the back of their cerebrum. Which problem will they most likely have?',
           options: ['Trouble seeing', 'Trouble hearing', 'Trouble feeling hot and cold', 'Trouble with hunger and thirst'], answer: 0,
@@ -623,6 +651,7 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'written',
+          support: false,
           text: 'What structures were you able to find with ease on the outside of the sheep’s brain? What structures were harder to identify, and why do you think that was? (2 to 4 sentences)',
           easy: 'Think about the outside of the sheep’s brain. Which structures (parts) were easy to find? Which structures were harder to find? Why do you think they were harder? Write 2 to 4 sentences.',
           starters: ['On the outside of the sheep’s brain, I easily found the …', 'It was harder to identify … because …', 'I think this was because …'],
@@ -637,6 +666,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'What structures were you able to find with ease inside the brain, after making the midsagittal cut? What structures were harder to identify? (2 to 4 sentences)',
           easy: 'Think about the inside of the brain, after your midsagittal cut (the cut down the middle). Which structures (parts) were easy to find? Which structures were harder to find? Write 2 to 4 sentences.',
           starters: ['After making the midsagittal cut, I easily found the …', 'Inside the brain, it was harder to identify … because …'],
@@ -650,6 +680,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'What surprised you about the structure and organization of the brain? (2 to 4 sentences)',
           easy: 'What surprised you about the structure of the brain (how it is built and put together)? Name the part, and tell why it surprised you. Write 2 to 4 sentences.',
           starters: ['I was surprised that …', 'Before the dissection, I thought …, but …', 'Something I did not expect was …'],
@@ -679,6 +710,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'What parts of the brain are still confusing for you? Be specific about what you are unsure of. (2 to 4 sentences)',
           easy: 'Which parts of the brain are still confusing to you? Be specific. Tell exactly what you are unsure of, such as where a part is or what it does. Write 2 to 4 sentences.',
           starters: ['I am still confused about …', 'I am not sure whether …', 'A question I still have is …'],

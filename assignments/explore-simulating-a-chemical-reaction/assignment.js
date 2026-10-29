@@ -9,6 +9,15 @@ window.ASSIGNMENT = {
   title: 'Explore - Simulating A Chemical Reaction',
   course: 'Biology A',
   storageKey: 'explore-simulating-a-chemical-reaction-v1',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How do different factors affect the rate of a chemical reaction?',
+    goals: [
+      'Name what the enzyme, the substrate, and the chemical reaction were in the penny model.',
+      'Explain what a denatured enzyme, a coenzyme, and a competitive inhibitor are.',
+      'Tell whether each factor makes the reaction faster or slower than the baseline.'
+    ]
+  },
   short: 'chemical-reaction',                 // short link: SITE/chemical-reaction
 
   /* the full video at the top. A captions file with the same name (.vtt) sits next to it.
@@ -16,13 +25,14 @@ window.ASSIGNMENT = {
   video: {
     title: 'Simulating a Chemical Reaction',
     src: 'media/chemical-reaction-video.mp4',
-    seconds: 345
+    seconds: 345,
+    support: false
   },
 
   /* short clips, one per trial. from/to are the times in the full video (they are shown to students). */
   clips: {
     model:     { src: 'media/clip-model.mp4',     from: 2.879,   to: 156.703, seconds: 154, title: 'What each part of the model represents' },
-    baseline:  { src: 'media/clip-baseline.mp4',  from: 156.703, to: 202.956, seconds: 47,  title: 'Trial 1: baseline data' },
+    baseline:  { src: 'media/clip-baseline.mp4',  from: 156.703, to: 202.956, seconds: 47,  title: 'Trial 1: baseline data', support: false },
     denatured: { src: 'media/clip-denatured.mp4', from: 202.956, to: 249.832, seconds: 47,  title: 'Trial 2: denatured enzyme (thumb taped)' },
     coenzyme:  { src: 'media/clip-coenzyme.mp4',  from: 249.832, to: 284.518, seconds: 35,  title: 'Trial 3: coenzyme (niece helping)' },
     inhibitor: { src: 'media/clip-inhibitor.mp4', from: 284.518, to: 325.961, seconds: 42,  title: 'Trial 4: competitive inhibitor (tennis ball)' }
@@ -116,6 +126,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'typed',
+          support: false,
           text: 'In the baseline trial, how many pennies had been flipped by the end of 100 seconds? Type the number.',
           expected: '93',
           aria: 'Pennies flipped in the baseline trial',
@@ -151,6 +162,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'typed',
+          support: false,
           text: 'With her thumb taped, how many pennies had Mrs. Kinzy flipped by the end of 100 seconds? Type the number.',
           expected: '42',
           aria: 'Pennies flipped in the denatured enzyme trial',
@@ -158,6 +170,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'Describe how taping my thumb acted as a denatured enzyme. (2 to 4 sentences)',
           easy: 'In the video, I taped my thumb. Explain how this was like a denatured enzyme. (2 to 4 sentences)',
           starters: ['Taping my thumb acted like a denatured enzyme because …', 'When my thumb was taped, …', 'As a result, the rate of the reaction …'],
@@ -198,6 +211,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Many coenzymes come from which part of your diet?',
           easy: 'Many coenzymes come from the food you eat. Which part of your food do they come from?',
           options: ['Water', 'Vitamins', 'Salt', 'Sugar'],
@@ -216,6 +230,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'Describe how having Mrs. Kinzy’s niece flip pennies with her acted as a coenzyme. (2 to 4 sentences)',
           easy: 'Mrs. Kinzy’s niece helped her flip the pennies. Explain how this was like a coenzyme. (2 to 4 sentences)',
           starters: ['Mrs. Kinzy’s niece acted like a coenzyme because …', 'With her niece helping, …', 'This shows that a coenzyme …'],
@@ -264,6 +279,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'typed',
+          support: false,
           text: 'Holding the tennis ball, how many pennies had Mrs. Kinzy flipped by the end of the 81 to 90 second time period? Type the number.',
           easy: 'Look at the tennis ball trial. How many pennies did Mrs. Kinzy flip by the end of the 81 to 90 second time period? Type the number.',
           expected: '40',
@@ -272,6 +288,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'Describe how holding the tennis ball acted as a competitive inhibitor. (2 to 4 sentences)',
           easy: 'In the video, I held a tennis ball while I flipped pennies. Explain how this was like a competitive inhibitor. (2 to 4 sentences)',
           starters: ['Holding the tennis ball acted like a competitive inhibitor because …', 'While my hand was holding the tennis ball, …', 'This is similar to an inhibitor that …'],
@@ -317,6 +334,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'At what temperature do most enzymes in the human body work best?',
           options: ['0°C (32°F)', '25°C (77°F)', '37°C (98.6°F)', '100°C (212°F)'],
           answer: 2,
@@ -325,6 +343,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'Real World Connection: Most enzymes in the human body work best at 37°C (98.6°F). What do you think this means then when you are sick? (2 to 4 sentences)',
           easy: 'Real World Connection: Most enzymes in your body work best at 37°C (98.6°F). That is normal body temperature. What do you think this means when you are sick? (2 to 4 sentences)',
           starters: ['If most enzymes work best at 37°C, then when I have a fever …', 'Because of this, my enzymes might …', 'This could explain why, when I am sick, …'],
@@ -345,6 +364,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'written',
+          support: false,
           text: 'In relation to your answer to the last question, pretend scientists discover an enzyme in the human body that works best at 39°C (102.2°F). What processes do you think this enzyme is most likely involved in? (2 to 4 sentences)',
           easy: 'Think about your answer to the last question. Now pretend scientists find an enzyme in the human body that works best at 39°C (102.2°F). What body processes (jobs) do you think this enzyme most likely helps with? (2 to 4 sentences)',
           starters: ['An enzyme that works best at 39°C would be most active when …', 'I think this enzyme is involved in … because …', 'This would help the body …'],

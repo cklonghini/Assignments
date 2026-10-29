@@ -23,6 +23,16 @@ window.ASSIGNMENT = {
   title: 'Osmosis Lab',
   course: 'Biology A',
   storageKey: 'osmosis-lab-v2',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How does water move by osmosis, and what happens to a gummy bear in plain water, salt water, and sugar water?',
+    goals: [
+      'Explain that in osmosis, water moves to the side with the greater solute concentration.',
+      'Tell what happens to a cell in a hypotonic, isotonic, and hypertonic solution.',
+      'Measure your gummy bears before and after 24 hours.',
+      'Use your measurements to explain your results with the words hypotonic and hypertonic.'
+    ]
+  },
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
     + '<circle cx="20" cy="11" r="7" fill="var(--ligand)"/><circle cx="44" cy="11" r="7" fill="var(--ligand)"/>'
@@ -44,9 +54,9 @@ window.ASSIGNMENT = {
     /* Part 1: the Amoeba Sisters video, cut before the water potential section */
     amoeba: { src: 'media/clip-amoeba.mp4', from: 0, to: 435.9, seconds: 436, title: 'Osmosis (Amoeba Sisters)',
               of: 'Osmosis and Water Potential (Updated)', whole: true },
-    tonic:  { src: 'media/clip-tonic.mp4', from: 215.0, to: 337.0, seconds: 122, title: 'Hypertonic, hypotonic, and isotonic, and the IV example',
+    tonic:  { support: false, src: 'media/clip-tonic.mp4', from: 215.0, to: 337.0, seconds: 122, title: 'Hypertonic, hypotonic, and isotonic, and the IV example',
               of: 'Osmosis and Water Potential (Updated)' },
-    fish:   { src: 'media/clip-fish.mp4', from: 337.0, to: 414.0, seconds: 77, title: 'A saltwater fish in a freshwater tank',
+    fish:   { support: false, src: 'media/clip-fish.mp4', from: 337.0, to: 414.0, seconds: 77, title: 'A saltwater fish in a freshwater tank',
               of: 'Osmosis and Water Potential (Updated)' }
   },
 
@@ -55,11 +65,13 @@ window.ASSIGNMENT = {
     {
       title: 'Before the lab: what is osmosis?',
       intro: 'Before you start the lab, watch this Amoeba Sisters video about osmosis. The video stops on its own 5 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again.',
+      easyIntro: 'Before you start the lab, watch this Amoeba Sisters video about osmosis. The video stops on its own 2 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again.',
       clips: ['amoeba'],
       questions: [
         {
           at: 85,
           type: 'choice',
+          support: false,
           text: 'The video says the movement of water molecules across a cell membrane is passive transport. What does that mean?',
           easy: 'The video says water crossing a cell membrane is passive transport. What does passive transport mean?',
           options: ['It does not require energy', 'It requires energy from the cell', 'Only salt can cross the membrane', 'Water can never cross the membrane'], answer: 0,
@@ -89,6 +101,7 @@ window.ASSIGNMENT = {
         {
           at: 334.4,
           type: 'choice',
+          support: false,
           text: 'Suppose pure water ran through an IV into someone’s blood. What does the video say would happen to the red blood cells?',
           easy: 'What would pure water in an IV do to red blood cells?',
           options: ['They would swell and possibly burst', 'They would shrink', 'They would stay the same size', 'They would turn into salt'], answer: 0,
@@ -98,6 +111,7 @@ window.ASSIGNMENT = {
         {
           at: 377,
           type: 'choice',
+          support: false,
           text: 'A saltwater fish is put into a freshwater tank. Where does the water go?',
           options: ['Into the cells of the saltwater fish', 'Out of the cells of the saltwater fish', 'Nowhere, because the fish is isotonic to fresh water', 'Into the salt'], answer: 0,
           explain: 'Right. The fish’s cells have a higher solute concentration than the fresh water, so the cells are the hypertonic side. Water goes into the cells of that poor saltwater fish.',
@@ -117,6 +131,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'At the end of the clip, the video explains how plants get water into their roots. Why does water move from rain-soaked soil into the root hair cells?',
           easy: 'Why does water move from wet soil into root hair cells?',
           options: ['The root hair cells have a higher solute concentration than the soil', 'The soil has a higher solute concentration than the root hair cells', 'The root hair cells use energy to pump water in', 'The soil and the root cells are isotonic'], answer: 0,
@@ -166,6 +181,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Why does a hospital IV hold a solution that is isotonic to blood plasma instead of pure water?',
           easy: 'Why do hospitals use IV fluid that is isotonic to blood, and not pure water?',
           options: ['So the red blood cells do not swell or shrink', 'So the red blood cells take in as much water as they can', 'So the red blood cells shrink and fit through the vein', 'Because pure water costs more'], answer: 0,
@@ -214,6 +230,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'selects',
+          support: false,
           text: 'Variables. Choose the independent variable (what you change on purpose) and the dependent variable (what you measure) for this experiment.',
           easy: 'Pick the independent variable (what you change) and the dependent variable (what you measure).',
           options: ['What is dissolved in the water (nothing, salt, or sugar)', 'The size of the gummy bear', 'The size of the cups', 'The time in the solution'],
@@ -224,6 +241,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Which of these should stay the same (be a constant) in every cup?',
           options: ['The amount of water and the time in the solution', 'What is dissolved in the water', 'Nothing needs to stay the same', 'Only the color of the gummy bear'], answer: 0,
           explain: 'Right. Constants include the same model (gummy bears), the same amount of water, the same time in the solution, the same temperature, and the same cup size. Only what is dissolved in the water changes.',
@@ -324,6 +342,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'multi',
+          support: false,
           text: 'Sources of error. Which of these could make your results less accurate? Choose all that are correct.',
           easy: 'Which of these could make your results less accurate? Choose all that are correct.',
           options: ['Measuring the gummy bears in a different way before and after', 'Not blotting the gummy bears dry before measuring', 'Salt or sugar that did not fully dissolve', 'Leaving some bears in the water longer than others', 'Using the same amount of water in every cup'],
@@ -334,6 +353,7 @@ window.ASSIGNMENT = {
         },
         {
           type: 'choice',
+          support: false,
           text: 'Connect to cells. A tiny single-celled protozoan that lives in fresh water is put into salty water. What happens?',
           easy: 'A tiny one-celled living thing from fresh water is put in salty water. What happens?',
           options: ['Water moves out of its cell, and it shrinks', 'Water moves into its cell, and it swells', 'Nothing happens, because salt cannot cross a membrane', 'Salt moves into the cell, and it swells'], answer: 0,
