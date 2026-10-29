@@ -22,6 +22,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `unlockAt` | no | With parts one at a time: how much of a part a student must finish before the next part opens. Default `0.8` (80%). A part with `gate: true` always needs all of it |
 | `short` | no | The short link name, so students can use `SITE/short` (for example `short: 'chemical-reaction'`). Default: the folder name without "explore-". Run `tools/build_index.py` after changing it |
 | `copyPaste` | no | Copy and paste are off by default (see below). Set `copyPaste: true` to allow them on this assignment |
+| `essential` | no | The goal box at the top of the supported version: `{ question: '...', goals: ['...', ...] }` (see "Supported version") |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
@@ -145,8 +146,18 @@ with `?support=eagle` on the end. Everyone else uses the plain link.
   simple. Do not give `agree` questions an `easy`.
 - Drop-downs, multiple choice, and choose-all questions show fewer choices on their own: the right answer(s) and two
   wrong ones (picked the same way every time, in the original order). Questions with 3 or fewer choices stay the same.
+- **Just the essentials.** The supported version is more focused: it leaves out anything marked `support: false`.
+  Put it on a question, a part, a clip (in `clips`), or the full video (`video: { ..., support: false }`). Keep what a
+  student needs to answer the essential question; leave out repeats, extras, harder stretch questions, and a second clip
+  that covers the same idea. Usually keep one written question. Leftover questions renumber themselves, and a part
+  whose only clip is left out keeps its reading. Without the full video, the top box explains how the assignment works.
+- **Goal box.** `essential: { question: 'How does ...?', goals: ['Tell ...', 'Explain ...'] }` at the top level puts
+  a "Your goal" box at the top of the supported version: the essential question, then "By the end of this assignment,
+  you should feel confident that you can:" and the goals (2 to 4 short "can do" lines in plain words). It has a Listen
+  button. Only the supported version shows it.
 - Nothing on the page or in the PDF says it is the supported version (the teacher's choice). The PDF shows the easier
-  wording the student saw. Progress saves under the same key, so a student can switch links without losing work.
+  wording the student saw. When anything is left out, progress saves apart from the plain link (question numbers
+differ), so a student should stay on one link. With nothing left out, both links share saved work.
 - Teacher preview of it: `?teacher=tm7k2q&support=eagle`.
 - `node tools/validate.js` counts the questions with easier wording.
 
@@ -168,6 +179,11 @@ bottom of the part with a button such as "Close Part 1 and open Part 2". Selecti
 banner (with a "Done" label), plays confetti (or seasonal shapes: autumn leaves September 15 to November 30, snowflakes in December and January, hearts in February, clovers and rainbows in March) with a "Part 1 complete!" message, and opens Part 2. Students who
 turn off motion on their device get the message without the confetti. A folded part has a "Look back at Part 1"
 button, so students can reread it. Until then, a note at its bottom says "You need to complete Part 1 to continue on to Part 2." A part with `gate: true` (lab setup and safety) needs every item done. The Finish section (PDF, Canvas, backup) stays hidden until the student closes the last part.
+
+When the student answers the last question of the open part (or finishes every item in it) and the green box is
+ready, the page scrolls down just enough to show it, gives it a short glow, and puts the keyboard on its button, so
+the button never sits unseen below the screen. If that last question is a written answer, it waits until the student
+leaves that question (clicks or tabs somewhere else), so it never pulls them away while they type or highlight.
 
 The student moves on with the button, not on their own, so they can read the explanation after their last right
 answer, and a part never folds up while they are still typing a written answer. Which part is open is saved with

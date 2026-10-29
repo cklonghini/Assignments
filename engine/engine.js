@@ -55,6 +55,19 @@ function injectPage(){
 
 var A=window.ASSIGNMENT;
 if(!A||!(A.video||A.board||A.parts)){ document.body.textContent='This page needs an assignment.js file with window.ASSIGNMENT defined.'; return; }
+/* Supported version (an accommodation): the assignment link plus ?support=eagle shows each question's easier wording
+   (`easy` in assignment.js), fewer answer choices, and the goal box (`essential`) at the top. It also leaves out every
+   part, question, and clip marked support: false (and the full video, when video.support is false), so the student
+   works on just the essentials. Nothing on the page or in the PDF says it is the supported version. */
+var SUPPORT=/[?&]support=eagle(&|$)/.test(location.search), TRIMMED=false;
+if(SUPPORT&&!A.board){
+  var keep=function(x){ if(x&&x.support===false){ TRIMMED=true; return false; } return true; };
+  A=window.ASSIGNMENT=Object.assign({},A);
+  if(A.video&&!keep(A.video)) delete A.video;
+  A.parts=(A.parts||[]).filter(keep).map(function(p){
+    return Object.assign({},p,{questions:(p.questions||[]).filter(keep),clips:(p.clips||[]).filter(function(k){return keep((A.clips||{})[k]);})});
+  });
+}
 var TITLE=A.title, COURSE=A.course, BOARD=A.board||null;
 /* game board: tries per answer, and the share of the points earned on try 1, 2, 3 */
 var MAXT=BOARD?(BOARD.tries||3):0, CREDIT=(BOARD&&BOARD.credit)||[1,0.5,0.25];
@@ -66,10 +79,6 @@ injectPage();
 /* Teacher view: the assignment link plus ?teacher=tm7k2q opens every part at once, shows the Finish section, allows
    copy and paste, and saves under its own key so it never mixes with a student's progress on the same computer. */
 var TEACHER=/[?&]teacher=tm7k2q(&|$)/.test(location.search);
-/* Supported version (an accommodation): the assignment link plus ?support=eagle shows each question's easier wording
-   (`easy` in assignment.js) and fewer answer choices. It saves under the same key, so a student can switch links
-   without losing work. Nothing on the page or in the PDF says it is the supported version. */
-var SUPPORT=/[?&]support=eagle(&|$)/.test(location.search);
 /* In the supported version a drop-down or multiple choice question shows the right answer and two wrong ones (plus a
    choice the student already saved). The wrong ones are picked the same way every time, and the order stays the same. */
 function fewer(id,options,right,keep){
@@ -81,7 +90,8 @@ function fewer(id,options,right,keep){
     .sort(function(a,b){return a.k-b.k;}).slice(0,2).map(function(p){return p.o;});
   return options.filter(function(o){return right.indexOf(o)>=0||pick.indexOf(o)>=0||(keep&&keep.indexOf(o)>=0);});
 }
-var KEY=(A.storageKey||('assignment-'+TITLE))+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
+/* question ids follow question numbers, so a supported version with questions left out saves under its own key */
+var KEY=(A.storageKey||('assignment-'+TITLE))+(TRIMMED?'|support':'')+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
 function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
@@ -2448,6 +2458,18 @@ function videoSection(){
   return s;
 }
 
+/* the goal box at the top of the supported version: essential: {question, goals: [...]} in assignment.js */
+function goalSection(){
+  var E=A.essential, s=h('section','task goalsec'); s.id='goal';
+  s.append(h('h2','display','Your goal'));
+  if(E.question){ var p=h('p','intro'); p.append(h('b',null,'Essential question: '),itxt(E.question)); s.append(p); }
+  if((E.goals||[]).length){
+    s.append(h('p','intro','By the end of this assignment, you should feel confident that you can:'));
+    var ul=h('ul','goals'); E.goals.forEach(function(g){ var li=h('li'); li.append(itxt(g)); ul.append(li); }); s.append(ul);
+  }
+  return s;
+}
+
 /* turns the ideas written in assignment.js into checks that ideaCheck can run.
    re: the pattern is somewhere in the answer. all: every pattern is in the same sentence, so an idea can ask for
    two things together (the coenzyme AND faster, the lungs AND oxygen). sentences, highlight and writing: true are
@@ -2698,6 +2720,40 @@ function gateEls(s,n){
   g.append(go); s.append(g);
   s.append(h('p','pnext'));
 }
+/* When the student answers the last question of the open part (or finishes all of it), the page scrolls down just
+   enough to show the Close button, so it never sits unseen below the screen. In a written answer it waits until the
+   student leaves that question, so it never pulls them away while they type or highlight. */
+var POP={armed:false,ready:{},pend:null,t:0};
+function lastQDone(sec){ var qs=sec.querySelectorAll('.q'); return !!qs.length&&qs[qs.length-1].dataset.s==='done'; }
+function writingIn(){
+  var ae=document.activeElement, q=ae&&ae.closest&&ae.closest('.q');
+  return q&&q.querySelector('textarea,[contenteditable="true"]')?q:null;
+}
+function popTo(n){
+  var wq=writingIn();
+  if(wq){ POP.pend={n:n,q:wq}; return; }
+  POP.pend=null; clearTimeout(POP.t);
+  POP.t=setTimeout(function(){
+    var sec=$('#part'+n), g=sec&&$('.pdone',sec);
+    if(!g||g.hidden||sec.hidden||sec.classList.contains('closed')||writingIn()) return;
+    var r=g.getBoundingClientRect();
+    var bar=$('.bar'), top=bar?bar.getBoundingClientRect().bottom:0;
+    if(r.top<top||r.bottom>window.innerHeight){
+      var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      g.scrollIntoView({behavior:still?'auto':'smooth',block:'nearest'});
+    }
+    g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop');
+    var go=$('.btn',g); if(go) go.focus({preventScroll:true});
+  },700);
+}
+document.addEventListener('focusout',function(){
+  setTimeout(function(){
+    var p=POP.pend; if(!p) return;
+    var ae=document.activeElement;
+    if(ae&&p.q.contains(ae)) return;
+    POP.pend=null; if(POP.ready[p.n]) popTo(p.n);
+  },0);
+});
 function applyGate(){
   if(!GATED) return;
   var secs=[].slice.call(document.querySelectorAll('section.task[data-task]'));
@@ -2715,6 +2771,9 @@ function applyGate(){
     g.hidden=past||sh<need;
     $('.pmsg',g).textContent=sh>=1?'You finished '+partWord(n)+'!'
       :'You finished enough of '+partWord(n)+' to move on. You can finish the rest first, or move on now and come back to it later.';
+    var ready=!past&&!g.hidden&&(sh>=1||lastQDone(sec));
+    if(ready&&!POP.ready[n]&&POP.armed) popTo(n);
+    POP.ready[n]=ready;
     var nx=$('.pnext',sec); nx.hidden=past||!g.hidden;
     nx.textContent='You need to complete '+partWord(n)+' to continue on to '+to+'.';
   });
@@ -3610,7 +3669,7 @@ function decorate(){
     }));
   });
   /* video and finish instructions */
-  [['#video','p.intro'],['#board','p.intro'],['#finish','ol,p.intro']].forEach(function(pair){
+  [['#goal','p.intro,li'],['#video','p.intro'],['#board','p.intro'],['#finish','ol,p.intro']].forEach(function(pair){
     var sec=$(pair[0],app); if(!sec) return;
     var b=listenBtn(function(){return [].map.call(sec.querySelectorAll(pair[1]),function(e){return e.innerText;}).join('. ');});
     var wrap=h('div','lrow'); wrap.append(b); sec.querySelector('h2').after(wrap);
@@ -3671,6 +3730,7 @@ function render(){
   TILES.length=0;
   /* video.afterPart: N puts the full video section after part N instead of at the top */
   var vAfter=A.video&&A.video.afterPart||0;
+  if(SUPPORT&&A.essential) app.append(goalSection());
   if(A.video&&!vAfter) app.append(videoSection());
   else if(!A.video&&!BOARD) app.append(startSection());
   if(BOARD) app.append(boardSection());
@@ -3681,7 +3741,7 @@ function render(){
   TOTAL_P=Object.keys(P).length;
   TOTAL_A=Object.keys(AUTO).length;
   decorate();
-  updateBar();
+  POP.armed=false; updateBar(); POP.armed=true;
 }
 
 ['first','last'].forEach(function(k){

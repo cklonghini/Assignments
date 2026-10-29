@@ -87,13 +87,34 @@ for (const dir of dirs) {
       if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
       groups = (A.parts || []).map((p, pi) => ({ where: 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : ''), title: p.title, clips: p.clips, questions: p.questions || [] }));
     }
-    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nEasy = 0;
+    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nEasy = 0, nOut = 0;
+    /* the supported version (?support=eagle): the goal box, and what it leaves out (support: false) */
+    const ES = A.essential;
+    if (ES != null) {
+      if (typeof ES !== 'object' || (!ES.question && !(ES.goals || []).length)) E('essential needs a question and goals: { question: \'...\', goals: [\'...\'] }');
+      else {
+        if (!ES.question) W('essential has no question');
+        if (!(ES.goals || []).length) W('essential has no goals');
+        else if (ES.goals.length > 5) W('essential has ' + ES.goals.length + ' goals; aim for 2 to 4');
+      }
+    }
+    const noSup = x => x && x.support === false;
+    if (noSup(A.video)) nOut++;
+    Object.keys(clips).forEach(k => { if (noSup(clips[k])) nOut++; });
     groups.forEach(p => {
       const where = p.where;
       if (!p.title) E(where + ' needs a title');
       (p.clips || []).forEach(k => { if (!clips[k]) E(where + ' uses a clip that is not defined: ' + k); used.add(k); });
       (p.images || []).forEach(im => checkImage(im, where));
       if (!(p.questions || []).length) W(where + ' has no questions');
+      if (!board) {
+        const P = (A.parts || [])[groups.indexOf(p)] || {};
+        if (noSup(P)) nOut++;
+        else if ((p.questions || []).length && (p.questions || []).every(noSup)) W(where + ' keeps no questions in the supported version; mark the part support: false instead');
+        (p.questions || []).forEach(q => { if (noSup(q)) nOut++; });
+        const vq = (p.questions || []).filter(q => q.at != null && !noSup(q)), c0 = (p.clips || [])[0];
+        if (vq.length && c0 && noSup(clips[c0])) W(where + ': the first clip is left out of the supported version, so its in-video questions show below the reading there');
+      } else if ((p.questions || []).some(noSup)) W(where + ': support: false does nothing on a game board');
       (p.questions || []).forEach(q => {
         qn++;
         const w = 'Q' + qn;
@@ -283,7 +304,7 @@ for (const dir of dirs) {
     if (nPhoto > 10) W(nPhoto + ' photo questions is a lot. Each photo makes the PDF bigger; aim for 10 or fewer');
     if (groups.reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
     Object.keys(clips).forEach(k => { if (!used.has(k)) W('Clip ' + k + ' is defined but not used in any part'); });
-    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '; ' + nEasy + ' with easier wording), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
+    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '; ' + nEasy + ' with easier wording' + (nOut ? ', ' + nOut + ' left out of the supported version' : '') + (ES ? ', goal box' : '') + '), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
   }
   errors.forEach(m => console.log('  ERROR   ' + m));
   warnings.forEach(m => console.log('  warning ' + m));

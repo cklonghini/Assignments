@@ -444,6 +444,13 @@ input.num{width:9ch}
 .gtog{margin:0 0 12px}
 .pdone{margin-top:28px;padding:16px 18px;border:2px solid var(--ok);background:var(--ok-bg);border-radius:12px}
 .pdone[hidden]{display:none}
+.pdone{scroll-margin-bottom:24px}
+.pdone.pop{animation:pdpop 1.2s ease-out}
+@keyframes pdpop{0%{box-shadow:0 0 0 0 var(--ok)}30%{box-shadow:0 0 0 8px var(--ok-bg),0 0 0 10px var(--ok)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.pdone.pop{animation:none}}
+/* goal box at the top of the supported version */
+.goalsec .goals{margin:6px 0 0;padding-left:1.4em;max-width:68ch}
+.goalsec .goals li{margin:4px 0}
 .pmsg{margin:0 0 10px;font-weight:700;font-size:1.1rem;color:var(--ok)}
 .pnext{margin:28px 0 0;padding:14px 18px;border:2px dashed var(--muted);border-radius:12px;font-weight:700;color:var(--muted)}
 .pnext[hidden]{display:none}

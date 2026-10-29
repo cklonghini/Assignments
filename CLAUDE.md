@@ -72,12 +72,17 @@ lab agreement, and a ready-to-go selfie `photo`.
   every section but the one the student is working on fades out. The browser remembers it for every assignment. Built into the engine.
 - A supported version (an accommodation) is the link plus `?support=eagle`: each question shows its `easy` wording and
   drop-downs and multiple choice show fewer choices. When you write a question, also write its `easy` wording (same
-  question and answer, plain words, short sentences) unless it is already simple. See "Supported version" in
-  `docs/ASSIGNMENT_FORMAT.md`. Nothing on the page or PDF labels it.
+  question and answer, plain words, short sentences) unless it is already simple. The supported version is also
+  more focused (the teacher uses it for special education students): mark extra questions, parts, and clips
+  `support: false` so it keeps just the essentials, and give the assignment an `essential` goal box (the essential
+  question and what students should feel confident they can do by the end), shown at the top of that version only.
+  See "Supported version" in `docs/ASSIGNMENT_FORMAT.md`. Nothing on the page or PDF labels it.
 - Each part's green reading box (`read`) is folded under "Read this before you answer" until the student opens it. On
   highlight questions the instructions fold under "How to answer this question", and what each highlight color is for
   shows as a tip when the student points at or taps its button. This is built into the engine.
 - Each part starts with a thick colored line and a banner title so students can see they are moving to a new section.
+- When a student answers the last question of a part, the page scrolls down to the "Close Part N" box so it never
+  sits unseen below the screen (in a written answer it waits until they leave the box). Built into the engine.
 - Parts open one at a time. When at least 80% of a part is done (all of a `gate: true` setup part), the student closes it with a button, it folds down, confetti (or seasonal shapes: autumn leaves September 15 to November 30, snowflakes in December and January, hearts in February, clovers and rainbows in March)
   plays, and the next part opens. The Finish and submit section shows only after the last part is closed. The teacher view (`?teacher=tm7k2q` on the link) opens everything. This is built into the engine (see "One part at a time" in `docs/ASSIGNMENT_FORMAT.md`).
 - No "watch for" timestamp boxes. Each clip is titled "Rewatch just this part", with its times in the full video.
