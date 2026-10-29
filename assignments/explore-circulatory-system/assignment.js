@@ -11,6 +11,16 @@ window.ASSIGNMENT = {
   course: 'Anatomy and Physiology B',
   storageKey: 'explore-circulatory-system-v2',
   short: 'cardiovascular-system',                 // short link: SITE/cardiovascular-system
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How does blood travel through the heart, the lungs, and the rest of the body?',
+    goals: [
+      'Name the jobs of blood and the parts of blood.',
+      'Label the chambers, vessels, and valves of the heart, and tell arteries, veins, and capillaries apart.',
+      'Trace the path of blood through the heart and lungs, and tell where it is oxygen-rich or oxygen-poor.',
+      'Find a blood type in a lab and tell which blood is safe for a patient.'
+    ]
+  },
 
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false">'
     + '<path d="M32 64 C10 48 4 36 4 25 C4 15 12 9 20 9 C26 9 30 13 32 17 C34 13 38 9 44 9 C52 9 60 15 60 25 C60 36 54 48 32 64 Z" fill="var(--ligand)"/>'
@@ -28,7 +38,7 @@ window.ASSIGNMENT = {
     blood:   { src: 'media/clip-blood.mp4',   from: 54.0,  to: 154.0, seconds: 100, title: 'What blood is and what it does' },
     heart:   { src: 'media/clip-heart.mp4',   from: 154.0, to: 249.0, seconds: 95, title: 'The heart: sides, chambers, vessels, and valves' },
     pathway: { src: 'media/clip-pathway.mp4', from: 249.0, to: 330.0, seconds: 81, title: 'Tracing the pathway of blood from a toe' },
-    recap:   { src: 'media/clip-recap.mp4',   from: 330.0, to: 389.0, seconds: 59, title: 'Coronary arteries and the quiz-yourself recap' },
+    recap:   { src: 'media/clip-recap.mp4',   from: 330.0, to: 389.0, seconds: 59, title: 'Coronary arteries and the quiz-yourself recap', support: false },
     /* from a second Amoeba Sisters video (captions from the teacher's transcript, source/blood-types-transcript.txt) */
     bloodtypes: { src: 'media/clip-bloodtypes.mp4', from: 0, to: 206.6, seconds: 207, title: 'Blood types and donating blood',
                   of: 'Multiple Alleles, ABO Blood Types, and Punnett Squares' }
@@ -114,6 +124,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'selects',
           text: 'Match each description to the correct word: the blood and the whole system.',
           easy: 'These are about blood and the whole body system. Read each meaning. Pick the word that matches it.',
@@ -141,6 +152,7 @@ window.ASSIGNMENT = {
         + '<li><b>Platelets</b> are cell fragments that help your blood clot when the body is damaged.</li></ul>',
       questions: [
         {
+          support: false,
           type: 'choice',
           text: 'True or false: The blood in your veins is blue.',
           options: ['True', 'False'], answer: 1,
@@ -159,6 +171,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'choice',
           text: 'What gives blood its red color?',
           options: ['Hemoglobin, an iron-containing protein in red blood cells', 'Plasma, the liquid part of blood', 'Platelets, when they clot', 'Oxygen stored in white blood cells'],
@@ -223,6 +236,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'choice',
           text: 'Which chambers of the heart have thinner walls?',
           options: ['The atria', 'The ventricles'], answer: 0,
@@ -255,6 +269,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'choice',
           text: 'How does the heart muscle itself get oxygen and glucose?',
           easy: 'The heart is a muscle. It needs its own oxygen and glucose (sugar). How does the heart muscle get them?',
@@ -308,6 +323,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'choice',
           text: 'Look at the table. Which blood type is the most common in the United States?',
           options: ['O+', 'A+', 'B+', 'AB−'], answer: 0,
@@ -315,6 +331,7 @@ window.ASSIGNMENT = {
           tip: 'Look for the biggest number in the table.'
         },
         {
+          support: false,
           type: 'choice',
           text: 'Look at the table. Which blood type is the rarest?',
           easy: 'Look at the table. Which blood type is the rarest (the fewest people have it)?',
@@ -336,6 +353,7 @@ window.ASSIGNMENT = {
           explain: 'Priya’s cells have the B marker and no Rh marker. B− blood has only B, and O− blood has no markers at all, so neither brings a marker her body would attack.'
         },
         {
+          support: false,
           type: 'multi',
           text: 'Mr. Chen is type A+. Which donor bags are safe for him? Choose every safe bag.',
           easy: 'Mr. Chen has type A+ blood. Which donor bags (bags of blood given by other people) are safe for him? Pick every safe bag.',
@@ -346,6 +364,7 @@ window.ASSIGNMENT = {
           explain: 'Mr. Chen’s cells have A and Rh. Any bag that only brings A, Rh, or no markers at all is safe: O−, O+, A−, and A+.'
         },
         {
+          support: false,
           type: 'highlight',
           cer: true,              // claim (blue), evidence (yellow), expand (green)
           from: 'the blood types video and your blood typing lab',

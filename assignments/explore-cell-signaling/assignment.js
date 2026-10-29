@@ -9,13 +9,24 @@ window.ASSIGNMENT = {
   title: 'Explore - Cell Signaling',
   course: 'Biology A',
   storageKey: 'explore-cell-signaling-v2',
+  /* supported version (?support=eagle): the goal box at the top */
+  essential: {
+    question: 'How do cells “talk” to each other?',
+    goals: [
+      'Tell what a ligand (signal molecule) and a receptor are.',
+      'Put the three stages of cell signaling in order: reception, transduction, and response.',
+      'Explain how neurons use neurotransmitters to send a signal across a synapse.',
+      'Show that different cells respond to the same signal in different ways.'
+    ]
+  },
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><circle cx="32" cy="14" r="8" fill="var(--ligand)"/><path d="M12 22 Q12 46 32 46 Q52 46 52 22" fill="none" stroke="var(--receptor)" stroke-width="9" stroke-linecap="round"/><rect x="28" y="44" width="8" height="22" fill="var(--receptor)"/></svg>',
 
   /* No single main video: each part has its own whole video. */
   start: {
     heading: 'How this assignment works',
     intro: 'In this assignment you will learn how cells “talk” to each other. You will watch four short videos, read about cell signaling, and try an online interactive.',
-    after: 'Work from top to bottom. Each part gives you a video or a reading, and then lets you practice and check your work. Some questions pop up inside the videos. You will also answer five written questions. Each part opens when you finish the one before it.'
+    after: 'Work from top to bottom. Each part gives you a video or a reading, and then lets you practice and check your work. Some questions pop up inside the videos. You will also answer five written questions. Each part opens when you finish the one before it.',
+    easyAfter: 'Work from top to bottom. Each part gives you a video or a reading, and then lets you practice and check your work. Some questions pop up inside the videos. You will also answer two written questions. Each part opens when you finish the one before it.'
   },
 
   clips: {
@@ -30,6 +41,7 @@ window.ASSIGNMENT = {
     {
       title: 'Introduction to cell signaling',
       intro: 'Watch the Intro to Cell Signaling video. It stops on its own 5 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again. Then answer the two written questions below the video.',
+      easyIntro: 'Watch the Intro to Cell Signaling video. It stops on its own 3 times and a question pops up. Answer each question to keep watching. You can rewind the video if you need to hear something again. Then answer the written question below the video.',
       clips: ['intro'],
       questions: [
         {
@@ -62,6 +74,7 @@ window.ASSIGNMENT = {
           explain: 'Right. First reception (a signal molecule binds a receptor), then transduction (the receptor gets activated), then a response.'
         },
         {
+          support: false,
           at: 200.5,
           type: 'choice',
           text: 'The video says gap junctions in animal cells and plasmodesmata in plant cells are connections between two close together cells. What do they allow?',
@@ -72,6 +85,7 @@ window.ASSIGNMENT = {
           explain: 'Right. Gap junctions and plasmodesmata connect two close cells so ions or other small molecules can pass, and they do not have to cross the cell membrane.'
         },
         {
+          support: false,
           at: 258.3,
           type: 'selects',
           text: 'Match each type of cell signaling to what the video says about it.',
@@ -97,6 +111,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'written',
           text: 'What is the difference between intracellular and intercellular signaling? (2 to 3 sentences)',
           easy: 'Intracellular signaling and intercellular signaling sound alike. Explain how they are different. (2 to 3 sentences)',
@@ -141,6 +156,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'selects',
           text: 'Read the caption under the picture. Then fill in the blanks.',
           img: { src: 'media/ligand-receptor-response.png', alt: 'Drawing of a ligand binding to a receptor on a cell. Inside the cell, chemical messengers relay the signal, which leads to a response.',
@@ -214,6 +230,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'written',
           text: 'What is dopamine? (1 to 2 sentences)',
           starters: ['Dopamine is a …', 'The body …', 'When dopamine is released, …'],
@@ -224,6 +241,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'written',
           text: 'Think of something you do when you are feeling down and record it below. (This would be an example of higher dopamine levels and a cell signaling response in your body!)',
           easy: 'What is one thing you do when you feel sad or down? Write it below. (Doing this raises your dopamine levels. It is an example of a cell signaling response in your body!)',
@@ -274,6 +292,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'selects',
           text: 'Cancer: click the info icon on the cell to learn more, then click the cell to begin the interactive. Choose the answers below.',
           easy: 'Cancer: 1. Click the info icon on the cell and read about it. 2. Click the cell to start the interactive. 3. Choose your answers below.',
@@ -286,6 +305,7 @@ window.ASSIGNMENT = {
           ]
         },
         {
+          support: false,
           type: 'selects',
           text: 'Leaf parenchyma: click the info icon on the cell to learn more, then click the cell to begin the interactive. Choose the answers below.',
           easy: 'Leaf parenchyma (a cell in a plant leaf): 1. Click the info icon on the cell and read about it. 2. Click the cell to start the interactive. 3. Choose your answers below.',
