@@ -151,6 +151,9 @@ with `?support=eagle` on the end. Everyone else uses the plain link.
   student needs to answer the essential question; leave out repeats, extras, harder stretch questions, and a second clip
   that covers the same idea. Usually keep one written question. Leftover questions renumber themselves, and a part
   whose only clip is left out keeps its reading. Without the full video, the top box explains how the assignment works.
+- When leaving things out makes a sentence wrong (for example "The video stops on its own 5 times" or "You will
+  also answer three written questions"), give the supported version its own wording: `easyIntro` and `easyAfter`
+  on `video` or `start`, and `easyIntro` on a part, replace `intro` and `after` there.
 - **Goal box.** `essential: { question: 'How does ...?', goals: ['Tell ...', 'Explain ...'] }` at the top level puts
   a "Your goal" box at the top of the supported version: the essential question, then "By the end of this assignment,
   you should feel confident that you can:" and the goals (2 to 4 short "can do" lines in plain words). It has a Listen

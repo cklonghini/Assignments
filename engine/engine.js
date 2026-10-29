@@ -62,10 +62,13 @@ if(!A||!(A.video||A.board||A.parts)){ document.body.textContent='This page needs
 var SUPPORT=/[?&]support=eagle(&|$)/.test(location.search), TRIMMED=false;
 if(SUPPORT&&!A.board){
   var keep=function(x){ if(x&&x.support===false){ TRIMMED=true; return false; } return true; };
+  /* easyIntro and easyAfter replace intro and after (counts like "stops 5 times" can change when questions are left out) */
+  var easier=function(x){ if(!x) return x; x=Object.assign({},x); if(x.easyIntro) x.intro=x.easyIntro; if(x.easyAfter) x.after=x.easyAfter; return x; };
   A=window.ASSIGNMENT=Object.assign({},A);
   if(A.video&&!keep(A.video)) delete A.video;
+  A.video=easier(A.video); A.start=easier(A.start);
   A.parts=(A.parts||[]).filter(keep).map(function(p){
-    return Object.assign({},p,{questions:(p.questions||[]).filter(keep),clips:(p.clips||[]).filter(function(k){return keep((A.clips||{})[k]);})});
+    return Object.assign(easier(p),{questions:(p.questions||[]).filter(keep),clips:(p.clips||[]).filter(function(k){return keep((A.clips||{})[k]);})});
   });
 }
 var TITLE=A.title, COURSE=A.course, BOARD=A.board||null;
