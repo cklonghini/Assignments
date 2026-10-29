@@ -193,6 +193,7 @@ window.ASSIGNMENT = {
       clips: ['neurons'],
       read: '<p><b>Read:</b> One unique example of cell signaling is <b>synaptic signaling</b>, in which a nerve cell (called a “neuron”) transmits a signal to another neuron. This process is named for the <b>synapse</b>, the junction between two nerve cells where signal transmission occurs.</p>'
         + '<p>When the sending neuron fires, an electrical impulse moves rapidly through the cell, traveling down a long, fiber-like extension called an <b>axon</b>. When the impulse reaches the synapse, it triggers the release of <b>neurotransmitters</b>, which quickly cross the small gap between the neurons. When the neurotransmitters arrive at the receiving cell, they bind to receptors and cause a chemical change inside of the cell (often, opening ion channels and changing the electrical potential across the membrane). The video above illustrates this process.</p>'
+        + '<p>One well-known neurotransmitter is <b>dopamine</b>. When neurons release dopamine, it helps create feelings of pleasure, reward, and motivation.</p>'
         + '<p class="small">Readings adapted from the Cell Signaling activity by Andrea Bierema, Michigan State University.</p>',
       questions: [
         {
