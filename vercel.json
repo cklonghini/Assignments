@@ -101,6 +101,16 @@
       "permanent": false
     },
     {
+      "source": "/mastery-biology-lp2",
+      "destination": "/assignments/mastery-biology-lp2/",
+      "permanent": false
+    },
+    {
+      "source": "/mastery-biology-lp2/",
+      "destination": "/assignments/mastery-biology-lp2/",
+      "permanent": false
+    },
+    {
       "source": "/osmosis-lab",
       "destination": "/assignments/osmosis-lab/",
       "permanent": false
