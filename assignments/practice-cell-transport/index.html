@@ -76,19 +76,10 @@ input[type=text]:focus{border-color:var(--primary)}
 .badge.prog{background:var(--warn-bg);color:var(--warn-ink)}
 .howto{background:var(--learn);border:1px solid var(--learn-line);border-radius:8px;padding:12px 16px;margin:14px 0}
 .howto ol{margin:.3em 0 0;padding-left:1.3em}
-/* how the 4 skills fit together: each kind of transport with its example under it */
-.fit{margin:18px 0 6px}
-.fit h2{font-size:1.2rem;margin:0 0 10px}
-.fitgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fitcol{border:2px solid var(--line);border-top:5px solid var(--gold);border-radius:10px;padding:12px 14px;background:var(--card)}
-.fitcol .kind{font-weight:800;font-size:1.1rem;margin:0}
-.fitcol .how{margin:2px 0 8px;color:var(--muted);font-size:.93rem}
-.fitcol .eg{display:flex;gap:8px;align-items:baseline;background:var(--soft);border-radius:8px;padding:8px 10px;margin:0}
-.fitcol .eg b{white-space:nowrap}
 .exlabel{display:inline-block;font-size:.85rem;font-weight:700;color:var(--gold-ink);margin:2px 0 0}
 .tcard.ex{margin-left:28px}
 .topbar .exl{display:block;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.85rem;font-weight:700;color:var(--primary-ink);opacity:.9}
-@media (max-width:560px){.fitgrid{grid-template-columns:1fr}.tcard.ex{margin-left:12px}}
+@media (max-width:560px){.tcard.ex{margin-left:12px}}
 
 /* quiz top bar */
 .topbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;background:var(--primary);color:var(--primary-ink);border-radius:10px;padding:12px 16px;margin-bottom:14px;box-shadow:0 -5px 0 var(--gold)}
@@ -235,15 +226,6 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
     <h1>Cell Transport Practice</h1>
     <p class="course">Biology A</p>
     <p class="sub" id="home-hello"></p>
-    <div class="fit" id="fit">
-      <div class="row" style="justify-content:space-between"><h2>How the 4 skills fit together</h2></div>
-      <div class="fitgrid">
-        <div class="fitcol"><p class="kind">1. Passive Transport</p><p class="how">No energy needed. Molecules move from high to low concentration.</p>
-          <p class="eg"><span aria-hidden="true">↳</span><span><b>Example: 2. Osmosis.</b> Water moving across a membrane is passive transport.</span></p></div>
-        <div class="fitcol"><p class="kind">3. Active Transport</p><p class="how">Needs energy (ATP). Molecules move from low to high concentration.</p>
-          <p class="eg"><span aria-hidden="true">↳</span><span><b>Example: 4. Sodium-Potassium Pump.</b> It uses ATP to pump ions against their gradients.</span></p></div>
-      </div>
-    </div>
     <div class="topics" id="topic-list"></div>
     <div class="card">
       <h2 style="margin-top:0">Finished?</h2>
@@ -950,7 +932,6 @@ function renderHome(){
   document.documentElement.style.setProperty("--topic","var(--passive)");
   const done=ORDER.filter(k=>state.topics[k].mastered).length;
   $("home-hello").textContent=`Hi ${state.name.split(" ")[0]}! You've mastered ${done} of ${ORDER.length} skills. Get ${STREAK_GOAL} in a row correct to master each one.`;
-  $("fit").querySelector(".row").innerHTML=`<h2 style="margin:0">How the 4 skills fit together</h2>${sayBtn("#fit")}`;
   $("topic-list").innerHTML=ORDER.map((k,i)=>{
     const T=TOPICS[k],s=state.topics[k];
     const badge=s.mastered?`<span class="badge done">✓ Mastered</span>`:s.answered?`<span class="badge prog">In progress · ${s.streak} of ${STREAK_GOAL} in a row</span>`:`<span class="badge">Not started</span>`;
@@ -1082,11 +1063,11 @@ function markWatched(k,from,to){
   for(let s=Math.floor(from);s<=Math.floor(to)&&s<len;s++)w[s]="1";
   state.watched[k]=w.join("");
 }
-function wpLabel(k){const p=watchedPct(k);return p>=WATCH_GOAL?`<span class="wp done" data-wk="${k}">✓ watched</span>`:`<span class="wp" data-wk="${k}">${Math.round(p*100)}%</span>`}
+function wpLabel(k){const p=watchedPct(k);return p>=WATCH_GOAL?`<span class="wp done" data-wk="${k}">✓ watched</span>`:`<span class="wp" data-wk="${k}"></span>`}
 function refreshWatch(){
-  document.querySelectorAll(".wp[data-wk]").forEach(el=>{const p=watchedPct(el.dataset.wk);el.classList.toggle("done",p>=WATCH_GOAL);el.textContent=p>=WATCH_GOAL?"✓ watched":Math.round(p*100)+"%"});
+  document.querySelectorAll(".wp[data-wk]").forEach(el=>{const p=watchedPct(el.dataset.wk);el.classList.toggle("done",p>=WATCH_GOAL);el.textContent=p>=WATCH_GOAL?"✓ watched":""});
   ORDER.forEach(k=>{const b=document.querySelector(`[data-go="${k}"]`),l=$("lock-"+k);if(!b)return;const ok=unlocked(k);b.disabled=!ok;
-    if(l){l.classList.toggle("hidden",ok);l.textContent=`🔒 Watch at least ${Math.round(WATCH_GOAL*100)}% of each lesson video to unlock this skill (${lessonDone(k)} of ${TOPICS[k].lesson.length} watched).`}});
+    if(l){l.classList.toggle("hidden",ok);l.textContent=`🔒 Watch the lesson videos above to unlock this skill (${lessonDone(k)} of ${TOPICS[k].lesson.length} watched).`}});
 }
 function mins(ids){const t=ids.reduce((n,k)=>n+CLIPS[k].dur,0);return t<60?t+" sec":Math.round(t/60)+" min"}
 function player(ids,title){
