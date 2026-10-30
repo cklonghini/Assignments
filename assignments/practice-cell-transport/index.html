@@ -146,6 +146,25 @@ select.pick.bad{border-color:var(--bad);background:var(--badbg)}
 .cloze{line-height:2.6;margin:16px 0;font-size:1.02rem}
 .cloze select.pick{padding:.25em .4em;margin:0 2px}
 .actions{margin-top:18px}
+/* Start here, the yellow stay-on-this-page box, and the sticky progress bars, as in engine/engine.css */
+.startban{font-weight:800;font-size:1.5rem;line-height:1.15;margin:0 0 14px;background:var(--primary);color:var(--banner-ink);padding:12px 16px;border-radius:10px;box-shadow:0 -5px 0 var(--gold)}
+.namerow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 4px}
+.namerow label{font-weight:700}
+.namerow input[type=text]{flex:1 1 180px;max-width:280px}
+.warn{background:var(--warn-bg);color:var(--warn-ink);border:3px solid var(--warn-line);border-radius:10px;padding:18px 20px;margin:18px 0 6px}
+.warn .whead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.warn h2{margin:0 0 6px;font-size:1.4rem;line-height:1.2}
+.warn p{margin:6px 0}.warn ul{margin:8px 0 0;padding-left:1.2em}.warn li{margin:4px 0}
+.warn .small{font-size:.9rem;margin-top:12px}
+.warn .say{color:var(--warn-ink);border-color:var(--warn-ink)}
+.startmsg{margin:8px 0 0;font-weight:700;color:var(--bad)}
+.pbar{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);margin:0 -20px 18px;padding:10px 20px 9px}
+.tracks{display:flex;gap:8px}
+.track{flex:1;min-width:0}
+.tl{display:block;font-size:.78rem;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tt{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.tf{height:100%;width:0;background:var(--primary);transition:width .25s}
+.statsrow{margin-top:6px;font-size:.86rem;color:var(--muted)}
 
 /* feedback */
 .fb{margin-top:18px;border-radius:14px;padding:18px 20px}
@@ -222,6 +241,7 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
 <div class="wrap">
   <div class="helpwrap hidden" id="help" role="alertdialog" aria-modal="true" aria-labelledby="help-h" aria-describedby="help-text"></div>
   <div class="brand"><img src="../../engine/brand/eagle.png" alt="">Elite Academic Academy</div>
+  <div class="pbar" aria-label="Your progress"><div class="tracks" id="tracks"></div><div class="statsrow"><span id="saved-at"></span></div></div>
 
   <!-- START -->
   <section id="s-start" class="hidden">
@@ -229,7 +249,19 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
     <p class="course">Biology A</p>
     <p class="sub">Passive transport · Osmosis · Active transport</p>
     <div class="card">
-      <div class="howto" style="margin-top:0">
+      <h2 class="startban">Start here</h2>
+      <p style="margin-top:0">Do these things before you begin. The rest of the assignment opens when you finish.</p>
+      <div class="namerow"><label for="in-first">First name</label><input type="text" id="in-first" autocomplete="given-name" placeholder="First name">
+        <label for="in-last">Last name</label><input type="text" id="in-last" autocomplete="family-name" placeholder="Last name"></div>
+      <aside class="warn" role="alert" aria-labelledby="warnh" id="warnbox">
+        <div class="whead"><h2 id="warnh">Stay on this page until you finish</h2></div>
+        <p><strong>If you close this tab, refresh the page, or leave it for another website, your progress may be lost and you will have to start over.</strong></p>
+        <ul><li>Do not use your browser’s back button or refresh button.</li>
+          <li>When you finish, download your PDF from the skills page and upload it to the Canvas assignment.</li></ul>
+        <p class="small">This page keeps a backup copy in your browser as you work, but don’t count on it. It disappears if you switch devices, use a private window, or clear your browser data.</p>
+      </aside>
+      <p>The progress bars at the top of the screen show how close you are to mastering each skill. They stay at the top as you scroll.</p>
+      <div class="howto">
         <strong>How this works</strong>
         <ol>
           <li>There are 3 skills: <b>Passive Transport</b>, then <b>Osmosis</b> (an example of passive transport), then <b>Active Transport</b>. Each skill is complete when you get <b><span id="goal-n">3</span> questions in a row</b> correct.</li>
@@ -237,9 +269,8 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
           <li>When you're done, save your PDF report and upload it to Canvas.</li>
         </ol>
       </div>
-      <label class="fld" for="in-name">Your first and last name</label>
-      <input type="text" id="in-name" autocomplete="name" placeholder="First Last">
-      <div class="actions"><button class="btn" id="b-start" disabled>Start practicing</button></div>
+      <div class="actions"><button class="btn" id="b-start">I’m ready. Start the assignment</button></div>
+      <p class="startmsg hidden" id="start-msg" aria-live="polite"></p>
     </div>
   </section>
 
@@ -1055,8 +1086,20 @@ Object.assign(DIAGRAMS,{
 /* ===================== STATE ===================== */
 let state=null;
 const COURSE="Biology A";
-function fresh(){const t={};ORDER.forEach(k=>t[k]={streak:0,answered:0,correct:0,mastered:false,masteredAt:null,timeMs:0,queue:[]});return {name:"",cls:COURSE,startedAt:null,topics:t,log:[]}}
-function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state))}catch(e){}}
+function fresh(){const t={};ORDER.forEach(k=>t[k]={streak:0,answered:0,correct:0,mastered:false,masteredAt:null,timeMs:0,queue:[]});return {name:"",first:"",last:"",cls:COURSE,startedAt:null,topics:t,log:[]}}
+let savedAt=null;
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state));savedAt=new Date()}catch(e){}paintProgress()}
+/* the sticky progress bars: Start (both names typed), then one per skill (its streak toward mastery) */
+function paintProgress(){
+  const tr=$("tracks"); if(!tr) return;
+  if(!tr.children.length) tr.innerHTML=["start"].concat(ORDER).map(k=>{const lab=k==="start"?"Start":TOPICS[k].name;
+    return `<div class="track"><span class="tl">${esc(lab)}</span><div class="tt" role="progressbar" id="trk-${k}" aria-label="${esc(lab)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>`}).join("");
+  const set=(k,pct)=>{const t=$("trk-"+k);t.firstChild.style.width=pct+"%";t.setAttribute("aria-valuenow",String(pct))};
+  const started=state&&state.startedAt;
+  set("start",started?100:(($("in-first").value.trim()?50:0)+($("in-last").value.trim()?50:0)));
+  ORDER.forEach(k=>{const s=state&&state.topics[k];set(k,!s?0:s.mastered?100:Math.round(100*Math.min(s.streak,STREAK_GOAL)/STREAK_GOAL))});
+  $("saved-at").textContent=savedAt?"Backup saved at "+savedAt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"";
+}
 function load(){try{const s=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(s&&s.name&&s.topics){const f=fresh();ORDER.forEach(k=>{if(!s.topics[k])s.topics[k]=f.topics[k]});return s}}catch(e){}return null}
 
 const $=id=>document.getElementById(id);
@@ -1093,9 +1136,13 @@ document.addEventListener("click",e=>{
 });
 
 /* ===================== START / HOME ===================== */
-$("in-name").addEventListener("input",e=>$("b-start").disabled=e.target.value.trim().split(/\s+/).filter(Boolean).length<1);
-$("b-start").onclick=()=>{state=fresh();state.name=$("in-name").value.trim();state.cls=COURSE;state.startedAt=new Date().toISOString();save();renderHome()};
-$("b-reset").onclick=()=>{if(confirm("Start over? This erases the progress saved on this device.")){try{localStorage.removeItem(STORE_KEY)}catch(e){}state=null;$("in-name").value="";$("b-start").disabled=true;show("s-start")}};
+["in-first","in-last"].forEach(id=>$(id).addEventListener("input",()=>{$("start-msg").classList.add("hidden");paintProgress()}));
+$("b-start").onclick=()=>{
+  const f=$("in-first").value.trim(),l=$("in-last").value.trim();
+  if(!f||!l){const m=$("start-msg");m.textContent="Type your first and last name above to continue.";m.classList.remove("hidden");$(f?"in-last":"in-first").focus();return}
+  state=fresh();state.first=f;state.last=l;state.name=f+" "+l;state.cls=COURSE;state.startedAt=new Date().toISOString();save();renderHome()};
+$("b-reset").onclick=()=>{if(confirm("Start over? This erases the progress saved on this device.")){try{localStorage.removeItem(STORE_KEY)}catch(e){}state=null;$("in-first").value="";$("in-last").value="";paintProgress();show("s-start")}};
+$("warnh").after(document.createRange().createContextualFragment(sayBtn("#warnbox")));
 $("b-report").onclick=downloadPdf;
 $("b-back").onclick=renderHome;
 
@@ -1416,7 +1463,7 @@ async function buildPdf(){
 }
 /* file name like the other assignments: "Title - Last First.pdf" */
 function pdfName(){
-  const w=(state.name||"").trim().split(/\s+/),last=w.length>1?w.pop():"",nm=((last?last+" ":"")+w.join(" ")).replace(/[\\\/:*?"<>|]+/g,"").trim();
+  const w=(state.name||"").trim().split(/\s+/),last=state.last?state.last.trim():w.length>1?w.pop():"",nm=((last?last+" ":"")+(state.first?state.first.trim():w.join(" "))).replace(/[\\\/:*?"<>|]+/g,"").trim();
   return "Practice - Cell Transport - "+(nm||"Student")+".pdf";
 }
 async function downloadPdf(){
@@ -1434,7 +1481,8 @@ async function downloadPdf(){
 /* ===================== INIT ===================== */
 $("goal-n").textContent=STREAK_GOAL;
 state=load();
-if(state){renderHome()}else{state=fresh();show("s-start")}
+if(state){save();renderHome()}else{state=fresh();show("s-start")}
+paintProgress();
 </script>
 </body>
 </html>
