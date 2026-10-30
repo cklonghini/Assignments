@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cell Transport Mastery</title>
 <!-- standalone page (no engine): tools/build_index.py lists it on the home page from these lines -->
-<meta name="assignment-title" content="Cell Transport Practice (Passive, Active, Osmosis)">
+<meta name="assignment-title" content="Cell Transport Practice (Passive, Active, Osmosis, Sodium-Potassium Pump)">
 <meta name="assignment-course" content="Biology A">
 <meta name="assignment-short" content="cell-transport-practice">
 <link rel="icon" type="image/png" href="../../engine/brand/favicon.png">
@@ -76,6 +76,19 @@ input[type=text]:focus{border-color:var(--primary)}
 .badge.prog{background:var(--warn-bg);color:var(--warn-ink)}
 .howto{background:var(--learn);border:1px solid var(--learn-line);border-radius:8px;padding:12px 16px;margin:14px 0}
 .howto ol{margin:.3em 0 0;padding-left:1.3em}
+/* how the 4 skills fit together: each kind of transport with its example under it */
+.fit{margin:18px 0 6px}
+.fit h2{font-size:1.2rem;margin:0 0 10px}
+.fitgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fitcol{border:2px solid var(--line);border-top:5px solid var(--gold);border-radius:10px;padding:12px 14px;background:var(--card)}
+.fitcol .kind{font-weight:800;font-size:1.1rem;margin:0}
+.fitcol .how{margin:2px 0 8px;color:var(--muted);font-size:.93rem}
+.fitcol .eg{display:flex;gap:8px;align-items:baseline;background:var(--soft);border-radius:8px;padding:8px 10px;margin:0}
+.fitcol .eg b{white-space:nowrap}
+.exlabel{display:inline-block;font-size:.85rem;font-weight:700;color:var(--gold-ink);margin:2px 0 0}
+.tcard.ex{margin-left:28px}
+.topbar .exl{display:block;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.85rem;font-weight:700;color:var(--primary-ink);opacity:.9}
+@media (max-width:560px){.fitgrid{grid-template-columns:1fr}.tcard.ex{margin-left:12px}}
 
 /* quiz top bar */
 .topbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;background:var(--primary);color:var(--primary-ink);border-radius:10px;padding:12px 16px;margin-bottom:14px;box-shadow:0 -5px 0 var(--gold)}
@@ -210,12 +223,12 @@ table.rt th{background:var(--soft)}
   <section id="s-start" class="hidden">
     <h1>Cell Transport Practice</h1>
     <p class="course">Biology A</p>
-    <p class="sub">Passive transport · Active transport · Osmosis</p>
+    <p class="sub">Passive transport · Active transport · Osmosis · The sodium-potassium pump</p>
     <div class="card">
       <div class="howto" style="margin-top:0">
         <strong>How this works</strong>
         <ol>
-          <li>There are 3 skills. Each one is complete when you get <b>3 questions in a row</b> correct.</li>
+          <li>There are 4 skills. Skills 1 and 2 are the two kinds of transport. Skills 3 and 4 are one example of each kind. Each skill is complete when you get <b>3 questions in a row</b> correct.</li>
           <li>Missed one? Read why, watch the short support video if you need it, and try the next question.</li>
           <li>When you're done, save your PDF report and upload it to Canvas.</li>
         </ol>
@@ -231,6 +244,15 @@ table.rt th{background:var(--soft)}
     <h1>Cell Transport Practice</h1>
     <p class="course">Biology A</p>
     <p class="sub" id="home-hello"></p>
+    <div class="fit" id="fit">
+      <div class="row" style="justify-content:space-between"><h2>How the 4 skills fit together</h2></div>
+      <div class="fitgrid">
+        <div class="fitcol"><p class="kind">1. Passive Transport</p><p class="how">No energy needed. Molecules move from high to low concentration.</p>
+          <p class="eg"><span aria-hidden="true">↳</span><span><b>Example: 3. Osmosis.</b> Water moving across a membrane is passive transport.</span></p></div>
+        <div class="fitcol"><p class="kind">2. Active Transport</p><p class="how">Needs energy (ATP). Molecules move from low to high concentration.</p>
+          <p class="eg"><span aria-hidden="true">↳</span><span><b>Example: 4. Sodium-Potassium Pump.</b> It uses ATP to pump ions against their gradients.</span></p></div>
+      </div>
+    </div>
     <div class="topics" id="topic-list"></div>
     <div class="card">
       <h2 style="margin-top:0">Finished?</h2>
@@ -356,6 +378,15 @@ const CLIPS = {
 "dur": 39,
 "label": "The pump works against the gradient"
 },
+"pump-intro": {"src":"clips/pump-intro.mp4","dur":21,"label":"Your cells have pumps too (0:34–0:55)"},
+"pump-job": {"src":"clips/pump-job.mp4","dur":19,"label":"What the pump does (1:06–1:25)"},
+"pump-ions": {"src":"clips/pump-ions.mp4","dur":28,"label":"Sodium and potassium ions need a protein (1:25–1:53)"},
+"pump-resting": {"src":"clips/pump-resting.mp4","dur":58,"label":"Resting membrane potential (1:53–2:51)"},
+"pump-cycle": {"src":"clips/pump-cycle.mp4","dur":65,"label":"How the pump works, step by step (2:51–3:57)"},
+"pump-against": {"src":"clips/pump-against.mp4","dur":31,"label":"Against the concentration gradient (3:57–4:27)"},
+"pump-result": {"src":"clips/pump-result.mp4","dur":33,"label":"3 out, 2 in: the electrochemical gradient (4:27–5:01)"},
+"pump-leak": {"src":"clips/pump-leak.mp4","dur":64,"label":"Potassium leakage channels (5:01–6:05)"},
+"pump-uses": {"src":"clips/pump-uses.mp4","dur":31,"label":"What the gradient is used for (6:05–6:36)"},
 "os-def": {
 "src": "clips/os-def.mp4",
 "dur": 74,
@@ -424,13 +455,16 @@ const TOPICS = {
             lesson:["ct-membrane","ct-simple","ct-facilitated"]},
   active:  {name:"Active Transport",  color:"var(--active)",  blurb:"Protein pumps, ATP, endocytosis, and exocytosis",
             lesson:["ct-active","nak-cycle","ct-endo","ct-exo"]},
-  osmosis: {name:"Osmosis",           color:"var(--osmosis)", blurb:"Water movement, hypertonic, hypotonic, and isotonic",
-            lesson:["os-def","os-utube","os-iv","os-fish","os-roots","os-turgor"]}
+  osmosis: {name:"Osmosis",           color:"var(--osmosis)", example:"An example of passive transport (Skill 1)", blurb:"Water movement, hypertonic, hypotonic, and isotonic",
+            lesson:["os-def","os-utube","os-iv","os-fish","os-roots","os-turgor"]},
+  pump:    {name:"Sodium-Potassium Pump", color:"var(--active)", example:"An example of active transport (Skill 2)", blurb:"ATP, the pump's cycle, resting membrane potential, and the electrochemical gradient",
+            lesson:["pump-intro","pump-job","pump-ions","pump-resting","pump-cycle","pump-against","pump-result","pump-leak","pump-uses"]}
 };
 
 /* Short reading at the top of each skill. Covers examples the questions use that the videos don't show. */
 const KEY = {
 passive:`<ul>
+<li><b>Coming up:</b> Skill 3, <b>Osmosis</b>, is an example of passive transport.</li>
 <li>The <b>cell membrane</b> controls what enters and leaves the cell. This helps the cell maintain <b>homeostasis</b>, a stable internal environment.</li>
 <li><b>Passive transport</b> does not use the cell's energy. Molecules move from <b>high to low</b> concentration. This is called moving <b>down</b> (or <b>with</b>) the <b>concentration gradient</b>.</li>
 <li><b>Simple diffusion:</b> small, nonpolar molecules like oxygen (O₂) and carbon dioxide (CO₂) pass right through the phospholipid bilayer.</li>
@@ -439,6 +473,7 @@ passive:`<ul>
 <li><b>Example in your body:</b> in your lungs, the air sacs (<b>alveoli</b>) have more oxygen than your blood, so oxygen diffuses from the air sacs into the blood.</li>
 </ul>`,
 active:`<ul>
+<li><b>Coming up:</b> Skill 4, the <b>Sodium-Potassium Pump</b>, is an example of active transport.</li>
 <li><b>Active transport</b> moves molecules from <b>low to high</b> concentration, <b>against</b> the concentration gradient. This takes energy, usually from <b>ATP</b>.</li>
 <li><b>Channel vs. pump:</b> a channel lets molecules flow down their gradient with no energy (passive). A <b>pump</b> uses ATP to push molecules against their gradient (active).</li>
 <li><b>Sodium-potassium pump:</b> each cycle uses 1 ATP to move <b>3 sodium (Na⁺) out</b> and <b>2 potassium (K⁺) in</b>.</li>
@@ -447,12 +482,24 @@ active:`<ul>
 <li><b>Tip:</b> if a cell needs <i>more</i> of something it already has a lot of (like glucose in gut cells, or minerals in plant root cells), it must use active transport. <b>mM</b> (millimolar) is a unit of concentration: a bigger number means more concentrated.</li>
 </ul>`,
 osmosis:`<ul>
-<li><b>Osmosis</b> is the diffusion of <b>water</b> across a semi-permeable membrane, like a cell membrane. It is passive transport.</li>
+<li><b>Osmosis is an example of passive transport</b> (Skill 1). Water moves down its gradient, and the cell uses no energy.</li>
+<li><b>Osmosis</b> is the diffusion of <b>water</b> across a semi-permeable membrane, like a cell membrane.</li>
 <li><b>Shortcut:</b> water moves toward the side with <b>more solute</b> (dissolved stuff like salt or sugar).</li>
 <li>Compare two solutions: <b>hypertonic</b> = more solute, <b>hypotonic</b> = less solute (<i>hypo</i> rhymes with <i>low</i>), <b>isotonic</b> = equal. Water moves toward the hypertonic side.</li>
 <li><b>Animal cells</b> (like red blood cells) have no cell wall. In a hypotonic solution they swell and can burst. In a hypertonic solution they lose water and shrink. Blood cells contain about <b>0.9% salt</b>, so IVs use <b>0.9% saline</b>, which is isotonic.</li>
 <li><b>Plant cells</b> have a cell wall. When water moves in, it pushes against the wall (<b>turgor pressure</b>), so the cell gets firm (<b>turgid</b>) instead of bursting. Plants wilt when they lose water.</li>
 <li><b>Food examples:</b> a potato or gummy bear in plain water gains water because it has more solute inside. Salting cucumbers to make pickles pulls water out, because the salt outside is hypertonic.</li>
+</ul>`,
+pump:`<ul>
+<li><b>The sodium-potassium pump is an example of active transport</b> (Skill 2). It uses energy from <b>ATP</b> to move ions <b>against</b> their concentration gradients.</li>
+<li><b>Extracellular</b> means outside the cell. <b>Intracellular</b> means inside the cell.</li>
+<li><b>Sodium (Na⁺)</b> and <b>potassium (K⁺)</b> ions have positive charges. Like most ions, they have trouble traveling directly through the cell membrane. They need a protein, such as a <b>channel</b> or a <b>pump</b>.</li>
+<li><b>Resting membrane potential:</b> the difference in electrical voltage between the inside and outside of a cell. At rest, most cells are <b>more negative inside</b> than outside. The pump helps maintain it.</li>
+<li><b>The pump's cycle:</b> (1) It opens to the inside, and <b>3 sodium ions</b> bind. (2) ATP transfers its phosphate to the pump (the pump is <b>phosphorylated</b>). This changes the pump's shape, so it opens to the outside and pushes the sodium out. (3) <b>2 potassium ions</b> bind. (4) The phosphate is released, the pump goes back to its original shape, and the potassium is dropped off inside. Then the cycle repeats.</li>
+<li><b>Against the gradient:</b> the pump keeps putting sodium outside, where sodium is already high, and potassium inside, where potassium is already high.</li>
+<li><b>Result:</b> more K⁺ inside and more Na⁺ outside. This is an <b>electrochemical gradient</b>: a difference in charge <i>and</i> in the types of ions. Moving 3 positive ions out for every 2 in adds a little to the negative inside, but it is not the big reason.</li>
+<li><b>Leakage channels:</b> many cells have far more <b>potassium leakage channels</b> than sodium leakage channels. K⁺ diffuses out (high to low), and losing these positive ions makes the inside <b>more negative</b>.</li>
+<li><b>Why it matters:</b> excitable cells like <b>neurons</b> and <b>muscle cells</b> use the gradient for <b>action potentials</b>. Some proteins that bring <b>glucose</b> into the cell also need the gradient.</li>
 </ul>`
 };
 
@@ -465,9 +512,11 @@ const QCLIPS = {
   a5:["ct-endo"], a6:["ct-exo"], a7:["ct-against","ct-aquaporins","ct-endo-short"], a8:["ct-active"],
   a9:["ct-against","nak-against"], a10:["nak-ions","nak-atp"],
   o1:["os-def","os-tonic","os-isotonic"], o2:["os-iv"], o3:["os-roots"], o4:["os-def","os-utube-setup"],
-  o5:["os-utube"], o6:["os-roots","os-turgor"], o7:["os-fish"], o8:["os-iv"], o9:["os-solute","os-tonic"], o10:["os-solute","os-potato"]
+  o5:["os-utube"], o6:["os-roots","os-turgor"], o7:["os-fish"], o8:["os-iv"], o9:["os-solute","os-tonic"], o10:["os-solute","os-potato"],
+  n1:["pump-ions","pump-resting","pump-result"], n2:["pump-job","pump-against"], n3:["pump-against","pump-leak"], n4:["pump-cycle"],
+  n5:["pump-cycle"], n6:["pump-against","pump-result"], n7:["pump-resting"], n8:["pump-leak"], n9:["pump-result","pump-leak"], n10:["pump-uses","pump-job"]
 };
-const ORDER = ["passive","active","osmosis"];
+const ORDER = ["passive","active","osmosis","pump"];
 
 /* ===================== QUESTION BANK =====================
  types: multi (select all true), mc (one answer), match (term → definition),
@@ -741,6 +790,95 @@ osmosis: [
     {t:"Sugar moved out of the gummy bear and pulled the gelatin apart.", ok:false, why:"The bear got bigger because water moved in, not because sugar moved out."},
     {t:"The gummy bear used energy to pump water in.", ok:false, why:"Gummy bears aren't alive and osmosis needs no energy."}
   ]}
+],
+pump: [
+{ id:"n1", type:"match", short:"Pump vocabulary",
+  prompt:"Match each term to its definition.",
+  review:"<b>Extracellular</b> is outside the cell and <b>intracellular</b> is inside. The <b>resting membrane potential</b> is the voltage difference across the membrane at rest. The pump builds an <b>electrochemical gradient</b>: a difference in charge and in the types of ions.",
+  pairs:[
+    {term:"extracellular", def:"outside of the cell", why:"<i>Extra-</i> means outside."},
+    {term:"intracellular", def:"inside of the cell", why:"<i>Intra-</i> means within."},
+    {term:"resting membrane potential", def:"the difference in electrical voltage between the inside and outside of a cell at rest", why:"At rest, most cells are more negative inside than outside."},
+    {term:"electrochemical gradient", def:"a difference in both charge and the types of ions across the membrane", why:"\"Electro\" is the charge. \"Chemical\" is the types of ions (more K⁺ inside, more Na⁺ outside)."}
+  ]},
+{ id:"n2", type:"mc", short:"Why the pump is active transport",
+  prompt:"The sodium-potassium pump is an example of active transport. Why?",
+  review:"Active transport moves molecules <b>against</b> their concentration gradient, from low to high, and that takes <b>energy</b>. The pump uses <b>ATP</b> to push sodium out where sodium is already high, and potassium in where potassium is already high.",
+  options:[
+    {t:"It uses energy from ATP to move ions against their concentration gradients.", ok:true, why:"Using ATP to move ions from low to high concentration is exactly what makes it active transport."},
+    {t:"It lets ions move from high to low concentration on their own.", ok:false, why:"Moving from high to low with no energy is passive transport. The pump moves ions the other way."},
+    {t:"It pumps air into the cell, like a fish tank pump.", ok:false, why:"The video says the pump isn't trying to aerate your cells. It moves sodium and potassium ions."},
+    {t:"It moves water across the membrane.", ok:false, why:"Water moving across a membrane is osmosis, which is passive. The pump moves ions."}
+  ]},
+{ id:"n3", type:"classify", short:"Passive or active? Ions and water",
+  prompt:"Sort each example as passive transport or active transport.",
+  review:"Ask: <b>is it moving against its gradient, using ATP?</b> Then it is active transport, like the pump. If it moves from high to low on its own or through a channel, it is passive, like osmosis or ions leaking through a leakage channel.",
+  cats:["passive transport","active transport"],
+  items:[
+    {t:"The sodium-potassium pump moves 3 Na⁺ out of the cell, where sodium is already high.", cat:"active transport", why:"The pump uses ATP to move sodium against its gradient."},
+    {t:"The pump brings 2 K⁺ into the cell, where potassium is already high.", cat:"active transport", why:"Potassium moves from low to high, against its gradient, so energy is needed."},
+    {t:"K⁺ moves out of the cell through a potassium leakage channel.", cat:"passive transport", why:"There is more K⁺ inside, so it diffuses out (high to low) through the channel with no energy."},
+    {t:"Water moves into a root hair cell by osmosis.", cat:"passive transport", why:"Osmosis is an example of passive transport. No ATP is used."}
+  ]},
+{ id:"n4", type:"cloze", short:"The pump's cycle",
+  prompt:"Complete the steps of the pump's cycle.",
+  review:"The pump starts open to the <b>inside</b>. <b>3 sodium</b> ions bind, and ATP gives the pump a <b>phosphate</b>. That changes its <b>shape</b>, so it opens to the outside and pushes the sodium out. <b>2 potassium</b> ions bind, the phosphate is released, and the pump drops the potassium off <b>inside</b>.",
+  text:"The pump starts open to the {{inside|outside}} of the cell. {{Three|Two}} sodium ions bind. ATP transfers its {{phosphate|sodium}} to the pump, which changes the pump's {{shape|size}}. The pump opens to the {{outside|inside}} and pushes the sodium out. Then {{two|three}} potassium ions bind. The phosphate is released, the pump goes back to its original shape, and the potassium is dropped off {{inside|outside}} the cell.",
+  summary:"Open to the <b>inside</b>, <b>three</b> sodium bind, ATP gives a <b>phosphate</b>, the <b>shape</b> changes, it opens to the <b>outside</b>, <b>two</b> potassium bind, and potassium is dropped off <b>inside</b>."},
+{ id:"n5", type:"mc", short:"What changes the pump's shape",
+  prompt:"Three sodium ions have just bound to the pump. What happens next?",
+  review:"After the 3 sodium ions bind, <b>ATP transfers its phosphate</b> to the pump. The pump is now <b>phosphorylated</b>. This changes the pump's shape, so it opens to the outside of the cell.",
+  options:[
+    {t:"ATP transfers a phosphate to the pump, which changes the pump's shape.", ok:true, why:"The phosphate from ATP changes the pump's shape, so it opens to the outside."},
+    {t:"Two potassium ions bind on the inside of the cell.", ok:false, why:"Potassium binds later, after the pump has opened to the outside."},
+    {t:"The sodium ions slip out through the lipid bilayer on their own.", ok:false, why:"Ions have trouble passing directly through the membrane. The pump has to push them out."},
+    {t:"The phosphate group is released from the pump.", ok:false, why:"The phosphate is released near the end of the cycle, after potassium binds."}
+  ]},
+{ id:"n6", type:"multi", short:"Where the ions end up",
+  prompt:"Select the true statements about what the pump does to sodium and potassium.",
+  review:"The pump keeps putting sodium <b>outside</b>, where sodium is already high, and potassium <b>inside</b>, where potassium is already high. The ions move from low to high concentration, <b>against</b> their gradients.",
+  options:[
+    {t:"After the pump works, there is more K⁺ inside the cell than outside.", ok:true, why:"The pump keeps bringing potassium in."},
+    {t:"After the pump works, there is more Na⁺ outside the cell than inside.", ok:true, why:"The pump keeps pushing sodium out."},
+    {t:"The pump moves sodium to the side where sodium is low.", ok:false, why:"That would be moving down the gradient. The pump moves sodium to the outside, where it is already <b>high</b>."},
+    {t:"The pump keeps working until sodium is equal on both sides.", ok:false, why:"The pump builds a difference. It keeps sodium high outside, not equal."}
+  ]},
+{ id:"n7", type:"mc", short:"Charge inside a resting cell",
+  prompt:"At rest, how does the inside of most cells compare to the outside?",
+  review:"The <b>resting membrane potential</b> is the difference in electrical voltage across the membrane. At rest, most cells are <b>more negative inside</b> than outside. The sodium-potassium pump helps maintain this.",
+  options:[
+    {t:"The inside is more negative than the outside.", ok:true, why:"That is the resting membrane potential of most cells."},
+    {t:"The inside is more positive than the outside.", ok:false, why:"Think about which side is more negative at rest. Watch the clip again and listen for the words \"more negative.\""},
+    {t:"The inside and outside have exactly the same charge.", ok:false, why:"There is a voltage difference. That difference is the resting membrane potential."},
+    {t:"Cells have no electrical charge at rest.", ok:false, why:"Cells have a resting membrane potential, so there is a charge difference."}
+  ]},
+{ id:"n8", type:"mc", short:"Potassium leakage channels",
+  prompt:"Many cells have far more potassium leakage channels than sodium leakage channels. What happens at rest?",
+  review:"There is more K⁺ inside, so K⁺ would like to move out (high to low). With lots of <b>potassium leakage channels</b>, K⁺ diffuses out. Losing these positive ions makes the inside of the cell <b>more negative</b>.",
+  options:[
+    {t:"K⁺ diffuses out through the channels, which makes the inside more negative.", ok:true, why:"Positive potassium ions leave, so the inside becomes more negative."},
+    {t:"Na⁺ rushes in through the channels, which makes the inside more positive.", ok:false, why:"There are fewer sodium leakage channels, so less sodium can get in."},
+    {t:"The leakage channels use ATP to pump K⁺ out.", ok:false, why:"Channels don't use ATP. K⁺ leaks out down its gradient, which is passive."},
+    {t:"Nothing happens, because ions can never cross the membrane.", ok:false, why:"Ions can't cross the lipid bilayer directly, but they can pass through a channel."}
+  ]},
+{ id:"n9", type:"mc", short:"Is 3 out, 2 in the main reason?",
+  prompt:"The pump moves 3 positive ions out for every 2 positive ions in. Is this the main reason the inside of a resting cell is more negative?",
+  review:"Moving 3 positive ions out for every 2 in adds a little to the negative charge inside. The video says it is <b>not the big reason</b>. The pump's bigger job is building the <b>electrochemical gradient</b> (more K⁺ inside, more Na⁺ outside). Then K⁺ leaking out through leakage channels makes the inside more negative.",
+  options:[
+    {t:"No. It helps a little, but the bigger reason is K⁺ leaking out through leakage channels.", ok:true, why:"The pump sets up the gradient, and positive K⁺ leaving through leakage channels makes the inside more negative."},
+    {t:"Yes. Moving 3 out and 2 in is the only reason.", ok:false, why:"Listen again: the video says this alone is not the big reason for the voltage difference."},
+    {t:"No. The inside is actually more positive at rest.", ok:false, why:"At rest, most cells are more negative inside."},
+    {t:"No. The pump has nothing to do with the resting potential.", ok:false, why:"The pump helps maintain the resting potential by building the electrochemical gradient."}
+  ]},
+{ id:"n10", type:"multi", short:"What the gradient is used for",
+  prompt:"The pump builds an electrochemical gradient. Select the true statements about what cells use it for.",
+  review:"The gradient is a setup for many things. <b>Excitable cells</b>, like neurons and muscle cells, use it for <b>action potentials</b> (a change in the cell's voltage). Some proteins that bring <b>glucose</b> into the cell also need the gradient.",
+  options:[
+    {t:"Neurons and muscle cells use it for action potentials.", ok:true, why:"An action potential is a change to the cell's voltage, and it depends on the gradient."},
+    {t:"Some proteins that bring glucose into the cell need the gradient.", ok:true, why:"The video gives glucose transport as an example."},
+    {t:"It pumps air into the cell to aerate it.", ok:false, why:"The video says the pump isn't trying to aerate your cells, even though it's called a pump."},
+    {t:"It lets the cell skip using ATP to run the pump.", ok:false, why:"The pump still needs ATP for every cycle."}
+  ]}
 ]
 };
 
@@ -783,7 +921,7 @@ let state=null;
 const COURSE="Biology A";
 function fresh(){const t={};ORDER.forEach(k=>t[k]={streak:0,answered:0,correct:0,mastered:false,masteredAt:null,timeMs:0,queue:[]});return {name:"",cls:COURSE,startedAt:null,topics:t,log:[]}}
 function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state))}catch(e){}}
-function load(){try{const s=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(s&&s.name&&s.topics)return s}catch(e){}return null}
+function load(){try{const s=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(s&&s.name&&s.topics){const f=fresh();ORDER.forEach(k=>{if(!s.topics[k])s.topics[k]=f.topics[k]});return s}}catch(e){}return null}
 
 const $=id=>document.getElementById(id);
 function show(id){["s-start","s-home","s-quiz","s-report"].forEach(s=>$(s).classList.toggle("hidden",s!==id));window.scrollTo(0,0);stopSpeak()}
@@ -829,11 +967,12 @@ $("b-back").onclick=renderHome;
 function renderHome(){
   document.documentElement.style.setProperty("--topic","var(--passive)");
   const done=ORDER.filter(k=>state.topics[k].mastered).length;
-  $("home-hello").textContent=`Hi ${state.name.split(" ")[0]}! You've mastered ${done} of 3 skills. Get ${STREAK_GOAL} in a row correct to master each one.`;
+  $("home-hello").textContent=`Hi ${state.name.split(" ")[0]}! You've mastered ${done} of ${ORDER.length} skills. Get ${STREAK_GOAL} in a row correct to master each one.`;
+  $("fit").querySelector(".row").innerHTML=`<h2 style="margin:0">How the 4 skills fit together</h2>${sayBtn("#fit")}`;
   $("topic-list").innerHTML=ORDER.map((k,i)=>{
     const T=TOPICS[k],s=state.topics[k];
     const badge=s.mastered?`<span class="badge done">✓ Mastered</span>`:s.answered?`<span class="badge prog">In progress · ${s.streak} of ${STREAK_GOAL} in a row</span>`:`<span class="badge">Not started</span>`;
-    return `<div class="card tcard" style="--c:${T.color}"><div><h3>${i+1}. ${T.name}</h3><p>${T.blurb}</p>${badge}<details class="video" style="--topic:${T.color}"><summary>Watch the lesson video (${mins(T.lesson)})</summary>${player(T.lesson)}</details></div><button class="btn" data-go="${k}">${s.mastered?"Practice more":s.answered?"Continue":"Start"}</button></div>`;
+    return `<div class="card tcard${T.example?" ex":""}" style="--c:${T.color}"><div><h3>${i+1}. ${T.name}</h3>${T.example?`<p class="exlabel">↳ ${T.example}</p>`:""}<p>${T.blurb}</p>${badge}<details class="video" style="--topic:${T.color}"><summary>Watch the lesson video (${mins(T.lesson)})</summary>${player(T.lesson)}</details></div><button class="btn" data-go="${k}">${s.mastered?"Practice more":s.answered?"Continue":"Start"}</button></div>`;
   }).join("");
   document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>startTopic(b.dataset.go));
   show("s-home"); wirePlayers($("topic-list"));
@@ -848,7 +987,7 @@ function nextQ(topic){
 }
 function startTopic(topic){
   document.documentElement.style.setProperty("--topic",TOPICS[topic].color);
-  $("q-topic").textContent=TOPICS[topic].name;
+  $("q-topic").innerHTML=TOPICS[topic].name+(TOPICS[topic].example?`<span class="exl">${TOPICS[topic].example}</span>`:"");
   $("q-keybody").innerHTML=`<div style="flex:1" id="q-keytext">${KEY[topic]}</div>${sayBtn("#q-keytext")}`;
   $("q-key").open = state.topics[topic].answered===0;
   cur={topic,num:0};
@@ -996,7 +1135,7 @@ function showMastery(){
   const nextK=ORDER.find(x=>!state.topics[x].mastered);
   const allDone=!nextK;
   $("q-card").innerHTML=`<div class="mastery"><div class="big">🎉</div><h2>You mastered ${T.name}!</h2><p>You answered ${STREAK_GOAL} questions in a row correctly (${s.correct} correct out of ${s.answered} total).</p>
-   ${allDone?`<p><b>All 3 skills are mastered.</b> Get your PDF report and upload it to Canvas.</p>`:``}
+   ${allDone?`<p><b>All ${ORDER.length} skills are mastered.</b> Get your PDF report and upload it to Canvas.</p>`:``}
    <div class="row">${allDone?`<button class="btn green" id="m-rep">Get my PDF for Canvas</button>`:`<button class="btn green" id="m-next">Next skill: ${TOPICS[nextK].name} →</button>`}
    <button class="btn ghost" id="m-home">All skills</button><button class="link" id="m-more">Keep practicing this skill</button></div></div>`;
   if(allDone) $("m-rep").onclick=renderReport; else $("m-next").onclick=()=>startTopic(nextK);
@@ -1011,7 +1150,7 @@ function renderReport(){
   const rows=ORDER.map(k=>{const s=state.topics[k];return `<tr><td>${TOPICS[k].name}</td><td class="${s.mastered?"yes":"no"}">${s.mastered?"✓ Mastered":"Not yet"}</td><td>${s.answered}</td><td>${s.correct}</td><td>${s.answered?Math.round(100*s.correct/s.answered)+"%":"—"}</td><td>${fmtTime(s.timeMs)}</td></tr>`}).join("");
   const log=state.log.map((l,i)=>`<tr><td>${i+1}</td><td>${TOPICS[l.topic].name}</td><td>${esc(l.short)}</td><td class="${l.ok?"yes":"no"}">${l.ok?"Correct":"Incorrect"}</td><td>${fmtDate(l.at)}</td></tr>`).join("");
   $("r-body").innerHTML=`<h1>Cell Transport Practice: Report</h1>
-   <div class="rmeta"><b>Student</b><span>${esc(state.name)}</span><b>Class</b><span>${COURSE}</span><b>Started</b><span>${fmtDate(state.startedAt)}</span><b>Report made</b><span>${fmtDate(new Date().toISOString())}</span><b>Skills mastered</b><span class="${done===3?"yes":"no"}">${done} of 3</span><b>Mastery rule</b><span>${STREAK_GOAL} correct in a row</span></div>
+   <div class="rmeta"><b>Student</b><span>${esc(state.name)}</span><b>Class</b><span>${COURSE}</span><b>Started</b><span>${fmtDate(state.startedAt)}</span><b>Report made</b><span>${fmtDate(new Date().toISOString())}</span><b>Skills mastered</b><span class="${done===ORDER.length?"yes":"no"}">${done} of ${ORDER.length}</span><b>Mastery rule</b><span>${STREAK_GOAL} correct in a row</span></div>
    <table class="rt"><thead><tr><th>Skill</th><th>Status</th><th>Answered</th><th>Correct</th><th>Accuracy</th><th>Time</th></tr></thead><tbody>${rows}</tbody></table>
    <h2 style="font-size:1.1rem">Question log</h2>
    ${state.log.length?`<table class="rt"><thead><tr><th>#</th><th>Skill</th><th>Question</th><th>Result</th><th>When</th></tr></thead><tbody>${log}</tbody></table>`:`<p>No questions answered yet.</p>`}`;
