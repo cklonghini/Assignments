@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cell Transport Mastery</title>
 <!-- standalone page (no engine): tools/build_index.py lists it on the home page from these lines -->
-<meta name="assignment-title" content="Cell Transport Practice (Passive, Osmosis, Active, Sodium-Potassium Pump)">
+<meta name="assignment-title" content="Cell Transport Practice (Passive, Osmosis, Active)">
 <meta name="assignment-course" content="Biology A">
 <meta name="assignment-short" content="cell-transport-practice">
 <link rel="icon" type="image/png" href="../../engine/brand/favicon.png">
@@ -59,7 +59,7 @@ h2{font-size:1.35rem;margin:.2em 0 .5em}
 label.fld{display:block;font-weight:700;margin:14px 0 6px}
 input[type=text]{width:100%;max-width:420px;padding:8px 10px;border:2px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
 input[type=text]:focus{border-color:var(--primary)}
-.say{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:700;background:transparent;color:var(--primary);
+.say{flex:none;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:700;background:transparent;color:var(--primary);
   border:2px solid var(--primary);border-radius:99px;padding:3px 11px 3px 8px;cursor:pointer;line-height:1.3;white-space:nowrap}
 .say svg{width:1.05em;height:1.05em}
 .say::after{content:"Listen"}
@@ -209,12 +209,12 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
   <section id="s-start" class="hidden">
     <h1>Cell Transport Practice</h1>
     <p class="course">Biology A</p>
-    <p class="sub">Passive transport · Osmosis · Active transport · The sodium-potassium pump</p>
+    <p class="sub">Passive transport · Osmosis · Active transport</p>
     <div class="card">
       <div class="howto" style="margin-top:0">
         <strong>How this works</strong>
         <ol>
-          <li>There are 4 skills: <b>Passive Transport</b>, then <b>Osmosis</b> (an example of passive transport), then <b>Active Transport</b>, then the <b>Sodium-Potassium Pump</b> (an example of active transport). Each skill is complete when you get <b><span id="goal-n">3</span> questions in a row</b> correct.</li>
+          <li>There are 3 skills: <b>Passive Transport</b>, then <b>Osmosis</b> (an example of passive transport), then <b>Active Transport</b>. Each skill is complete when you get <b><span id="goal-n">3</span> questions in a row</b> correct.</li>
           <li>Missed one? Read why, watch the short support video if you need it, and try the next question.</li>
           <li>When you're done, save your PDF report and upload it to Canvas.</li>
         </ol>
@@ -353,15 +353,6 @@ const CLIPS = {
 "dur": 39,
 "label": "The pump works against the gradient"
 },
-"pump-intro": {"src":"clips/pump-intro.mp4","dur":21,"label":"Your cells have pumps too (0:34–0:55)"},
-"pump-job": {"src":"clips/pump-job.mp4","dur":19,"label":"What the pump does (1:06–1:25)"},
-"pump-ions": {"src":"clips/pump-ions.mp4","dur":28,"label":"Sodium and potassium ions need a protein (1:25–1:53)"},
-"pump-resting": {"src":"clips/pump-resting.mp4","dur":58,"label":"Resting membrane potential (1:53–2:51)"},
-"pump-cycle": {"src":"clips/pump-cycle.mp4","dur":65,"label":"How the pump works, step by step (2:51–3:57)"},
-"pump-against": {"src":"clips/pump-against.mp4","dur":31,"label":"Against the concentration gradient (3:57–4:27)"},
-"pump-result": {"src":"clips/pump-result.mp4","dur":33,"label":"3 out, 2 in: the electrochemical gradient (4:27–5:01)"},
-"pump-leak": {"src":"clips/pump-leak.mp4","dur":64,"label":"Potassium leakage channels (5:01–6:05)"},
-"pump-uses": {"src":"clips/pump-uses.mp4","dur":31,"label":"What the gradient is used for (6:05–6:36)"},
 "os-def": {
 "src": "clips/os-def.mp4",
 "dur": 74,
@@ -435,9 +426,7 @@ const TOPICS = {
   osmosis: {name:"Osmosis",           color:"var(--osmosis)", example:"An example of passive transport (Skill 1)", blurb:"Water movement, hypertonic, hypotonic, and isotonic",
             goal:{q:"How does water move into and out of cells?",goals:["Explain what osmosis is.", "Use the words hypertonic, hypotonic, and isotonic.", "Predict whether a cell will swell or shrink."]},
             lesson:["os-def","os-utube","os-iv","os-fish","os-roots","os-turgor"]},
-  pump:    {name:"Sodium-Potassium Pump", color:"var(--active)", example:"An example of active transport (Skill 3)", blurb:"ATP, the pump's cycle, resting membrane potential, and the electrochemical gradient",
-            goal:{q:"How does the sodium-potassium pump use energy to move ions?",goals:["Tell which way sodium and potassium move.", "Explain why the pump is active transport.", "Put the steps of the pump in order."]},
-            lesson:["pump-intro","pump-job","pump-ions","pump-resting","pump-cycle","pump-against","pump-result","pump-leak","pump-uses"]}
+
 };
 
 /* Short reading at the top of each skill. Covers examples the questions use that the videos don't show. */
@@ -452,33 +441,27 @@ passive:`<ul>
 <li><b>Example in your body:</b> in your lungs, the air sacs (<b>alveoli</b>) have more oxygen than your blood, so oxygen diffuses from the air sacs into the blood.</li>
 </ul>`,
 active:`<ul>
-<li><b>Next:</b> Skill 4, the <b>Sodium-Potassium Pump</b>, is an example of active transport.</li>
 <li><b>Active transport</b> moves molecules from <b>low to high</b> concentration, <b>against</b> the concentration gradient. This takes energy, usually from <b>ATP</b>.</li>
 <li><b>Channel vs. pump:</b> a channel lets molecules flow down their gradient with no energy (passive). A <b>pump</b> uses ATP to push molecules against their gradient (active).</li>
 <li><b>Sodium-potassium pump:</b> each cycle uses 1 ATP to move <b>3 sodium (Na⁺) out</b> and <b>2 potassium (K⁺) in</b>.</li>
+<li><b>Gastric proton pump:</b> cells in your stomach lining use ATP to pump hydrogen ions (H⁺) out into the stomach, where there are already many H⁺ ions (that makes stomach acid). For each H⁺ pumped out, one potassium ion (K⁺) is brought in.</li>
+<li><b>Homeostasis takes work.</b> Cells must keep their internal conditions in a stable range to survive. Cells often keep the inside very different from the outside (like more K⁺ inside), and some of the processes that do this, like pumps, need energy.</li>
 <li><b>Endocytosis</b> (<i>endo</i> = in): the membrane surrounds something large and brings it in as a vesicle. The video shows an amoeba; <b>white blood cells</b> do the same thing to swallow bacteria.</li>
 <li><b>Exocytosis</b> (<i>exo</i> = exit): a vesicle fuses with the membrane and releases its contents outside the cell. The video shows plant cells sending out carbohydrates for their cell walls. Your <b>pancreas</b> cells send out the hormone <b>insulin</b> the same way.</li>
 <li><b>Tip:</b> if a cell needs <i>more</i> of something it already has a lot of (like glucose in gut cells, or minerals in plant root cells), it must use active transport. <b>mM</b> (millimolar) is a unit of concentration: a bigger number means more concentrated.</li>
 </ul>`,
 osmosis:`<ul>
 <li><b>Osmosis is an example of passive transport</b> (Skill 1). Water moves down its gradient, and the cell uses no energy.</li>
-<li><b>Osmosis</b> is the diffusion of <b>water</b> across a semi-permeable membrane, like a cell membrane.</li>
+<li><b>Osmosis</b> is the diffusion of <b>water</b> across a semi-permeable membrane, like a cell membrane. A semi-permeable membrane lets water through but only lets certain other molecules cross.</li>
+<li><b>Two paths for water:</b> a little water slips between the phospholipids (<b>simple diffusion</b>). Much more goes through channel proteins called <b>aquaporins</b> (<b>facilitated diffusion</b>).</li>
+<li><b>Less solute = more water.</b> A solution with a lower solute concentration has a higher water concentration.</li>
+<li>Water molecules cross the membrane <b>in both directions</b>, but <b>more</b> move toward the side with more solute. Water moving into a side <b>increases its volume</b> and <b>lowers its solute concentration</b>. When both sides are about the same, molecules keep moving both ways (equilibrium).</li>
+<li><b>The U-tube model:</b> scientists model osmosis with a U-shaped tube. A membrane at the bottom stands for the cell membrane: water can cross it, but the solute can't.</li>
 <li><b>Shortcut:</b> water moves toward the side with <b>more solute</b> (dissolved stuff like salt or sugar).</li>
 <li>Compare two solutions: <b>hypertonic</b> = more solute, <b>hypotonic</b> = less solute (<i>hypo</i> rhymes with <i>low</i>), <b>isotonic</b> = equal. Water moves toward the hypertonic side.</li>
 <li><b>Animal cells</b> (like red blood cells) have no cell wall. In a hypotonic solution they swell and can burst. In a hypertonic solution they lose water and shrink. Blood cells contain about <b>0.9% salt</b>, so IVs use <b>0.9% saline</b>, which is isotonic.</li>
 <li><b>Plant cells</b> have a cell wall. When water moves in, it pushes against the wall (<b>turgor pressure</b>), so the cell gets firm (<b>turgid</b>) instead of bursting. Plants wilt when they lose water.</li>
 <li><b>Food examples:</b> a potato or gummy bear in plain water gains water because it has more solute inside. Salting cucumbers to make pickles pulls water out, because the salt outside is hypertonic.</li>
-</ul>`,
-pump:`<ul>
-<li><b>The sodium-potassium pump is an example of active transport</b> (Skill 3). It uses energy from <b>ATP</b> to move ions <b>against</b> their concentration gradients.</li>
-<li><b>Extracellular</b> means outside the cell. <b>Intracellular</b> means inside the cell.</li>
-<li><b>Sodium (Na⁺)</b> and <b>potassium (K⁺)</b> ions have positive charges. Like most ions, they have trouble traveling directly through the cell membrane. They need a protein, such as a <b>channel</b> or a <b>pump</b>.</li>
-<li><b>Resting membrane potential:</b> the difference in electrical voltage between the inside and outside of a cell. At rest, most cells are <b>more negative inside</b> than outside. The pump helps maintain it.</li>
-<li><b>The pump's cycle:</b> (1) It opens to the inside, and <b>3 sodium ions</b> bind. (2) ATP transfers its phosphate to the pump (the pump is <b>phosphorylated</b>). This changes the pump's shape, so it opens to the outside and pushes the sodium out. (3) <b>2 potassium ions</b> bind. (4) The phosphate is released, the pump goes back to its original shape, and the potassium is dropped off inside. Then the cycle repeats.</li>
-<li><b>Against the gradient:</b> the pump keeps putting sodium outside, where sodium is already high, and potassium inside, where potassium is already high.</li>
-<li><b>Result:</b> more K⁺ inside and more Na⁺ outside. This is an <b>electrochemical gradient</b>: a difference in charge <i>and</i> in the types of ions. Moving 3 positive ions out for every 2 in adds a little to the negative inside, but it is not the big reason.</li>
-<li><b>Leakage channels:</b> many cells have far more <b>potassium leakage channels</b> than sodium leakage channels. K⁺ diffuses out (high to low), and losing these positive ions makes the inside <b>more negative</b>.</li>
-<li><b>Why it matters:</b> excitable cells like <b>neurons</b> and <b>muscle cells</b> use the gradient for <b>action potentials</b>. Some proteins that bring <b>glucose</b> into the cell also need the gradient.</li>
 </ul>`
 };
 
@@ -489,13 +472,12 @@ const QCLIPS = {
   p7:["ct-facilitated","nak-atp"], p8:["ct-simple","os-equilibrium"], p9:["ct-simple","ct-needhelp"], p10:["ct-simple"],
   a1:["ct-active"], a2:["ct-active","ct-endo-short","ct-exo-short"], a3:["nak-cycle"], a4:["ct-against"],
   a5:["ct-endo"], a6:["ct-exo"], a7:["ct-against","ct-aquaporins","ct-endo-short"], a8:["ct-active"],
-  a9:["ct-against","nak-against"], a10:["nak-ions","nak-atp"],
+  a9:["ct-against","nak-against"], a10:["nak-ions","nak-atp"], a11:["ct-active","nak-cycle"], a12:["ct-homeostasis","ct-active"],
   o1:["os-def","os-tonic","os-isotonic"], o2:["os-iv"], o3:["os-roots"], o4:["os-def","os-utube-setup"],
   o5:["os-utube"], o6:["os-roots","os-turgor"], o7:["os-fish"], o8:["os-iv"], o9:["os-solute","os-tonic"], o10:["os-solute","os-potato"],
-  n1:["pump-ions","pump-resting","pump-result"], n2:["pump-job","pump-against"], n3:["pump-against","pump-leak"], n4:["pump-cycle"],
-  n5:["pump-cycle"], n6:["pump-against","pump-result"], n7:["pump-resting"], n8:["pump-leak"], n9:["pump-result","pump-leak"], n10:["pump-uses","pump-job"]
+  o11:["os-def","ct-aquaporins"], o12:["os-utube-setup"], o13:["os-solute","os-tonic"], o14:["os-utube"], o15:["os-solute","os-utube"], o16:["os-equilibrium","os-def"], o17:["os-tonic","os-iv"]
 };
-const ORDER = ["passive","osmosis","active","pump"];
+const ORDER = ["passive","osmosis","active"];
 
 /* ===================== QUESTION BANK =====================
  types: multi (select all true), mc (one answer), match (term → definition),
@@ -553,14 +535,14 @@ passive: [
     {t:"It lets every molecule pass through freely.", ok:false, why:"If everything passed freely, the cell couldn't control conditions inside. The membrane is selective."},
     {t:"It makes energy for the cell.", ok:false, why:"The membrane doesn't make energy. Cells get energy from ATP."}
   ]},
-{ id:"p7", type:"multi", short:"Channel proteins",
-  prompt:"Select the true statements about facilitated diffusion.",
-  review:"<b>Facilitated diffusion</b> uses channel or carrier proteins to help molecules that can't pass through the bilayer on their own. It is still passive: no energy, and molecules move from high to low concentration.",
+{ id:"p7", type:"mc", short:"Facilitated diffusion",
+  prompt:"Which statement about facilitated diffusion is true?",
+  review:"<b>Facilitated diffusion</b> is still passive. A <b>channel</b> or <b>carrier protein</b> gives molecules a path, and they move <b>down</b> their concentration gradient, from high to low. No ATP is used.",
   options:[
-    {t:"Ions such as potassium (K⁺) can cross the membrane through channel proteins.", ok:true, why:"Channel proteins give charged ions a water-friendly tunnel through the bilayer."},
-    {t:"Channel proteins use ATP to push ions across the membrane.", ok:false, why:"Channels don't use energy. Proteins that use ATP to move molecules are called <b>pumps</b>, which are part of active transport."},
-    {t:"Facilitated diffusion moves molecules down their concentration gradient.", ok:true, why:"Like all passive transport, it moves molecules from high to low concentration."},
-    {t:"Facilitated diffusion can move molecules from low to high concentration if there are enough channels.", ok:false, why:"More channels only speed up movement <i>down</i> the gradient. Moving from low to high always takes energy."}
+    {t:"It moves molecules down their concentration gradient through a channel or carrier protein.", ok:true, why:"The protein gives the molecule a path, and the molecule still moves from high to low with no energy."},
+    {t:"Channel proteins use ATP to push ions across the membrane.", ok:false, why:"Channels don't use energy. Ions flow through them down their gradient. Pumps are the proteins that use ATP."},
+    {t:"It can move molecules from low to high concentration if there are enough channels.", ok:false, why:"More channels just make diffusion faster. Moving from low to high always needs energy and a pump."},
+    {t:"It only moves water.", ok:false, why:"Many things use facilitated diffusion, such as glucose and ions like potassium (K⁺)."}
   ]},
 { id:"p8", type:"mc", short:"Net movement of CO₂", diagram:"gradient",
   prompt:"The diagram shows carbon dioxide molecules (purple dots) inside and outside a cell. What will be the <b>net</b> movement of carbon dioxide?",
@@ -592,14 +574,14 @@ passive: [
   ]}
 ],
 active: [
-{ id:"a1", type:"multi", short:"Active transport basics",
-  prompt:"Select the true statements.",
+{ id:"a1", type:"mc", short:"Active transport basics",
+  prompt:"Which statement about active transport is true?",
   review:"<b>Active transport</b> uses energy from the cell, usually <b>ATP</b>, to move molecules <b>against</b> their concentration gradient, from an area of lower concentration to an area of higher concentration.",
   options:[
-    {t:"Active transport moves molecules from an area of low concentration to an area of high concentration.", ok:true, why:"Moving \"uphill\" against the gradient is exactly what active transport does."},
-    {t:"Active transport requires energy, usually from ATP.", ok:true, why:"Moving molecules against their gradient takes energy, and cells usually get it from ATP."},
-    {t:"Active transport only happens after the concentrations on both sides are equal.", ok:false, why:"Cells use active transport to build and keep concentration differences. It does not wait for equilibrium."},
-    {t:"Active transport uses open channel proteins that let molecules flow through freely.", ok:false, why:"Molecules flowing freely through open channels is facilitated diffusion. Active transport uses <b>pumps</b> that change shape using energy."}
+    {t:"It moves molecules from low to high concentration and needs energy, usually from ATP.", ok:true, why:"Moving \"uphill\" against the gradient takes energy, and cells usually get it from ATP."},
+    {t:"It moves molecules from high to low concentration with no energy.", ok:false, why:"That describes passive transport. Active transport goes the other way and needs energy."},
+    {t:"It only happens after the concentrations on both sides are equal.", ok:false, why:"Cells use active transport to build and keep concentration differences. It does not wait for equilibrium."},
+    {t:"It uses open channel proteins that let molecules flow through freely.", ok:false, why:"Molecules flowing freely through open channels is facilitated diffusion. Active transport uses <b>pumps</b> that use energy."}
   ]},
 { id:"a2", type:"match", short:"Match active transport terms",
   prompt:"Match each term to its definition.",
@@ -679,6 +661,20 @@ active: [
     {t:"A channel uses energy; a pump does not.", ok:false, why:"This is reversed. Pumps use energy; channels do not."},
     {t:"Channels move only water; pumps move only ions.", ok:false, why:"Many channels move ions (like K⁺ channels). Aquaporins are channels for water."},
     {t:"There is no difference; both are passive transport.", ok:false, why:"Pumps use energy, so they are active transport."}
+  ]},
+{ id:"a11", type:"cloze", short:"The gastric proton pump",
+  prompt:"Your stomach lining has a protein pump called the gastric proton pump. It pumps hydrogen ions (H⁺) into the stomach cavity, where there are already many H⁺ ions (that's what makes stomach acid), and brings potassium ions (K⁺) into the cell. Complete the paragraph.",
+  review:"The <b>gastric proton pump</b> is active transport, like the sodium-potassium pump. It uses <b>ATP</b> to change <b>shape</b> and move ions <b>against</b> their gradients: H⁺ goes <b>out of</b> the cell into the stomach, where H⁺ is already high, and K⁺ comes in, the <b>opposite</b> direction.",
+  text:"A cell in the stomach lining has a {{lower|higher}} concentration of H⁺ ions than the stomach cavity. Using energy from {{ATP|water}}, the pump changes {{shape|color}} so it can move the ions. It moves one H⁺ ion {{out of|into}} the cell for every K⁺ ion it moves in the {{opposite|same}} direction.",
+  summary:"The cell has a <b>lower</b> H⁺ concentration than the stomach, so pumping H⁺ out is against the gradient. Energy from <b>ATP</b> changes the pump's <b>shape</b>. It moves H⁺ <b>out of</b> the cell and K⁺ in the <b>opposite</b> direction."},
+{ id:"a12", type:"multi", short:"Homeostasis and energy",
+  prompt:"Select the true statements about homeostasis.",
+  review:"Cells live in changing environments, but their internal conditions (like water balance and ion levels) must stay in a stable range. That stable state is <b>homeostasis</b>. Cells use many processes to keep it, and some of them, like protein pumps, need <b>energy</b>.",
+  options:[
+    {t:"Cells must keep their internal conditions within a stable range to survive.", ok:true, why:"That stable internal environment is homeostasis."},
+    {t:"Cells reach homeostasis when their internal conditions match the outside environment.", ok:false, why:"Cells often keep the inside very different from the outside. For example, pumps keep more K⁺ inside than outside."},
+    {t:"Cells use many different processes to maintain homeostasis.", ok:true, why:"The membrane, diffusion, osmosis, pumps, and vesicles all help."},
+    {t:"Maintaining homeostasis sometimes requires energy.", ok:true, why:"Active transport, like a protein pump, uses ATP to keep conditions stable."}
   ]}
 ],
 osmosis: [
@@ -768,95 +764,57 @@ osmosis: [
     {t:"The gummy bear was hypotonic to the water, so water moved into it.", ok:false, why:"If the bear were hypotonic (less solute), water would move <i>out</i> of it."},
     {t:"Sugar moved out of the gummy bear and pulled the gelatin apart.", ok:false, why:"The bear got bigger because water moved in, not because sugar moved out."},
     {t:"The gummy bear used energy to pump water in.", ok:false, why:"Gummy bears aren't alive and osmosis needs no energy."}
-  ]}
-],
-pump: [
-{ id:"n1", type:"match", short:"Pump vocabulary",
-  prompt:"Match each term to its definition.",
-  review:"<b>Extracellular</b> is outside the cell and <b>intracellular</b> is inside. The <b>resting membrane potential</b> is the voltage difference across the membrane at rest. The pump builds an <b>electrochemical gradient</b>: a difference in charge and in the types of ions.",
-  pairs:[
-    {term:"extracellular", def:"outside of the cell", why:"<i>Extra-</i> means outside."},
-    {term:"intracellular", def:"inside of the cell", why:"<i>Intra-</i> means within."},
-    {term:"resting membrane potential", def:"the difference in electrical voltage between the inside and outside of a cell at rest", why:"At rest, most cells are more negative inside than outside."},
-    {term:"electrochemical gradient", def:"a difference in both charge and the types of ions across the membrane", why:"\"Electro\" is the charge. \"Chemical\" is the types of ions (more K⁺ inside, more Na⁺ outside)."}
   ]},
-{ id:"n2", type:"mc", short:"Why the pump is active transport",
-  prompt:"The sodium-potassium pump is an example of active transport. Why?",
-  review:"Active transport moves molecules <b>against</b> their concentration gradient, from low to high, and that takes <b>energy</b>. The pump uses <b>ATP</b> to push sodium out where sodium is already high, and potassium in where potassium is already high.",
+{ id:"o11", type:"cloze", short:"How water crosses the membrane",
+  prompt:"Complete the paragraph.",
+  review:"Osmosis is <b>passive</b> transport of water, so water moves <b>down</b> its concentration gradient with no energy. A little water slips between the phospholipids (<b>simple</b> diffusion). Much more goes through channel proteins called aquaporins (<b>facilitated</b> diffusion).",
+  text:"Osmosis is the {{passive|active}} transport of water molecules {{down|against}} their concentration gradient. Water can move by {{simple|facilitated}} diffusion through the phospholipids, or by {{facilitated|simple}} diffusion through channel proteins called aquaporins.",
+  summary:"Osmosis is <b>passive</b>, so water moves <b>down</b> its gradient. Through the phospholipids is <b>simple</b> diffusion. Through aquaporins is <b>facilitated</b> diffusion."},
+{ id:"o12", type:"cloze", short:"The U-tube model's membrane",
+  prompt:"Scientists model osmosis with a U-shaped tube. A different salt solution goes in each side, and a membrane at the bottom stands for the cell membrane. Complete the sentences.",
+  review:"A cell membrane is <b>semi-permeable</b>: it lets water through but only lets certain other molecules cross. So the membrane in the U-tube model has to <b>allow</b> water through and allow only certain types of molecules, just like the real one.",
+  text:"To model a cell membrane, the membrane in the U-tube {{allows|blocks}} water to pass through. Like a cell membrane, it {{allows only certain types of|allows all|blocks all}} molecules to pass through.",
+  summary:"The model's membrane <b>allows</b> water through and <b>allows only certain types of</b> molecules through, like a real cell membrane."},
+{ id:"o13", type:"mc", short:"Solute and water concentration", diagram:"chamber",
+  prompt:"Look at the container. Compared to side A, side B has a ______ concentration of sugar and a ______ concentration of water.",
+  review:"Solute and water go opposite ways. A solution with <b>less solute</b> has <b>more water</b> in it. Side B has less sugar than side A, so side B has a <b>higher water concentration</b>.",
   options:[
-    {t:"It uses energy from ATP to move ions against their concentration gradients.", ok:true, why:"Using ATP to move ions from low to high concentration is exactly what makes it active transport."},
-    {t:"It lets ions move from high to low concentration on their own.", ok:false, why:"Moving from high to low with no energy is passive transport. The pump moves ions the other way."},
-    {t:"It pumps air into the cell, like a fish tank pump.", ok:false, why:"The video says the pump isn't trying to aerate your cells. It moves sodium and potassium ions."},
-    {t:"It moves water across the membrane.", ok:false, why:"Water moving across a membrane is osmosis, which is passive. The pump moves ions."}
+    {t:"lower ... higher", ok:true, why:"Side B has less sugar (2%), so more of it is water."},
+    {t:"higher ... higher", ok:false, why:"Check the labels: side B has 2% sugar and side A has 10%. Which side has less sugar?"},
+    {t:"higher ... lower", ok:false, why:"Check the labels again. Side B has less sugar than side A."},
+    {t:"lower ... lower", ok:false, why:"Less solute means more room for water. Think about what that does to the water concentration."}
   ]},
-{ id:"n3", type:"classify", short:"Passive or active? Ions and water",
-  prompt:"Sort each example as passive transport or active transport.",
-  review:"Ask: <b>is it moving against its gradient, using ATP?</b> Then it is active transport, like the pump. If it moves from high to low on its own or through a channel, it is passive, like osmosis or ions leaking through a leakage channel.",
-  cats:["passive transport","active transport"],
+{ id:"o14", type:"classify", short:"U-tube: what changes on each side", diagram:"chamber",
+  prompt:"The membrane lets water through, but not sugar. Over time, water moves by osmosis. Decide which side each change happens on.",
+  review:"Water moves toward more solute, so water moves from side B into <b>side A</b>. Side A gains water: its <b>volume</b> rises and its <b>water concentration</b> goes up. Side B loses water, so its sugar gets more crowded: <b>side B's sugar concentration increases</b>.",
+  cats:["side A","side B"],
   items:[
-    {t:"The sodium-potassium pump moves 3 Na⁺ out of the cell, where sodium is already high.", cat:"active transport", why:"The pump uses ATP to move sodium against its gradient."},
-    {t:"The pump brings 2 K⁺ into the cell, where potassium is already high.", cat:"active transport", why:"Potassium moves from low to high, against its gradient, so energy is needed."},
-    {t:"K⁺ moves out of the cell through a potassium leakage channel.", cat:"passive transport", why:"There is more K⁺ inside, so it diffuses out (high to low) through the channel with no energy."},
-    {t:"Water moves into a root hair cell by osmosis.", cat:"passive transport", why:"Osmosis is an example of passive transport. No ATP is used."}
+    {t:"The volume (water level) increases.", cat:"side A", why:"Water moves into side A, toward more sugar, so its level rises."},
+    {t:"The water concentration increases.", cat:"side A", why:"Side A gains water, so more of it is water."},
+    {t:"The sugar concentration increases.", cat:"side B", why:"Side B loses water but keeps all its sugar, so the sugar gets more concentrated."}
   ]},
-{ id:"n4", type:"cloze", short:"The pump's cycle",
-  prompt:"Complete the steps of the pump's cycle.",
-  review:"The pump starts open to the <b>inside</b>. <b>3 sodium</b> ions bind, and ATP gives the pump a <b>phosphate</b>. That changes its <b>shape</b>, so it opens to the outside and pushes the sodium out. <b>2 potassium</b> ions bind, the phosphate is released, and the pump drops the potassium off <b>inside</b>.",
-  text:"The pump starts open to the {{inside|outside}} of the cell. {{Three|Two}} sodium ions bind. ATP transfers its {{phosphate|sodium}} to the pump, which changes the pump's {{shape|size}}. The pump opens to the {{outside|inside}} and pushes the sodium out. Then {{two|three}} potassium ions bind. The phosphate is released, the pump goes back to its original shape, and the potassium is dropped off {{inside|outside}} the cell.",
-  summary:"Open to the <b>inside</b>, <b>three</b> sodium bind, ATP gives a <b>phosphate</b>, the <b>shape</b> changes, it opens to the <b>outside</b>, <b>two</b> potassium bind, and potassium is dropped off <b>inside</b>."},
-{ id:"n5", type:"mc", short:"What changes the pump's shape",
-  prompt:"Three sodium ions have just bound to the pump. What happens next?",
-  review:"After the 3 sodium ions bind, <b>ATP transfers its phosphate</b> to the pump. The pump is now <b>phosphorylated</b>. This changes the pump's shape, so it opens to the outside of the cell.",
+{ id:"o15", type:"cloze", short:"What osmosis does to volume and concentration",
+  prompt:"Complete the paragraph about what happens during osmosis.",
+  review:"Water moves toward the <b>higher</b> solute concentration. The water adds to the volume on that side, so the volume <b>increases</b>. The same solute is now spread through more water, so that side's concentration <b>decreases</b>.",
+  text:"During osmosis, water moves across a membrane toward the side with {{higher|lower}} solute concentration. The water moving in {{increases|decreases}} the volume on that side, which {{decreases|increases}} the solute concentration on that side.",
+  summary:"Water moves toward <b>higher</b> solute concentration. That <b>increases</b> the volume there, which <b>decreases</b> the solute concentration."},
+{ id:"o16", type:"mc", short:"Water moves both ways",
+  prompt:"A cell has more water molecules inside than the water outside it. How do the water molecules cross the cell membrane?",
+  review:"Water molecules never stop moving. They cross the membrane <b>in both directions</b>, but <b>more</b> move from the side with more water to the side with less. Over time, the water concentration on both sides becomes about the same (equilibrium), and molecules keep moving both ways.",
   options:[
-    {t:"ATP transfers a phosphate to the pump, which changes the pump's shape.", ok:true, why:"The phosphate from ATP changes the pump's shape, so it opens to the outside."},
-    {t:"Two potassium ions bind on the inside of the cell.", ok:false, why:"Potassium binds later, after the pump has opened to the outside."},
-    {t:"The sodium ions slip out through the lipid bilayer on their own.", ok:false, why:"Ions have trouble passing directly through the membrane. The pump has to push them out."},
-    {t:"The phosphate group is released from the pump.", ok:false, why:"The phosphate is released near the end of the cycle, after potassium binds."}
+    {t:"In both directions, but more move from inside the cell to the outside.", ok:true, why:"Water moves both ways, with a net movement from more water (inside) to less water (outside)."},
+    {t:"Only from inside the cell to the outside.", ok:false, why:"Water molecules move both ways. It's the <i>net</i> movement that goes from inside to outside."},
+    {t:"In both directions, but more move from outside the cell to the inside.", ok:false, why:"The net movement goes from more water to less water. Which side has more water here?"},
+    {t:"They stop moving once they reach the membrane.", ok:false, why:"Water molecules keep moving all the time, even at equilibrium."}
   ]},
-{ id:"n6", type:"multi", short:"Where the ions end up",
-  prompt:"Select the true statements about what the pump does to sodium and potassium.",
-  review:"The pump keeps putting sodium <b>outside</b>, where sodium is already high, and potassium <b>inside</b>, where potassium is already high. The ions move from low to high concentration, <b>against</b> their gradients.",
+{ id:"o17", type:"multi", short:"A cell in a salty solution", diagram:"rbc-salt",
+  prompt:"A red blood cell is in a 10% salt solution, which has a higher solute concentration than the cell. Select the true statements about what will happen over time.",
+  review:"The salt solution is <b>hypertonic</b> to the cell. Water moves toward more solute, so water <b>leaves</b> the cell. The cell loses water, so its water volume goes <b>down</b> and its solute concentration goes <b>up</b>. Salt ions can't slip through the phospholipids.",
   options:[
-    {t:"After the pump works, there is more K⁺ inside the cell than outside.", ok:true, why:"The pump keeps bringing potassium in."},
-    {t:"After the pump works, there is more Na⁺ outside the cell than inside.", ok:true, why:"The pump keeps pushing sodium out."},
-    {t:"The pump moves sodium to the side where sodium is low.", ok:false, why:"That would be moving down the gradient. The pump moves sodium to the outside, where it is already <b>high</b>."},
-    {t:"The pump keeps working until sodium is equal on both sides.", ok:false, why:"The pump builds a difference. It keeps sodium high outside, not equal."}
-  ]},
-{ id:"n7", type:"mc", short:"Charge inside a resting cell",
-  prompt:"At rest, how does the inside of most cells compare to the outside?",
-  review:"The <b>resting membrane potential</b> is the difference in electrical voltage across the membrane. At rest, most cells are <b>more negative inside</b> than outside. The sodium-potassium pump helps maintain this.",
-  options:[
-    {t:"The inside is more negative than the outside.", ok:true, why:"That is the resting membrane potential of most cells."},
-    {t:"The inside is more positive than the outside.", ok:false, why:"Think about which side is more negative at rest. Watch the clip again and listen for the words \"more negative.\""},
-    {t:"The inside and outside have exactly the same charge.", ok:false, why:"There is a voltage difference. That difference is the resting membrane potential."},
-    {t:"Cells have no electrical charge at rest.", ok:false, why:"Cells have a resting membrane potential, so there is a charge difference."}
-  ]},
-{ id:"n8", type:"mc", short:"Potassium leakage channels",
-  prompt:"Many cells have far more potassium leakage channels than sodium leakage channels. What happens at rest?",
-  review:"There is more K⁺ inside, so K⁺ would like to move out (high to low). With lots of <b>potassium leakage channels</b>, K⁺ diffuses out. Losing these positive ions makes the inside of the cell <b>more negative</b>.",
-  options:[
-    {t:"K⁺ diffuses out through the channels, which makes the inside more negative.", ok:true, why:"Positive potassium ions leave, so the inside becomes more negative."},
-    {t:"Na⁺ rushes in through the channels, which makes the inside more positive.", ok:false, why:"There are fewer sodium leakage channels, so less sodium can get in."},
-    {t:"The leakage channels use ATP to pump K⁺ out.", ok:false, why:"Channels don't use ATP. K⁺ leaks out down its gradient, which is passive."},
-    {t:"Nothing happens, because ions can never cross the membrane.", ok:false, why:"Ions can't cross the lipid bilayer directly, but they can pass through a channel."}
-  ]},
-{ id:"n9", type:"mc", short:"Is 3 out, 2 in the main reason?",
-  prompt:"The pump moves 3 positive ions out for every 2 positive ions in. Is this the main reason the inside of a resting cell is more negative?",
-  review:"Moving 3 positive ions out for every 2 in adds a little to the negative charge inside. The video says it is <b>not the big reason</b>. The pump's bigger job is building the <b>electrochemical gradient</b> (more K⁺ inside, more Na⁺ outside). Then K⁺ leaking out through leakage channels makes the inside more negative.",
-  options:[
-    {t:"No. It helps a little, but the bigger reason is K⁺ leaking out through leakage channels.", ok:true, why:"The pump sets up the gradient, and positive K⁺ leaving through leakage channels makes the inside more negative."},
-    {t:"Yes. Moving 3 out and 2 in is the only reason.", ok:false, why:"Listen again: the video says this alone is not the big reason for the voltage difference."},
-    {t:"No. The inside is actually more positive at rest.", ok:false, why:"At rest, most cells are more negative inside."},
-    {t:"No. The pump has nothing to do with the resting potential.", ok:false, why:"The pump helps maintain the resting potential by building the electrochemical gradient."}
-  ]},
-{ id:"n10", type:"multi", short:"What the gradient is used for",
-  prompt:"The pump builds an electrochemical gradient. Select the true statements about what cells use it for.",
-  review:"The gradient is a setup for many things. <b>Excitable cells</b>, like neurons and muscle cells, use it for <b>action potentials</b> (a change in the cell's voltage). Some proteins that bring <b>glucose</b> into the cell also need the gradient.",
-  options:[
-    {t:"Neurons and muscle cells use it for action potentials.", ok:true, why:"An action potential is a change to the cell's voltage, and it depends on the gradient."},
-    {t:"Some proteins that bring glucose into the cell need the gradient.", ok:true, why:"The video gives glucose transport as an example."},
-    {t:"It pumps air into the cell to aerate it.", ok:false, why:"The video says the pump isn't trying to aerate your cells, even though it's called a pump."},
-    {t:"It lets the cell skip using ATP to run the pump.", ok:false, why:"The pump still needs ATP for every cycle."}
+    {t:"Water will move out of the cell.", ok:true, why:"Water moves toward the higher solute concentration, which is outside the cell."},
+    {t:"The volume of water inside the cell will decrease.", ok:true, why:"The cell loses water, so it shrinks."},
+    {t:"The concentration of solutes inside the cell will increase.", ok:true, why:"The same solutes are left in less water, so they are more concentrated."},
+    {t:"The salt will diffuse through the phospholipids into the cell.", ok:false, why:"Salt is made of charged ions, which can't pass directly through the phospholipid bilayer."}
   ]}
 ]
 };
@@ -879,18 +837,12 @@ o3:{prompt:"Root hair cells have <b>more solute</b> than the rainwater in the so
 o5:{prompt:"The membrane lets water through, but not sugar. Complete the sentences.", text:"Side A has {{more|less}} sugar than side B. Water moves from side {{B|A}} to side {{A|B}}. The water on side A will {{rise|fall}}."},
 o7:{prompt:"A saltwater fish is put in fresh water. Its cells have <b>more salt</b> than the water around it. What happens to its cells?", opts:["Water moves in, and the cells swell.","Water moves out, and the cells shrink.",null,"Nothing changes."]},
 o10:{prompt:"A gummy bear (mostly sugar) sits in plain water overnight. In the morning, it is much bigger. Why?", opts:["It had more solute than the water, so water moved in by osmosis.","It had less solute than the water, so water moved in.",null,"It used energy to pump water in."]},
-a1:{prompt:"Which statements are true?", opts:["Active transport moves molecules from low to high concentration.","Active transport needs energy, usually from ATP.","Active transport only happens when both sides are equal.",null]},
+a1:{prompt:"Which is true about active transport?", opts:["It moves molecules from low to high concentration and needs energy (ATP).","It moves molecules from high to low with no energy.","It only happens when both sides are equal.",null]},
 a2:{prompt:"Match each word to what it means.", pairs:["a protein that uses energy to move molecules from low to high concentration",null,"the membrane wraps around something and brings it into the cell","a vesicle opens at the membrane and sends material out of the cell"]},
 a3:{prompt:"During one cycle, what does the sodium-potassium pump do?", opts:["moves 3 sodium (Na⁺) out and 2 potassium (K⁺) in, using 1 ATP","moves 2 sodium out and 3 potassium in, using 1 ATP","lets sodium and potassium flow through with no energy",null]},
 a5:{prompt:"A white blood cell wraps around a bacterium and pulls it inside. What is this called?", opts:["endocytosis","exocytosis",null,"osmosis"]},
 a6:{prompt:"Pancreas cells pack insulin into vesicles. The vesicles open at the cell membrane and send the insulin out. What is this called?", opts:["exocytosis","endocytosis","simple diffusion",null]},
 a9:{prompt:"A cell has 50 mM of an ion inside and only 5 mM outside. It needs to bring in <b>more</b>. What does it need?", opts:["a protein pump and energy from ATP","an open channel protein","nothing; the ions will move in on their own",null]},
-n1:{prompt:"Match each word to what it means.", pairs:["outside the cell","inside the cell","the difference in voltage (charge) between the inside and outside of a resting cell",null]},
-n2:{prompt:"Why is the sodium-potassium pump active transport?", opts:["It uses ATP to move ions from low to high concentration.","It lets ions move from high to low on their own.",null,"It moves water across the membrane."]},
-n3:{prompt:"Is each one passive transport or active transport?", items:["The pump moves sodium (Na⁺) out, where there is already a lot of sodium.",null,"Potassium (K⁺) leaks out through a channel.","Water moves into a root cell by osmosis."]},
-n4:{prompt:"Complete the steps of the pump.", text:"The pump opens to the inside. {{Three|Two}} sodium ions get on. ATP gives the pump a phosphate, so the pump changes {{shape|size}} and pushes the sodium {{out|in}}. Then {{two|three}} potassium ions get on and are dropped off inside."},
-n6:{prompt:"What does the pump do to sodium and potassium? Pick all that are true.", opts:["Afterward, there is more potassium (K⁺) inside the cell.","Afterward, there is more sodium (Na⁺) outside the cell.",null,"The pump keeps going until sodium is equal on both sides."]},
-n7:{prompt:"At rest, how does the inside of most cells compare to the outside?", opts:["The inside is more negative.","The inside is more positive.","Both sides have the same charge.",null]}
 };
 /* the question a student sees: the regular one, or in the supported version its easier, shorter form */
 function view(q){
@@ -1036,7 +988,7 @@ function loadQ(){
   if(q.type==="multi"||q.type==="mc"){
     cur.order=shuffle(q.options.map((_,i)=>i));
     const multi=q.type==="multi";
-    body.innerHTML=(multi?`<p class="instr">Select all that are true.</p>`:`<p class="instr">Choose one answer.</p>`)+
+    body.innerHTML=(multi?`<p class="instr">Select all that are true. <b>${(n=>n+(n===1?" is":" are")+" true.")(q.options.filter(o=>o.ok).length)}</b></p>`:`<p class="instr">Choose one answer.</p>`)+
       `<div class="opts" role="${multi?"group":"radiogroup"}">`+cur.order.map(i=>`<button class="opt ${multi?"":"radio"}" role="${multi?"checkbox":"radio"}" ${multi?'aria-pressed="false"':'aria-checked="false"'} data-i="${i}"><span class="box"></span><span>${q.options[i].t}</span></button>`).join("")+`</div>`;
     body.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
       if(cur.done) return;
