@@ -97,6 +97,24 @@ input[type=text]:focus{border-color:var(--primary)}
 .qhead{display:flex;gap:10px;align-items:flex-start}
 .qnum{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
 .prompt{font-size:1.1rem;font-weight:700;margin:0}
+/* motion in the question pictures: molecules jiggle in place (no net movement, so nothing gives an answer away) */
+.diagram .jig{transform-box:fill-box;transform-origin:center;animation:jig1 2.6s ease-in-out infinite alternate}
+.diagram .j2{animation-name:jig2;animation-duration:3.1s}
+.diagram .j3{animation-name:jig3;animation-duration:2.2s}
+@keyframes jig1{from{transform:translate(-2px,1px)}to{transform:translate(2px,-2px)}}
+@keyframes jig2{from{transform:translate(2px,2px)}to{transform:translate(-2px,-1px)}}
+@keyframes jig3{from{transform:translate(0,-2px)}to{transform:translate(1px,2px)}}
+.diagram .swim{animation:swim 5s ease-in-out infinite alternate}
+@keyframes swim{from{transform:translate(-22px,0)}to{transform:translate(22px,0)}}
+.diagram .drip{animation:drip 2.6s ease-in infinite}
+@keyframes drip{0%,20%{transform:translate(0,0);opacity:1}85%{transform:translate(0,58px);opacity:1}100%{transform:translate(0,62px);opacity:0}}
+.diagram .exo{animation:exo 4.5s ease-in-out infinite}
+@keyframes exo{0%{transform:translate(0,0);opacity:0}15%{opacity:1}80%{transform:translate(78px,0);opacity:1}100%{transform:translate(84px,0);opacity:0}}
+.diagram .engulf{animation:engulf 5s ease-in-out infinite}
+@keyframes engulf{0%,15%{transform:translate(0,0)}80%,100%{transform:translate(-72px,0)}}
+.diagram .bob{transform-box:fill-box;transform-origin:center;animation:bob 2.4s ease-in-out infinite alternate}
+@keyframes bob{from{transform:scaleY(.94)}to{transform:scaleY(1.04)}}
+@media (prefers-reduced-motion:reduce){.diagram *{animation:none!important}}
 .diagram{display:block;width:100%;max-width:420px;height:auto;margin:16px auto;border-radius:10px;border:1px solid var(--line)}
 .cap{text-align:center;font-size:.85rem;color:var(--muted);margin:-8px 0 12px}
 .opts{display:grid;gap:10px;margin:16px 0}
@@ -503,7 +521,7 @@ passive: [
     {term:"concentration gradient", def:"a difference in the concentration of a substance between two areas", why:"The gradient is like a hill. In passive transport, molecules roll down it."},
     {term:"equilibrium", def:"the point when a substance is evenly spread out, so there is no net movement", why:"At equilibrium, molecules still move, but equal numbers cross each way."}
   ]},
-{ id:"p3", type:"mc", short:"Glucose and facilitated diffusion",
+{ id:"p3", type:"mc", short:"Glucose and facilitated diffusion", diagram:"glucose-muscle",
   prompt:"Glucose is a large, polar molecule. The concentration of glucose is higher in the blood than inside a muscle cell. How does glucose most likely enter the muscle cell?",
   review:"Small, nonpolar molecules can cross the bilayer on their own. Large or polar molecules (like glucose) and charged ions need help from <b>transport proteins</b>. If they are moving from high to low concentration, that help is still <b>passive</b>. This is called facilitated diffusion.",
   options:[
@@ -521,7 +539,7 @@ passive: [
     {t:"sodium ions (Na⁺), which are charged", ok:false, why:"Charged ions are repelled by the hydrophobic tails. They need a channel protein."},
     {t:"glucose, a large, polar molecule", ok:false, why:"Glucose is too large and polar. It needs a carrier protein."}
   ]},
-{ id:"p5", type:"cloze", short:"Food coloring in water",
+{ id:"p5", type:"cloze", short:"Food coloring in water", diagram:"dye",
   prompt:"Complete the paragraph.",
   review:"<b>Diffusion</b> is the movement of molecules from an area of higher concentration to an area of lower concentration. It continues until the molecules are evenly spread out.",
   text:"A drop of food coloring is added to a glass of still water. At first, the dye molecules are {{concentrated in one spot|evenly spread out}}. Over time, the dye moves from an area of {{higher|lower}} concentration to an area of {{lower|higher}} concentration. This continues until the dye is {{evenly spread out|all at the bottom}}. This process is called {{diffusion|osmosis|active transport}}, and it {{does not require|requires}} added energy.",
@@ -535,7 +553,7 @@ passive: [
     {t:"It lets every molecule pass through freely.", ok:false, why:"If everything passed freely, the cell couldn't control conditions inside. The membrane is selective."},
     {t:"It makes energy for the cell.", ok:false, why:"The membrane doesn't make energy. Cells get energy from ATP."}
   ]},
-{ id:"p7", type:"mc", short:"Facilitated diffusion",
+{ id:"p7", type:"mc", short:"Facilitated diffusion", diagram:"fd-proteins",
   prompt:"Which statement about facilitated diffusion is true?",
   review:"<b>Facilitated diffusion</b> is still passive. A <b>channel</b> or <b>carrier protein</b> gives molecules a path, and they move <b>down</b> their concentration gradient, from high to low. No ATP is used.",
   options:[
@@ -563,7 +581,7 @@ passive: [
     {t:"Potassium ions (K⁺) flow out of a nerve cell through ion channels.", cat:"facilitated diffusion", why:"Charged ions need a channel, and they are moving from high to low."},
     {t:"Carbon dioxide leaves a cell.", cat:"simple diffusion", why:"CO₂ is small and nonpolar, so it needs no help."}
   ]},
-{ id:"p10", type:"mc", short:"Oxygen in the lungs",
+{ id:"p10", type:"mc", short:"Oxygen in the lungs", diagram:"lungs",
   prompt:"In the lungs, the air sacs (alveoli) have a higher concentration of oxygen than the blood in nearby capillaries. Which statement is correct?",
   review:"Gas exchange in the lungs happens by <b>diffusion</b>. Oxygen moves from where it is more concentrated (the air sacs) to where it is less concentrated (the blood), with no energy needed.",
   options:[
@@ -592,7 +610,7 @@ active: [
     {term:"endocytosis", def:"the cell membrane surrounds material and brings it into the cell in a vesicle", why:"<i>Endo-</i> means into."},
     {term:"exocytosis", def:"a vesicle fuses with the cell membrane and releases material outside the cell", why:"<i>Exo-</i> means out of."}
   ]},
-{ id:"a3", type:"mc", short:"Sodium-potassium pump",
+{ id:"a3", type:"mc", short:"Sodium-potassium pump", diagram:"nak",
   prompt:"Nerve cells keep a high concentration of sodium ions (Na⁺) outside the cell and a high concentration of potassium ions (K⁺) inside the cell. During one cycle, what does the sodium-potassium pump do?",
   review:"The <b>sodium-potassium pump</b> is a classic example of active transport. Using energy from one ATP, it pumps <b>3 sodium ions out</b> and <b>2 potassium ions in</b>. Both move against their gradients. This keeps nerve and muscle cells ready to send signals.",
   options:[
@@ -606,7 +624,7 @@ active: [
   review:"When a cell needs to collect even more of something it already has a lot of, it has to move molecules <b>against</b> the gradient. That takes energy, so it is <b>active transport</b>.",
   text:"After a meal, cells lining the small intestine may already contain a {{higher|lower}} concentration of glucose than the food in the intestine. To absorb more glucose, the cells must move it {{against|down}} its concentration gradient, from {{lower|higher}} concentration to {{higher|lower}} concentration. This requires {{energy|no energy}}, so this process is {{active transport|facilitated diffusion|simple diffusion}}.",
   summary:"The cells already have a <b>higher</b> glucose concentration, so absorbing more means moving glucose <b>against</b> its gradient, from <b>lower</b> to <b>higher</b> concentration. That requires <b>energy</b>, so it is <b>active transport</b>."},
-{ id:"a5", type:"mc", short:"White blood cell engulfs bacteria",
+{ id:"a5", type:"mc", short:"White blood cell engulfs bacteria", diagram:"engulf",
   prompt:"A white blood cell wraps its membrane around a bacterium and pulls it inside in a vesicle. What process is this?",
   review:"Some things are too big to fit through any protein. Cells move these large materials in <b>vesicles</b>. Bringing material <b>in</b> is <b>endocytosis</b>; sending it <b>out</b> is <b>exocytosis</b>. Both use energy.",
   options:[
@@ -615,7 +633,7 @@ active: [
     {t:"facilitated diffusion", ok:false, why:"Facilitated diffusion moves single molecules through proteins. A whole bacterium is far too large."},
     {t:"osmosis", ok:false, why:"Osmosis is only the movement of water across a membrane."}
   ]},
-{ id:"a6", type:"mc", short:"Releasing insulin",
+{ id:"a6", type:"mc", short:"Releasing insulin", diagram:"exo",
   prompt:"Cells in the pancreas make the protein hormone insulin. The insulin is packed into vesicles, which fuse with the cell membrane and release the insulin into the blood. What process is this?",
   review:"Large molecules like proteins are packed into <b>vesicles</b>. When a vesicle fuses with the cell membrane and releases its contents outside the cell, that is <b>exocytosis</b>, a type of active transport.",
   options:[
@@ -644,7 +662,7 @@ active: [
     {t:"exocytosis of proteins", ok:true, why:"Moving vesicles and fusing them with the membrane requires energy."},
     {t:"osmosis", ok:false, why:"Osmosis is passive. Water would keep moving down its gradient."}
   ]},
-{ id:"a9", type:"mc", short:"Moving ions uphill",
+{ id:"a9", type:"mc", short:"Moving ions uphill", diagram:"ion-uphill",
   prompt:"The concentration of an ion is 5 mM outside a cell and 50 mM inside. The cell needs to bring <b>more</b> of this ion inside. What does the cell need?",
   review:"Inside is already higher than outside. Bringing in more means moving the ion from low to high concentration, <b>against</b> its gradient. That always requires a <b>pump</b> and <b>energy</b>.",
   options:[
@@ -653,7 +671,7 @@ active: [
     {t:"nothing; the ions will diffuse inside on their own", ok:false, why:"On their own, the ions would move from high (inside) to low (outside)."},
     {t:"osmosis", ok:false, why:"Osmosis is the movement of water, not ions."}
   ]},
-{ id:"a10", type:"mc", short:"Channel vs. pump",
+{ id:"a10", type:"mc", short:"Channel vs. pump", diagram:"channel-pump",
   prompt:"What is the main difference between a channel protein and a pump protein?",
   review:"<b>Channels</b> are passive: they open a path so molecules can flow down their gradient. <b>Pumps</b> are active: they use energy to move molecules against their gradient.",
   options:[
@@ -662,7 +680,7 @@ active: [
     {t:"Channels move only water; pumps move only ions.", ok:false, why:"Many channels move ions (like K⁺ channels). Aquaporins are channels for water."},
     {t:"There is no difference; both are passive transport.", ok:false, why:"Pumps use energy, so they are active transport."}
   ]},
-{ id:"a11", type:"cloze", short:"The gastric proton pump",
+{ id:"a11", type:"cloze", short:"The gastric proton pump", diagram:"proton-pump",
   prompt:"Your stomach lining has a protein pump called the gastric proton pump. It pumps hydrogen ions (H⁺) into the stomach cavity, where there are already many H⁺ ions (that's what makes stomach acid), and brings potassium ions (K⁺) into the cell. Complete the paragraph.",
   review:"The <b>gastric proton pump</b> is active transport, like the sodium-potassium pump. It uses <b>ATP</b> to change <b>shape</b> and move ions <b>against</b> their gradients: H⁺ goes <b>out of</b> the cell into the stomach, where H⁺ is already high, and K⁺ comes in, the <b>opposite</b> direction.",
   text:"A cell in the stomach lining has a {{lower|higher}} concentration of H⁺ ions than the stomach cavity. Using energy from {{ATP|water}}, the pump changes {{shape|color}} so it can move the ions. It moves one H⁺ ion {{out of|into}} the cell for every K⁺ ion it moves in the {{opposite|same}} direction.",
@@ -696,7 +714,7 @@ osmosis: [
     {t:"Salt moves out of the cell until both sides are equal.", ok:false, why:"In osmosis, it is the <b>water</b> that moves. The membrane does not let the salt ions cross freely."},
     {t:"Nothing happens, because distilled water has no solute.", ok:false, why:"The <i>difference</i> in solute is what matters. The cell has more solute, so water moves in."}
   ]},
-{ id:"o3", type:"mc", short:"Plant roots take in water",
+{ id:"o3", type:"mc", short:"Plant roots take in water", diagram:"root",
   prompt:"After it rains, the soil is soaked with water. The root hair cells of a plant have a higher solute concentration than the water in the soil. What happens?",
   review:"Water moves toward the higher solute concentration. The root hair cells are <b>hypertonic</b> compared to the soil water, so water moves into the roots by <b>osmosis</b>. This is how many plants take in water.",
   options:[
@@ -719,7 +737,7 @@ osmosis: [
   review:"Water moves toward the side with the <b>higher solute concentration</b>. The side with more solute is <b>hypertonic</b>, so it gains water and its level rises.",
   text:"Side A has a {{higher|lower}} sugar concentration than side B, so side A is {{hypertonic|hypotonic|isotonic}} compared to side B. Water will have a net movement from side {{B|A}} to side {{A|B}}. As a result, the water level on side A will {{rise|fall|stay the same}}.",
   summary:"Side A has the <b>higher</b> sugar concentration, so it is <b>hypertonic</b> to side B. Water moves from side <b>B</b> to side <b>A</b>, so the water level on side A will <b>rise</b>."},
-{ id:"o6", type:"mc", short:"Plant cell in fresh water",
+{ id:"o6", type:"mc", short:"Plant cell in fresh water", diagram:"plant-cell",
   prompt:"A plant cell is placed in fresh water, which is hypotonic to the cell. What happens?",
   review:"Plant cells have a strong <b>cell wall</b>. In a hypotonic solution, water rushes in and fills the central vacuole, pushing the cell against its wall. The cell becomes firm (<b>turgid</b>) but does not burst. This is why watered plants stand up straight.",
   options:[
@@ -728,7 +746,7 @@ osmosis: [
     {t:"Water leaves the cell, and the plant wilts.", ok:false, why:"Wilting happens in a <i>hypertonic</i> solution. Fresh water is hypotonic, so water moves in."},
     {t:"Nothing happens, because plant cells have cell walls.", ok:false, why:"Water still crosses the cell membrane. The wall just keeps the cell from bursting."}
   ]},
-{ id:"o7", type:"mc", short:"Saltwater fish in fresh water",
+{ id:"o7", type:"mc", short:"Saltwater fish in fresh water", diagram:"fish",
   prompt:"A saltwater fish is placed in a freshwater fish tank. The fish's cells have a higher solute concentration than the fresh water. What will happen to the fish's cells?",
   review:"Water moves toward the side with more solute. The fish's cells are <b>hypertonic</b> to the fresh water, so water moves into the cells and they swell. If the fish isn't rescued, it could die.",
   options:[
@@ -737,7 +755,7 @@ osmosis: [
     {t:"Salt will move from the fresh water into the cells.", ok:false, why:"Fresh water has very little salt, and in osmosis it is the <b>water</b> that moves."},
     {t:"Nothing will change, because fish already live in water.", ok:false, why:"What matters is the solute concentration. Fresh water has much less solute than the fish's cells."}
   ]},
-{ id:"o8", type:"mc", short:"IV saline",
+{ id:"o8", type:"mc", short:"IV saline", diagram:"iv",
   prompt:"Why do hospitals give patients an IV of 0.9% saline instead of pure water?",
   review:"Blood cells contain about 0.9% salt. A 0.9% saline solution is <b>isotonic</b>, so water moves in and out at the same rate. There is no net movement, and cells keep their normal shape.",
   options:[
@@ -756,7 +774,7 @@ osmosis: [
     {t:"A cell with 0.9% salt is placed in a 0.9% salt solution.", cat:"no net movement", why:"The concentrations are equal (isotonic)."},
     {t:"Cucumber slices are covered in salt to make pickles.", cat:"out of the cell", why:"The salty surroundings are hypertonic, so water leaves the cucumber cells."}
   ]},
-{ id:"o10", type:"mc", short:"The growing gummy bear",
+{ id:"o10", type:"mc", short:"The growing gummy bear", diagram:"gummy",
   prompt:"A gummy bear (mostly sugar and gelatin) is left in a cup of plain water overnight. In the morning it is much bigger. Why?",
   review:"The gummy bear has a much higher solute (sugar) concentration than plain water. Water moves by <b>osmosis</b> toward the higher solute concentration, into the gummy bear.",
   options:[
@@ -765,12 +783,12 @@ osmosis: [
     {t:"Sugar moved out of the gummy bear and pulled the gelatin apart.", ok:false, why:"The bear got bigger because water moved in, not because sugar moved out."},
     {t:"The gummy bear used energy to pump water in.", ok:false, why:"Gummy bears aren't alive and osmosis needs no energy."}
   ]},
-{ id:"o11", type:"cloze", short:"How water crosses the membrane",
+{ id:"o11", type:"cloze", short:"How water crosses the membrane", diagram:"aquaporin",
   prompt:"Complete the paragraph.",
   review:"Osmosis is <b>passive</b> transport of water, so water moves <b>down</b> its concentration gradient with no energy. A little water slips between the phospholipids (<b>simple</b> diffusion). Much more goes through channel proteins called aquaporins (<b>facilitated</b> diffusion).",
   text:"Osmosis is the {{passive|active}} transport of water molecules {{down|against}} their concentration gradient. Water can move by {{simple|facilitated}} diffusion through the phospholipids, or by {{facilitated|simple}} diffusion through channel proteins called aquaporins.",
   summary:"Osmosis is <b>passive</b>, so water moves <b>down</b> its gradient. Through the phospholipids is <b>simple</b> diffusion. Through aquaporins is <b>facilitated</b> diffusion."},
-{ id:"o12", type:"cloze", short:"The U-tube model's membrane",
+{ id:"o12", type:"cloze", short:"The U-tube model's membrane", diagram:"utube",
   prompt:"Scientists model osmosis with a U-shaped tube. A different salt solution goes in each side, and a membrane at the bottom stands for the cell membrane. Complete the sentences.",
   review:"A cell membrane is <b>semi-permeable</b>: it lets water through but only lets certain other molecules cross. So the membrane in the U-tube model has to <b>allow</b> water through and allow only certain types of molecules, just like the real one.",
   text:"To model a cell membrane, the membrane in the U-tube {{allows|blocks}} water to pass through. Like a cell membrane, it {{allows only certain types of|allows all|blocks all}} molecules to pass through.",
@@ -793,12 +811,12 @@ osmosis: [
     {t:"The water concentration increases.", cat:"side A", why:"Side A gains water, so more of it is water."},
     {t:"The sugar concentration increases.", cat:"side B", why:"Side B loses water but keeps all its sugar, so the sugar gets more concentrated."}
   ]},
-{ id:"o15", type:"cloze", short:"What osmosis does to volume and concentration",
+{ id:"o15", type:"cloze", short:"What osmosis does to volume and concentration", diagram:"utube",
   prompt:"Complete the paragraph about what happens during osmosis.",
   review:"Water moves toward the <b>higher</b> solute concentration. The water adds to the volume on that side, so the volume <b>increases</b>. The same solute is now spread through more water, so that side's concentration <b>decreases</b>.",
   text:"During osmosis, water moves across a membrane toward the side with {{higher|lower}} solute concentration. The water moving in {{increases|decreases}} the volume on that side, which {{decreases|increases}} the solute concentration on that side.",
   summary:"Water moves toward <b>higher</b> solute concentration. That <b>increases</b> the volume there, which <b>decreases</b> the solute concentration."},
-{ id:"o16", type:"mc", short:"Water moves both ways",
+{ id:"o16", type:"mc", short:"Water moves both ways", diagram:"water-both",
   prompt:"A cell has more water molecules inside than the water outside it. How do the water molecules cross the cell membrane?",
   review:"Water molecules never stop moving. They cross the membrane <b>in both directions</b>, but <b>more</b> move from the side with more water to the side with less. Over time, the water concentration on both sides becomes about the same (equilibrium), and molecules keep moving both ways.",
   options:[
@@ -890,6 +908,149 @@ function svgRBC(label,n){
 }
 const DIAGRAMS={gradient:svgGradient, bilayer:svgBilayer, chamber:svgChamber,
   "rbc-water":()=>svgRBC("distilled water (0% salt)",0), "rbc-salt":()=>svgRBC("10% salt solution",22)};
+
+/* ---- pictures for more questions. Each shows the setup of the question, never its answer. ---- */
+const FONT='font-family="Atkinson Hyperlegible,Arial,sans-serif"';
+const tx=(x,y,s,o={})=>`<text x="${x}" y="${y}" font-size="${o.size||13}"${o.bold?' font-weight="700"':''} text-anchor="${o.anchor||"middle"}" fill="${o.fill||"#2d2926"}" ${FONT}>${s}</text>`;
+const sup=(a,b)=>`${a}<tspan baseline-shift="super" font-size="70%">${b}</tspan>`;
+function jig(r){return `class="jig j${1+Math.floor(r()*3)}" style="animation-delay:-${(r()*3).toFixed(2)}s"`}
+/* one molecule or ion */
+function part(kind,x,y,r){
+  const a=jig(r),ion=(fill,lab)=>`<g ${a}><circle cx="${x}" cy="${y}" r="9" fill="${fill}"/><text x="${x}" y="${y+3.5}" font-size="8.5" font-weight="700" text-anchor="middle" fill="#fff" ${FONT}>${lab}</text></g>`;
+  switch(kind){
+    case "o2": return `<g ${a}><circle cx="${x-4.5}" cy="${y}" r="5.5" fill="#d9483b"/><circle cx="${x+4.5}" cy="${y}" r="5.5" fill="#d9483b"/></g>`;
+    case "glucose": return `<g ${a}><polygon points="${[0,1,2,3,4,5].map(i=>(x+8*Math.cos(i*Math.PI/3)).toFixed(1)+","+(y+8*Math.sin(i*Math.PI/3)).toFixed(1)).join(" ")}" fill="#e98b2a"/></g>`;
+    case "na": return ion("#2f6fb3",sup("Na","+"));
+    case "k": return ion("#2e8b57",sup("K","+"));
+    case "h": return ion("#8a5cc2",sup("H","+"));
+    case "water": return `<g ${a}><circle cx="${x}" cy="${y}" r="5" fill="#3b9ad9"/><circle cx="${x-4.5}" cy="${y-4}" r="2.6" fill="#9fd3f5"/><circle cx="${x+4.5}" cy="${y-4}" r="2.6" fill="#9fd3f5"/></g>`;
+    case "solute": return `<g ${a}><rect x="${x-5.5}" y="${y-5.5}" width="11" height="11" rx="2.5" fill="#e0a100"/></g>`;
+    default: return `<g ${a}><circle cx="${x}" cy="${y}" r="6.5" fill="#7b3fb0"/></g>`;
+  }
+}
+/* scatter n molecules in a box without overlaps */
+function scatter(items,box,r,taken){
+  let s="";
+  items.forEach(([kind,n])=>{for(let i=0,tries=0;i<n&&tries<400;tries++){
+    const x=box[0]+r()*(box[2]-box[0]),y=box[1]+r()*(box[3]-box[1]);
+    if(taken.some(([a,b])=>(a-x)**2+(b-y)**2<20*20)) continue;
+    taken.push([x,y]); s+=part(kind,x,y,r); i++;}});
+  return s;
+}
+/* a protein in a membrane at (x,y); vertical = the membrane runs up and down */
+function protein(kind,x,y,vertical){
+  const R=(w,h,fill,rx)=>`<rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="${rx||8}" fill="${fill}"/>`;
+  if(kind==="pump") return vertical?R(64,46,"#7d4fb8",14)+R(40,24,"#a07ad6",10):R(46,64,"#7d4fb8",14)+R(24,40,"#a07ad6",10);
+  if(kind==="carrier") return `<path d="M${x-22} ${y-30} h44 v60 h-44 z M${x-9} ${y-30} v24 h18 v-24" fill="#e9a23b" fill-rule="evenodd"/>`;
+  // channel or aquaporin: two halves with an open pore
+  return vertical?`<rect x="${x-32}" y="${y-22}" width="64" height="14" rx="5" fill="#2a9d8f"/><rect x="${x-32}" y="${y+8}" width="64" height="14" rx="5" fill="#2a9d8f"/>`
+                 :`<rect x="${x-22}" y="${y-32}" width="14" height="64" rx="5" fill="#2a9d8f"/><rect x="${x+8}" y="${y-32}" width="14" height="64" rx="5" fill="#2a9d8f"/>`;
+}
+/* two sides of a membrane (left | right), each with its own molecules */
+function svgSides(o){
+  const r=rng(o.seed||5),L=o.left,Rt=o.right,taken=[];
+  let s=`<svg class="diagram" viewBox="0 0 360 250" role="img" aria-label="${o.alt}"><rect width="180" height="250" fill="${L.bg}"/><rect x="180" width="180" height="250" fill="${Rt.bg}"/>`;
+  for(let y=34;y<=244;y+=12) s+=`<line x1="174" y1="${y}" x2="186" y2="${y}" stroke="#d08a2c" stroke-width="1.6"/><circle cx="170" cy="${y}" r="5" fill="#3b82c4"/><circle cx="190" cy="${y}" r="5" fill="#3b82c4"/>`;
+  if(o.protein){ s+=protein(o.protein.kind,180,146,true); taken.push([180,146]); }
+  s+=`<rect x="0" y="0" width="360" height="28" fill="#fff" opacity=".75"/>`+tx(85,19,L.label,{bold:1})+tx(275,19,Rt.label,{bold:1});
+  s+=scatter(L.items,[16,44,154,236],r,taken)+scatter(Rt.items,[206,44,344,236],r,taken);
+  if(o.protein&&o.protein.label) s+=`<rect x="118" y="182" width="124" height="20" rx="10" fill="#fff" opacity=".92"/>`+tx(180,196,o.protein.label,{size:11.5,bold:1});
+  return s+`</svg>`+(o.cap?`<p class="cap">${o.cap}</p>`:"");
+}
+/* a membrane lying flat, with proteins in it (top = outside, bottom = inside) */
+function svgFlat(o){
+  const r=rng(o.seed||9),taken=[];
+  let s=`<svg class="diagram" viewBox="0 0 360 240" role="img" aria-label="${o.alt}"><rect width="360" height="90" fill="#fbf0d4"/><rect y="150" width="360" height="90" fill="#f7d6d6"/><rect y="90" width="360" height="60" fill="#fff"/>`;
+  for(let x=10;x<=350;x+=14){ if(o.proteins.some(pr=>Math.abs(pr.x-x)<34)) continue;
+    s+=`<line x1="${x}" y1="104" x2="${x}" y2="136" stroke="#d08a2c" stroke-width="1.6"/><circle cx="${x}" cy="98" r="6" fill="#3b82c4"/><circle cx="${x}" cy="142" r="6" fill="#3b82c4"/>`; }
+  o.proteins.forEach(pr=>{ s+=protein(pr.kind,pr.x,120,false); taken.push([pr.x,120]); });
+  s+=tx(10,20,o.top||"outside the cell",{anchor:"start",fill:"#5f5850"})+tx(10,232,o.bottom||"inside the cell",{anchor:"start",fill:"#5f5850"});
+  s+=scatter(o.topItems,[16,30,344,80],r,taken)+scatter(o.bottomItems,[16,162,344,212],r,taken);
+  o.proteins.forEach(pr=>{ if(pr.label) s+=`<rect x="${pr.x-58}" y="${pr.labelY||160}" width="116" height="20" rx="10" fill="#fff" opacity=".92"/>`+tx(pr.x,(pr.labelY||160)+14,pr.label,{size:11.5,bold:1}); });
+  return s+`</svg>`+(o.cap?`<p class="cap">${o.cap}</p>`:"");
+}
+function svgDye(){
+  return `<svg class="diagram" viewBox="0 0 300 230" role="img" aria-label="A dropper holding a drop of blue food coloring over a glass of still water"><rect width="300" height="230" fill="#fff"/>
+  <path d="M95 92 L105 208 Q106 214 112 214 H188 Q194 214 195 208 L205 92" fill="#e3f2fc" stroke="#5a7896" stroke-width="3"/><path d="M93 70 L95 92 M207 70 L205 92" stroke="#5a7896" stroke-width="3"/>
+  <rect x="140" y="8" width="20" height="26" rx="6" fill="#2d2926"/><path d="M143 34 h14 l-3 30 h-8 z" fill="#cfe3f3" stroke="#5a7896" stroke-width="2"/><rect x="146" y="44" width="8" height="18" fill="#2f5fd0"/>
+  <circle class="drip" cx="150" cy="72" r="5" fill="#2f5fd0"/>${tx(150,228,"still water",{fill:"#5f5850"})}${tx(212,52,"food coloring",{anchor:"start",fill:"#5f5850"})}</svg>`;
+}
+function svgEngulf(){
+  return `<svg class="diagram" viewBox="0 0 360 220" role="img" aria-label="A white blood cell reaching its membrane around a rod-shaped bacterium"><rect width="360" height="220" fill="#fbf0d4"/>
+  <path d="M30 110 C30 30 210 20 228 70 C236 92 250 80 262 84 M30 110 C30 190 210 200 228 150 C236 128 250 140 262 136" fill="#e9e1f7" stroke="#7d4fb8" stroke-width="4"/>
+  <path d="M30 110 C30 30 210 20 228 70 L228 150 C210 200 30 190 30 110 z" fill="#e9e1f7"/><circle cx="110" cy="110" r="26" fill="#b9a2e0"/>
+  <g class="engulf"><rect x="250" y="96" width="56" height="28" rx="14" fill="#4f9a3a"/><circle cx="266" cy="110" r="3" fill="#2e6b22"/><circle cx="288" cy="106" r="3" fill="#2e6b22"/></g>
+  ${tx(110,206,"white blood cell",{bold:1})}${tx(300,82,"bacterium",{bold:1})}</svg>`;
+}
+function svgExo(){
+  const ves=(d,x,y)=>`<g class="exo" style="animation-delay:${d}s"><circle cx="${x}" cy="${y}" r="15" fill="#fff" stroke="#7d4fb8" stroke-width="3"/><circle cx="${x-5}" cy="${y-4}" r="2.6" fill="#d9483b"/><circle cx="${x+4}" cy="${y-2}" r="2.6" fill="#d9483b"/><circle cx="${x-2}" cy="${y+5}" r="2.6" fill="#d9483b"/></g>`;
+  return `<svg class="diagram" viewBox="0 0 360 220" role="img" aria-label="A pancreas cell with vesicles full of insulin moving toward its cell membrane, next to the blood"><rect width="360" height="220" fill="#fbe3e3"/>
+  <rect x="14" y="14" width="250" height="192" rx="40" fill="#f7d6d6" stroke="#7d4fb8" stroke-width="4"/><circle cx="80" cy="110" r="34" fill="#c99595"/>
+  ${ves(0,170,70)}${ves(-1.5,150,112)}${ves(-3,175,152)}${tx(140,200,"pancreas cell",{bold:1})}${tx(312,30,"blood",{bold:1})}</svg><p class="cap">Circles = vesicles · Red dots = insulin</p>`;
+}
+function svgRoot(){
+  const r=rng(21); let s=`<svg class="diagram" viewBox="0 0 360 230" role="img" aria-label="A root hair cell with many solute particles inside, surrounded by wet soil with water and few solute particles"><rect width="360" height="230" fill="#8a6a4a"/>`;
+  for(let i=0;i<26;i++){const x=r()*360,y=r()*230;s+=`<ellipse cx="${x}" cy="${y}" rx="${10+r()*14}" ry="${7+r()*9}" fill="#6f5238"/>`}
+  for(let i=0;i<34;i++){const x=r()*360,y=r()*230;s+=`<g ${jig(r)}><circle cx="${x}" cy="${y}" r="4" fill="#5fb4ea"/></g>`}
+  s+=`<path d="M0 70 H230 Q300 70 300 115 Q300 160 230 160 H0 Z" fill="#efe2c4" stroke="#b58a3c" stroke-width="4"/>`;
+  const taken=[];s+=scatter([["solute",12]],[20,86,270,146],r,taken);
+  return s+`<rect x="8" y="8" width="150" height="22" rx="11" fill="#fff" opacity=".92"/>${tx(83,23,"water in the soil",{bold:1})}<rect x="70" y="174" width="130" height="22" rx="11" fill="#fff" opacity=".92"/>${tx(135,189,"root hair cell",{bold:1})}</svg><p class="cap">Gold squares = solute · Blue dots = water</p>`;
+}
+function svgPlantCell(){
+  const r=rng(31); let w="";for(let i=0;i<16;i++){const x=40+r()*220,y=50+r()*130;if(x>92&&x<208&&y>66&&y<166)continue;w+=`<g ${jig(r)}><circle cx="${x}" cy="${y}" r="4" fill="#3b9ad9"/></g>`}
+  return `<svg class="diagram" viewBox="0 0 300 220" role="img" aria-label="A plant cell with a cell wall and a large vacuole, sitting in a beaker of fresh water"><rect width="300" height="220" fill="#fff"/><rect x="32" y="40" width="236" height="148" fill="#e3f2fc"/>${w}
+  <rect x="92" y="66" width="116" height="100" rx="8" fill="#cfe9b4" stroke="#3f7d2a" stroke-width="6"/><rect x="104" y="78" width="92" height="76" rx="6" fill="#bfe0f5"/><circle cx="118" cy="140" r="9" fill="#7aa35c"/>
+  <path d="M30 14 V180 Q30 190 40 190 H260 Q270 190 270 180 V14" fill="none" stroke="#5a7896" stroke-width="3"/>${tx(150,210,"fresh water",{fill:"#5f5850"})}</svg><p class="cap">Thick green border = cell wall · Light blue = vacuole · Blue dots = water</p>`;
+}
+function svgFish(){
+  const r=rng(41); let salt="";for(let i=0;i<9;i++)salt+=`<circle cx="${132+r()*58}" cy="${100+r()*22}" r="3" fill="#4a5563"/>`;
+  let out="";for(let i=0;i<3;i++)out+=`<g ${jig(r)}><circle cx="${50+r()*240}" cy="${60+r()*20+(i%2)*100}" r="3" fill="#4a5563"/></g>`;
+  return `<svg class="diagram" viewBox="0 0 340 220" role="img" aria-label="A saltwater fish swimming in a tank of fresh water. The fish has many salt particles inside it, and the water has few."><rect width="340" height="220" fill="#fff"/><rect x="22" y="40" width="296" height="150" fill="#dff0fb"/>${out}
+  <g class="swim"><path d="M110 112 Q160 70 212 104 Q222 112 212 120 Q160 154 110 112 Z" fill="#f08a3c"/><path d="M110 112 L84 92 L88 112 L84 132 Z" fill="#e06f22"/><circle cx="198" cy="106" r="4" fill="#2d2926"/>${salt}</g>
+  <path d="M20 22 V190 H320 V22" fill="none" stroke="#5a7896" stroke-width="3"/>${tx(170,210,"fresh water",{fill:"#5f5850"})}</svg><p class="cap">Gray dots = salt</p>`;
+}
+function svgIV(){
+  let cells="";[[210,150],[260,166],[306,148],[236,186],[290,192]].forEach(([x,y],i)=>cells+=`<g class="jig j${1+i%3}" style="animation-delay:-${i*.7}s"><ellipse cx="${x}" cy="${y}" rx="17" ry="11" fill="#e05a5a"/><ellipse cx="${x}" cy="${y}" rx="7" ry="4" fill="#b83a3a" opacity=".6"/></g>`);
+  return `<svg class="diagram" viewBox="0 0 360 230" role="img" aria-label="An IV bag labeled 0.9 percent saline, with a tube that leads into a blood vessel full of red blood cells"><rect width="360" height="230" fill="#fff"/>
+  <rect x="34" y="14" width="96" height="120" rx="14" fill="#eef6fc" stroke="#5a7896" stroke-width="3"/><rect x="34" y="60" width="96" height="74" rx="10" fill="#cfe7f8"/>${tx(82,44,"IV bag",{bold:1})}${tx(82,96,"0.9%",{bold:1,size:15})}${tx(82,114,"saline",{size:12})}
+  <path d="M82 134 V168 Q82 178 92 178 H178" fill="none" stroke="#5a7896" stroke-width="3"/><rect x="178" y="128" width="168" height="80" rx="30" fill="#fbe3e3" stroke="#b83a3a" stroke-width="3"/>${cells}${tx(262,224,"blood vessel with red blood cells",{fill:"#5f5850",size:12})}</svg>`;
+}
+function svgGummy(){
+  return `<svg class="diagram" viewBox="0 0 300 220" role="img" aria-label="A gummy bear sitting at the bottom of a cup of plain water"><rect width="300" height="220" fill="#fff"/>
+  <path d="M70 40 L84 196 Q85 202 92 202 H208 Q215 202 216 196 L230 40" fill="#e3f2fc" stroke="#5a7896" stroke-width="3"/><path d="M68 24 L70 40 M232 24 L230 40" stroke="#5a7896" stroke-width="3"/>
+  <g fill="#e2463f" opacity=".9"><circle cx="136" cy="152" r="8"/><circle cx="164" cy="152" r="8"/><circle cx="150" cy="166" r="18"/><ellipse cx="150" cy="186" rx="22" ry="16"/><circle cx="134" cy="194" r="7"/><circle cx="166" cy="194" r="7"/></g>
+  ${tx(150,216,"plain water",{fill:"#5f5850"})}</svg>`;
+}
+function svgUTube(){
+  const r=rng(51); let d="";
+  const put=(x0,x1,y0,y1,n)=>{for(let i=0;i<n;i++)d+=part("solute",x0+r()*(x1-x0),y0+r()*(y1-y0),r)};
+  put(48,92,92,170,3); put(208,252,92,170,10);
+  return `<svg class="diagram" viewBox="0 0 300 250" role="img" aria-label="A U-shaped tube with a membrane at the bottom. The left side has a little solute and the right side has a lot of solute. The water levels start the same."><rect width="300" height="250" fill="#fff"/>
+  <path d="M40 80 V170 Q40 228 100 228 H200 Q260 228 260 170 V80 H200 V170 Q200 184 186 184 H114 Q100 184 100 170 V80 Z" fill="#d6ecfb"/>${d}
+  <path d="M40 20 V170 Q40 228 100 228 H200 Q260 228 260 170 V20 M100 20 V170 Q100 184 114 184 H186 Q200 184 200 170 V20" fill="none" stroke="#5a7896" stroke-width="3"/>
+  <line x1="150" y1="184" x2="150" y2="228" stroke="#333" stroke-width="3" stroke-dasharray="6 4"/>${tx(70,70,"left",{bold:1})}${tx(230,70,"right",{bold:1})}${tx(150,246,"membrane (dashed line)",{size:12,fill:"#5f5850"})}</svg><p class="cap">Gold squares = solute (salt)</p>`;
+}
+Object.assign(DIAGRAMS,{
+  "glucose-muscle":()=>svgSides({alt:"Glucose molecules on both sides of a cell membrane: many in the blood and few inside the muscle cell",seed:3,
+     left:{label:"in the blood",bg:"#fbe3e3",items:[["glucose",10]]},right:{label:"inside a muscle cell",bg:"#f7d6d6",items:[["glucose",3]]},cap:"Orange hexagons = glucose"}),
+  "lungs":()=>svgSides({alt:"Oxygen molecules on both sides of a membrane: many in the air sac and few in the blood",seed:4,
+     left:{label:"air sac (alveolus)",bg:"#e8f4fb",items:[["o2",11]]},right:{label:"blood in a capillary",bg:"#f7d6d6",items:[["o2",3]]},cap:"Red pairs = oxygen (O₂)"}),
+  "ion-uphill":()=>svgSides({alt:"An ion on both sides of a cell membrane: 5 millimolar outside with few ions, and 50 millimolar inside with many ions",seed:6,
+     left:{label:"outside: 5 mM",bg:"#fbf0d4",items:[["dot",3]]},right:{label:"inside: 50 mM",bg:"#f7d6d6",items:[["dot",13]]},cap:"Purple dots = the ion"}),
+  "nak":()=>svgSides({alt:"A nerve cell membrane with a sodium-potassium pump. Outside, there is a lot of sodium and a little potassium. Inside, there is a lot of potassium and a little sodium.",seed:8,protein:{kind:"pump",label:"sodium-potassium pump"},
+     left:{label:"outside the nerve cell",bg:"#fbf0d4",items:[["na",8],["k",2]]},right:{label:"inside the nerve cell",bg:"#f7d6d6",items:[["k",8],["na",2]]},cap:"Blue = sodium (Na⁺) · Green = potassium (K⁺)"}),
+  "proton-pump":()=>svgSides({alt:"A stomach-lining cell next to the stomach cavity, with a gastric proton pump in the membrane. The stomach cavity has many hydrogen ions.",seed:12,protein:{kind:"pump",label:"gastric proton pump"},
+     left:{label:"stomach-lining cell",bg:"#f7d6d6",items:[["h",2],["k",6]]},right:{label:"stomach cavity",bg:"#fdf3c9",items:[["h",11],["k",2]]},cap:"Purple = hydrogen ions (H⁺) · Green = potassium (K⁺)"}),
+  "water-both":()=>svgSides({alt:"Water molecules and solute on both sides of a cell membrane: inside the cell there is more water and little solute; outside there is less water and more solute",seed:14,
+     left:{label:"inside the cell",bg:"#f7d6d6",items:[["water",14],["solute",2]]},right:{label:"outside the cell",bg:"#fbf0d4",items:[["water",7],["solute",8]]},cap:"Blue = water molecules · Gold squares = solute"}),
+  "fd-proteins":()=>svgFlat({alt:"A cell membrane with a channel protein and a carrier protein. There are more molecules outside the cell than inside.",seed:16,
+     proteins:[{kind:"channel",x:110,label:"channel protein"},{kind:"carrier",x:250,label:"carrier protein"}],topItems:[["dot",11]],bottomItems:[["dot",3]]}),
+  "channel-pump":()=>svgFlat({alt:"A cell membrane with a channel protein and a pump protein side by side",seed:18,
+     proteins:[{kind:"channel",x:110,label:"channel protein"},{kind:"pump",x:250,label:"pump protein"}],topItems:[["dot",6]],bottomItems:[["dot",6]]}),
+  "aquaporin":()=>svgFlat({alt:"A cell membrane made of phospholipids, with an aquaporin channel protein. Water molecules are on both sides.",seed:20,
+     proteins:[{kind:"channel",x:240,label:"aquaporin"}],topItems:[["water",12]],bottomItems:[["water",6]],cap:"Blue = water molecules · The blue circles with orange tails are phospholipids"}),
+  dye:svgDye, engulf:svgEngulf, exo:svgExo, root:svgRoot, "plant-cell":svgPlantCell, fish:svgFish, iv:svgIV, gummy:svgGummy, utube:svgUTube
+});
 
 /* ===================== STATE ===================== */
 let state=null;
