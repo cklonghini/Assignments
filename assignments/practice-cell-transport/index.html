@@ -160,6 +160,10 @@ select.pick.bad{border-color:var(--bad);background:var(--badbg)}
 .player video{display:block;width:100%;border-radius:8px;background:#000;aspect-ratio:16/9}
 .player .pl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .player .pl button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:.3em .7em;font-size:.82rem;cursor:pointer;text-align:left}
+.player .pl button .wp{margin-left:6px;font-weight:700;color:var(--muted)}
+.player .pl button .wp.done{color:var(--ok)}
+.player .pl button.on .wp,.player .pl button.on .wp.done{color:inherit}
+.lock{margin:8px 0 0;font-size:.9rem;font-weight:700;color:var(--warn-ink);background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:8px;padding:6px 10px}
 .player .pl button.on{border-color:var(--primary);background:var(--primary);color:var(--primary-ink)}
 .why{background:var(--card);border-radius:10px;padding:12px 16px;margin-top:10px}
 .why ul{margin:.3em 0 0;padding-left:1.2em}.why li{margin:.3em 0}
@@ -294,6 +298,8 @@ table.rt th{background:var(--soft)}
 <script>
 /* ===================== SETTINGS ===================== */
 const STREAK_GOAL = 3;                 // correct answers in a row needed to master a skill
+const WATCH_GOAL = 0.8;                // share of each lesson clip a student must watch before the skill's Start button unlocks
+const TEACHER = new URLSearchParams(location.search).get("teacher")==="tm7k2q";  // teacher view: every skill unlocked
 const STORE_KEY = "cell-transport-mastery-v1";
 
 const CLIPS = {
@@ -972,10 +978,10 @@ function renderHome(){
   $("topic-list").innerHTML=ORDER.map((k,i)=>{
     const T=TOPICS[k],s=state.topics[k];
     const badge=s.mastered?`<span class="badge done">✓ Mastered</span>`:s.answered?`<span class="badge prog">In progress · ${s.streak} of ${STREAK_GOAL} in a row</span>`:`<span class="badge">Not started</span>`;
-    return `<div class="card tcard${T.example?" ex":""}" style="--c:${T.color}"><div><h3>${i+1}. ${T.name}</h3>${T.example?`<p class="exlabel">↳ ${T.example}</p>`:""}<p>${T.blurb}</p>${badge}<details class="video" style="--topic:${T.color}"><summary>Watch the lesson video (${mins(T.lesson)})</summary>${player(T.lesson)}</details></div><button class="btn" data-go="${k}">${s.mastered?"Practice more":s.answered?"Continue":"Start"}</button></div>`;
+    return `<div class="card tcard${T.example?" ex":""}" style="--c:${T.color}"><div><h3>${i+1}. ${T.name}</h3>${T.example?`<p class="exlabel">↳ ${T.example}</p>`:""}<p>${T.blurb}</p>${badge}<details class="video" style="--topic:${T.color}"><summary>Watch the lesson video (${mins(T.lesson)})</summary>${player(T.lesson)}</details><p class="lock${unlocked(k)?" hidden":""}" id="lock-${k}"></p></div><button class="btn" data-go="${k}"${unlocked(k)?"":" disabled"}>${s.mastered?"Practice more":s.answered?"Continue":"Start"}</button></div>`;
   }).join("");
   document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>startTopic(b.dataset.go));
-  show("s-home"); wirePlayers($("topic-list"));
+  show("s-home"); wirePlayers($("topic-list")); refreshWatch();
 }
 
 /* ===================== QUIZ ===================== */
@@ -986,6 +992,7 @@ function nextQ(topic){
   const id=s.queue.shift(); save(); return bank.find(q=>q.id===id);
 }
 function startTopic(topic){
+  if(!unlocked(topic)){renderHome();return}
   document.documentElement.style.setProperty("--topic",TOPICS[topic].color);
   $("q-topic").innerHTML=TOPICS[topic].name+(TOPICS[topic].example?`<span class="exl">${TOPICS[topic].example}</span>`:"");
   $("q-keybody").innerHTML=`<div style="flex:1" id="q-keytext">${KEY[topic]}</div>${sayBtn("#q-keytext")}`;
@@ -1087,19 +1094,44 @@ function explanation(q,res){
   return `<div class="exp" id="exp-r"><div class="tag rv">review</div><div class="top"><div style="flex:1">${q.review}</div>${sayBtn("#exp-r")}</div></div>
           <div class="exp" id="exp-s"><div class="tag sv">solve</div><div class="top"><div style="flex:1">${solve}</div>${sayBtn("#exp-s")}</div></div>`;
 }
+/* Lesson-video watching. state.watched[clip] is a string with one character per second of the clip: "1" = played. */
+function watchedPct(k){const w=(state.watched||{})[k]||"";const n=(w.match(/1/g)||[]).length;return Math.min(1,n/Math.max(1,Math.floor(CLIPS[k].dur)))}
+function lessonDone(topic){return TOPICS[topic].lesson.filter(k=>watchedPct(k)>=WATCH_GOAL).length}
+function unlocked(topic){return TEACHER||state.topics[topic].mastered||lessonDone(topic)===TOPICS[topic].lesson.length}
+function markWatched(k,from,to){
+  state.watched=state.watched||{};
+  const len=Math.floor(CLIPS[k].dur)+2;let w=(state.watched[k]||"").padEnd(len,"0").split("");
+  for(let s=Math.floor(from);s<=Math.floor(to)&&s<len;s++)w[s]="1";
+  state.watched[k]=w.join("");
+}
+function wpLabel(k){const p=watchedPct(k);return p>=WATCH_GOAL?`<span class="wp done" data-wk="${k}">✓ watched</span>`:`<span class="wp" data-wk="${k}">${Math.round(p*100)}%</span>`}
+function refreshWatch(){
+  document.querySelectorAll(".wp[data-wk]").forEach(el=>{const p=watchedPct(el.dataset.wk);el.classList.toggle("done",p>=WATCH_GOAL);el.textContent=p>=WATCH_GOAL?"✓ watched":Math.round(p*100)+"%"});
+  ORDER.forEach(k=>{const b=document.querySelector(`[data-go="${k}"]`),l=$("lock-"+k);if(!b)return;const ok=unlocked(k);b.disabled=!ok;
+    if(l){l.classList.toggle("hidden",ok);l.textContent=`🔒 Watch at least ${Math.round(WATCH_GOAL*100)}% of each lesson video to unlock this skill (${lessonDone(k)} of ${TOPICS[k].lesson.length} watched).`}});
+}
 function mins(ids){const t=ids.reduce((n,k)=>n+CLIPS[k].dur,0);return t<60?t+" sec":Math.round(t/60)+" min"}
 function player(ids,title){
   if(!ids||!ids.length) return "";
-  const list=ids.length>1?`<div class="pl">${ids.map((k,i)=>`<button data-k="${k}" class="${i?"":"on"}">${i+1}. ${esc(CLIPS[k].label)} (${CLIPS[k].dur}s)</button>`).join("")}</div>`:"";
+  const list=ids.length>1?`<div class="pl">${ids.map((k,i)=>`<button data-k="${k}" class="${i?"":"on"}">${i+1}. ${esc(CLIPS[k].label)} (${CLIPS[k].dur}s)${title?"":wpLabel(k)}</button>`).join("")}</div>`:"";
   return `<div class="player" data-ids="${ids.join(",")}">${title?`<p class="ph">${title}</p>`:""}<video controls playsinline preload="metadata" src="${CLIPS[ids[0]].src}#t=0.1"></video>${list}</div>`;
 }
 function wirePlayers(root){
   root.querySelectorAll(".player").forEach(p=>{
     const ids=p.dataset.ids.split(","),v=p.querySelector("video"),btns=[...p.querySelectorAll(".pl button")];
     let i=0;
-    const go=(n,play)=>{i=n;v.src=CLIPS[ids[i]].src+(play?"":"#t=0.1");btns.forEach((b,j)=>b.classList.toggle("on",j===i));if(play)v.play().catch(()=>{})};
+    const go=(n,play)=>{last=null;i=n;v.src=CLIPS[ids[i]].src+(play?"":"#t=0.1");btns.forEach((b,j)=>b.classList.toggle("on",j===i));if(play)v.play().catch(()=>{})};
     btns.forEach((b,j)=>b.onclick=()=>go(j,true));
-    v.addEventListener("ended",()=>{if(i<ids.length-1)go(i+1,true)});
+    let last=null,saved=0;
+    v.addEventListener("playing",()=>{last=v.currentTime});
+    v.addEventListener("seeking",()=>{last=null});
+    v.addEventListener("timeupdate",()=>{
+      const t=v.currentTime;
+      if(last!==null&&!v.paused&&t>last&&t-last<=2){markWatched(ids[i],last,t);if(Date.now()-saved>4000){saved=Date.now();save()}refreshWatch()}
+      last=v.paused?null:t;
+    });
+    v.addEventListener("pause",()=>{last=null;save();refreshWatch()});
+    v.addEventListener("ended",()=>{last=null;save();refreshWatch();if(i<ids.length-1)go(i+1,true)});
   });
 }
 
@@ -1135,11 +1167,10 @@ function showMastery(){
   const nextK=ORDER.find(x=>!state.topics[x].mastered);
   const allDone=!nextK;
   $("q-card").innerHTML=`<div class="mastery"><div class="big">🎉</div><h2>You mastered ${T.name}!</h2><p>You answered ${STREAK_GOAL} questions in a row correctly (${s.correct} correct out of ${s.answered} total).</p>
-   ${allDone?`<p><b>All ${ORDER.length} skills are mastered.</b> Get your PDF report and upload it to Canvas.</p>`:``}
-   <div class="row">${allDone?`<button class="btn green" id="m-rep">Get my PDF for Canvas</button>`:`<button class="btn green" id="m-next">Next skill: ${TOPICS[nextK].name} →</button>`}
-   <button class="btn ghost" id="m-home">All skills</button><button class="link" id="m-more">Keep practicing this skill</button></div></div>`;
-  if(allDone) $("m-rep").onclick=renderReport; else $("m-next").onclick=()=>startTopic(nextK);
-  $("m-home").onclick=renderHome; $("m-more").onclick=loadQ;
+   ${allDone?`<p><b>All ${ORDER.length} skills are mastered.</b> Go back to the skills page to get your PDF report for Canvas.</p>`
+            :`<p>Go back to the skills page. Watch the lesson video for <b>${TOPICS[nextK].name}</b> to unlock it, then start it.</p>`}
+   <div class="row"><button class="btn green" id="m-home">← Back to all skills</button></div></div>`;
+  $("m-home").onclick=renderHome;
 }
 
 /* ===================== REPORT ===================== */
@@ -1147,11 +1178,11 @@ function fmtTime(ms){const m=Math.round(ms/60000);return m<1?"under 1 min":m+" m
 function fmtDate(iso){return new Date(iso).toLocaleString([], {month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})}
 function renderReport(){
   const done=ORDER.filter(k=>state.topics[k].mastered).length;
-  const rows=ORDER.map(k=>{const s=state.topics[k];return `<tr><td>${TOPICS[k].name}</td><td class="${s.mastered?"yes":"no"}">${s.mastered?"✓ Mastered":"Not yet"}</td><td>${s.answered}</td><td>${s.correct}</td><td>${s.answered?Math.round(100*s.correct/s.answered)+"%":"—"}</td><td>${fmtTime(s.timeMs)}</td></tr>`}).join("");
+  const rows=ORDER.map(k=>{const s=state.topics[k];return `<tr><td>${TOPICS[k].name}</td><td class="${s.mastered?"yes":"no"}">${s.mastered?"✓ Mastered":"Not yet"}</td><td>${s.answered}</td><td>${s.correct}</td><td>${s.answered?Math.round(100*s.correct/s.answered)+"%":"—"}</td><td>${fmtTime(s.timeMs)}</td><td>${lessonDone(k)} of ${TOPICS[k].lesson.length}</td></tr>`}).join("");
   const log=state.log.map((l,i)=>`<tr><td>${i+1}</td><td>${TOPICS[l.topic].name}</td><td>${esc(l.short)}</td><td class="${l.ok?"yes":"no"}">${l.ok?"Correct":"Incorrect"}</td><td>${fmtDate(l.at)}</td></tr>`).join("");
   $("r-body").innerHTML=`<h1>Cell Transport Practice: Report</h1>
    <div class="rmeta"><b>Student</b><span>${esc(state.name)}</span><b>Class</b><span>${COURSE}</span><b>Started</b><span>${fmtDate(state.startedAt)}</span><b>Report made</b><span>${fmtDate(new Date().toISOString())}</span><b>Skills mastered</b><span class="${done===ORDER.length?"yes":"no"}">${done} of ${ORDER.length}</span><b>Mastery rule</b><span>${STREAK_GOAL} correct in a row</span></div>
-   <table class="rt"><thead><tr><th>Skill</th><th>Status</th><th>Answered</th><th>Correct</th><th>Accuracy</th><th>Time</th></tr></thead><tbody>${rows}</tbody></table>
+   <table class="rt"><thead><tr><th>Skill</th><th>Status</th><th>Answered</th><th>Correct</th><th>Accuracy</th><th>Time</th><th>Lesson videos watched</th></tr></thead><tbody>${rows}</tbody></table>
    <h2 style="font-size:1.1rem">Question log</h2>
    ${state.log.length?`<table class="rt"><thead><tr><th>#</th><th>Skill</th><th>Question</th><th>Result</th><th>When</th></tr></thead><tbody>${log}</tbody></table>`:`<p>No questions answered yet.</p>`}`;
   show("s-report");
