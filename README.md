@@ -13,7 +13,7 @@ Each one is a page on Vercel with the video and short clips, auto-checked practi
 | Test - Unit 4 Transport (Anatomy & Physiology), game board | `assignments/test-unit-4-transport/` |
 | Practice - The Cardiovascular System (Anatomy & Physiology B) | `assignments/practice-the-cardiovascular-system/` |
 | Lung Capacity Lab (Anatomy & Physiology), with an interactive graph | `assignments/lung-capacity-lab/` |
-| Cell Transport Practice (Passive, Active, Osmosis) (Biology), standalone mastery page with its own `clips/` | `assignments/practice-cell-transport/` |
+| Practice - Cell Transport (Biology A), standalone mastery page with its own `clips/` | `assignments/practice-cell-transport/` |
 
 The home page (`index.html`) lists every assignment. Students get the direct link, for example
 `https://YOUR-PROJECT.vercel.app/assignments/explore-species-classification/`.

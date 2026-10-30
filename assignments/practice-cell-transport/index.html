@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cell Transport Mastery</title>
+<title>Practice - Cell Transport</title>
 <!-- standalone page (no engine): tools/build_index.py lists it on the home page from these lines -->
-<meta name="assignment-title" content="Cell Transport Practice (Passive, Osmosis, Active)">
+<meta name="assignment-title" content="Practice - Cell Transport">
 <meta name="assignment-course" content="Biology A">
 <meta name="assignment-short" content="cell-transport-practice">
 <link rel="icon" type="image/png" href="../../engine/brand/favicon.png">
@@ -207,7 +207,7 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
 
   <!-- START -->
   <section id="s-start" class="hidden">
-    <h1>Cell Transport Practice</h1>
+    <h1>Practice - Cell Transport</h1>
     <p class="course">Biology A</p>
     <p class="sub">Passive transport · Osmosis · Active transport</p>
     <div class="card">
@@ -227,7 +227,7 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
 
   <!-- HOME -->
   <section id="s-home" class="hidden">
-    <h1>Cell Transport Practice</h1>
+    <h1>Practice - Cell Transport</h1>
     <p class="course">Biology A</p>
     <p class="sub" id="home-hello"></p>
     <div class="topics" id="topic-list"></div>
@@ -1179,7 +1179,7 @@ async function headingPng(lines,pt){
 }
 async function buildPdf(){
   const L=window.PDFLib; if(!L) throw new Error("nolib");
-  const TITLE="Cell Transport Practice", name=state.name||"Student";
+  const TITLE="Practice - Cell Transport", name=state.name||"Student";
   const doc=await L.PDFDocument.create(); doc.setTitle(TITLE+" - "+pdfSafe(name)); doc.setAuthor(pdfSafe(name));
   const F=await doc.embedFont(L.StandardFonts.Helvetica),FB=await doc.embedFont(L.StandardFonts.HelveticaBold),FI=await doc.embedFont(L.StandardFonts.HelveticaOblique);
   const W0=612,PH=792,M=54,CW=W0-2*M,c=(r,g,b)=>L.rgb(r/255,g/255,b/255);
@@ -1256,7 +1256,7 @@ async function buildPdf(){
 /* file name like the other assignments: "Title - Last First.pdf" */
 function pdfName(){
   const w=(state.name||"").trim().split(/\s+/),last=w.length>1?w.pop():"",nm=((last?last+" ":"")+w.join(" ")).replace(/[\\\/:*?"<>|]+/g,"").trim();
-  return "Cell Transport Practice - "+(nm||"Student")+".pdf";
+  return "Practice - Cell Transport - "+(nm||"Student")+".pdf";
 }
 async function downloadPdf(){
   const b=$("b-report"),msg=$("pdf-msg"),say=(s,col)=>{msg.textContent=s;msg.style.color=col||""};
