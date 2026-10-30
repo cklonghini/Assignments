@@ -184,14 +184,6 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
 .mastery h2{color:var(--ok);margin-top:.3em}
 .mastery .row{justify-content:center;margin-top:16px}
 
-/* report */
-.report h1{font-size:1.5rem}
-.rmeta{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0 16px}
-.rmeta b{color:var(--muted);font-weight:400}
-table.rt{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:.93rem}
-table.rt th,table.rt td{border:1px solid var(--line);padding:6px 8px;text-align:left}
-table.rt th{background:var(--soft)}
-.yes{color:var(--ok);font-weight:700}.no{color:var(--bad);font-weight:700}
 /* "reach out to your teacher" message after many misses in a row */
 .helpwrap{position:fixed;inset:0;z-index:50;background:rgba(20,18,16,.6);display:flex;align-items:center;justify-content:center;padding:16px}
 .helpbox{background:var(--card);color:var(--ink);border:4px solid var(--gold);border-radius:16px;max-width:560px;width:100%;padding:26px 26px 22px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.35)}
@@ -199,12 +191,6 @@ table.rt th{background:var(--soft)}
 .helpbox h2{font-size:1.6rem;margin:.3em 0 .4em}
 .helpbox p{font-size:1.15rem;margin:.4em 0}
 .helpbox .row{justify-content:center;margin-top:18px}
-/* report: skills not completed */
-.notdone{border:4px solid var(--bad);background:var(--badbg);color:var(--bad);border-radius:10px;padding:14px 18px;margin:12px 0 16px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.notdone h2{margin:0 0 6px;font-size:1.3rem;font-weight:800;color:var(--bad)}
-.notdone ul{margin:0;padding-left:1.2em}.notdone li{margin:4px 0;font-weight:800;color:var(--ink)}
-.notdone p{margin:8px 0 0;font-weight:700;color:var(--ink)}
-.printnote{background:var(--warn-bg);color:var(--warn-ink);border:2px solid var(--warn-line);border-radius:10px;padding:10px 14px;font-size:.92rem;margin:12px 0}
 
 @media (max-width:560px){
   body{font-size:16px}
@@ -216,20 +202,8 @@ table.rt th{background:var(--soft)}
   .exp{padding:12px 12px 12px 34px}
   .exp .tag{width:22px;font-size:.65rem}
 }
-@media print{
-  :root{--bg:#f7f4ee; --card:#ffffff; --ink:#2d2926; --muted:#5f5850; --line:#e0d8ca;
-  --primary:#2d2926; --primary-ink:#ffffff; --gold:#c1a01e; --gold-ink:#7f6810; --banner-ink:#dcbc3c;
-  --ok:#17703f; --okbg:#e3f4ea; --ok-ink:#ffffff; --bad:#a8321f; --badbg:#fbe9e5;
-  --warn-bg:#fff0c2; --warn-ink:#4a3000; --warn-line:#d99a00;
-  --learn:#eaf4e4; --learn-line:#a9c99a; --soft:#f1ebdd; --rv:#4f8a2c;}
-  body{background:#fff;font-size:11pt}
-  .no-print{display:none!important}
-  .wrap{max-width:none;padding:0}
-  .card{border:0;box-shadow:none;padding:0}
-  table.rt{page-break-inside:auto}
-  table.rt tr{page-break-inside:avoid}
-}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -273,9 +247,10 @@ table.rt th{background:var(--soft)}
     <div class="topics" id="topic-list"></div>
     <div class="card">
       <h2 style="margin-top:0">Finished?</h2>
-      <p style="margin-top:0">Get your report, save it as a PDF, and upload it to Canvas.</p>
+      <p style="margin-top:0">Download your PDF and upload it to the Canvas assignment. It shows your name, the date, which skills you mastered, and every question with your answer.</p>
       <div class="row">
-        <button class="btn green" id="b-report">Get my PDF for Canvas</button>
+        <button class="btn green" id="b-report">Download my PDF</button>
+        <span class="instr" id="pdf-msg" aria-live="polite" style="margin:0"></span>
         <button class="link" id="b-reset" style="color:var(--muted)">Not you? Start over</button>
       </div>
     </div>
@@ -291,18 +266,6 @@ table.rt th{background:var(--soft)}
     </div>
     <details class="card keyideas" id="q-key"><summary><span>Key ideas: read before you start</span></summary><div class="kbody" id="q-keybody"></div></details>
     <div class="card" id="q-card"></div>
-  </section>
-
-  <!-- REPORT -->
-  <section id="s-report" class="hidden">
-    <div class="row no-print" style="margin-bottom:12px">
-      <button class="link" id="b-rback">← Back to skills</button>
-    </div>
-    <div class="card report" id="r-body"></div>
-    <div class="no-print">
-      <div class="printnote"><b>To save as a PDF:</b> click the button below. In the print window, set <b>Destination</b> to <b>Save as PDF</b>, then save. Upload that PDF to the Canvas assignment.</div>
-      <button class="btn green" onclick="window.print()">Save as PDF</button>
-    </div>
   </section>
 
   <footer class="sitefoot no-print"><img src="../../engine/brand/logo.png" alt="Elite Academic Academy"><p>In a world where you can be anything, Be Elite.</p></footer>
@@ -944,7 +907,7 @@ function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state))}catch(
 function load(){try{const s=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(s&&s.name&&s.topics){const f=fresh();ORDER.forEach(k=>{if(!s.topics[k])s.topics[k]=f.topics[k]});return s}}catch(e){}return null}
 
 const $=id=>document.getElementById(id);
-function show(id){["s-start","s-home","s-quiz","s-report"].forEach(s=>$(s).classList.toggle("hidden",s!==id));window.scrollTo(0,0);stopSpeak()}
+function show(id){["s-start","s-home","s-quiz"].forEach(s=>$(s).classList.toggle("hidden",s!==id));window.scrollTo(0,0);stopSpeak()}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function strip(html){const d=document.createElement("div");d.innerHTML=html;return d.textContent}
@@ -980,8 +943,7 @@ document.addEventListener("click",e=>{
 $("in-name").addEventListener("input",e=>$("b-start").disabled=e.target.value.trim().split(/\s+/).filter(Boolean).length<1);
 $("b-start").onclick=()=>{state=fresh();state.name=$("in-name").value.trim();state.cls=COURSE;state.startedAt=new Date().toISOString();save();renderHome()};
 $("b-reset").onclick=()=>{if(confirm("Start over? This erases the progress saved on this device.")){try{localStorage.removeItem(STORE_KEY)}catch(e){}state=null;$("in-name").value="";$("b-start").disabled=true;show("s-start")}};
-$("b-report").onclick=renderReport;
-$("b-rback").onclick=renderHome;
+$("b-report").onclick=downloadPdf;
 $("b-back").onclick=renderHome;
 
 function renderHome(){
@@ -1072,17 +1034,19 @@ function grade(){
       else if(!p&&o.ok){b.classList.add("missed");note=q.type==="multi"?"Missed: this is true":"✓ Correct answer"}
       if(note) b.insertAdjacentHTML("beforeend",`<span class="note">${note}</span>`);
     });
-    return {ok,picked};
+    return {ok,picked,answer:picked.map(i=>strip(q.options[i].t)).join("\n")};
   }
   const sels=[...body.querySelectorAll("select.pick")];
   if(sels.some(s=>!s.value)) return {incomplete:"Fill in every blank before you submit."};
   let ok=true;
+  const answer=q.type==="cloze"?(()=>{let n=0;return strip(q.text.replace(/\{\{.*?\}\}/g,()=>"["+sels[n++].value+"]"))})()
+    :sels.map(s=>{const i=+s.dataset.i;return q.type==="match"?strip(q.pairs[i].def)+": "+s.value:strip(q.items[i].t)+" -> "+s.value}).join("\n");
   sels.forEach(s=>{
     const i=+s.dataset.i, ans=q.type==="match"?q.pairs[i].term:q.type==="classify"?q.items[i].cat:cur.answers[i];
     const good=s.value===ans; ok=ok&&good; s.disabled=true; s.classList.add(good?"ok":"bad");
     if(!good) s.insertAdjacentHTML("afterend",`<span class="fix">→ ${esc(ans)}</span>`);
   });
-  return {ok};
+  return {ok,answer};
 }
 
 function whyRight(q,res){
@@ -1162,7 +1126,7 @@ function submit(){
   if(needHelp) s.helpShown=(s.helpShown||0)+1;
   let justMastered=false;
   if(!s.mastered&&s.streak>=STREAK_GOAL){s.mastered=true;s.masteredAt=new Date().toISOString();justMastered=true}
-  state.log.push({topic:cur.topic,id:q.id,short:q.short,ok:res.ok,at:new Date().toISOString()});
+  state.log.push({topic:cur.topic,id:q.id,short:q.short,q:strip(q.prompt),a:res.answer,ok:res.ok,at:new Date().toISOString()});
   save(); updateBar();
 
   const left=STREAK_GOAL-s.streak;
@@ -1196,30 +1160,120 @@ function showMastery(){
   const nextK=ORDER.find(x=>!state.topics[x].mastered);
   const allDone=!nextK;
   $("q-card").innerHTML=`<div class="mastery"><div class="big">🎉</div><h2>You mastered ${T.name}!</h2><p>You answered ${STREAK_GOAL} questions in a row correctly (${s.correct} correct out of ${s.answered} total).</p>
-   ${allDone?`<p><b>All ${ORDER.length} skills are mastered.</b> Go back to the skills page to get your PDF report for Canvas.</p>`
+   ${allDone?`<p><b>All ${ORDER.length} skills are mastered.</b> Go back to the skills page to download your PDF for Canvas.</p>`
             :`<p>Go back to the skills page. Watch the lesson video for <b>${TOPICS[nextK].name}</b> to unlock it, then start it.</p>`}
    <div class="row"><button class="btn green" id="m-home">← Back to all skills</button></div></div>`;
   $("m-home").onclick=renderHome;
 }
 
-/* ===================== REPORT ===================== */
-function fmtTime(ms){const m=Math.round(ms/60000);return m<1?"under 1 min":m+" min"}
-function fmtDate(iso){return new Date(iso).toLocaleString([], {month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})}
-function renderReport(){
-  const done=ORDER.filter(k=>state.topics[k].mastered).length;
-  const rows=ORDER.map(k=>{const s=state.topics[k];return `<tr><td>${TOPICS[k].name}</td><td class="${s.mastered?"yes":"no"}">${s.mastered?"✓ Mastered":"<b>NOT YET COMPLETED</b>"}</td><td>${s.answered}</td><td>${s.correct}</td><td>${s.answered?Math.round(100*s.correct/s.answered)+"%":"—"}</td><td>${fmtTime(s.timeMs)}</td><td>${lessonDone(k)} of ${TOPICS[k].lesson.length}</td></tr>`}).join("");
-  const log=state.log.map((l,i)=>`<tr><td>${i+1}</td><td>${TOPICS[l.topic].name}</td><td>${esc(l.short)}</td><td class="${l.ok?"yes":"no"}">${l.ok?"Correct":"Incorrect"}</td><td>${fmtDate(l.at)}</td></tr>`).join("");
-  const notDone=ORDER.filter(k=>!state.topics[k].mastered);
-  const helped=ORDER.filter(k=>state.topics[k].helpShown);
-  const note=notDone.length?`<div class="notdone"><h2>⚠ NOT YET COMPLETED: ${notDone.length} of ${ORDER.length} skills</h2>
-     <ul>${notDone.map(k=>`<li>${TOPICS[k].name}: this skill has not yet been completed (not mastered).</li>`).join("")}</ul>
-     ${helped.length?`<p>The page asked this student to reach out for support (${HELP_AFTER} or more misses in a row) in: ${helped.map(k=>TOPICS[k].name).join(", ")}.</p>`:""}</div>`:"";
-  $("r-body").innerHTML=`<h1>Cell Transport Practice: Report</h1>
-   <div class="rmeta"><b>Student</b><span>${esc(state.name)}</span><b>Class</b><span>${COURSE}</span><b>Started</b><span>${fmtDate(state.startedAt)}</span><b>Report made</b><span>${fmtDate(new Date().toISOString())}</span><b>Skills mastered</b><span class="${done===ORDER.length?"yes":"no"}">${done} of ${ORDER.length}</span><b>Mastery rule</b><span>${STREAK_GOAL} correct in a row</span></div>${note}
-   <table class="rt"><thead><tr><th>Skill</th><th>Status</th><th>Answered</th><th>Correct</th><th>Accuracy</th><th>Time</th><th>Lesson videos watched</th></tr></thead><tbody>${rows}</tbody></table>
-   <h2 style="font-size:1.1rem">Question log</h2>
-   ${state.log.length?`<table class="rt"><thead><tr><th>#</th><th>Skill</th><th>Question</th><th>Result</th><th>When</th></tr></thead><tbody>${log}</tbody></table>`:`<p>No questions answered yet.</p>`}`;
-  show("s-report");
+/* ===================== PDF REPORT =====================
+   Built in the browser with pdf-lib and downloaded, laid out like the other assignments' PDFs (engine/engine.js). */
+const BRAND="../../engine/brand/";
+function pdfSafe(s){
+  return String(s).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—−]/g,"-").replace(/…/g,"...").replace(/ /g," ")
+    .replace(/→/g,"->").replace(/⁺/g,"+").replace(/⁻/g,"-").replace(/₂/g,"2").replace(/₃/g,"3").replace(/[✓✔]/g,"").replace(/[^\x09\x0A\x0D\x20-\x7E¡-ÿ]/g,"");
+}
+/* title, course and name in Cabin Bold, drawn to a picture so the PDF matches the other assignments */
+async function headingPng(lines,pt){
+  try{await Promise.race([document.fonts.load("700 "+pt+"px Cabin"),new Promise(r=>setTimeout(r,2500))])}catch(e){}
+  const sc=4,lh=pt*1.3,c=document.createElement("canvas");let x=c.getContext("2d");const font="700 "+pt*sc+'px Cabin, "Helvetica Neue", Arial, sans-serif';
+  x.font=font;const w=Math.ceil(Math.max(...lines.map(s=>x.measureText(s).width))+4*sc);
+  c.width=w;c.height=Math.ceil(lh*lines.length*sc+2*sc);x=c.getContext("2d");x.font=font;x.fillStyle="#2d2926";
+  lines.forEach((s,i)=>x.fillText(s,0,(i*lh+pt)*sc));
+  const blob=await new Promise(r=>c.toBlob(r,"image/png"));
+  return {bytes:new Uint8Array(await blob.arrayBuffer()),w:w/sc,h:c.height/sc};
+}
+async function buildPdf(){
+  const L=window.PDFLib; if(!L) throw new Error("nolib");
+  const TITLE="Cell Transport Practice", name=state.name||"Student";
+  const doc=await L.PDFDocument.create(); doc.setTitle(TITLE+" - "+pdfSafe(name)); doc.setAuthor(pdfSafe(name));
+  const F=await doc.embedFont(L.StandardFonts.Helvetica),FB=await doc.embedFont(L.StandardFonts.HelveticaBold),FI=await doc.embedFont(L.StandardFonts.HelveticaOblique);
+  const W0=612,PH=792,M=54,CW=W0-2*M,c=(r,g,b)=>L.rgb(r/255,g/255,b/255);
+  const INK=c(45,41,38),MUTED=c(95,88,80),GOLD=c(193,160,30),LINE=c(224,216,202),RESP=c(110,90,12),OK=c(23,112,63),BAD=c(168,50,31),BADBG=c(251,233,229);
+  let page=null,y=0;
+  const newPage=()=>{page=doc.addPage([W0,PH]);y=M};
+  const room=n=>{if(!page||y+n>PH-M)newPage()};
+  function wrap(s,font,size,width){
+    const out=[];
+    pdfSafe(s).split("\n").forEach(par=>{let line="";par.split(/ +/).forEach(w=>{const tst=line?line+" "+w:w;
+      if(font.widthOfTextAtSize(tst,size)<=width){line=tst;return}
+      if(line)out.push(line);
+      while(font.widthOfTextAtSize(w,size)>width){let k=w.length;while(k>1&&font.widthOfTextAtSize(w.slice(0,k),size)>width)k--;out.push(w.slice(0,k));w=w.slice(k)}
+      line=w});out.push(line)});
+    return out;
+  }
+  function text(s,size,font,indent,color){indent=indent||0;const lh=size*1.35;
+    wrap(s,font,size,CW-indent).forEach(ln=>{room(lh);page.drawText(ln,{x:M+indent,y:PH-y-size,size,font,color:color||INK});y+=lh})}
+  const rule=(col,th)=>{room(th+2);page.drawLine({start:{x:M,y:PH-y},end:{x:W0-M,y:PH-y},thickness:th,color:col})};
+
+  newPage();
+  const hd=await headingPng([TITLE,COURSE,name],14), img=await doc.embedPng(hd.bytes);
+  page.drawImage(img,{x:M,y:PH-M-hd.h,width:hd.w,height:hd.h});
+  try{const eg=await doc.embedPng(new Uint8Array(await (await fetch(BRAND+"eagle.png")).arrayBuffer())),eh=40,ew=eh*eg.width/eg.height,bn="ELITE ACADEMIC ACADEMY",bw=FB.widthOfTextAtSize(bn,7);
+    page.drawImage(eg,{x:W0-M-bw/2-ew/2,y:PH-M-eh,width:ew,height:eh});page.drawText(bn,{x:W0-M-bw,y:PH-M-eh-10,size:7,font:FB,color:RESP})}catch(e){}
+  y=M+hd.h+6;
+  text("Date completed: "+new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),11,F,0,MUTED);
+  y+=6;rule(GOLD,2);y+=14;
+
+  /* skills not completed: a bold red box the teacher can't miss */
+  const notDone=ORDER.filter(k=>!state.topics[k].mastered), helped=ORDER.filter(k=>state.topics[k].helpShown);
+  if(notDone.length){
+    const lines=[["NOT YET COMPLETED: "+notDone.length+" of "+ORDER.length+" skills",13,BAD]]
+      .concat(notDone.map(k=>["- "+TOPICS[k].name+": this skill has not yet been completed (not mastered).",11,INK]));
+    if(helped.length) lines.push(["The page asked this student to reach out for support ("+HELP_AFTER+" or more misses in a row) in: "+helped.map(k=>TOPICS[k].name).join(", ")+".",10,INK]);
+    const pad=10, wrapped=lines.map(([s,sz,col])=>({ls:wrap(s,FB,sz,CW-2*pad),sz,col}));
+    const h=wrapped.reduce((n,w)=>n+w.ls.length*w.sz*1.35,0)+2*pad;
+    room(h+4);
+    page.drawRectangle({x:M,y:PH-y-h,width:CW,height:h,color:BADBG,borderColor:BAD,borderWidth:3});
+    y+=pad;
+    wrapped.forEach(w=>w.ls.forEach(ln=>{page.drawText(ln,{x:M+pad,y:PH-y-w.sz,size:w.sz,font:FB,color:w.col});y+=w.sz*1.35}));
+    y+=pad+14;
+  }
+
+  text("Results",13,FB);y+=2;
+  const done=ORDER.length-notDone.length;
+  text("Skills mastered: "+done+" of "+ORDER.length+" (mastery = "+STREAK_GOAL+" correct in a row)",10.5,FB);y+=2;
+  ORDER.forEach((k,i)=>{const s=state.topics[k];
+    room(32);text((i+1)+". "+TOPICS[k].name+": "+(s.mastered?"Mastered":"NOT YET COMPLETED"),10.5,FB,0,s.mastered?OK:BAD);
+    text((s.answered?s.correct+" of "+s.answered+" questions correct ("+Math.round(100*s.correct/s.answered)+"%)":"Not started")+"   ·   Lesson videos watched: "+lessonDone(k)+" of "+TOPICS[k].lesson.length,10,F,16,MUTED);y+=3});
+  y+=8;rule(LINE,1);y+=14;
+
+  text("Questions and answers",13,FB);y+=4;
+  if(!state.log.length) text("No questions answered yet.",10.5,FI,0,MUTED);
+  let num=0;
+  ORDER.forEach(k=>{
+    const rows=state.log.filter(l=>l.topic===k);
+    if(!rows.length) return;
+    y+=6;room(90);text(TOPICS[k].name,11.5,FB,0,RESP);
+    rows.forEach(l=>{
+      num++;y+=4;
+      const qt=num+". "+(l.q||l.short), at=l.a!=null?l.a:"(answer not saved: answered before the PDF showed answers)";
+      room((wrap(qt,FB,10.5,CW).length+wrap(at,FI,10.5,CW-16).length)*10.5*1.35+10*1.35+2);  /* keep each question on one page */
+      text(qt,10.5,FB);
+      text(at,10.5,FI,16,l.a!=null?RESP:MUTED);
+      text(l.ok?"Correct":"Incorrect",10,FB,16,l.ok?OK:BAD);
+    });
+  });
+
+  const pages=doc.getPages(),n=pages.length;
+  pages.forEach((pg,i)=>pg.drawText(pdfSafe(name+"  |  "+TITLE+"  |  "+COURSE+"  |  Page "+(i+1)+" of "+n),{x:M,y:28,size:9,font:F,color:MUTED}));
+  return new Blob([await doc.save()],{type:"application/pdf"});
+}
+/* file name like the other assignments: "Title - Last First.pdf" */
+function pdfName(){
+  const w=(state.name||"").trim().split(/\s+/),last=w.length>1?w.pop():"",nm=((last?last+" ":"")+w.join(" ")).replace(/[\\\/:*?"<>|]+/g,"").trim();
+  return "Cell Transport Practice - "+(nm||"Student")+".pdf";
+}
+async function downloadPdf(){
+  const b=$("b-report"),msg=$("pdf-msg"),say=(s,col)=>{msg.textContent=s;msg.style.color=col||""};
+  b.disabled=true;say("Preparing your PDF…");
+  try{
+    const blob=await buildPdf(),u=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=u;a.download=pdfName();document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);
+    const nd=ORDER.filter(k=>!state.topics[k].mastered).length;
+    say("Your PDF downloaded. Upload it to the Canvas assignment."+(nd?" (It shows "+nd+" skill"+(nd>1?"s":"")+" not yet completed.)":""),"var(--ok)");
+  }catch(e){say("The PDF could not be made. Check your internet connection, reload the page, and try again. Your progress is saved.","var(--bad)")}
+  b.disabled=false;
 }
 
 /* ===================== INIT ===================== */
