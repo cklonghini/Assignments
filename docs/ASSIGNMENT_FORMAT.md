@@ -23,6 +23,8 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `short` | no | The short link name, so students can use `SITE/short` (for example `short: 'chemical-reaction'`). Default: the folder name without "explore-". Run `tools/build_index.py` after changing it |
 | `copyPaste` | no | Copy and paste are off by default (see below). Set `copyPaste: true` to allow them on this assignment |
 | `essential` | no | The goal box at the top of the supported version: `{ question: '...', goals: ['...', ...] }` (see "Supported version") |
+| `courses` | no | For one assignment that every class uses: a list of class names, for example `['Biology A', 'Marine Science A']`. Start here then has a "Which class is this for?" drop-down that students must fill in before they start, and their choice replaces `course` under the title and on the PDF. Example: `assignments/welcome-to-class/` |
+| `support` | no | Set `support: false` when the assignment is the same for every student: `?support=eagle` then changes nothing |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
@@ -450,6 +452,25 @@ reload. A photo box counts as done when it has a photo; students can still finis
 photo with its caption, or "no photo added", and a "Photos added" line in the results. Photos are not in the backup
 code or the Canvas text fallback (the text says a photo was added). Keep it to about 5 photo boxes; each photo adds
 about 100 KB to the PDF. Photo boxes do not work on a game board.
+
+### record: a video of the student talking (teacher graded)
+
+For a self-introduction or any "tell me out loud" task. Example: Part 1 of `assignments/welcome-to-class/`.
+
+```js
+{ type: 'record', text: 'Record a video to introduce yourself.',
+  prompts: ['Say your name, so I know how to pronounce it.', 'Tell me a little bit about yourself.'],   // listed above the recorder
+  min: 40,                 // words the transcript needs before it counts as done (default 25)
+  maxSeconds: 180 }        // the recording stops on its own after this long (default 180)
+```
+
+Students press **Start recording** (webcam and microphone), answer the prompts, and press **Stop recording**. While they
+talk, the browser turns their speech into words (Chrome, Edge, Safari) in a transcript box they can fix. In Firefox, or
+when speech-to-text is not working, they type what they said. They can watch their video back, record again, or
+download it. **Only the transcript goes in the PDF and the Canvas text**, with a note saying how long the video was and
+whether the transcript came from speech-to-text, was edited, or was typed. The video stays in the student's browser
+(IndexedDB, like photos) and is never sent anywhere. It counts as done with a recording and a transcript of at least
+`min` words. One per assignment is plenty. It does not work on a game board.
 
 ### agree: a lab agreement students check and sign
 

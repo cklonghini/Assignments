@@ -37,6 +37,9 @@ function injectPage(){
     +'<p class="intro">Do these things before you begin. The rest of the assignment opens when you finish.</p>'
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
     +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
+    /* courses: [...] in assignment.js (one assignment for several classes): students choose their class here */
+    +(A2.courses?'<div class="namerow courserow"><label for="courseSel">Which class is this for?</label><select id="courseSel"><option value="">Choose your class</option>'
+      +A2.courses.map(function(c){c=String(c).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); return '<option value="'+c+'">'+c+'</option>';}).join('')+'</select></div>':'')
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
     +'<p><strong>If you close this tab, refresh the page, or leave it for another website, your progress may be lost and you will have to start over.</strong></p>'
     +'<ul>'+(hasPics?'<li>Selecting a picture opens it full size in a new tab. Keep this tab open and come back to it to enter your answers.</li>':'')
@@ -64,7 +67,8 @@ if(!A||!(A.video||A.board||A.parts)){ document.body.textContent='This page needs
    (`easy` in assignment.js), fewer answer choices, and the goal box (`essential`) at the top. It also leaves out every
    part, question, and clip marked support: false (and the full video, when video.support is false), so the student
    works on just the essentials. Nothing on the page or in the PDF says it is the supported version. */
-var SUPPORT=/[?&]support=eagle(&|$)/.test(location.search), TRIMMED=false;
+/* support: false in assignment.js: the assignment is the same for every student, so ?support=eagle changes nothing */
+var SUPPORT=A.support!==false&&/[?&]support=eagle(&|$)/.test(location.search), TRIMMED=false;
 if(SUPPORT&&!A.board){
   var keep=function(x){ if(x&&x.support===false){ TRIMMED=true; return false; } return true; };
   /* easyIntro and easyAfter replace intro and after (counts like "stops 5 times" can change when questions are left out) */
@@ -76,7 +80,9 @@ if(SUPPORT&&!A.board){
     return Object.assign(easier(p),{questions:(p.questions||[]).filter(keep),clips:(p.clips||[]).filter(function(k){return keep((A.clips||{})[k]);})});
   });
 }
-var TITLE=A.title, COURSE=A.course, BOARD=A.board||null;
+var TITLE=A.title, BOARD=A.board||null;
+/* the class the student chose in Start here (courses in assignment.js), or the course label */
+function courseName(){return (A.courses&&S&&S.course&&A.courses.indexOf(S.course)>=0)?S.course:A.course;}
 /* game board: tries per answer, and the share of the points earned on try 1, 2, 3 */
 var MAXT=BOARD?(BOARD.tries||3):0, CREDIT=(BOARD&&BOARD.credit)||[1,0.5,0.25];
 injectPage();
@@ -100,7 +106,7 @@ function fewer(id,options,right,keep){
 }
 /* question ids follow question numbers, so a supported version with questions left out saves under its own key */
 var KEY=(A.storageKey||('assignment-'+TITLE))+(TRIMMED?'|support':'')+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},recs:{},course:'',agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -114,6 +120,8 @@ function copyMeta(f,o){
   f.rich=(o.rich&&typeof o.rich==='object')?o.rich:{};
   f.photos=(o.photos&&typeof o.photos==='object')?o.photos:{};
   f.agree=(o.agree&&typeof o.agree==='object')?o.agree:{};
+  f.recs=(o.recs&&typeof o.recs==='object')?o.recs:{};
+  f.course=typeof o.course==='string'&&(A.courses||[]).indexOf(o.course)>=0?o.course:'';
   f.open=!!o.open;
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
@@ -319,6 +327,7 @@ function hasProgress(){
   if(Object.keys(S.rich).some(function(k){return S.rich[k]&&segsPlain(S.rich[k].segs).trim();})) return true;
   if(Object.keys(S.agree).some(function(k){return S.agree[k]&&((S.agree[k].on||[]).some(Boolean)||S.agree[k].sign);})) return true;
   if(Object.keys(S.photos).some(function(k){return S.photos[k]&&(S.photos[k].has||S.photos[k].cap);})) return true;
+  if(Object.keys(S.recs||{}).some(function(k){return S.recs[k]&&(S.recs[k].has||S.recs[k].text);})) return true;
   if(Object.keys(S.graphs||{}).some(function(k){var g=S.graphs[k]; return g&&g.f;})) return true;
   return (S.mn||[]).some(function(x){return x;});
 }
@@ -1841,6 +1850,158 @@ function photoField(id,q){
 }
 
 /* ------------------------------------------------------------------ */
+/* Builders: a video recording of the student (an introduction)        */
+/* ------------------------------------------------------------------ */
+/* The student records a short video with the webcam and microphone. While they talk, the browser turns their
+   speech into words (Chrome, Edge, Safari), and they can fix the words in the transcript box. In Firefox they type
+   what they said. Only the transcript goes in the PDF and the Canvas text. The video stays in this browser
+   (IndexedDB, next to the photos) so the student can watch it back or download it.
+   S.recs[id] = {has, secs, mime, heard (speech-to-text words), text (the transcript), at}. */
+var REC={}, RECS=[];
+var CAN_REC=CAN_CAM&&!!window.MediaRecorder;
+function recDone(id){var st=S.recs[id], q=REC[id]; return !!(st&&st.has&&q&&words(st.text)>=q.min);}
+function recStopAll(){ RECS.slice().forEach(function(f){f();}); }
+function recordField(id,q){
+  var min=q.min==null?25:q.min, max=q.maxSeconds||180;
+  REC[id]={min:min};
+  ORDER.push({kind:'record',id:id,q:CURQ,sub:''});
+  var st=S.recs[id]||(S.recs[id]={has:false,secs:0,mime:'',heard:'',text:''});
+  var wrap=h('div','sub recq'); mark(wrap);
+  if((q.prompts||[]).length){
+    wrap.append(h('p','whint','In your video, answer each of these:'));
+    var ol=h('ol','recprompts'); q.prompts.forEach(function(t){var li=h('li'); li.append(itxt(t)); ol.append(li);}); wrap.append(ol);
+  }
+  if(!CAN_REC) wrap.append(h('p','whint','This browser can’t record video. Please open this page in Chrome or Edge on a computer with a camera and microphone.'));
+  else if(!SR) wrap.append(h('p','whint','This browser can’t turn your speech into words. After you record, type what you said in the transcript box. Chrome or Edge can fill it in for you.'));
+  var live=document.createElement('video'); live.className='reclive'; live.muted=true; live.playsInline=true; live.setAttribute('playsinline','');
+  live.setAttribute('aria-label','Camera preview'); live.hidden=true;
+  var back=document.createElement('video'); back.className='recback'; back.controls=true; back.playsInline=true; back.setAttribute('playsinline','');
+  back.setAttribute('aria-label','Your recording'); back.hidden=true;
+  var row=h('div','row gap');
+  var go=h('button','btn mic'); go.type='button'; go.hidden=!CAN_REC;
+  var dl=h('button','btn ghost','Download my video'); dl.type='button';
+  var clock=h('span','recclock'); clock.setAttribute('aria-live','off');
+  var msg=h('span','msg'); msg.setAttribute('aria-live','polite');
+  row.append(go,dl,clock,msg);
+  var lab=h('label',null,'Your transcript (what you said). Read it over and fix any words the computer heard wrong.'); lab.htmlFor='t-'+id;
+  var ta=h('textarea'); ta.id='t-'+id; ta.rows=6; ta.value=st.text||'';
+  ta.setAttribute('placeholder',SR?'Your words show up here while you talk.':'Type what you said in your video.');
+  var wmsg=h('p','msg'); wmsg.setAttribute('aria-live','polite');
+  wrap.append(live,back,row,lab,ta,wmsg);
+  var rec=null, stream=null, chunks=[], sr=null, srDead=false, t0=0, timer=0, heard='', interim='', on=false;
+  function say(t,bad){msg.textContent=t; if(bad) msg.dataset.s='bad'; else msg.removeAttribute('data-s');}
+  function mmss(x){x=Math.round(x); return Math.floor(x/60)+':'+String(x%60).padStart(2,'0');}
+  function showBack(blob){
+    if(PHOTO_URL[id]) URL.revokeObjectURL(PHOTO_URL[id]);
+    PHOTO_URL[id]=URL.createObjectURL(blob instanceof Blob?blob:new Blob([blob],{type:st.mime||'video/webm'}));
+    back.src=PHOTO_URL[id]; back.hidden=false;
+  }
+  function paint(){
+    go.textContent=on?'Stop recording':(st.has?'Record again':'Start recording');
+    go.setAttribute('aria-pressed',on?'true':'false');
+    dl.hidden=on||!st.has||!PHOTO_URL[id];
+    ta.readOnly=on;
+    clock.textContent=on?'Recording '+mmss((Date.now()-t0)/1000)+' (up to '+mmss(max)+')':(st.has?'Your video: '+mmss(st.secs):'');
+    var n=words(st.text), done=recDone(id);
+    wrap.dataset.s=done?'ok':'idle';
+    wmsg.textContent=on?'':done?'Saved. Your teacher will read your transcript in your PDF.'
+      :!st.has?'Record your video, then check your transcript.'
+      :'Your transcript has '+n+' word'+(n===1?'':'s')+'. Make sure it shows everything you said (at least '+min+' words).';
+    wmsg.dataset.s=done?'ok':'idle';
+  }
+  function words2(){ return (heard+' '+interim).replace(/\s+/g,' ').trim(); }
+  function listen(){
+    if(!SR) return;
+    sr=new SR(); sr.lang='en-US'; sr.continuous=true; sr.interimResults=true;
+    sr.onresult=function(e){
+      interim='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        var t=e.results[i][0].transcript;
+        if(e.results[i].isFinal) heard+=' '+t; else interim+=' '+t;
+      }
+      ta.value=words2();
+    };
+    /* a quiet stretch is fine; anything else (no network, blocked) means the student types the transcript */
+    sr.onerror=function(e){
+      var why=(e&&e.error)||'';
+      if(why!=='no-speech'&&why!=='aborted'){ srDead=true; say('Recording. The computer can’t turn your speech into words right now, so after you stop, type what you said in the transcript box.',true); }
+    };
+    /* Chrome stops listening after a quiet stretch, so start again while the camera is still recording */
+    sr.onend=function(){ heard=words2(); interim=''; if(on&&!srDead){ try{sr.start();}catch(e){} } };
+    try{sr.start();}catch(e){}
+  }
+  function stop(){
+    if(!on) return;
+    on=false; clearInterval(timer);
+    var i=RECS.indexOf(stop); if(i>=0) RECS.splice(i,1);
+    if(sr){ try{sr.stop();}catch(e){} }
+    try{ rec.stop(); }catch(e){}
+    paint();
+  }
+  function finish(){
+    if(stream){ camStop(stream); stream=null; }
+    live.srcObject=null; live.hidden=true;
+    var type=(rec&&rec.mimeType)||'video/webm', blob=new Blob(chunks,{type:type}); chunks=[];
+    if(!blob.size){ say('Nothing was recorded. Press Start recording and try again.',true); paint(); return; }
+    st.has=true; st.secs=Math.max(1,Math.round((Date.now()-t0)/1000)); st.mime=type; st.at=new Date().toISOString();
+    /* the speech-to-text words go in the box; the student can fix them */
+    setTimeout(function(){
+      heard=words2(); interim='';
+      if(heard){ st.heard=heard; st.text=heard; ta.value=heard; }
+      else { st.heard=''; ta.value=st.text||''; }
+      showBack(blob); paint(); commit();
+      blob.arrayBuffer().then(function(buf){ return photoPut(id,{buf:buf,type:type}); }).then(function(kept){
+        say(kept?(heard?'Recorded. Watch your video above, then check your transcript.':'Recorded. Watch your video above, then type what you said in the transcript box.'):'Recorded, but this browser can’t keep your video after you leave. Your transcript is saved.',!kept);
+        paint();
+      });
+    },SR?700:0);
+  }
+  function start(){
+    ttsStop(); if(micStop) micStop();
+    go.disabled=true; say('Starting your camera…');
+    var opts={video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:true};
+    navigator.mediaDevices.getUserMedia(opts).catch(function(){
+      return navigator.mediaDevices.getUserMedia({audio:true}).then(function(a){ say('Your camera didn’t start, so this records your voice only.',true); return a; });
+    }).then(function(s){
+      stream=s; CAMS.push(s);
+      var hasVid=s.getVideoTracks().length>0;
+      live.srcObject=s; live.hidden=!hasVid; if(hasVid) live.play().catch(function(){});
+      var types=['video/webm;codecs=vp8,opus','video/webm','video/mp4','audio/webm','audio/mp4'].filter(function(t){
+        return (hasVid?/^video/:/^audio/).test(t)&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t);
+      });
+      var o={videoBitsPerSecond:700000,audioBitsPerSecond:64000}; if(types[0]) o.mimeType=types[0];
+      rec=new MediaRecorder(s,o); chunks=[];
+      rec.ondataavailable=function(e){ if(e.data&&e.data.size) chunks.push(e.data); };
+      rec.onstop=finish;
+      rec.start(1000);
+      heard=''; interim=''; srDead=false; if(SR) ta.value=''; listen();
+      on=true; t0=Date.now(); RECS.push(stop); go.disabled=false;
+      if(hasVid) say('Recording. Answer each question, then press Stop recording.');
+      timer=setInterval(function(){ if(Date.now()-t0>=max*1000) stop(); else paint(); },500);
+      paint(); go.focus();
+    }).catch(function(){
+      if(stream){ camStop(stream); stream=null; }
+      go.disabled=false; live.hidden=true;
+      say('Your camera and microphone didn’t start. If your browser asks, choose Allow. '+MIC_HELP,true);
+    });
+  }
+  go.addEventListener('click',function(){ if(on) stop(); else start(); });
+  dl.addEventListener('click',function(){
+    if(!PHOTO_URL[id]) return;
+    var a=document.createElement('a'); a.href=PHOTO_URL[id];
+    a.download=(fullName()||'my').replace(/[^A-Za-z0-9]+/g,'-')+'-video.'+(/mp4/.test(st.mime)?'mp4':'webm');
+    document.body.append(a); a.click(); a.remove();
+  });
+  ta.addEventListener('input',function(){ st.text=ta.value; paint(); save(); updateBar(); });
+  paint();
+  if(st.has) photoGet(id).then(function(v){
+    if(v&&v.buf){ showBack(new Blob([v.buf],{type:v.type||st.mime})); paint(); }
+    else say('Your video isn’t saved in this browser anymore. Your transcript is still here.');
+  });
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
 /* Builders: agreement (a safety pledge: check every statement, then   */
 /* sign with your name). Saved in S.agree[id] = {on:[...], sign, at}.  */
 /* ------------------------------------------------------------------ */
@@ -2599,6 +2760,9 @@ function buildQuestion(q,s,tile){
   } else if(t==='photo'){
     ids=[];
     o.body.append(photoField(id,q));
+  } else if(t==='record'){
+    ids=[];
+    o.body.append(recordField(id,q));
   } else {
     o.body.append(h('p','msg','Unknown question type: '+t));
   }
@@ -3136,6 +3300,12 @@ function answerGroups(){
       it.photo=ph.has?o.id:null; it.cap=!!cap;
       it.resp=[cap||'(no caption)'];
       it.tag=ph.has?'photo added':'no photo added';
+    } else if(o.kind==='record'){
+      var rc=S.recs[o.id]||{}, tx=(rc.text||'').trim();
+      it.resp=[tx||'(no transcript)'];
+      it.tag=(rc.has?'video recorded ('+Math.floor((rc.secs||0)/60)+':'+String((rc.secs||0)%60).padStart(2,'0')+'); transcript '
+        +(!rc.heard?'typed by the student':(tx===rc.heard.trim()?'from speech-to-text':'from speech-to-text, then edited by the student')):'no video recorded')
+        +' • '+words(tx)+' words';
     } else {
       var w=S.written[o.id]||{}, t=(w.text||'').trim();
       it.resp=[t||'(no answer)'];
@@ -3153,14 +3323,13 @@ function summaryParts(){
     board.push(['Tiles finished',T.done+' of '+T.n]);
   }
   var res=videoRows().concat(board,[
-    ['Auto-checked items',sc.a+' / '+TOTAL_A+' correct'],
-    ['Written responses',sc.w+' / '+TOTAL_W+' completed']
-  ].concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]));
+    ['Auto-checked items',sc.a+' / '+TOTAL_A+' correct']
+  ].concat(TOTAL_W?[['Written responses',sc.w+' / '+TOTAL_W+' completed']]:[]).concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]).concat(Object.keys(REC).length?[['Video recordings',Object.keys(REC).filter(recDone).length+' / '+Object.keys(REC).length+' recorded with a transcript']]:[]));
   return {date:fmtDate(new Date()),res:res,groups:answerGroups()};
 }
 function buildSummary(){
   var p=summaryParts();
-  var L=[TITLE,COURSE,fullName()||'(name not entered)','Date completed: '+p.date,'','Results '+CODE_SYM[timeCode()]];
+  var L=[TITLE,courseName(),fullName()||'(name not entered)','Date completed: '+p.date,'','Results '+CODE_SYM[timeCode()]];
   p.res.forEach(function(r){L.push(r[0]+': '+r[1]);});
   var anyCer=Object.keys(R).some(function(k){return R[k].cer;}), anyHl=Object.keys(R).some(function(k){return !R[k].cer;});
   if(anyHl) L.push('(Text inside [[double brackets]] was highlighted in yellow as transition words that point to evidence.)');
@@ -3335,7 +3504,7 @@ async function buildPdf(){
   var p=summaryParts();
   newPage();
 
-  var hd=await headingPng([TITLE,COURSE,fullName()||'(name not entered)'],14);
+  var hd=await headingPng([TITLE,courseName(),fullName()||'(name not entered)'],14);
   var img=await doc.embedPng(hd.bytes);
   page.drawImage(img,{x:M,y:PH-M-hd.h,width:hd.w,height:hd.h});
   /* school eagle and name in the top right corner (left out if the picture cannot load) */
@@ -3404,7 +3573,7 @@ async function buildPdf(){
 
   var pages=doc.getPages(), n=pages.length;
   pages.forEach(function(pg,i){
-    pg.drawText(pdfSafe((fullName()||'Student')+'  |  '+TITLE+'  |  '+COURSE+'  |  Page '+(i+1)+' of '+n),{x:M,y:28,size:9,font:F,color:MUTED});
+    pg.drawText(pdfSafe((fullName()||'Student')+'  |  '+TITLE+'  |  '+courseName()+'  |  Page '+(i+1)+' of '+n),{x:M,y:28,size:9,font:F,color:MUTED});
   });
   var bytes=await doc.save();
   return new Blob([bytes],{type:'application/pdf'});
@@ -3438,7 +3607,7 @@ function finishEl(){
   s.append(ol);
   s.append(h('p','intro',BOARD
     ?'Your PDF shows your name, the date you finished, your score, and all of your answers.'
-    :'Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers'+(Object.keys(R).length?', including your yellow highlights':'')+(Object.keys(P).length?'. It also shows your photos':'')+'.'));
+    :'Your PDF shows your name, the date you finished, '+(VID_ORDER.length?'how much of the video you watched, ':'')+'and all of your answers'+(Object.keys(R).length?', including your yellow highlights':'')+(Object.keys(P).length?'. It also shows your photos':'')+(Object.keys(REC).length?'. It shows the transcript of your video, not the video itself':'')+'.'));
   var row=h('div','row');
   var make=h('button','btn','Download my PDF'); make.type='button';
   var cmsg=h('span','msg'); cmsg.setAttribute('aria-live','polite');
@@ -3528,7 +3697,7 @@ function finishEl(){
     try{
       var n=decodeState(rt.value);
       S=n; save(); render();
-      $('#first').value=S.first||''; $('#last').value=S.last||''; paintStart();
+      $('#first').value=S.first||''; $('#last').value=S.last||''; if(A.courses) $('#courseSel').value=S.course||''; paintStart();
     }catch(e){rm.dataset.s='bad';rm.textContent='That code didn’t work. Check that you copied all of it.';}
   });
   s.append(det);
@@ -3543,7 +3712,7 @@ function finishEl(){
   start.addEventListener('click',function(){start.hidden=true;ask.hidden=false;});
   no.addEventListener('click',function(){start.hidden=false;ask.hidden=true;});
   yes.addEventListener('click',function(){
-    var f1=S.first, l1=S.last, r1=S.ready; S=fresh(); S.first=f1; S.last=l1; S.ready=r1; finished=false; save();
+    var f1=S.first, l1=S.last, r1=S.ready, c1=S.course; S=fresh(); S.first=f1; S.last=l1; S.ready=r1; S.course=c1; finished=false; save();
     photoClearAll().then(render);
   });
   return s;
@@ -3739,7 +3908,9 @@ function hasNames(){return !!((S.first||'').trim()&&(S.last||'').trim());}
 if(!S.ready&&hasNames()&&hasProgress()){ S.ready=true; save(); }
 function paintStart(){
   var sec=$('#start'), ready=!!(TEACHER||S.ready);
-  var pct=((S.first||'').trim()?50:0)+((S.last||'').trim()?50:0), trk=$('#trk0');
+  var need=[(S.first||'').trim(),(S.last||'').trim()].concat(A.courses?[S.course]:[]), trk=$('#trk0');
+  var pct=Math.round(100*need.filter(Boolean).length/need.length);
+  $('p.course').textContent=courseName();
   $('.tf',trk).style.width=pct+'%'; $('.tt',trk).setAttribute('aria-valuenow',String(pct));
   $('#app').hidden=!ready;
   sec.classList.toggle('closed',ready&&!START_OPEN);
@@ -3767,6 +3938,11 @@ function showNames(){
       msg.textContent='Type your first and last name above to continue.';
       $((S.first||'').trim()?'#last':'#first').focus(); return;
     }
+    if(A.courses&&!S.course){
+      msg.dataset.s='bad';
+      msg.textContent='Choose your class above to continue.';
+      $('#courseSel').focus(); return;
+    }
     msg.textContent=''; msg.removeAttribute('data-s');
     S.ready=true; START_OPEN=false; commit();
     var next=[].filter.call(document.querySelectorAll('#app>section'),function(x){return !x.hidden;})[0];
@@ -3782,7 +3958,8 @@ function render(){
   ORDER.length=0;
   var app=$('#app'); app.textContent='';
   Object.keys(W).forEach(function(k){delete W[k];}); Object.keys(R).forEach(function(k){delete R[k];}); Object.keys(P).forEach(function(k){delete P[k];});
-  photoUrlsDrop();
+  recStopAll(); photoUrlsDrop();
+  Object.keys(REC).forEach(function(k){delete REC[k];});
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;
@@ -3807,6 +3984,10 @@ function render(){
   el.value=S[k]||'';
   el.addEventListener('input',function(){S[k]=el.value;commit();});
 });
+if(A.courses){
+  var csel=$('#courseSel'); csel.value=S.course||'';
+  csel.addEventListener('change',function(){S.course=csel.value; commit();});
+}
 render();
 focusMask();
 

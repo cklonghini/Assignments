@@ -209,6 +209,26 @@
       "source": "/test-unit-4-transport/",
       "destination": "/assignments/test-unit-4-transport/",
       "permanent": false
+    },
+    {
+      "source": "/welcome",
+      "destination": "/assignments/welcome-to-class/",
+      "permanent": false
+    },
+    {
+      "source": "/welcome/",
+      "destination": "/assignments/welcome-to-class/",
+      "permanent": false
+    },
+    {
+      "source": "/welcome-to-class",
+      "destination": "/assignments/welcome-to-class/",
+      "permanent": false
+    },
+    {
+      "source": "/welcome-to-class/",
+      "destination": "/assignments/welcome-to-class/",
+      "permanent": false
     }
   ]
 }

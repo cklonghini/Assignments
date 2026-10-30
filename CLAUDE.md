@@ -69,6 +69,9 @@ lab agreement, and a ready-to-go selfie `photo`.
   "Backup saved at" time under them). The rest of the page stays hidden until they select "I’m ready. Start the
   assignment," which needs both names. Then "Start here" folds down so they never scroll back to it. This, the backup
   code, the Canvas text-entry fallback, and the PDF printout at the bottom are part of the engine. Keep them.
+- An assignment every class uses (for example "Welcome to Our Class") lists the classes in `courses`, so students choose
+  theirs in Start here, and its title has no "Explore - ". If the teacher says it is the same for every student, set
+  `support: false`.
 - School branding (Elite Academic Academy) is built into the engine: gold `#c1a01e` and black `#2d2926`, a small eagle and
   the school name above the title, the logo at the bottom of the page, the eagle in the PDF header, and the eagle as the
   browser-tab icon. The logo files are in `engine/brand/`. Keep it subtle; do not add logos inside assignments.

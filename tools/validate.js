@@ -87,7 +87,7 @@ for (const dir of dirs) {
       if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
       groups = (A.parts || []).map((p, pi) => ({ where: 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : ''), title: p.title, clips: p.clips, questions: p.questions || [] }));
     }
-    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nEasy = 0, nOut = 0;
+    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nRec = 0, nEasy = 0, nOut = 0;
     /* the supported version (?support=eagle): the goal box, and what it leaves out (support: false) */
     const ES = A.essential;
     if (ES != null) {
@@ -290,12 +290,20 @@ for (const dir of dirs) {
           case 'photo':
             nPhoto++;
             break;
+          case 'record':
+            nRec++;
+            if (q.prompts != null && (!Array.isArray(q.prompts) || !q.prompts.length)) E(w + ': prompts must be a list of what to talk about');
+            break;
           default:
             E(w + ' has an unknown type: ' + q.type);
         }
       });
     });
     if (board && nPhoto) E('Photo questions do not work on a game board');
+    if (board && nRec) E('Video recording questions do not work on a game board');
+    if (nRec > 1) W(nRec + ' video recording questions; each recording is kept in the browser, so aim for 1');
+    if (A.courses != null && (!Array.isArray(A.courses) || A.courses.length < 2)) E('courses must be a list of 2 or more class names, for example [\'Biology A\', \'Marine Science A\']');
+    if (A.support === false && (nEasy || nOut || A.essential)) W('support: false turns off the supported version, so easy wording, support: false parts, and essential are not used');
     if (!board) {
       const gates = (A.parts || []).filter(p => p.gate);
       if (gates.length > 1) E('Only one part can have gate: true');
@@ -304,7 +312,7 @@ for (const dir of dirs) {
     if (nPhoto > 10) W(nPhoto + ' photo questions is a lot. Each photo makes the PDF bigger; aim for 10 or fewer');
     if (groups.reduce((n, p) => n + (p.questions || []).filter(q => q.type === 'mnemonic').length, 0) > 1) E('Only one memory-trick (mnemonic) question is allowed per assignment');
     Object.keys(clips).forEach(k => { if (!used.has(k)) W('Clip ' + k + ' is defined but not used in any part'); });
-    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + '; ' + nEasy + ' with easier wording' + (nOut ? ', ' + nOut + ' left out of the supported version' : '') + (ES ? ', goal box' : '') + '), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
+    console.log('\n' + dir + ': ' + qn + ' questions (' + nAuto + ' auto-checked, ' + nWritten + ' written' + (nPhoto ? ', ' + nPhoto + ' photo' : '') + (nRec ? ', ' + nRec + ' video recording' : '') + '; ' + nEasy + ' with easier wording' + (nOut ? ', ' + nOut + ' left out of the supported version' : '') + (ES ? ', goal box' : '') + '), ' + (board ? (board.categories || []).length + ' board categories' + (board.final ? ' + final round' : '') : (A.parts || []).length + ' parts, ' + Object.keys(clips).length + ' clips'));
   }
   errors.forEach(m => console.log('  ERROR   ' + m));
   warnings.forEach(m => console.log('  warning ' + m));
