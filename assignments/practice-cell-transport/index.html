@@ -158,6 +158,10 @@ select.pick.bad{border-color:var(--bad);background:var(--badbg)}
 .player .pl button.on{border-color:var(--primary);background:var(--primary);color:var(--primary-ink)}
 .why{background:var(--card);border-radius:10px;padding:12px 16px;margin-top:10px}
 .why ul{margin:.3em 0 0;padding-left:1.2em}.why li{margin:.3em 0}
+.goalbox{margin-bottom:14px;border:2px solid var(--gold);border-left:8px solid var(--gold)}
+.goalbox .gq{font-weight:800;font-size:1.1rem;margin:0 0 6px}
+.goalbox p{margin:0 0 4px}
+.goalbox ul{margin:4px 0 0;padding-left:1.3em}
 .keyideas{margin-bottom:14px;padding:0;background:var(--learn);border:1px solid var(--learn-line);border-radius:8px;box-shadow:none}
 .keyideas summary{cursor:pointer;font-weight:700;color:var(--ink);padding:14px 18px;font-size:1.05rem}
 .keyideas .kbody{display:flex;gap:8px;align-items:flex-start;padding:0 18px 14px}
@@ -210,7 +214,7 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
       <div class="howto" style="margin-top:0">
         <strong>How this works</strong>
         <ol>
-          <li>There are 4 skills: <b>Passive Transport</b>, then <b>Osmosis</b> (an example of passive transport), then <b>Active Transport</b>, then the <b>Sodium-Potassium Pump</b> (an example of active transport). Each skill is complete when you get <b>3 questions in a row</b> correct.</li>
+          <li>There are 4 skills: <b>Passive Transport</b>, then <b>Osmosis</b> (an example of passive transport), then <b>Active Transport</b>, then the <b>Sodium-Potassium Pump</b> (an example of active transport). Each skill is complete when you get <b><span id="goal-n">3</span> questions in a row</b> correct.</li>
           <li>Missed one? Read why, watch the short support video if you need it, and try the next question.</li>
           <li>When you're done, save your PDF report and upload it to Canvas.</li>
         </ol>
@@ -246,6 +250,7 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
       <div class="streak" aria-live="polite"><span>In a row:</span><div class="dots" id="q-dots"></div></div>
       <div class="stat" id="q-stat"></div>
     </div>
+    <div class="card goalbox hidden" id="q-goal"></div>
     <details class="card keyideas" id="q-key"><summary><span>Key ideas: read before you start</span></summary><div class="kbody" id="q-keybody"></div></details>
     <div class="card" id="q-card"></div>
   </section>
@@ -255,11 +260,16 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
 
 <script>
 /* ===================== SETTINGS ===================== */
-const STREAK_GOAL = 3;                 // correct answers in a row needed to master a skill
-const HELP_AFTER = 7;                  // misses in a row (more than 6) that bring up the "reach out to your teacher" message
+/* Supported version (an accommodation, as on the other assignments): the link plus ?support=eagle.
+   It asks 6 essential questions per skill with easier wording and fewer choices (EASY below), shows a goal box
+   at the top of each skill, needs 2 in a row to master a skill, and shows the help message after 5 misses in a row.
+   Nothing on the page or the PDF says it is the supported version. It saves its progress apart from the plain link. */
+const SUPPORT = /[?&]support=eagle(&|$)/.test(location.search);
+const STREAK_GOAL = SUPPORT ? 2 : 3;   // correct answers in a row needed to master a skill
+const HELP_AFTER = SUPPORT ? 5 : 7;    // misses in a row that bring up the "reach out to your teacher" message
 const WATCH_GOAL = 0.8;                // share of each lesson clip a student must watch before the skill's Start button unlocks
 const TEACHER = new URLSearchParams(location.search).get("teacher")==="tm7k2q";  // teacher view: every skill unlocked
-const STORE_KEY = "cell-transport-mastery-v1";
+const STORE_KEY = "cell-transport-mastery-v1" + (SUPPORT ? "|support" : "");
 
 const CLIPS = {
 "ct-homeostasis": {"src":"clips/ct-homeostasis.mp4","dur":24,"label":"The cell membrane and homeostasis"},
@@ -417,12 +427,16 @@ const CLIPS = {
 /* Lesson video for each skill: clips play back-to-back */
 const TOPICS = {
   passive: {name:"Passive Transport", color:"var(--passive)", blurb:"Diffusion, facilitated diffusion, and concentration gradients",
+            goal:{q:"How do molecules move across the cell membrane without using energy?",goals:["Tell the difference between simple diffusion and facilitated diffusion.", "Explain why molecules move from high to low concentration.", "Give an example of passive transport in your body."]},
             lesson:["ct-membrane","ct-simple","ct-facilitated"]},
   active:  {name:"Active Transport",  color:"var(--active)",  blurb:"Protein pumps, ATP, endocytosis, and exocytosis",
+            goal:{q:"How do cells move things from low to high concentration?",goals:["Explain why active transport needs energy (ATP).", "Tell endocytosis and exocytosis apart.", "Describe what the sodium-potassium pump moves."]},
             lesson:["ct-active","nak-cycle","ct-endo","ct-exo"]},
   osmosis: {name:"Osmosis",           color:"var(--osmosis)", example:"An example of passive transport (Skill 1)", blurb:"Water movement, hypertonic, hypotonic, and isotonic",
+            goal:{q:"How does water move into and out of cells?",goals:["Explain what osmosis is.", "Use the words hypertonic, hypotonic, and isotonic.", "Predict whether a cell will swell or shrink."]},
             lesson:["os-def","os-utube","os-iv","os-fish","os-roots","os-turgor"]},
   pump:    {name:"Sodium-Potassium Pump", color:"var(--active)", example:"An example of active transport (Skill 3)", blurb:"ATP, the pump's cycle, resting membrane potential, and the electrochemical gradient",
+            goal:{q:"How does the sodium-potassium pump use energy to move ions?",goals:["Tell which way sodium and potassium move.", "Explain why the pump is active transport.", "Put the steps of the pump in order."]},
             lesson:["pump-intro","pump-job","pump-ions","pump-resting","pump-cycle","pump-against","pump-result","pump-leak","pump-uses"]}
 };
 
@@ -847,6 +861,50 @@ pump: [
 ]
 };
 
+/* ===================== SUPPORTED VERSION =====================
+ The 6 questions per skill kept in the supported version, with easier wording. Same question, same right answer.
+   prompt: easier question.  opts / pairs / items: easier text for each original choice, row, or example, in the
+   same order; null leaves it out (fewer choices).  text: an easier drop-down paragraph (first choice is right).
+ Questions not listed here are left out of the supported version. */
+const EASY = {
+p1:{prompt:"Which statements are true?", opts:["Passive transport does not use the cell's energy.",null,"Oxygen can get into a cell by passive transport.","When both sides are equal, the molecules stop moving."]},
+p2:{prompt:"Match each word to what it means.", pairs:["molecules pass right through the membrane, from high to low concentration","molecules go through a protein, from high to low concentration","a difference in how much of something is in two places",null]},
+p3:{prompt:"Glucose is big and polar. There is more glucose in the blood than in a muscle cell. How does glucose get into the muscle cell?", opts:["simple diffusion through the membrane","facilitated diffusion through a carrier protein","active transport using ATP",null]},
+p5:{prompt:"Complete the sentences.", text:"A drop of food coloring goes into still water. The dye moves from {{high|low}} concentration to {{low|high}} concentration. It keeps moving until it is {{evenly spread out|all at the bottom}}. This is called {{diffusion|osmosis}}."},
+p8:{prompt:"The diagram shows carbon dioxide (purple dots) inside and outside a cell. Overall, which way will the carbon dioxide move?", opts:["out of the cell","into the cell","it will not move at all",null]},
+p10:{prompt:"Your air sacs (alveoli) have <b>more oxygen</b> than your blood. Which is true?", opts:["Oxygen diffuses from the air sacs into the blood. No energy is used.","Oxygen is pumped into the blood using ATP.","Oxygen moves from the blood into the air sacs.",null]},
+o1:{prompt:"Match each word to what it means.", pairs:[null,"a solution with <b>more</b> solute (dissolved stuff) than the cell","a solution with <b>less</b> solute than the cell","a solution with the <b>same</b> amount of solute as the cell"]},
+o2:{prompt:"A red blood cell has 0.9% salt inside. It is put in pure water (0% salt). What happens?", opts:["Water moves into the cell. The cell swells and may burst.","Water moves out of the cell. The cell shrinks.",null,"Nothing happens."]},
+o3:{prompt:"Root hair cells have <b>more solute</b> than the rainwater in the soil. What happens?", opts:["Water moves into the root cells.","Water moves out of the root cells into the soil.","The root cells pump water in using ATP.",null]},
+o5:{prompt:"The membrane lets water through, but not sugar. Complete the sentences.", text:"Side A has {{more|less}} sugar than side B. Water moves from side {{B|A}} to side {{A|B}}. The water on side A will {{rise|fall}}."},
+o7:{prompt:"A saltwater fish is put in fresh water. Its cells have <b>more salt</b> than the water around it. What happens to its cells?", opts:["Water moves in, and the cells swell.","Water moves out, and the cells shrink.",null,"Nothing changes."]},
+o10:{prompt:"A gummy bear (mostly sugar) sits in plain water overnight. In the morning, it is much bigger. Why?", opts:["It had more solute than the water, so water moved in by osmosis.","It had less solute than the water, so water moved in.",null,"It used energy to pump water in."]},
+a1:{prompt:"Which statements are true?", opts:["Active transport moves molecules from low to high concentration.","Active transport needs energy, usually from ATP.","Active transport only happens when both sides are equal.",null]},
+a2:{prompt:"Match each word to what it means.", pairs:["a protein that uses energy to move molecules from low to high concentration",null,"the membrane wraps around something and brings it into the cell","a vesicle opens at the membrane and sends material out of the cell"]},
+a3:{prompt:"During one cycle, what does the sodium-potassium pump do?", opts:["moves 3 sodium (Na⁺) out and 2 potassium (K⁺) in, using 1 ATP","moves 2 sodium out and 3 potassium in, using 1 ATP","lets sodium and potassium flow through with no energy",null]},
+a5:{prompt:"A white blood cell wraps around a bacterium and pulls it inside. What is this called?", opts:["endocytosis","exocytosis",null,"osmosis"]},
+a6:{prompt:"Pancreas cells pack insulin into vesicles. The vesicles open at the cell membrane and send the insulin out. What is this called?", opts:["exocytosis","endocytosis","simple diffusion",null]},
+a9:{prompt:"A cell has 50 mM of an ion inside and only 5 mM outside. It needs to bring in <b>more</b>. What does it need?", opts:["a protein pump and energy from ATP","an open channel protein","nothing; the ions will move in on their own",null]},
+n1:{prompt:"Match each word to what it means.", pairs:["outside the cell","inside the cell","the difference in voltage (charge) between the inside and outside of a resting cell",null]},
+n2:{prompt:"Why is the sodium-potassium pump active transport?", opts:["It uses ATP to move ions from low to high concentration.","It lets ions move from high to low on their own.",null,"It moves water across the membrane."]},
+n3:{prompt:"Is each one passive transport or active transport?", items:["The pump moves sodium (Na⁺) out, where there is already a lot of sodium.",null,"Potassium (K⁺) leaks out through a channel.","Water moves into a root cell by osmosis."]},
+n4:{prompt:"Complete the steps of the pump.", text:"The pump opens to the inside. {{Three|Two}} sodium ions get on. ATP gives the pump a phosphate, so the pump changes {{shape|size}} and pushes the sodium {{out|in}}. Then {{two|three}} potassium ions get on and are dropped off inside."},
+n6:{prompt:"What does the pump do to sodium and potassium? Pick all that are true.", opts:["Afterward, there is more potassium (K⁺) inside the cell.","Afterward, there is more sodium (Na⁺) outside the cell.",null,"The pump keeps going until sodium is equal on both sides."]},
+n7:{prompt:"At rest, how does the inside of most cells compare to the outside?", opts:["The inside is more negative.","The inside is more positive.","Both sides have the same charge.",null]}
+};
+/* the question a student sees: the regular one, or in the supported version its easier, shorter form */
+function view(q){
+  const E=SUPPORT&&EASY[q.id]; if(!E) return q;
+  const v=Object.assign({},q,{prompt:E.prompt||q.prompt});
+  const use=(list,easy,key)=>list.map((o,i)=>easy[i]===null?null:Object.assign({},o,{[key]:easy[i]||o[key]})).filter(Boolean);
+  if(E.opts) v.options=use(q.options,E.opts,"t");
+  if(E.pairs) v.pairs=use(q.pairs,E.pairs,"def");
+  if(E.items) v.items=use(q.items,E.items,"t");
+  if(E.text) v.text=E.text;
+  return v;
+}
+const bankFor=topic=>SUPPORT?BANK[topic].filter(q=>EASY[q.id]):BANK[topic];
+
 /* ===================== DIAGRAMS ===================== */
 function rng(seed){return ()=>(seed=(seed*16807)%2147483647)/2147483647}
 function svgGradient(){
@@ -944,12 +1002,15 @@ function renderHome(){
 /* ===================== QUIZ ===================== */
 let cur=null; // {topic, q, t0, order, num}
 function nextQ(topic){
-  const s=state.topics[topic],bank=BANK[topic];
+  const s=state.topics[topic],bank=bankFor(topic);
   if(!s.queue.length){let ids=shuffle(bank.map(q=>q.id));if(cur&&cur.q&&ids[0]===cur.q.id&&ids.length>1)ids.push(ids.shift());s.queue=ids}
-  const id=s.queue.shift(); save(); return bank.find(q=>q.id===id);
+  const id=s.queue.shift(); save(); return view(bank.find(q=>q.id===id));
 }
 function startTopic(topic){
   if(!unlocked(topic)){renderHome();return}
+  const G=TOPICS[topic].goal;
+  $("q-goal").classList.toggle("hidden",!SUPPORT);
+  if(SUPPORT) $("q-goal").innerHTML=`<div class="qhead"><div style="flex:1" id="q-goaltext"><p class="qnum">Your goal</p><p class="gq">${G.q}</p><p>By the end of this skill, you should feel confident that you can:</p><ul>${G.goals.map(g=>`<li>${g}</li>`).join("")}</ul></div>${sayBtn("#q-goaltext")}</div>`;
   document.documentElement.style.setProperty("--topic",TOPICS[topic].color);
   $("q-topic").innerHTML=TOPICS[topic].name+(TOPICS[topic].example?`<span class="exl">${TOPICS[topic].example}</span>`:"");
   $("q-keybody").innerHTML=`<div style="flex:1" id="q-keytext">${KEY[topic]}</div>${sayBtn("#q-keytext")}`;
@@ -1258,6 +1319,7 @@ async function downloadPdf(){
 }
 
 /* ===================== INIT ===================== */
+$("goal-n").textContent=STREAK_GOAL;
 state=load();
 if(state){renderHome()}else{state=fresh();show("s-start")}
 </script>
