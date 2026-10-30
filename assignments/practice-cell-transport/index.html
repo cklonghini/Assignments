@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cell Transport Mastery</title>
 <!-- standalone page (no engine): tools/build_index.py lists it on the home page from these lines -->
-<meta name="assignment-title" content="Cell Transport Practice (Passive, Active, Osmosis, Sodium-Potassium Pump)">
+<meta name="assignment-title" content="Cell Transport Practice (Passive, Osmosis, Active, Sodium-Potassium Pump)">
 <meta name="assignment-course" content="Biology A">
 <meta name="assignment-short" content="cell-transport-practice">
 <link rel="icon" type="image/png" href="../../engine/brand/favicon.png">
@@ -214,12 +214,12 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
   <section id="s-start" class="hidden">
     <h1>Cell Transport Practice</h1>
     <p class="course">Biology A</p>
-    <p class="sub">Passive transport · Active transport · Osmosis · The sodium-potassium pump</p>
+    <p class="sub">Passive transport · Osmosis · Active transport · The sodium-potassium pump</p>
     <div class="card">
       <div class="howto" style="margin-top:0">
         <strong>How this works</strong>
         <ol>
-          <li>There are 4 skills. Skills 1 and 2 are the two kinds of transport. Skills 3 and 4 are one example of each kind. Each skill is complete when you get <b>3 questions in a row</b> correct.</li>
+          <li>There are 4 skills: <b>Passive Transport</b>, then <b>Osmosis</b> (an example of passive transport), then <b>Active Transport</b>, then the <b>Sodium-Potassium Pump</b> (an example of active transport). Each skill is complete when you get <b>3 questions in a row</b> correct.</li>
           <li>Missed one? Read why, watch the short support video if you need it, and try the next question.</li>
           <li>When you're done, save your PDF report and upload it to Canvas.</li>
         </ol>
@@ -239,8 +239,8 @@ details.video summary{cursor:pointer;font-weight:700;color:var(--primary)}
       <div class="row" style="justify-content:space-between"><h2>How the 4 skills fit together</h2></div>
       <div class="fitgrid">
         <div class="fitcol"><p class="kind">1. Passive Transport</p><p class="how">No energy needed. Molecules move from high to low concentration.</p>
-          <p class="eg"><span aria-hidden="true">↳</span><span><b>Example: 3. Osmosis.</b> Water moving across a membrane is passive transport.</span></p></div>
-        <div class="fitcol"><p class="kind">2. Active Transport</p><p class="how">Needs energy (ATP). Molecules move from low to high concentration.</p>
+          <p class="eg"><span aria-hidden="true">↳</span><span><b>Example: 2. Osmosis.</b> Water moving across a membrane is passive transport.</span></p></div>
+        <div class="fitcol"><p class="kind">3. Active Transport</p><p class="how">Needs energy (ATP). Molecules move from low to high concentration.</p>
           <p class="eg"><span aria-hidden="true">↳</span><span><b>Example: 4. Sodium-Potassium Pump.</b> It uses ATP to pump ions against their gradients.</span></p></div>
       </div>
     </div>
@@ -440,14 +440,14 @@ const TOPICS = {
             lesson:["ct-active","nak-cycle","ct-endo","ct-exo"]},
   osmosis: {name:"Osmosis",           color:"var(--osmosis)", example:"An example of passive transport (Skill 1)", blurb:"Water movement, hypertonic, hypotonic, and isotonic",
             lesson:["os-def","os-utube","os-iv","os-fish","os-roots","os-turgor"]},
-  pump:    {name:"Sodium-Potassium Pump", color:"var(--active)", example:"An example of active transport (Skill 2)", blurb:"ATP, the pump's cycle, resting membrane potential, and the electrochemical gradient",
+  pump:    {name:"Sodium-Potassium Pump", color:"var(--active)", example:"An example of active transport (Skill 3)", blurb:"ATP, the pump's cycle, resting membrane potential, and the electrochemical gradient",
             lesson:["pump-intro","pump-job","pump-ions","pump-resting","pump-cycle","pump-against","pump-result","pump-leak","pump-uses"]}
 };
 
 /* Short reading at the top of each skill. Covers examples the questions use that the videos don't show. */
 const KEY = {
 passive:`<ul>
-<li><b>Coming up:</b> Skill 3, <b>Osmosis</b>, is an example of passive transport.</li>
+<li><b>Next:</b> Skill 2, <b>Osmosis</b>, is an example of passive transport.</li>
 <li>The <b>cell membrane</b> controls what enters and leaves the cell. This helps the cell maintain <b>homeostasis</b>, a stable internal environment.</li>
 <li><b>Passive transport</b> does not use the cell's energy. Molecules move from <b>high to low</b> concentration. This is called moving <b>down</b> (or <b>with</b>) the <b>concentration gradient</b>.</li>
 <li><b>Simple diffusion:</b> small, nonpolar molecules like oxygen (O₂) and carbon dioxide (CO₂) pass right through the phospholipid bilayer.</li>
@@ -456,7 +456,7 @@ passive:`<ul>
 <li><b>Example in your body:</b> in your lungs, the air sacs (<b>alveoli</b>) have more oxygen than your blood, so oxygen diffuses from the air sacs into the blood.</li>
 </ul>`,
 active:`<ul>
-<li><b>Coming up:</b> Skill 4, the <b>Sodium-Potassium Pump</b>, is an example of active transport.</li>
+<li><b>Next:</b> Skill 4, the <b>Sodium-Potassium Pump</b>, is an example of active transport.</li>
 <li><b>Active transport</b> moves molecules from <b>low to high</b> concentration, <b>against</b> the concentration gradient. This takes energy, usually from <b>ATP</b>.</li>
 <li><b>Channel vs. pump:</b> a channel lets molecules flow down their gradient with no energy (passive). A <b>pump</b> uses ATP to push molecules against their gradient (active).</li>
 <li><b>Sodium-potassium pump:</b> each cycle uses 1 ATP to move <b>3 sodium (Na⁺) out</b> and <b>2 potassium (K⁺) in</b>.</li>
@@ -474,7 +474,7 @@ osmosis:`<ul>
 <li><b>Food examples:</b> a potato or gummy bear in plain water gains water because it has more solute inside. Salting cucumbers to make pickles pulls water out, because the salt outside is hypertonic.</li>
 </ul>`,
 pump:`<ul>
-<li><b>The sodium-potassium pump is an example of active transport</b> (Skill 2). It uses energy from <b>ATP</b> to move ions <b>against</b> their concentration gradients.</li>
+<li><b>The sodium-potassium pump is an example of active transport</b> (Skill 3). It uses energy from <b>ATP</b> to move ions <b>against</b> their concentration gradients.</li>
 <li><b>Extracellular</b> means outside the cell. <b>Intracellular</b> means inside the cell.</li>
 <li><b>Sodium (Na⁺)</b> and <b>potassium (K⁺)</b> ions have positive charges. Like most ions, they have trouble traveling directly through the cell membrane. They need a protein, such as a <b>channel</b> or a <b>pump</b>.</li>
 <li><b>Resting membrane potential:</b> the difference in electrical voltage between the inside and outside of a cell. At rest, most cells are <b>more negative inside</b> than outside. The pump helps maintain it.</li>
@@ -499,7 +499,7 @@ const QCLIPS = {
   n1:["pump-ions","pump-resting","pump-result"], n2:["pump-job","pump-against"], n3:["pump-against","pump-leak"], n4:["pump-cycle"],
   n5:["pump-cycle"], n6:["pump-against","pump-result"], n7:["pump-resting"], n8:["pump-leak"], n9:["pump-result","pump-leak"], n10:["pump-uses","pump-job"]
 };
-const ORDER = ["passive","active","osmosis","pump"];
+const ORDER = ["passive","osmosis","active","pump"];
 
 /* ===================== QUESTION BANK =====================
  types: multi (select all true), mc (one answer), match (term → definition),
