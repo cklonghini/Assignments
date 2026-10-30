@@ -175,6 +175,12 @@ student needs one.
 
 ## One part at a time
 
+Before any part, every assignment (game boards and labs too) starts with a "Start here" step built into the engine:
+first and last name, the yellow "Stay on this page" box, and a note about the progress bars. Everything below it
+(video, parts, Finish) stays hidden until the student types both names and selects "I’m ready. Start the
+assignment." Start here then folds to its banner with a "Look back at Start here" button. Students who already had
+a name and answers saved before this step existed skip it. The teacher view skips it too.
+
 By default students see only the part they are working on. Later parts stay hidden. When at least 80% of the
 checked items in a part are done (auto-checked answers right, written answers long enough; change it with
 `unlockAt`), a green box appears at the

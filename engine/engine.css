@@ -68,6 +68,15 @@ h1{margin:0;font-weight:800;font-size:clamp(2rem,6vw,3.1rem);line-height:1.04;le
 .warn li{margin:4px 0}
 .warn .small{font-size:.9rem;margin-top:12px}
 
+/* Start here: name, warning, and progress bars come first; the rest of the page opens after it */
+.task.startstep{margin-top:24px}
+.task.startstep::before{display:none}
+.startstep .namerow{margin:6px 0 4px}
+.startstep .warn h2{background:none;color:inherit;padding:0;border-radius:0;font-size:1.4rem;margin:0 0 6px}
+.startstep .barnote{margin-top:14px}
+.sgo{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:18px}
+.sgo[hidden]{display:none}
+
 /* sticky progress */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);
   border-bottom:1px solid var(--line);margin:14px -20px 0;padding:10px 20px 9px}

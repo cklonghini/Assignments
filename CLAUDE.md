@@ -62,13 +62,15 @@ lab agreement, and a ready-to-go selfie `photo`.
 - Title format: "Explore - Topic Name" with a dash and capitalized words. The course label sits under the title.
   Exception: hands-on labs have no "Explore - " (for example "Heart Dissection", "Sheep Brain Dissection",
   "Lung Capacity Lab").
+- Every assignment opens with a "Start here" step: students type their first and last name, read the yellow "Stay on
+  this page until you finish" box, and see the sticky progress bars (a "Start" bar, then one per part, with only the
+  "Backup saved at" time under them). The rest of the page stays hidden until they select "I’m ready. Start the
+  assignment," which needs both names. Then "Start here" folds down so they never scroll back to it. This, the backup
+  code, the Canvas text-entry fallback, and the PDF printout at the bottom are part of the engine. Keep them.
 - School branding (Elite Academic Academy) is built into the engine: gold `#c1a01e` and black `#2d2926`, a small eagle and
   the school name above the title, the logo at the bottom of the page, the eagle in the PDF header, and the eagle as the
   browser-tab icon. The logo files are in `engine/brand/`. Keep it subtle; do not add logos inside assignments.
-- Students enter first and last name at the top. The yellow "Stay on this page until you finish" box, the sticky
-  progress bars (one per part, with only the "Backup saved at" time under them), the backup code, the Canvas text-entry fallback, and the PDF printout at the bottom
-  are part of the engine. Keep them.
-- A "Focus" switch (a focus mask) under the name boxes is an accommodation (for example for students with IEPs): when it is on,
+- A "Focus" switch (a focus mask) under the title is an accommodation (for example for students with IEPs): when it is on,
   every section but the one the student is working on fades out. The browser remembers it for every assignment. Built into the engine.
 - A supported version (an accommodation) is the link plus `?support=eagle`: each question shows its `easy` wording and
   drop-downs and multiple choice show fewer choices. When you write a question, also write its `easy` wording (same

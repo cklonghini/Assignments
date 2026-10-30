@@ -16,7 +16,7 @@ function injectPage(){
   if(!head.querySelector('link[rel~="icon"]')){ var fav=document.createElement('link'); fav.rel='icon'; fav.type='image/png'; fav.href=BRAND+'favicon.png'; head.appendChild(fav); }
   var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#2d2926'; head.appendChild(tc);
   var icon=A2.icon||'<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M26 24 L46 36 L26 48 Z" fill="var(--primary-ink)"/></svg>';
-  var tracks='', groups=A2.board?(A2.board.categories||[]):(A2.parts||[]);
+  var tracks='<div class="track" id="trk0"><span class="tl">Start</span><div class="tt" role="progressbar" aria-label="Start here progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>', groups=A2.board?(A2.board.categories||[]):(A2.parts||[]);
   groups.forEach(function(p,i){
     var n=i+1, lab=A2.board?String(p.title||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'):(A2.partWord||'Part')+' '+n;
     tracks+='<div class="track" id="trk'+n+'"><span class="tl">'+lab+'</span><div class="tt" role="progressbar" aria-label="'+lab+' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>';
@@ -26,21 +26,26 @@ function injectPage(){
   document.body.insertAdjacentHTML('afterbegin',
     '<div class="wrap"><div class="brand"><img src="'+BRAND+'eagle.png" alt="">Elite Academic Academy</div>'
     +'<header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
-    +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
-    +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
     +'<div class="maskrow"><span class="tipwrap" id="maskWrap"><button type="button" class="switch" id="maskSw" role="switch" aria-checked="false" aria-labelledby="maskLbl" aria-describedby="maskHint"><span class="knob"></span></button>'
     +'<label for="maskSw" id="maskLbl" class="masklbl">Focus</label>'
     +'<span id="maskHint" class="tip" role="tooltip">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></span></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
+    +'<div class="bar" aria-label="Your progress"><div class="tracks">'+tracks+'</div>'
+    +'<div class="statsrow"><span id="sSaved"></span></div></div>'
+    +'<section class="task startstep" id="start"><h2 class="display">Start here</h2>'
+    +'<p class="intro">Do these things before you begin. The rest of the assignment opens when you finish.</p>'
+    +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
+    +'<label for="last">Last name</label><input type="text" id="last" autocomplete="family-name" placeholder="Last name"></div>'
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
     +'<p><strong>If you close this tab, refresh the page, or leave it for another website, your progress may be lost and you will have to start over.</strong></p>'
     +'<ul>'+(hasPics?'<li>Selecting a picture opens it full size in a new tab. Keep this tab open and come back to it to enter your answers.</li>':'')
     +'<li>Do not use your browser’s back button or refresh button.</li>'
     +'<li>When you finish, scroll to the bottom, download your PDF, and upload it to the Canvas assignment.</li></ul>'
     +'<p class="small">This page keeps a backup copy in your browser as you work, but don’t count on it. It disappears if you switch devices, use a private window, or clear your browser data.</p></aside>'
-    +'<div class="bar" aria-label="Your progress"><div class="tracks">'+tracks+'</div>'
-    +'<div class="statsrow"><span id="sSaved"></span></div></div>'
+    +'<p class="intro barnote">The progress bars at the top of the screen show how much of each '+(A2.board?'category':String(A2.partWord||'Part').toLowerCase())+' you have done. They stay at the top as you scroll.</p>'
+    +'<div class="sgo"><button type="button" class="btn" id="startGo">I’m ready. Start the assignment</button><span class="msg" id="startMsg" aria-live="polite"></span></div>'
+    +'</section>'
     +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript>'
     +'<footer class="sitefoot"><img src="'+BRAND+'logo.png" alt="Elite Academic Academy"><p>In a world where you can be anything, Be Elite.</p></footer></div>');
   document.querySelector('h1.display').textContent=A2.title;
@@ -116,6 +121,7 @@ function copyMeta(f,o){
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
   f.voice=o.voice==='male'?'male':'';
   f.onPart=typeof o.onPart==='number'&&o.onPart>=1?Math.floor(o.onPart):0;
+  f.ready=!!o.ready;
 }
 function load(){
   try{
@@ -318,6 +324,7 @@ function hasProgress(){
 }
 function updateBar(){
   gateCheck();
+  paintStart();
   document.querySelectorAll('section.task[data-task]').forEach(function(sec){
     var n=sec.dataset.task, c=[].slice.call(sec.querySelectorAll('[data-c]'));
     var ok=c.filter(function(e){return e.dataset.s==='ok';}).length;
@@ -3425,7 +3432,7 @@ function finishEl(){
   var s=h('section','task finish'); s.id='finish';
   s.append(h('h2','display','Finish and submit to Canvas'));
   var ol=h('ol');
-  ['Check that your first and last name are entered at the top of the page.',
+  ['Check that your first and last name are entered in “Start here” at the top of the page.',
    'Select “Download my PDF.” If your browser asks, choose to save the file.',
    'Go to the Canvas assignment, select File Upload, upload the PDF, and submit.'].forEach(function(t){ol.append(h('li',null,t));});
   s.append(ol);
@@ -3447,8 +3454,8 @@ function finishEl(){
   }
   make.addEventListener('click',function(){
     if(!(S.first||'').trim()||!(S.last||'').trim()){
-      say('Enter your first and last name at the top of the page first.',false);
-      $((S.first||'').trim()?'#last':'#first').focus(); return;
+      say('Enter your first and last name in “Start here” at the top of the page first.',false);
+      showNames(); return;
     }
     var blob;
     make.disabled=true; say('Preparing your PDF…');
@@ -3487,7 +3494,7 @@ function finishEl(){
   var tmsg=h('span','msg'); tmsg.setAttribute('aria-live','polite');
   crow.append(copy,tmsg); txtd.append(ta,crow); s.append(txtd);
   tmake.addEventListener('click',function(){
-    if(!(S.first||'').trim()||!(S.last||'').trim()){ tmsg.textContent=''; crow.hidden=false; tmsg.dataset.s='bad'; tmsg.textContent='Enter your first and last name at the top of the page first.'; return; }
+    if(!(S.first||'').trim()||!(S.last||'').trim()){ tmsg.textContent=''; crow.hidden=false; tmsg.dataset.s='bad'; tmsg.textContent='Enter your first and last name in “Start here” at the top of the page first.'; showNames(); return; }
     ta.value=buildSummary(); ta.hidden=false; crow.hidden=false; tmsg.textContent='';
   });
   copy.addEventListener('click',function(){
@@ -3521,7 +3528,7 @@ function finishEl(){
     try{
       var n=decodeState(rt.value);
       S=n; save(); render();
-      $('#first').value=S.first||''; $('#last').value=S.last||'';
+      $('#first').value=S.first||''; $('#last').value=S.last||''; paintStart();
     }catch(e){rm.dataset.s='bad';rm.textContent='That code didn’t work. Check that you copied all of it.';}
   });
   s.append(det);
@@ -3536,7 +3543,7 @@ function finishEl(){
   start.addEventListener('click',function(){start.hidden=true;ask.hidden=false;});
   no.addEventListener('click',function(){start.hidden=false;ask.hidden=true;});
   yes.addEventListener('click',function(){
-    var f1=S.first, l1=S.last; S=fresh(); S.first=f1; S.last=l1; finished=false; save();
+    var f1=S.first, l1=S.last, r1=S.ready; S=fresh(); S.first=f1; S.last=l1; S.ready=r1; finished=false; save();
     photoClearAll().then(render);
   });
   return s;
@@ -3718,6 +3725,53 @@ function decorate(){
   ['paste','drop'].forEach(function(ev){ document.addEventListener(ev,function(e){stop(e,IN);},true); });
   document.addEventListener('beforeinput',function(e){ if(/^insertFrom(Paste|Drop|Yank)/.test(e.inputType||'')) stop(e,IN); },true);
   document.addEventListener('dragstart',function(e){ var t=e.target; if(!(t&&t.nodeType===1&&t.getAttribute('draggable')==='true')) stop(e,OUT); },true);
+})();
+
+/* ------------------------------------------------------------------ */
+/* Start here: the first stop on every assignment. Students type their */
+/* name, read the stay-on-this-page box, and see the progress bars.    */
+/* The rest of the page opens when they select the button. Then Start  */
+/* here folds down to its banner so they never need to scroll back.    */
+/* ------------------------------------------------------------------ */
+var START_OPEN=false;
+function hasNames(){return !!((S.first||'').trim()&&(S.last||'').trim());}
+/* students who started before this step existed (name and answers already in) go straight to their work */
+if(!S.ready&&hasNames()&&hasProgress()){ S.ready=true; save(); }
+function paintStart(){
+  var sec=$('#start'), ready=!!(TEACHER||S.ready);
+  var pct=((S.first||'').trim()?50:0)+((S.last||'').trim()?50:0), trk=$('#trk0');
+  $('.tf',trk).style.width=pct+'%'; $('.tt',trk).setAttribute('aria-valuenow',String(pct));
+  $('#app').hidden=!ready;
+  sec.classList.toggle('closed',ready&&!START_OPEN);
+  $('.sgo',sec).hidden=ready;
+  var tog=$('.gtog',sec); tog.hidden=!ready;
+  tog.textContent=START_OPEN?'Fold up Start here':'Look back at Start here';
+  tog.setAttribute('aria-expanded',START_OPEN?'true':'false');
+}
+/* opens Start here and puts the cursor in the empty name box */
+function showNames(){
+  START_OPEN=true; paintStart();
+  var el=$((S.first||'').trim()?'#last':'#first');
+  el.scrollIntoView({block:'center'}); el.focus({preventScroll:true});
+}
+(function(){
+  var sec=$('#start'), hd=$('h2',sec);
+  hd.tabIndex=-1; hd.append(h('span','gdone','Done'));
+  var tog=h('button','btn ghost small gtog'); tog.type='button'; tog.hidden=true;
+  tog.addEventListener('click',function(){ START_OPEN=!START_OPEN; paintStart(); });
+  hd.after(tog);
+  $('#startGo').addEventListener('click',function(){
+    var msg=$('#startMsg');
+    if(!hasNames()){
+      msg.dataset.s='bad';
+      msg.textContent='Type your first and last name above to continue.';
+      $((S.first||'').trim()?'#last':'#first').focus(); return;
+    }
+    msg.textContent=''; msg.removeAttribute('data-s');
+    S.ready=true; START_OPEN=false; commit();
+    var next=[].filter.call(document.querySelectorAll('#app>section'),function(x){return !x.hidden;})[0];
+    if(next){ next.scrollIntoView({block:'start'}); var nh=$('h2',next); if(nh){nh.tabIndex=-1; nh.focus({preventScroll:true});} }
+  });
 })();
 
 /* ------------------------------------------------------------------ */
