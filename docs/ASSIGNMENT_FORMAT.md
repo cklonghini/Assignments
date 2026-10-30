@@ -465,12 +465,12 @@ For a self-introduction or any "tell me out loud" task. Example: Part 1 of `assi
 ```
 
 Students press **Start recording** (webcam and microphone), answer the prompts, and press **Stop recording**. While they
-talk, the browser turns their speech into words (Chrome, Edge, Safari) in a transcript box they can fix. In Firefox, or
-when speech-to-text is not working, they type what they said. They can watch their video back, record again, or
+talk, the browser turns their speech into words (Chrome, Edge, Safari). Students do not see that transcript (the
+teacher's choice). In Firefox, or when speech-to-text is not working or heard nothing, a box opens and they type what they said. They can watch their video back, record again, or
 download it. **Only the transcript goes in the PDF and the Canvas text**, with a note saying how long the video was and
 whether the transcript came from speech-to-text, was edited, or was typed. The video stays in the student's browser
-(IndexedDB, like photos) and is never sent anywhere. It counts as done with a recording and a transcript of at least
-`min` words. One per assignment is plenty. It does not work on a game board.
+(IndexedDB, like photos) and is never sent anywhere. It counts as done with a recording and speech-to-text words, or, when
+students type it, a transcript of at least `min` words. One per assignment is plenty. It does not work on a game board.
 
 ### agree: a lab agreement students check and sign
 

@@ -256,7 +256,8 @@ th{background:var(--bg)}
 .reclive{transform:scaleX(-1)}
 .recclock{font-weight:700}
 .recq>label{display:block;margin-top:14px;font-weight:700}
-.recq textarea[readonly]{background:var(--bg,#f6f6f6)}
+/* the transcript stays out of sight (and out of Listen) unless the student has to type it */
+.recq textarea[hidden]~.lrow{display:none}
 .courserow select{flex:0 1 320px}
 
 /* game board */

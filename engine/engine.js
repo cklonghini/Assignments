@@ -1853,13 +1853,15 @@ function photoField(id,q){
 /* Builders: a video recording of the student (an introduction)        */
 /* ------------------------------------------------------------------ */
 /* The student records a short video with the webcam and microphone. While they talk, the browser turns their
-   speech into words (Chrome, Edge, Safari), and they can fix the words in the transcript box. In Firefox they type
-   what they said. Only the transcript goes in the PDF and the Canvas text. The video stays in this browser
+   speech into words (Chrome, Edge, Safari). Students do not see that transcript (the teacher's choice); it shows only in
+   the PDF and the Canvas text. When the browser can't turn speech into words (Firefox) or heard nothing, a box opens for
+   the student to type what they said. Only the transcript goes in the PDF, never the video. The video stays in this browser
    (IndexedDB, next to the photos) so the student can watch it back or download it.
    S.recs[id] = {has, secs, mime, heard (speech-to-text words), text (the transcript), at}. */
 var REC={}, RECS=[];
 var CAN_REC=CAN_CAM&&!!window.MediaRecorder;
-function recDone(id){var st=S.recs[id], q=REC[id]; return !!(st&&st.has&&q&&words(st.text)>=q.min);}
+function recHeard(st){return !!(SR&&st&&(st.heard||'').trim());}
+function recDone(id){var st=S.recs[id], q=REC[id]; return !!(st&&st.has&&q&&(recHeard(st)||words(st.text)>=q.min));}
 function recStopAll(){ RECS.slice().forEach(function(f){f();}); }
 function recordField(id,q){
   var min=q.min==null?25:q.min, max=q.maxSeconds||180;
@@ -1872,7 +1874,7 @@ function recordField(id,q){
     var ol=h('ol','recprompts'); q.prompts.forEach(function(t){var li=h('li'); li.append(itxt(t)); ol.append(li);}); wrap.append(ol);
   }
   if(!CAN_REC) wrap.append(h('p','whint','This browser can’t record video. Please open this page in Chrome or Edge on a computer with a camera and microphone.'));
-  else if(!SR) wrap.append(h('p','whint','This browser can’t turn your speech into words. After you record, type what you said in the transcript box. Chrome or Edge can fill it in for you.'));
+  else if(!SR) wrap.append(h('p','whint','This browser can’t turn your speech into words. After you record, type what you said in the box that opens.'));
   var live=document.createElement('video'); live.className='reclive'; live.muted=true; live.playsInline=true; live.setAttribute('playsinline','');
   live.setAttribute('aria-label','Camera preview'); live.hidden=true;
   var back=document.createElement('video'); back.className='recback'; back.controls=true; back.playsInline=true; back.setAttribute('playsinline','');
@@ -1883,9 +1885,9 @@ function recordField(id,q){
   var clock=h('span','recclock'); clock.setAttribute('aria-live','off');
   var msg=h('span','msg'); msg.setAttribute('aria-live','polite');
   row.append(go,dl,clock,msg);
-  var lab=h('label',null,'Your transcript (what you said). Read it over and fix any words the computer heard wrong.'); lab.htmlFor='t-'+id;
+  var lab=h('label',null,'The computer couldn’t turn your speech into words. Type what you said in your video.'); lab.htmlFor='t-'+id;
   var ta=h('textarea'); ta.id='t-'+id; ta.rows=6; ta.value=st.text||'';
-  ta.setAttribute('placeholder',SR?'Your words show up here while you talk.':'Type what you said in your video.');
+  ta.setAttribute('placeholder','Type what you said in your video.');
   var wmsg=h('p','msg'); wmsg.setAttribute('aria-live','polite');
   wrap.append(live,back,row,lab,ta,wmsg);
   var rec=null, stream=null, chunks=[], sr=null, srDead=false, t0=0, timer=0, heard='', interim='', on=false;
@@ -1900,13 +1902,14 @@ function recordField(id,q){
     go.textContent=on?'Stop recording':(st.has?'Record again':'Start recording');
     go.setAttribute('aria-pressed',on?'true':'false');
     dl.hidden=on||!st.has||!PHOTO_URL[id];
-    ta.readOnly=on;
+    var typing=!on&&st.has&&!recHeard(st);
+    lab.hidden=ta.hidden=!typing;
     clock.textContent=on?'Recording '+mmss((Date.now()-t0)/1000)+' (up to '+mmss(max)+')':(st.has?'Your video: '+mmss(st.secs):'');
     var n=words(st.text), done=recDone(id);
     wrap.dataset.s=done?'ok':'idle';
-    wmsg.textContent=on?'':done?'Saved. Your teacher will read your transcript in your PDF.'
-      :!st.has?'Record your video, then check your transcript.'
-      :'Your transcript has '+n+' word'+(n===1?'':'s')+'. Make sure it shows everything you said (at least '+min+' words).';
+    wmsg.textContent=on?'':done?'Saved. Your teacher will see what you said in your PDF.'
+      :!st.has?'Record your video to finish this part.'
+      :'You typed '+n+' word'+(n===1?'':'s')+'. Type everything you said (at least '+min+' words).';
     wmsg.dataset.s=done?'ok':'idle';
   }
   function words2(){ return (heard+' '+interim).replace(/\s+/g,' ').trim(); }
@@ -1924,7 +1927,7 @@ function recordField(id,q){
     /* a quiet stretch is fine; anything else (no network, blocked) means the student types the transcript */
     sr.onerror=function(e){
       var why=(e&&e.error)||'';
-      if(why!=='no-speech'&&why!=='aborted'){ srDead=true; say('Recording. The computer can’t turn your speech into words right now, so after you stop, type what you said in the transcript box.',true); }
+      if(why!=='no-speech'&&why!=='aborted'){ srDead=true; say('Recording. The computer can’t turn your speech into words right now, so after you stop, type what you said.',true); }
     };
     /* Chrome stops listening after a quiet stretch, so start again while the camera is still recording */
     sr.onend=function(){ heard=words2(); interim=''; if(on&&!srDead){ try{sr.start();}catch(e){} } };
@@ -1951,7 +1954,7 @@ function recordField(id,q){
       else { st.heard=''; ta.value=st.text||''; }
       showBack(blob); paint(); commit();
       blob.arrayBuffer().then(function(buf){ return photoPut(id,{buf:buf,type:type}); }).then(function(kept){
-        say(kept?(heard?'Recorded. Watch your video above, then check your transcript.':'Recorded. Watch your video above, then type what you said in the transcript box.'):'Recorded, but this browser can’t keep your video after you leave. Your transcript is saved.',!kept);
+        say(kept?(heard?'Recorded. You can watch your video above.':'Recorded. Now type what you said in the box below.'):'Recorded, but this browser can’t keep your video after you leave. What you said is saved.',!kept);
         paint();
       });
     },SR?700:0);
@@ -1996,7 +1999,7 @@ function recordField(id,q){
   paint();
   if(st.has) photoGet(id).then(function(v){
     if(v&&v.buf){ showBack(new Blob([v.buf],{type:v.type||st.mime})); paint(); }
-    else say('Your video isn’t saved in this browser anymore. Your transcript is still here.');
+    else say('Your video isn’t saved in this browser anymore, but what you said is still saved.');
   });
   return wrap;
 }

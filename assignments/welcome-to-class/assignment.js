@@ -12,7 +12,7 @@
 window.ASSIGNMENT = {
   title: 'Welcome to Our Class',
   course: 'All Classes',
-  courses: ['Anatomy and Physiology A', 'Anatomy and Physiology B', 'Biology A', 'Marine Science A'],
+  courses: ['Anatomy and Physiology A', 'Biology A', 'Marine Science A'],
   storageKey: 'welcome-to-class-v1',
   short: 'welcome',
   support: false,
@@ -38,7 +38,7 @@ window.ASSIGNMENT = {
         + '<li>Press <b>Start recording</b>. If your browser asks to use your camera and microphone, choose <b>Allow</b>.</li>'
         + '<li>Talk to me like we are meeting for the first time. Answer every question on the list.</li>'
         + '<li>Press <b>Stop recording</b> when you finish. You can watch your video, and you can record it again.</li>'
-        + '<li>While you talk, the computer types what you say in the transcript box. Read it over and fix any words it heard wrong. Your teacher reads this transcript in your PDF.</li>'
+        + '<li>While you talk, the computer writes down what you say. Your teacher reads it in your PDF.</li>'
         + '</ul>',
       readLabel: 'How to record your video',
       questions: [
