@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Rebuild the home page (index.html) so it lists every assignment in assignments/, and write vercel.json with a
 short link for each one (for example /cell-signaling goes to /assignments/explore-cell-signaling/). Run it after
-adding an assignment. The home page groups assignments by subject (the course label without its A/B semester). The short name is the folder name without "explore-", or `short: 'name'` in assignment.js."""
+adding an assignment. The home page groups assignments by subject (the course label without its A/B semester). The short name is the folder name without "explore-", or `short: 'name'` in assignment.js.
+A standalone page (an index.html with no assignment.js and no engine) is listed when its <head> has
+<meta name="assignment-title" content="..."> and <meta name="assignment-course" content="...">
+(and optionally assignment-short). Folders without these, such as redirect pages, are skipped."""
 import html, json, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -10,6 +13,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def field(text, name):
     m = re.search(r'^\s*' + name + r"\s*:\s*(['\"])(.*?)(?<!\\)\1", text, re.M)
     return m.group(2).replace("\\'", "'") if m else ''
+
+
+def meta(text, name):
+    m = re.search(r'<meta\s+name="' + name + r'"\s+content="([^"]*)"', text)
+    return html.unescape(m.group(1)) if m else ''
 
 
 SUBJECTS = ['Biology', 'Anatomy & Physiology', 'Marine Science']
@@ -27,11 +35,18 @@ def main():
     items = []
     for d in sorted(os.listdir(base)):
         p = os.path.join(base, d, 'assignment.js')
-        if d.startswith('_') or not os.path.isfile(p):
+        page = os.path.join(base, d, 'index.html')
+        if d.startswith('_'):
             continue
-        t = open(p, encoding='utf-8').read()
-        short = field(t, 'short') or re.sub(r'^explore-', '', d)
-        items.append((d, field(t, 'title') or d, field(t, 'course'), short))
+        if os.path.isfile(p):
+            t = open(p, encoding='utf-8').read()
+            short = field(t, 'short') or re.sub(r'^explore-', '', d)
+            items.append((d, field(t, 'title') or d, field(t, 'course'), short))
+        elif os.path.isfile(page):
+            t = open(page, encoding='utf-8').read()
+            if meta(t, 'assignment-title'):
+                short = meta(t, 'assignment-short') or re.sub(r'^explore-', '', d)
+                items.append((d, meta(t, 'assignment-title'), meta(t, 'assignment-course'), short))
     seen = {}
     for d, t, c, short in items:
         if short in seen:

@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cell Transport Mastery</title>
+<!-- standalone page (no engine): tools/build_index.py lists it on the home page from these lines -->
+<meta name="assignment-title" content="Cell Transport Practice (Passive, Active, Osmosis)">
+<meta name="assignment-course" content="Biology">
+<meta name="assignment-short" content="cell-transport-practice">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f6fa; --card:#ffffff; --ink:#1c2836; --muted:#5a6a7e; --line:#d7e0ea;
+  --ok:#2f7d4f; --okbg:#e5f5ea; --bad:#c2372f; --badbg:#fcebea;
+  --passive:#2463a6; --active:#b8541a; --osmosis:#0e7a7e;
+  --topic:#2463a6; --soft:#eaf1f9; --focus:#f2a33a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Lexend,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.55}
+button,select,input{font-family:inherit;font-size:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+.hidden{display:none!important}
+h1{font-size:1.9rem;line-height:1.2;margin:.2em 0 .3em}
+h2{font-size:1.35rem;margin:.2em 0 .5em}
+.sub{color:var(--muted);margin:0 0 1.2em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 1px 3px rgba(20,40,70,.05)}
+.btn{display:inline-flex;align-items:center;gap:.4em;border:0;border-radius:10px;padding:.7em 1.3em;font-weight:600;cursor:pointer;background:var(--topic);color:#fff;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent;color:var(--topic);border:2px solid currentColor}
+.btn.green{background:var(--ok)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+label.fld{display:block;font-weight:600;margin:14px 0 6px}
+input[type=text]{width:100%;padding:.65em .8em;border:2px solid var(--line);border-radius:10px;background:#fff}
+input[type=text]:focus{border-color:var(--passive)}
+.say{border:0;background:var(--soft);color:var(--topic);border-radius:50%;width:34px;height:34px;flex:0 0 34px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.say svg{width:18px;height:18px}
+.say.speaking{background:var(--topic);color:#fff}
+
+/* home */
+.topics{display:grid;gap:14px;margin:18px 0}
+.tcard{display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center;border-left:8px solid var(--c)}
+.tcard h3{margin:0;font-size:1.2rem;color:var(--c)}
+.tcard p{margin:.2em 0 0;color:var(--muted);font-size:.95rem}
+.badge{display:inline-block;font-size:.8rem;font-weight:600;padding:.2em .7em;border-radius:99px;background:#eef1f5;color:var(--muted);margin-top:6px}
+.badge.done{background:var(--okbg);color:var(--ok)}
+.badge.prog{background:#fff4e2;color:#9a5a00}
+.tcard .btn{background:var(--c)}
+.howto{background:var(--soft);border-radius:12px;padding:14px 18px;margin:14px 0}
+.howto ol{margin:.3em 0 0;padding-left:1.3em}
+
+/* quiz top bar */
+.topbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:14px;border-top:6px solid var(--topic)}
+.topbar .t{font-weight:700;color:var(--topic);font-size:1.1rem}
+.link{background:none;border:0;color:var(--topic);font-weight:600;cursor:pointer;padding:4px 0}
+.streak{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.dots{display:flex;gap:6px}
+.dot{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);background:#fff;transition:.25s}
+.dot.on{background:var(--ok);border-color:var(--ok)}
+.stat{font-size:.9rem;color:var(--muted)}
+
+/* question */
+.qhead{display:flex;gap:10px;align-items:flex-start}
+.qnum{font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.prompt{font-size:1.1rem;font-weight:500;margin:0}
+.diagram{display:block;width:100%;max-width:420px;height:auto;margin:16px auto;border-radius:10px;border:1px solid var(--line)}
+.cap{text-align:center;font-size:.85rem;color:var(--muted);margin:-8px 0 12px}
+.opts{display:grid;gap:10px;margin:16px 0}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;width:100%;background:#fff;border:2px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;color:var(--ink);line-height:1.4}
+.opt:hover:not(:disabled){border-color:var(--topic);background:var(--soft)}
+.opt .box{flex:0 0 22px;height:22px;border:2px solid #9aabbe;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.opt.radio .box{border-radius:50%}
+.opt[aria-pressed=true],.opt[aria-checked=true]{border-color:var(--topic);background:var(--soft)}
+.opt[aria-pressed=true] .box,.opt[aria-checked=true] .box{background:var(--topic);border-color:var(--topic)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok)!important;background:var(--okbg)!important}
+.opt.ok .box{background:var(--ok)!important;border-color:var(--ok)!important}
+.opt.bad{border-color:var(--bad)!important;background:var(--badbg)!important}
+.opt.bad .box{background:var(--bad)!important;border-color:var(--bad)!important}
+.opt.missed{border-color:var(--ok)!important;border-style:dashed!important}
+.opt .note{margin-left:auto;font-size:.78rem;font-weight:600;white-space:nowrap}
+.opt.ok .note{color:var(--ok)}.opt.bad .note,.opt.missed .note{color:var(--bad)}
+.instr{font-size:.92rem;color:var(--muted);margin:10px 0 0}
+table.mt{width:100%;border-collapse:collapse;margin:16px 0}
+table.mt th{text-align:left;font-size:.85rem;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--line)}
+table.mt td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+select.pick{padding:.5em .6em;border:2px solid var(--line);border-radius:8px;background:#fff;max-width:100%;color:var(--ink)}
+select.pick:focus{border-color:var(--topic)}
+select.pick.ok{border-color:var(--ok);background:var(--okbg)}
+select.pick.bad{border-color:var(--bad);background:var(--badbg)}
+.fix{display:inline-block;font-size:.85rem;font-weight:600;color:var(--ok);margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{background:var(--topic);color:#fff;border-radius:8px;padding:.3em .8em;font-size:.92rem;font-weight:500}
+.cloze{line-height:2.6;margin:16px 0;font-size:1.02rem}
+.cloze select.pick{padding:.25em .4em;margin:0 2px}
+.actions{margin-top:18px}
+
+/* feedback */
+.fb{margin-top:18px;border-radius:14px;padding:18px 20px}
+.fb.right{background:var(--okbg);border:2px solid var(--ok)}
+.fb.wrong{background:#fff;border:2px solid var(--bad)}
+.fb h3{margin:0 0 .3em;font-size:1.4rem}
+.fb.right h3{color:var(--ok)}.fb.wrong h3{color:var(--bad)}
+.fb .msg{margin:0 0 .6em}
+.exp{position:relative;border:1px solid var(--line);border-radius:10px;padding:14px 16px 14px 46px;margin:12px 0;background:#fff}
+.exp .tag{position:absolute;left:0;top:0;bottom:0;width:30px;border-radius:10px 0 0 10px;color:#fff;font-size:.72rem;font-weight:600;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;justify-content:center;letter-spacing:.05em}
+.exp .tag.rv{background:#7cae3c}.exp .tag.sv{background:#e8902c}
+.exp .top{display:flex;gap:8px;align-items:flex-start}
+.exp ul{list-style:none;margin:0;padding:0}
+.exp li{display:flex;gap:10px;margin:0 0 12px}
+.exp li:last-child{margin-bottom:0}
+.ic{font-weight:700;font-size:1.1rem;flex:0 0 18px}
+.ic.y{color:var(--ok)}.ic.n{color:var(--bad)}
+.you{font-size:.75rem;font-weight:600;background:#eef1f5;color:var(--muted);padding:.1em .5em;border-radius:6px;margin-left:4px;white-space:nowrap}
+.player{background:var(--soft);border-radius:12px;padding:12px 14px;margin:14px 0}
+.player .ph{font-weight:600;color:var(--topic);margin:0 0 8px;font-size:.98rem}
+.player video{display:block;width:100%;border-radius:8px;background:#000;aspect-ratio:16/9}
+.player .pl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.player .pl button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:.3em .7em;font-size:.82rem;cursor:pointer;text-align:left}
+.player .pl button.on{border-color:var(--topic);background:var(--topic);color:#fff}
+.why{background:#fff;border-radius:10px;padding:12px 16px;margin-top:10px}
+.why ul{margin:.3em 0 0;padding-left:1.2em}.why li{margin:.3em 0}
+.keyideas{margin-bottom:14px;padding:0;border-left:6px solid var(--topic)}
+.keyideas summary{cursor:pointer;font-weight:700;color:var(--topic);padding:14px 18px;font-size:1.05rem}
+.keyideas .kbody{display:flex;gap:8px;align-items:flex-start;padding:0 18px 14px}
+.keyideas ul{margin:0;padding-left:1.2em}.keyideas li{margin:.45em 0}
+details.video{margin:14px 0 4px;background:var(--soft);border-radius:10px;padding:10px 14px}
+details.video summary{cursor:pointer;font-weight:600;color:var(--topic)}
+.vwrap{position:relative;padding-top:56.25%;margin-top:10px;border-radius:8px;overflow:hidden;background:#000}
+.vwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vlink{font-size:.85rem;margin:.5em 0 0}
+.vlink a{color:var(--topic)}
+
+/* mastery */
+.mastery{text-align:center;padding:30px 22px}
+.mastery .big{font-size:3rem;line-height:1}
+.mastery h2{color:var(--ok);margin-top:.3em}
+.mastery .row{justify-content:center;margin-top:16px}
+
+/* report */
+.report h1{font-size:1.5rem}
+.rmeta{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0 16px}
+.rmeta b{color:var(--muted);font-weight:500}
+table.rt{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:.93rem}
+table.rt th,table.rt td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+table.rt th{background:#eef2f7}
+.yes{color:var(--ok);font-weight:600}.no{color:var(--bad);font-weight:600}
+.printnote{background:#fff7e6;border:1px solid #f1d39a;border-radius:10px;padding:10px 14px;font-size:.92rem;margin:12px 0}
+
+@media (max-width:560px){
+  body{font-size:16px}
+  h1{font-size:1.55rem}
+  .card{padding:16px}
+  .tcard{grid-template-columns:1fr}
+  .tcard .btn{justify-self:start}
+  table.mt td,table.mt th{padding:8px 4px}
+  .exp{padding:12px 12px 12px 34px}
+  .exp .tag{width:22px;font-size:.65rem}
+}
+@media print{
+  body{background:#fff;font-size:11pt}
+  .no-print{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .card{border:0;box-shadow:none;padding:0}
+  table.rt{page-break-inside:auto}
+  table.rt tr{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- START -->
+  <section id="s-start" class="hidden">
+    <h1>Cell Transport Practice</h1>
+    <p class="sub">Passive transport · Active transport · Osmosis</p>
+    <div class="card">
+      <div class="howto" style="margin-top:0">
+        <strong>How this works</strong>
+        <ol>
+          <li>There are 3 skills. Each one is complete when you get <b>3 questions in a row</b> correct.</li>
+          <li>Missed one? Read why, watch the short support video if you need it, and try the next question.</li>
+          <li>When you're done, save your PDF report and upload it to Canvas.</li>
+        </ol>
+      </div>
+      <label class="fld" for="in-name">Your first and last name</label>
+      <input type="text" id="in-name" autocomplete="name" placeholder="First Last">
+      <label class="fld" for="in-class">Class <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <input type="text" id="in-class" placeholder="e.g., Biology">
+      <div class="actions"><button class="btn" id="b-start" disabled>Start practicing</button></div>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section id="s-home" class="hidden">
+    <h1>Cell Transport Practice</h1>
+    <p class="sub" id="home-hello"></p>
+    <div class="topics" id="topic-list"></div>
+    <div class="card">
+      <h2 style="margin-top:0">Finished?</h2>
+      <p style="margin-top:0">Get your report, save it as a PDF, and upload it to Canvas.</p>
+      <div class="row">
+        <button class="btn green" id="b-report">Get my PDF for Canvas</button>
+        <button class="link" id="b-reset" style="color:var(--muted)">Not you? Start over</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="s-quiz" class="hidden">
+    <div class="topbar">
+      <button class="link" id="b-back">← All skills</button>
+      <div class="t" id="q-topic"></div>
+      <div class="streak" aria-live="polite"><span>In a row:</span><div class="dots" id="q-dots"></div></div>
+      <div class="stat" id="q-stat"></div>
+    </div>
+    <details class="card keyideas" id="q-key"><summary><span>Key ideas: read before you start</span></summary><div class="kbody" id="q-keybody"></div></details>
+    <div class="card" id="q-card"></div>
+  </section>
+
+  <!-- REPORT -->
+  <section id="s-report" class="hidden">
+    <div class="row no-print" style="margin-bottom:12px">
+      <button class="link" id="b-rback">← Back to skills</button>
+    </div>
+    <div class="card report" id="r-body"></div>
+    <div class="no-print">
+      <div class="printnote"><b>To save as a PDF:</b> click the button below. In the print window, set <b>Destination</b> to <b>Save as PDF</b>, then save. Upload that PDF to the Canvas assignment.</div>
+      <button class="btn green" onclick="window.print()">Save as PDF</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ===================== SETTINGS ===================== */
+const STREAK_GOAL = 3;                 // correct answers in a row needed to master a skill
+const STORE_KEY = "cell-transport-mastery-v1";
+
+const CLIPS = {
+"ct-homeostasis": {"src":"clips/ct-homeostasis.mp4","dur":24,"label":"The cell membrane and homeostasis"},
+"ct-membrane": {
+"src": "clips/ct-membrane.mp4",
+"dur": 57,
+"label": "The cell membrane and homeostasis"
+},
+"ct-bilayer": {
+"src": "clips/ct-bilayer.mp4",
+"dur": 33,
+"label": "The phospholipid bilayer"
+},
+"ct-simple": {
+"src": "clips/ct-simple.mp4",
+"dur": 54,
+"label": "Simple diffusion and the concentration gradient"
+},
+"ct-facilitated": {
+"src": "clips/ct-facilitated.mp4",
+"dur": 86,
+"label": "Facilitated diffusion"
+},
+"ct-needhelp": {
+"src": "clips/ct-needhelp.mp4",
+"dur": 42,
+"label": "Which molecules need a transport protein"
+},
+"ct-aquaporins": {
+"src": "clips/ct-aquaporins.mp4",
+"dur": 21,
+"label": "Water through aquaporins (passive)"
+},
+"ct-active": {
+"src": "clips/ct-active.mp4",
+"dur": 75,
+"label": "Active transport and ATP"
+},
+"ct-against": {
+"src": "clips/ct-against.mp4",
+"dur": 37,
+"label": "Moving against the gradient takes energy"
+},
+"ct-endo": {
+"src": "clips/ct-endo.mp4",
+"dur": 83,
+"label": "Endocytosis"
+},
+"ct-endo-short": {
+"src": "clips/ct-endo-short.mp4",
+"dur": 45,
+"label": "Endocytosis: bringing large things in"
+},
+"ct-exo": {
+"src": "clips/ct-exo.mp4",
+"dur": 50,
+"label": "Exocytosis"
+},
+"ct-exo-short": {
+"src": "clips/ct-exo-short.mp4",
+"dur": 19,
+"label": "Exocytosis: sending materials out"
+},
+"nak-atp": {
+"src": "clips/nak-atp.mp4",
+"dur": 21,
+"label": "Cell pumps run on ATP"
+},
+"nak-ions": {
+"src": "clips/nak-ions.mp4",
+"dur": 19,
+"label": "Ions need a channel or a pump"
+},
+"nak-cycle": {
+"src": "clips/nak-cycle.mp4",
+"dur": 104,
+"label": "The sodium-potassium pump"
+},
+"nak-against": {
+"src": "clips/nak-against.mp4",
+"dur": 39,
+"label": "The pump works against the gradient"
+},
+"os-def": {
+"src": "clips/os-def.mp4",
+"dur": 74,
+"label": "What is osmosis?"
+},
+"os-solute": {
+"src": "clips/os-solute.mp4",
+"dur": 41,
+"label": "Water moves toward more solute"
+},
+"os-utube": {
+"src": "clips/os-utube.mp4",
+"dur": 116,
+"label": "The U-tube: hypertonic and hypotonic"
+},
+"os-utube-setup": {
+"src": "clips/os-utube-setup.mp4",
+"dur": 16,
+"label": "Water can cross the membrane, salt can't"
+},
+"os-equilibrium": {
+"src": "clips/os-equilibrium.mp4",
+"dur": 16,
+"label": "Equilibrium: molecules keep moving"
+},
+"os-tonic": {
+"src": "clips/os-tonic.mp4",
+"dur": 35,
+"label": "Hypertonic vs. hypotonic"
+},
+"os-iv": {
+"src": "clips/os-iv.mp4",
+"dur": 84,
+"label": "Red blood cells and IV fluids"
+},
+"os-isotonic": {
+"src": "clips/os-isotonic.mp4",
+"dur": 14,
+"label": "Isotonic solutions"
+},
+"os-fish": {
+"src": "clips/os-fish.mp4",
+"dur": 44,
+"label": "A saltwater fish in fresh water"
+},
+"os-roots": {
+"src": "clips/os-roots.mp4",
+"dur": 38,
+"label": "How plant roots take in water"
+},
+"os-potato": {
+"src": "clips/os-potato.mp4",
+"dur": 12,
+"label": "A potato in distilled water gains water"
+},
+"os-turgor": {
+"src": "clips/os-turgor.mp4",
+"dur": 27,
+"label": "Turgor pressure and cell walls"
+}
+};
+
+/* Lesson video for each skill: clips play back-to-back */
+const TOPICS = {
+  passive: {name:"Passive Transport", color:"var(--passive)", blurb:"Diffusion, facilitated diffusion, and concentration gradients",
+            lesson:["ct-membrane","ct-simple","ct-facilitated"]},
+  active:  {name:"Active Transport",  color:"var(--active)",  blurb:"Protein pumps, ATP, endocytosis, and exocytosis",
+            lesson:["ct-active","nak-cycle","ct-endo","ct-exo"]},
+  osmosis: {name:"Osmosis",           color:"var(--osmosis)", blurb:"Water movement, hypertonic, hypotonic, and isotonic",
+            lesson:["os-def","os-utube","os-iv","os-fish","os-roots","os-turgor"]}
+};
+
+/* Short reading at the top of each skill. Covers examples the questions use that the videos don't show. */
+const KEY = {
+passive:`<ul>
+<li>The <b>cell membrane</b> controls what enters and leaves the cell. This helps the cell maintain <b>homeostasis</b>, a stable internal environment.</li>
+<li><b>Passive transport</b> does not use the cell's energy. Molecules move from <b>high to low</b> concentration. This is called moving <b>down</b> (or <b>with</b>) the <b>concentration gradient</b>.</li>
+<li><b>Simple diffusion:</b> small, nonpolar molecules like oxygen (O₂) and carbon dioxide (CO₂) pass right through the phospholipid bilayer.</li>
+<li><b>Facilitated diffusion:</b> large, polar, or charged particles (glucose, ions like Na⁺ and K⁺) need a <b>transport protein</b> (a channel or carrier). It is still passive.</li>
+<li><b>Equilibrium:</b> the concentration is the same on both sides. Molecules keep moving both ways, but there is no <b>net movement</b>.</li>
+<li><b>Example in your body:</b> in your lungs, the air sacs (<b>alveoli</b>) have more oxygen than your blood, so oxygen diffuses from the air sacs into the blood.</li>
+</ul>`,
+active:`<ul>
+<li><b>Active transport</b> moves molecules from <b>low to high</b> concentration, <b>against</b> the concentration gradient. This takes energy, usually from <b>ATP</b>.</li>
+<li><b>Channel vs. pump:</b> a channel lets molecules flow down their gradient with no energy (passive). A <b>pump</b> uses ATP to push molecules against their gradient (active).</li>
+<li><b>Sodium-potassium pump:</b> each cycle uses 1 ATP to move <b>3 sodium (Na⁺) out</b> and <b>2 potassium (K⁺) in</b>.</li>
+<li><b>Endocytosis</b> (<i>endo</i> = in): the membrane surrounds something large and brings it in as a vesicle. The video shows an amoeba; <b>white blood cells</b> do the same thing to swallow bacteria.</li>
+<li><b>Exocytosis</b> (<i>exo</i> = exit): a vesicle fuses with the membrane and releases its contents outside the cell. The video shows plant cells sending out carbohydrates for their cell walls. Your <b>pancreas</b> cells send out the hormone <b>insulin</b> the same way.</li>
+<li><b>Tip:</b> if a cell needs <i>more</i> of something it already has a lot of (like glucose in gut cells, or minerals in plant root cells), it must use active transport. <b>mM</b> (millimolar) is a unit of concentration: a bigger number means more concentrated.</li>
+</ul>`,
+osmosis:`<ul>
+<li><b>Osmosis</b> is the diffusion of <b>water</b> across a semi-permeable membrane, like a cell membrane. It is passive transport.</li>
+<li><b>Shortcut:</b> water moves toward the side with <b>more solute</b> (dissolved stuff like salt or sugar).</li>
+<li>Compare two solutions: <b>hypertonic</b> = more solute, <b>hypotonic</b> = less solute (<i>hypo</i> rhymes with <i>low</i>), <b>isotonic</b> = equal. Water moves toward the hypertonic side.</li>
+<li><b>Animal cells</b> (like red blood cells) have no cell wall. In a hypotonic solution they swell and can burst. In a hypertonic solution they lose water and shrink. Blood cells contain about <b>0.9% salt</b>, so IVs use <b>0.9% saline</b>, which is isotonic.</li>
+<li><b>Plant cells</b> have a cell wall. When water moves in, it pushes against the wall (<b>turgor pressure</b>), so the cell gets firm (<b>turgid</b>) instead of bursting. Plants wilt when they lose water.</li>
+<li><b>Food examples:</b> a potato or gummy bear in plain water gains water because it has more solute inside. Salting cucumbers to make pickles pulls water out, because the salt outside is hypertonic.</li>
+</ul>`
+};
+
+/* Support clip(s) shown when a question is missed. Empty list = no clip yet. */
+const QCLIPS = {
+  p1:["ct-simple","os-equilibrium"], p2:["ct-simple","ct-facilitated","os-equilibrium"], p3:["ct-facilitated"],
+  p4:["ct-bilayer","ct-simple","ct-needhelp"], p5:["ct-simple","os-equilibrium"], p6:["ct-homeostasis"],
+  p7:["ct-facilitated","nak-atp"], p8:["ct-simple","os-equilibrium"], p9:["ct-simple","ct-needhelp"], p10:["ct-simple"],
+  a1:["ct-active"], a2:["ct-active","ct-endo-short","ct-exo-short"], a3:["nak-cycle"], a4:["ct-against"],
+  a5:["ct-endo"], a6:["ct-exo"], a7:["ct-against","ct-aquaporins","ct-endo-short"], a8:["ct-active"],
+  a9:["ct-against","nak-against"], a10:["nak-ions","nak-atp"],
+  o1:["os-def","os-tonic","os-isotonic"], o2:["os-iv"], o3:["os-roots"], o4:["os-def","os-utube-setup"],
+  o5:["os-utube"], o6:["os-roots","os-turgor"], o7:["os-fish"], o8:["os-iv"], o9:["os-solute","os-tonic"], o10:["os-solute","os-potato"]
+};
+const ORDER = ["passive","active","osmosis"];
+
+/* ===================== QUESTION BANK =====================
+ types: multi (select all true), mc (one answer), match (term → definition),
+        classify (sort items into categories), cloze (fill paragraph; first option in {{a|b}} is correct)
+*/
+const BANK = {
+passive: [
+{ id:"p1", type:"multi", short:"Passive transport basics",
+  prompt:"Select the true statements.",
+  review:"Cells use <b>passive transport</b> to move molecules across the cell membrane <b>without using cellular energy</b>. Molecules move <b>down their concentration gradient</b>, from an area of higher concentration to an area of lower concentration.",
+  options:[
+    {t:"Passive transport does not require energy from the cell.", ok:true, why:"Passive transport is powered by the natural, random motion of molecules, not by ATP from the cell."},
+    {t:"In passive transport, molecules move from an area of low concentration to an area of high concentration.", ok:false, why:"That is moving <i>against</i> the gradient. Passive transport always moves molecules from <b>high to low</b> concentration."},
+    {t:"Oxygen can enter a cell by passive transport.", ok:true, why:"Oxygen is small and nonpolar, so it diffuses straight through the lipid bilayer without any energy."},
+    {t:"Once the concentration is equal on both sides of the membrane, the molecules stop moving.", ok:false, why:"Molecules never stop moving. At equilibrium they keep crossing in <b>both directions</b> at the same rate, so there is no <b>net</b> movement."}
+  ]},
+{ id:"p2", type:"match", short:"Match passive transport terms",
+  prompt:"Match each term to its definition.",
+  review:"There are two kinds of diffusion. In <b>simple diffusion</b>, molecules pass directly through the lipid bilayer. In <b>facilitated diffusion</b>, a transport protein helps them across. Both move molecules down a <b>concentration gradient</b> until they reach <b>equilibrium</b>.",
+  pairs:[
+    {term:"simple diffusion", def:"movement of molecules directly through the phospholipid bilayer from high to low concentration", why:"<i>Simple</i> means no help. The molecule slips right between the phospholipids."},
+    {term:"facilitated diffusion", def:"movement of molecules from high to low concentration through a channel or carrier protein", why:"<i>Facilitated</i> means helped. A transport protein gives the molecule a path, but no energy is used."},
+    {term:"concentration gradient", def:"a difference in the concentration of a substance between two areas", why:"The gradient is like a hill. In passive transport, molecules roll down it."},
+    {term:"equilibrium", def:"the point when a substance is evenly spread out, so there is no net movement", why:"At equilibrium, molecules still move, but equal numbers cross each way."}
+  ]},
+{ id:"p3", type:"mc", short:"Glucose and facilitated diffusion",
+  prompt:"Glucose is a large, polar molecule. The concentration of glucose is higher in the blood than inside a muscle cell. How does glucose most likely enter the muscle cell?",
+  review:"Small, nonpolar molecules can cross the bilayer on their own. Large or polar molecules (like glucose) and charged ions need help from <b>transport proteins</b>. If they are moving from high to low concentration, that help is still <b>passive</b>. This is called facilitated diffusion.",
+  options:[
+    {t:"simple diffusion through the lipid bilayer", ok:false, why:"Glucose is too large and polar to slip between the nonpolar tails of the bilayer."},
+    {t:"facilitated diffusion through a carrier protein", ok:true, why:"Glucose is moving <b>down</b> its gradient (high → low), so no energy is needed, but it needs a <b>transport protein</b> to get through."},
+    {t:"active transport using ATP", ok:false, why:"Active transport is only needed to move molecules <i>against</i> their gradient. Here, glucose is moving from high to low."},
+    {t:"exocytosis", ok:false, why:"Exocytosis moves materials <i>out</i> of the cell in vesicles, not in."}
+  ]},
+{ id:"p4", type:"multi", short:"What can cross the bilayer?", diagram:"bilayer",
+  prompt:"Look at the cell membrane. Which molecules can cross the phospholipid bilayer by <b>simple diffusion</b>, without help from a protein? Select all that apply.",
+  review:"The phospholipid bilayer has <b>polar, hydrophilic heads</b> facing the outside and inside of the cell, and <b>nonpolar, hydrophobic tails</b> in the middle. The nonpolar middle lets only <b>small, nonpolar</b> molecules pass through freely.",
+  options:[
+    {t:"oxygen (O₂), a small, nonpolar molecule", ok:true, why:"Small, nonpolar molecules pass right through the nonpolar tails."},
+    {t:"carbon dioxide (CO₂), a small, nonpolar molecule", ok:true, why:"CO₂ is small and nonpolar, so it diffuses straight through the bilayer."},
+    {t:"sodium ions (Na⁺), which are charged", ok:false, why:"Charged ions are repelled by the hydrophobic tails. They need a channel protein."},
+    {t:"glucose, a large, polar molecule", ok:false, why:"Glucose is too large and polar. It needs a carrier protein."}
+  ]},
+{ id:"p5", type:"cloze", short:"Food coloring in water",
+  prompt:"Complete the paragraph.",
+  review:"<b>Diffusion</b> is the movement of molecules from an area of higher concentration to an area of lower concentration. It continues until the molecules are evenly spread out.",
+  text:"A drop of food coloring is added to a glass of still water. At first, the dye molecules are {{concentrated in one spot|evenly spread out}}. Over time, the dye moves from an area of {{higher|lower}} concentration to an area of {{lower|higher}} concentration. This continues until the dye is {{evenly spread out|all at the bottom}}. This process is called {{diffusion|osmosis|active transport}}, and it {{does not require|requires}} added energy.",
+  summary:"The dye starts <b>concentrated in one spot</b> and spreads from <b>higher</b> to <b>lower</b> concentration until it is <b>evenly spread out</b>. This is <b>diffusion</b>, and it <b>does not require</b> added energy. (Osmosis is only used for <i>water</i> moving across a membrane.)"},
+{ id:"p6", type:"mc", short:"The cell membrane and homeostasis",
+  prompt:"Why is it important that the cell membrane controls what enters and leaves a cell?",
+  review:"Every cell is surrounded by a cell membrane. By controlling what goes in and out, the membrane helps the cell maintain <b>homeostasis</b>, a stable internal environment.",
+  options:[
+    {t:"It helps the cell maintain homeostasis, a stable internal environment.", ok:true, why:"Letting in what the cell needs and letting out waste keeps conditions inside the cell stable."},
+    {t:"It keeps all molecules from ever leaving the cell.", ok:false, why:"Cells must let waste products out, so the membrane can't block everything."},
+    {t:"It lets every molecule pass through freely.", ok:false, why:"If everything passed freely, the cell couldn't control conditions inside. The membrane is selective."},
+    {t:"It makes energy for the cell.", ok:false, why:"The membrane doesn't make energy. Cells get energy from ATP."}
+  ]},
+{ id:"p7", type:"multi", short:"Channel proteins",
+  prompt:"Select the true statements about facilitated diffusion.",
+  review:"<b>Facilitated diffusion</b> uses channel or carrier proteins to help molecules that can't pass through the bilayer on their own. It is still passive: no energy, and molecules move from high to low concentration.",
+  options:[
+    {t:"Ions such as potassium (K⁺) can cross the membrane through channel proteins.", ok:true, why:"Channel proteins give charged ions a water-friendly tunnel through the bilayer."},
+    {t:"Channel proteins use ATP to push ions across the membrane.", ok:false, why:"Channels don't use energy. Proteins that use ATP to move molecules are called <b>pumps</b>, which are part of active transport."},
+    {t:"Facilitated diffusion moves molecules down their concentration gradient.", ok:true, why:"Like all passive transport, it moves molecules from high to low concentration."},
+    {t:"Facilitated diffusion can move molecules from low to high concentration if there are enough channels.", ok:false, why:"More channels only speed up movement <i>down</i> the gradient. Moving from low to high always takes energy."}
+  ]},
+{ id:"p8", type:"mc", short:"Net movement of CO₂", diagram:"gradient",
+  prompt:"The diagram shows carbon dioxide molecules (purple dots) inside and outside a cell. What will be the <b>net</b> movement of carbon dioxide?",
+  review:"<b>Net movement</b> is the overall direction molecules travel. CO₂ molecules cross the membrane in both directions, but more of them move from the area of higher concentration (inside) to the area of lower concentration (outside).",
+  options:[
+    {t:"out of the cell", ok:true, why:"The concentration is higher inside, so more molecules move out than in. The net movement is down the gradient: inside → outside."},
+    {t:"into the cell", ok:false, why:"That would be from low to high concentration, which diffusion can't do."},
+    {t:"there will be no movement at all", ok:false, why:"Molecules are always moving. Because there is a gradient, there is a net movement outward."},
+    {t:"equal numbers will move in and out", ok:false, why:"That only happens at equilibrium. Right now there are many more molecules inside the cell."}
+  ]},
+{ id:"p9", type:"classify", short:"Simple vs. facilitated diffusion",
+  prompt:"Sort each example into the correct type of passive transport.",
+  review:"Both types are passive (no energy, high → low). The difference is whether the molecule needs a <b>transport protein</b> to get across. Small, nonpolar molecules don't; large, polar, or charged particles do.",
+  cats:["simple diffusion","facilitated diffusion"],
+  items:[
+    {t:"Oxygen moves from the blood into a muscle cell.", cat:"simple diffusion", why:"O₂ is small and nonpolar, so it passes right through the bilayer."},
+    {t:"Glucose enters a red blood cell through a carrier protein.", cat:"facilitated diffusion", why:"Glucose needs a carrier protein, but it is moving down its gradient, so no energy is used."},
+    {t:"Potassium ions (K⁺) flow out of a nerve cell through ion channels.", cat:"facilitated diffusion", why:"Charged ions need a channel, and they are moving from high to low."},
+    {t:"Carbon dioxide leaves a cell.", cat:"simple diffusion", why:"CO₂ is small and nonpolar, so it needs no help."}
+  ]},
+{ id:"p10", type:"mc", short:"Oxygen in the lungs",
+  prompt:"In the lungs, the air sacs (alveoli) have a higher concentration of oxygen than the blood in nearby capillaries. Which statement is correct?",
+  review:"Gas exchange in the lungs happens by <b>diffusion</b>. Oxygen moves from where it is more concentrated (the air sacs) to where it is less concentrated (the blood), with no energy needed.",
+  options:[
+    {t:"Oxygen diffuses from the air sacs into the blood without using cellular energy.", ok:true, why:"Oxygen moves down its gradient, from high (air sacs) to low (blood)."},
+    {t:"Oxygen is pumped from the air sacs into the blood using ATP.", ok:false, why:"Oxygen is moving down its gradient, so no pump or ATP is needed."},
+    {t:"Oxygen diffuses from the blood into the air sacs.", ok:false, why:"That would be from low to high. The net movement is from the air sacs (high) to the blood (low)."},
+    {t:"Oxygen cannot cross cell membranes because it is too large.", ok:false, why:"O₂ is a small, nonpolar molecule that crosses membranes easily."}
+  ]}
+],
+active: [
+{ id:"a1", type:"multi", short:"Active transport basics",
+  prompt:"Select the true statements.",
+  review:"<b>Active transport</b> uses energy from the cell, usually <b>ATP</b>, to move molecules <b>against</b> their concentration gradient, from an area of lower concentration to an area of higher concentration.",
+  options:[
+    {t:"Active transport moves molecules from an area of low concentration to an area of high concentration.", ok:true, why:"Moving \"uphill\" against the gradient is exactly what active transport does."},
+    {t:"Active transport requires energy, usually from ATP.", ok:true, why:"Moving molecules against their gradient takes energy, and cells usually get it from ATP."},
+    {t:"Active transport only happens after the concentrations on both sides are equal.", ok:false, why:"Cells use active transport to build and keep concentration differences. It does not wait for equilibrium."},
+    {t:"Active transport uses open channel proteins that let molecules flow through freely.", ok:false, why:"Molecules flowing freely through open channels is facilitated diffusion. Active transport uses <b>pumps</b> that change shape using energy."}
+  ]},
+{ id:"a2", type:"match", short:"Match active transport terms",
+  prompt:"Match each term to its definition.",
+  review:"Active transport includes <b>protein pumps</b> that move small molecules and ions, and <b>bulk transport</b> (endocytosis and exocytosis) that moves large materials in vesicles. All of these use energy, usually from <b>ATP</b>.",
+  pairs:[
+    {term:"protein pump", def:"a membrane protein that uses energy to move molecules against their concentration gradient", why:"Pumps change shape using ATP to push molecules \"uphill.\""},
+    {term:"ATP", def:"the molecule cells use as an energy source for active transport", why:"ATP is the cell's energy currency."},
+    {term:"endocytosis", def:"the cell membrane surrounds material and brings it into the cell in a vesicle", why:"<i>Endo-</i> means into."},
+    {term:"exocytosis", def:"a vesicle fuses with the cell membrane and releases material outside the cell", why:"<i>Exo-</i> means out of."}
+  ]},
+{ id:"a3", type:"mc", short:"Sodium-potassium pump",
+  prompt:"Nerve cells keep a high concentration of sodium ions (Na⁺) outside the cell and a high concentration of potassium ions (K⁺) inside the cell. During one cycle, what does the sodium-potassium pump do?",
+  review:"The <b>sodium-potassium pump</b> is a classic example of active transport. Using energy from one ATP, it pumps <b>3 sodium ions out</b> and <b>2 potassium ions in</b>. Both move against their gradients. This keeps nerve and muscle cells ready to send signals.",
+  options:[
+    {t:"moves 3 Na⁺ out and 2 K⁺ in, using one ATP", ok:true, why:"This keeps Na⁺ high outside and K⁺ high inside, pushing both against their gradients."},
+    {t:"moves 2 Na⁺ out and 3 K⁺ in, using one ATP", ok:false, why:"The numbers are reversed. The pump moves 3 sodium out and 2 potassium in."},
+    {t:"lets Na⁺ flow in and K⁺ flow out without using energy", ok:false, why:"That describes ions moving <i>down</i> their gradients through channels (passive). The pump moves them against their gradients."},
+    {t:"moves both Na⁺ and K⁺ into the cell", ok:false, why:"The pump is an exchanger: sodium goes out and potassium comes in."}
+  ]},
+{ id:"a4", type:"cloze", short:"Glucose in gut cells",
+  prompt:"Complete the paragraph.",
+  review:"When a cell needs to collect even more of something it already has a lot of, it has to move molecules <b>against</b> the gradient. That takes energy, so it is <b>active transport</b>.",
+  text:"After a meal, cells lining the small intestine may already contain a {{higher|lower}} concentration of glucose than the food in the intestine. To absorb more glucose, the cells must move it {{against|down}} its concentration gradient, from {{lower|higher}} concentration to {{higher|lower}} concentration. This requires {{energy|no energy}}, so this process is {{active transport|facilitated diffusion|simple diffusion}}.",
+  summary:"The cells already have a <b>higher</b> glucose concentration, so absorbing more means moving glucose <b>against</b> its gradient, from <b>lower</b> to <b>higher</b> concentration. That requires <b>energy</b>, so it is <b>active transport</b>."},
+{ id:"a5", type:"mc", short:"White blood cell engulfs bacteria",
+  prompt:"A white blood cell wraps its membrane around a bacterium and pulls it inside in a vesicle. What process is this?",
+  review:"Some things are too big to fit through any protein. Cells move these large materials in <b>vesicles</b>. Bringing material <b>in</b> is <b>endocytosis</b>; sending it <b>out</b> is <b>exocytosis</b>. Both use energy.",
+  options:[
+    {t:"endocytosis", ok:true, why:"The membrane surrounds the bacterium and brings it <b>into</b> the cell. (This type of endocytosis is also called phagocytosis, or \"cell eating.\")"},
+    {t:"exocytosis", ok:false, why:"Exocytosis moves material <i>out</i> of the cell. Here the bacterium is coming in."},
+    {t:"facilitated diffusion", ok:false, why:"Facilitated diffusion moves single molecules through proteins. A whole bacterium is far too large."},
+    {t:"osmosis", ok:false, why:"Osmosis is only the movement of water across a membrane."}
+  ]},
+{ id:"a6", type:"mc", short:"Releasing insulin",
+  prompt:"Cells in the pancreas make the protein hormone insulin. The insulin is packed into vesicles, which fuse with the cell membrane and release the insulin into the blood. What process is this?",
+  review:"Large molecules like proteins are packed into <b>vesicles</b>. When a vesicle fuses with the cell membrane and releases its contents outside the cell, that is <b>exocytosis</b>, a type of active transport.",
+  options:[
+    {t:"exocytosis", ok:true, why:"Vesicles fuse with the membrane and release material <b>out</b> of the cell."},
+    {t:"endocytosis", ok:false, why:"Endocytosis brings material <i>into</i> the cell. Insulin is leaving."},
+    {t:"simple diffusion", ok:false, why:"Insulin is a large protein. It can't slip through the lipid bilayer."},
+    {t:"the sodium-potassium pump", ok:false, why:"That pump only moves sodium and potassium ions, not proteins."}
+  ]},
+{ id:"a7", type:"classify", short:"Passive or active?",
+  prompt:"Sort each example as passive transport or active transport.",
+  review:"Ask two questions. <b>Is the substance moving against its gradient?</b> <b>Is the cell moving something large in a vesicle?</b> If either answer is yes, it is active transport and needs energy. If it moves down its gradient on its own or through a channel, it is passive.",
+  cats:["passive transport","active transport"],
+  items:[
+    {t:"Sodium ions are pumped out of a nerve cell.", cat:"active transport", why:"Pumping uses ATP to move sodium against its gradient."},
+    {t:"Water moves into a cell through aquaporins.", cat:"passive transport", why:"Water moves down its gradient through channel proteins (osmosis). No energy is used."},
+    {t:"An amoeba engulfs a food particle.", cat:"active transport", why:"This is endocytosis, which uses energy."},
+    {t:"Oxygen diffuses into a red blood cell.", cat:"passive transport", why:"Oxygen moves from high to low concentration on its own."},
+    {t:"Root cells take in minerals that are already more concentrated inside the root than in the soil.", cat:"active transport", why:"The minerals move from low (soil) to high (root), against the gradient, so energy is needed."}
+  ]},
+{ id:"a8", type:"multi", short:"A cell runs out of ATP",
+  prompt:"A poison stops a cell from making ATP. Select the processes that would <b>stop working</b>.",
+  review:"Only processes that use energy depend on ATP. <b>Active transport</b> (pumps and vesicles) would stop. <b>Passive transport</b> (diffusion and osmosis) would keep going, because it doesn't use the cell's energy.",
+  options:[
+    {t:"the sodium-potassium pump", ok:true, why:"Pumps need ATP to change shape and move ions against their gradient."},
+    {t:"simple diffusion of oxygen into the cell", ok:false, why:"Diffusion doesn't use ATP, so it would keep going."},
+    {t:"exocytosis of proteins", ok:true, why:"Moving vesicles and fusing them with the membrane requires energy."},
+    {t:"osmosis", ok:false, why:"Osmosis is passive. Water would keep moving down its gradient."}
+  ]},
+{ id:"a9", type:"mc", short:"Moving ions uphill",
+  prompt:"The concentration of an ion is 5 mM outside a cell and 50 mM inside. The cell needs to bring <b>more</b> of this ion inside. What does the cell need?",
+  review:"Inside is already higher than outside. Bringing in more means moving the ion from low to high concentration, <b>against</b> its gradient. That always requires a <b>pump</b> and <b>energy</b>.",
+  options:[
+    {t:"a protein pump and energy from ATP", ok:true, why:"Moving from 5 mM up to 50 mM is against the gradient, so the cell needs a pump powered by ATP."},
+    {t:"an open channel protein", ok:false, why:"A channel would let ions flow down their gradient, which here is <i>out</i> of the cell."},
+    {t:"nothing; the ions will diffuse inside on their own", ok:false, why:"On their own, the ions would move from high (inside) to low (outside)."},
+    {t:"osmosis", ok:false, why:"Osmosis is the movement of water, not ions."}
+  ]},
+{ id:"a10", type:"mc", short:"Channel vs. pump",
+  prompt:"What is the main difference between a channel protein and a pump protein?",
+  review:"<b>Channels</b> are passive: they open a path so molecules can flow down their gradient. <b>Pumps</b> are active: they use energy to move molecules against their gradient.",
+  options:[
+    {t:"A pump uses energy and can move molecules against their gradient; a channel does not use energy.", ok:true, why:"That's the key difference: pumps are active transport, channels are passive transport."},
+    {t:"A channel uses energy; a pump does not.", ok:false, why:"This is reversed. Pumps use energy; channels do not."},
+    {t:"Channels move only water; pumps move only ions.", ok:false, why:"Many channels move ions (like K⁺ channels). Aquaporins are channels for water."},
+    {t:"There is no difference; both are passive transport.", ok:false, why:"Pumps use energy, so they are active transport."}
+  ]}
+],
+osmosis: [
+{ id:"o1", type:"match", short:"Osmosis vocabulary",
+  prompt:"Match each term to its definition.",
+  review:"<b>Osmosis</b> is the diffusion of water. We compare a solution to a cell using three words. Memory trick: <b>hyper</b> = more (like hyperactive), <b>hypo</b> = less (like hypothermia), <b>iso</b> = equal.",
+  pairs:[
+    {term:"osmosis", def:"the diffusion of water across a selectively permeable membrane", why:"Osmosis is passive transport of water."},
+    {term:"hypertonic", def:"a solution with a higher solute concentration than the cell", why:"<i>Hyper</i> means more solute."},
+    {term:"hypotonic", def:"a solution with a lower solute concentration than the cell", why:"<i>Hypo</i> means less solute."},
+    {term:"isotonic", def:"a solution with the same solute concentration as the cell", why:"<i>Iso</i> means equal."}
+  ]},
+{ id:"o2", type:"mc", short:"Red blood cell in pure water", diagram:"rbc-water",
+  prompt:"A red blood cell (about 0.9% salt inside) is placed in distilled water (0% salt). What will happen?",
+  review:"Distilled water is <b>hypotonic</b> to the cell: it has a lower solute concentration. Water moves toward the higher solute concentration, which is inside the cell. Animal cells have no cell wall, so they can swell and burst (<b>lysis</b>).",
+  options:[
+    {t:"Water moves into the cell, and the cell swells and may burst.", ok:true, why:"Water moves toward the higher solute concentration (inside the cell)."},
+    {t:"Water moves out of the cell, and the cell shrinks.", ok:false, why:"That happens in a <i>hypertonic</i> solution. Pure water has less solute than the cell, so water moves in."},
+    {t:"Salt moves out of the cell until both sides are equal.", ok:false, why:"In osmosis, it is the <b>water</b> that moves. The membrane does not let the salt ions cross freely."},
+    {t:"Nothing happens, because distilled water has no solute.", ok:false, why:"The <i>difference</i> in solute is what matters. The cell has more solute, so water moves in."}
+  ]},
+{ id:"o3", type:"mc", short:"Plant roots take in water",
+  prompt:"After it rains, the soil is soaked with water. The root hair cells of a plant have a higher solute concentration than the water in the soil. What happens?",
+  review:"Water moves toward the higher solute concentration. The root hair cells are <b>hypertonic</b> compared to the soil water, so water moves into the roots by <b>osmosis</b>. This is how many plants take in water.",
+  options:[
+    {t:"Water moves into the root cells, because they are hypertonic to the soil water.", ok:true, why:"The root cells have more solute, so water moves into them."},
+    {t:"Water moves out of the root cells into the soil.", ok:false, why:"Water moves toward more solute. The roots have more solute, so water moves in, not out."},
+    {t:"The root cells pump water in using ATP.", ok:false, why:"Osmosis is passive transport. No energy is needed."},
+    {t:"The root cells are hypotonic to the soil water.", ok:false, why:"Hypotonic means <i>less</i> solute. The root cells have <i>more</i> solute, so they are hypertonic."}
+  ]},
+{ id:"o4", type:"multi", short:"Osmosis true statements",
+  prompt:"Select the true statements.",
+  review:"<b>Osmosis</b> is a special kind of diffusion: the movement of <b>water</b> across a selectively permeable membrane. Water moves toward the side with <b>more solute</b>, because that side has less \"free\" water. Osmosis is passive and does not use ATP.",
+  options:[
+    {t:"Osmosis is the diffusion of water across a selectively permeable membrane.", ok:true, why:"That is the definition of osmosis."},
+    {t:"During osmosis, water moves toward the side with the higher solute concentration.", ok:true, why:"More solute means less free water, so water moves toward the solute."},
+    {t:"Osmosis requires energy from ATP.", ok:false, why:"Osmosis is passive transport. It does not use the cell's energy."},
+    {t:"During osmosis, solute particles cross the membrane to balance the concentrations.", ok:false, why:"In osmosis, the <b>water</b> moves. The solute usually can't cross the membrane."}
+  ]},
+{ id:"o5", type:"cloze", short:"Water across a membrane", diagram:"chamber",
+  prompt:"The container is divided by a membrane that lets water through but not sugar. Complete the paragraph.",
+  review:"Water moves toward the side with the <b>higher solute concentration</b>. The side with more solute is <b>hypertonic</b>, so it gains water and its level rises.",
+  text:"Side A has a {{higher|lower}} sugar concentration than side B, so side A is {{hypertonic|hypotonic|isotonic}} compared to side B. Water will have a net movement from side {{B|A}} to side {{A|B}}. As a result, the water level on side A will {{rise|fall|stay the same}}.",
+  summary:"Side A has the <b>higher</b> sugar concentration, so it is <b>hypertonic</b> to side B. Water moves from side <b>B</b> to side <b>A</b>, so the water level on side A will <b>rise</b>."},
+{ id:"o6", type:"mc", short:"Plant cell in fresh water",
+  prompt:"A plant cell is placed in fresh water, which is hypotonic to the cell. What happens?",
+  review:"Plant cells have a strong <b>cell wall</b>. In a hypotonic solution, water rushes in and fills the central vacuole, pushing the cell against its wall. The cell becomes firm (<b>turgid</b>) but does not burst. This is why watered plants stand up straight.",
+  options:[
+    {t:"Water enters, the vacuole fills, and the cell becomes firm (turgid) but does not burst.", ok:true, why:"The cell wall pushes back, so the cell gets firm instead of bursting."},
+    {t:"Water enters, and the cell bursts like a red blood cell.", ok:false, why:"Red blood cells have no cell wall. The plant's cell wall keeps it from bursting."},
+    {t:"Water leaves the cell, and the plant wilts.", ok:false, why:"Wilting happens in a <i>hypertonic</i> solution. Fresh water is hypotonic, so water moves in."},
+    {t:"Nothing happens, because plant cells have cell walls.", ok:false, why:"Water still crosses the cell membrane. The wall just keeps the cell from bursting."}
+  ]},
+{ id:"o7", type:"mc", short:"Saltwater fish in fresh water",
+  prompt:"A saltwater fish is placed in a freshwater fish tank. The fish's cells have a higher solute concentration than the fresh water. What will happen to the fish's cells?",
+  review:"Water moves toward the side with more solute. The fish's cells are <b>hypertonic</b> to the fresh water, so water moves into the cells and they swell. If the fish isn't rescued, it could die.",
+  options:[
+    {t:"Water will move into the cells, and they will swell.", ok:true, why:"The cells have more solute (they are hypertonic), so water moves in."},
+    {t:"Water will move out of the cells, and they will shrink.", ok:false, why:"That would happen if the water around the fish had <i>more</i> solute. Fresh water has less solute than the fish's cells."},
+    {t:"Salt will move from the fresh water into the cells.", ok:false, why:"Fresh water has very little salt, and in osmosis it is the <b>water</b> that moves."},
+    {t:"Nothing will change, because fish already live in water.", ok:false, why:"What matters is the solute concentration. Fresh water has much less solute than the fish's cells."}
+  ]},
+{ id:"o8", type:"mc", short:"IV saline",
+  prompt:"Why do hospitals give patients an IV of 0.9% saline instead of pure water?",
+  review:"Blood cells contain about 0.9% salt. A 0.9% saline solution is <b>isotonic</b>, so water moves in and out at the same rate. There is no net movement, and cells keep their normal shape.",
+  options:[
+    {t:"0.9% saline is isotonic to blood cells, so there is no net movement of water and the cells keep their normal shape.", ok:true, why:"Equal solute concentrations mean no net water movement."},
+    {t:"Pure water is hypertonic and would shrink blood cells.", ok:false, why:"Pure water is <b>hypotonic</b>. It would make blood cells swell and burst."},
+    {t:"Salt gives cells energy for active transport.", ok:false, why:"Salt is not an energy source. Cells get energy from ATP."},
+    {t:"Saline moves into cells faster than water does.", ok:false, why:"The reason is tonicity: isotonic saline causes no net water movement."}
+  ]},
+{ id:"o9", type:"classify", short:"Which way will water move?",
+  prompt:"For each situation, choose which way water will move.",
+  review:"Compare the solute concentration <b>inside</b> the cell to the solution <b>outside</b>. Water always has a net movement toward the side with <b>more solute</b>. If they are equal, there is no net movement.",
+  cats:["into the cell","out of the cell","no net movement"],
+  items:[
+    {t:"A cell with 1% salt is placed in a 5% salt solution.", cat:"out of the cell", why:"The outside is saltier (hypertonic), so water leaves the cell."},
+    {t:"A cell with 3% salt is placed in a 0.5% salt solution.", cat:"into the cell", why:"The inside is saltier, so water moves in (the solution is hypotonic)."},
+    {t:"A cell with 0.9% salt is placed in a 0.9% salt solution.", cat:"no net movement", why:"The concentrations are equal (isotonic)."},
+    {t:"Cucumber slices are covered in salt to make pickles.", cat:"out of the cell", why:"The salty surroundings are hypertonic, so water leaves the cucumber cells."}
+  ]},
+{ id:"o10", type:"mc", short:"The growing gummy bear",
+  prompt:"A gummy bear (mostly sugar and gelatin) is left in a cup of plain water overnight. In the morning it is much bigger. Why?",
+  review:"The gummy bear has a much higher solute (sugar) concentration than plain water. Water moves by <b>osmosis</b> toward the higher solute concentration, into the gummy bear.",
+  options:[
+    {t:"The gummy bear was hypertonic to the water, so water moved into it by osmosis.", ok:true, why:"The bear had more solute, so water moved into it."},
+    {t:"The gummy bear was hypotonic to the water, so water moved into it.", ok:false, why:"If the bear were hypotonic (less solute), water would move <i>out</i> of it."},
+    {t:"Sugar moved out of the gummy bear and pulled the gelatin apart.", ok:false, why:"The bear got bigger because water moved in, not because sugar moved out."},
+    {t:"The gummy bear used energy to pump water in.", ok:false, why:"Gummy bears aren't alive and osmosis needs no energy."}
+  ]}
+]
+};
+
+/* ===================== DIAGRAMS ===================== */
+function rng(seed){return ()=>(seed=(seed*16807)%2147483647)/2147483647}
+function svgGradient(){
+  const inside=[[120,58],[150,70],[185,55],[222,62],[245,80],[130,92],[165,100],[200,88],[238,110],[118,125],[150,135],[185,122],[215,140],[245,138],[170,150],[132,155]];
+  const outside=[[40,70],[318,150],[52,165],[305,45]];
+  let s=`<svg class="diagram" viewBox="0 0 360 210" role="img" aria-label="A cell with many carbon dioxide molecules inside and only four outside"><rect width="360" height="210" fill="#fbf0d4"/><rect x="95" y="35" width="170" height="145" rx="20" fill="#f7d6d6" stroke="#5a7896" stroke-width="3"/>`;
+  inside.concat(outside).forEach(([x,y])=>s+=`<circle cx="${x}" cy="${y}" r="6.5" fill="#7b3fb0"/>`);
+  s+=`<text x="10" y="22" font-size="13" fill="#5a6a7e" font-family="Lexend,sans-serif">outside the cell</text><text x="180" y="174" text-anchor="middle" font-size="13" fill="#5a6a7e" font-family="Lexend,sans-serif">inside the cell</text></svg>`;
+  return s;
+}
+function svgBilayer(){
+  let s=`<svg class="diagram" viewBox="0 0 360 200" role="img" aria-label="A phospholipid bilayer: a row of polar heads on the outside and inside, with nonpolar tails in the middle"><rect width="360" height="45" fill="#fbf0d4"/><rect y="155" width="360" height="45" fill="#f7d6d6"/><rect y="45" width="360" height="110" fill="#fff"/>`;
+  for(let x=15;x<=345;x+=18){
+    s+=`<path d="M${x-3} 62 q-3 9 0 17 q3 9 0 18 M${x+3} 62 q3 9 0 17 q-3 9 0 18" stroke="#d08a2c" stroke-width="2" fill="none"/>`;
+    s+=`<path d="M${x-3} 138 q-3 -9 0 -17 q3 -9 0 -18 M${x+3} 138 q3 -9 0 -17 q-3 -9 0 -18" stroke="#d08a2c" stroke-width="2" fill="none"/>`;
+    s+=`<circle cx="${x}" cy="55" r="8" fill="#3b82c4"/><circle cx="${x}" cy="145" r="8" fill="#3b82c4"/>`;
+  }
+  s+=`<text x="10" y="27" font-size="13" fill="#5a6a7e" font-family="Lexend,sans-serif">outside the cell</text><text x="10" y="187" font-size="13" fill="#5a6a7e" font-family="Lexend,sans-serif">inside the cell</text></svg>`;
+  return s + `<p class="cap">Blue circles = polar, hydrophilic heads · Orange lines = nonpolar, hydrophobic tails</p>`;
+}
+function svgChamber(){
+  const r=rng(7); let dots="";
+  const place=(x0,x1,n)=>{for(let i=0;i<n;i++){const x=x0+r()*(x1-x0),y=70+r()*95;dots+=`<rect x="${x-6}" y="${y-6}" width="12" height="12" rx="3" fill="#e0a100"/>`}};
+  place(48,160,11); place(205,310,2);
+  return `<svg class="diagram" viewBox="0 0 360 232" role="img" aria-label="A container divided by a membrane. Side A has 10 percent sugar and many sugar molecules. Side B has 2 percent sugar and few sugar molecules."><rect width="360" height="232" fill="#fff"/><rect x="32" y="52" width="296" height="128" fill="#d6ecfb"/>${dots}<path d="M30 20 V180 H330 V20" fill="none" stroke="#5a7896" stroke-width="3"/><line x1="180" y1="22" x2="180" y2="180" stroke="#333" stroke-width="3" stroke-dasharray="7 5"/><text x="105" y="42" text-anchor="middle" font-size="15" font-weight="600" fill="#1c2836" font-family="Lexend,sans-serif">Side A</text><text x="255" y="42" text-anchor="middle" font-size="15" font-weight="600" fill="#1c2836" font-family="Lexend,sans-serif">Side B</text><text x="105" y="200" text-anchor="middle" font-size="13" fill="#1c2836" font-family="Lexend,sans-serif">10% sugar</text><text x="255" y="200" text-anchor="middle" font-size="13" fill="#1c2836" font-family="Lexend,sans-serif">2% sugar</text><text x="180" y="224" text-anchor="middle" font-size="12" fill="#5a6a7e" font-family="Lexend,sans-serif">dashed line = membrane (water can pass, sugar cannot)</text></svg>`;
+}
+function svgRBC(label,n){
+  const r=rng(11); let dots="";
+  for(let i=0;i<n;){const x=72+r()*156,y=60+r()*112; if(((x-150)/48)**2+((y-115)/34)**2<1) continue; dots+=`<circle cx="${x}" cy="${y}" r="3.5" fill="#4a5563"/>`; i++;}
+  return `<svg class="diagram" viewBox="0 0 300 210" role="img" aria-label="A red blood cell in a beaker of ${label}"><rect width="300" height="210" fill="#fff"/><rect x="62" y="50" width="176" height="128" fill="#dff0fb"/>${dots}<ellipse cx="150" cy="115" rx="40" ry="26" fill="#e05a5a"/><ellipse cx="150" cy="115" rx="18" ry="10" fill="#b83a3a" opacity=".6"/><path d="M60 18 V170 Q60 180 70 180 H230 Q240 180 240 170 V18" fill="none" stroke="#5a7896" stroke-width="3"/><text x="150" y="202" text-anchor="middle" font-size="13" fill="#1c2836" font-family="Lexend,sans-serif">${label}</text></svg>` + (n?`<p class="cap">Gray dots = salt</p>`:``);
+}
+const DIAGRAMS={gradient:svgGradient, bilayer:svgBilayer, chamber:svgChamber,
+  "rbc-water":()=>svgRBC("distilled water (0% salt)",0), "rbc-salt":()=>svgRBC("10% salt solution",22)};
+
+/* ===================== STATE ===================== */
+let state=null;
+function fresh(){const t={};ORDER.forEach(k=>t[k]={streak:0,answered:0,correct:0,mastered:false,masteredAt:null,timeMs:0,queue:[]});return {name:"",cls:"",startedAt:null,topics:t,log:[]}}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(s&&s.name&&s.topics)return s}catch(e){}return null}
+
+const $=id=>document.getElementById(id);
+function show(id){["s-start","s-home","s-quiz","s-report"].forEach(s=>$(s).classList.toggle("hidden",s!==id));window.scrollTo(0,0);stopSpeak()}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function strip(html){const d=document.createElement("div");d.innerHTML=html;return d.textContent}
+
+/* ===================== READ ALOUD ===================== */
+const SPK=`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>`;
+function sayBtn(target){return `<button class="say" data-say="${target}" aria-label="Read aloud" title="Read aloud">${SPK}</button>`}
+function readable(node){const c=node.cloneNode(true);c.querySelectorAll("select").forEach(s=>s.replaceWith(" blank "));c.querySelectorAll(".say,.note,.fix,.you,svg,details,.player").forEach(n=>n.remove());return c.textContent.replace(/\s+/g," ").replace(/→/g," to ").trim()}
+function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}document.querySelectorAll(".say.speaking").forEach(b=>b.classList.remove("speaking"))}
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".say"); if(!b) return;
+  if(!("speechSynthesis" in window)){alert("Read-aloud isn't supported in this browser.");return}
+  const was=b.classList.contains("speaking"); stopSpeak(); if(was) return;
+  const node=document.querySelector(b.dataset.say); if(!node) return;
+  const u=new SpeechSynthesisUtterance(readable(node)); u.rate=.95; u.onend=()=>b.classList.remove("speaking");
+  b.classList.add("speaking"); speechSynthesis.speak(u);
+});
+
+/* ===================== START / HOME ===================== */
+$("in-name").addEventListener("input",e=>$("b-start").disabled=e.target.value.trim().split(/\s+/).filter(Boolean).length<1);
+$("b-start").onclick=()=>{state=fresh();state.name=$("in-name").value.trim();state.cls=$("in-class").value.trim();state.startedAt=new Date().toISOString();save();renderHome()};
+$("b-reset").onclick=()=>{if(confirm("Start over? This erases the progress saved on this device.")){try{localStorage.removeItem(STORE_KEY)}catch(e){}state=null;$("in-name").value="";$("in-class").value="";$("b-start").disabled=true;show("s-start")}};
+$("b-report").onclick=renderReport;
+$("b-rback").onclick=renderHome;
+$("b-back").onclick=renderHome;
+
+function renderHome(){
+  document.documentElement.style.setProperty("--topic","var(--passive)");
+  const done=ORDER.filter(k=>state.topics[k].mastered).length;
+  $("home-hello").textContent=`Hi ${state.name.split(" ")[0]}! You've mastered ${done} of 3 skills. Get ${STREAK_GOAL} in a row correct to master each one.`;
+  $("topic-list").innerHTML=ORDER.map((k,i)=>{
+    const T=TOPICS[k],s=state.topics[k];
+    const badge=s.mastered?`<span class="badge done">✓ Mastered</span>`:s.answered?`<span class="badge prog">In progress · ${s.streak} of ${STREAK_GOAL} in a row</span>`:`<span class="badge">Not started</span>`;
+    return `<div class="card tcard" style="--c:${T.color}"><div><h3>${i+1}. ${T.name}</h3><p>${T.blurb}</p>${badge}<details class="video" style="--topic:${T.color}"><summary>Watch the lesson video (${mins(T.lesson)})</summary>${player(T.lesson)}</details></div><button class="btn" data-go="${k}">${s.mastered?"Practice more":s.answered?"Continue":"Start"}</button></div>`;
+  }).join("");
+  document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>startTopic(b.dataset.go));
+  show("s-home"); wirePlayers($("topic-list"));
+}
+
+/* ===================== QUIZ ===================== */
+let cur=null; // {topic, q, t0, order, num}
+function nextQ(topic){
+  const s=state.topics[topic],bank=BANK[topic];
+  if(!s.queue.length){let ids=shuffle(bank.map(q=>q.id));if(cur&&cur.q&&ids[0]===cur.q.id&&ids.length>1)ids.push(ids.shift());s.queue=ids}
+  const id=s.queue.shift(); save(); return bank.find(q=>q.id===id);
+}
+function startTopic(topic){
+  document.documentElement.style.setProperty("--topic",TOPICS[topic].color);
+  $("q-topic").textContent=TOPICS[topic].name;
+  $("q-keybody").innerHTML=`<div style="flex:1" id="q-keytext">${KEY[topic]}</div>${sayBtn("#q-keytext")}`;
+  $("q-key").open = state.topics[topic].answered===0;
+  cur={topic,num:0};
+  show("s-quiz"); loadQ();
+}
+function updateBar(){
+  const s=state.topics[cur.topic];
+  $("q-dots").innerHTML=Array.from({length:STREAK_GOAL},(_,i)=>`<div class="dot ${i<Math.min(s.streak,STREAK_GOAL)||s.mastered?"on":""}"></div>`).join("");
+  $("q-dots").setAttribute("aria-label",`${s.mastered?STREAK_GOAL:s.streak} of ${STREAK_GOAL} in a row`);
+  $("q-stat").textContent=s.mastered?"✓ Mastered":`Answered: ${s.answered}`;
+}
+function loadQ(){
+  const q=nextQ(cur.topic); cur.q=q; cur.num++; cur.t0=Date.now(); cur.done=false;
+  updateBar();
+  const card=$("q-card");
+  let h=`<div class="qhead"><div style="flex:1"><div class="qnum">Question ${state.topics[cur.topic].answered+1}</div><p class="prompt" id="qp">${q.prompt}</p></div>${sayBtn("#qread")}</div>`;
+  if(q.diagram) h+=DIAGRAMS[q.diagram]();
+  h+=`<div id="qbody"></div><div class="actions"><button class="btn" id="b-submit">Submit</button></div><div id="fb"></div>`;
+  card.innerHTML=`<div id="qread">${h}</div>`;
+  const body=$("qbody");
+  if(q.type==="multi"||q.type==="mc"){
+    cur.order=shuffle(q.options.map((_,i)=>i));
+    const multi=q.type==="multi";
+    body.innerHTML=(multi?`<p class="instr">Select all that are true.</p>`:`<p class="instr">Choose one answer.</p>`)+
+      `<div class="opts" role="${multi?"group":"radiogroup"}">`+cur.order.map(i=>`<button class="opt ${multi?"":"radio"}" role="${multi?"checkbox":"radio"}" ${multi?'aria-pressed="false"':'aria-checked="false"'} data-i="${i}"><span class="box"></span><span>${q.options[i].t}</span></button>`).join("")+`</div>`;
+    body.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      if(cur.done) return;
+      if(multi){b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")==="true"?"false":"true");b.querySelector(".box").textContent=b.getAttribute("aria-pressed")==="true"?"✓":""}
+      else body.querySelectorAll(".opt").forEach(o=>{const on=o===b;o.setAttribute("aria-checked",on);o.querySelector(".box").textContent=on?"●":""});
+    });
+  } else if(q.type==="match"){
+    const terms=shuffle(q.pairs.map(p=>p.term)); cur.order=shuffle(q.pairs.map((_,i)=>i));
+    const opts=`<option value="">Choose…</option>`+terms.map(t=>`<option>${esc(t)}</option>`).join("");
+    body.innerHTML=`<div class="chips">${terms.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div><table class="mt"><thead><tr><th style="width:40%">Term</th><th>Definition</th></tr></thead><tbody>`+
+      cur.order.map(i=>`<tr><td><select class="pick" data-i="${i}" aria-label="Term for: ${esc(q.pairs[i].def)}">${opts}</select></td><td>${q.pairs[i].def}</td></tr>`).join("")+`</tbody></table>`;
+  } else if(q.type==="classify"){
+    cur.order=shuffle(q.items.map((_,i)=>i));
+    const opts=`<option value="">Choose…</option>`+q.cats.map(c=>`<option>${esc(c)}</option>`).join("");
+    body.innerHTML=`<table class="mt"><thead><tr><th>Example</th><th style="width:38%">Answer</th></tr></thead><tbody>`+
+      cur.order.map(i=>`<tr><td>${q.items[i].t}</td><td><select class="pick" data-i="${i}" aria-label="Answer for: ${esc(q.items[i].t)}">${opts}</select></td></tr>`).join("")+`</tbody></table>`;
+  } else if(q.type==="cloze"){
+    let bi=0; cur.answers=[];
+    const html=q.text.replace(/\{\{(.*?)\}\}/g,(_,g)=>{const o=g.split("|");cur.answers.push(o[0]);const i=bi++;return `<select class="pick" data-i="${i}" aria-label="Blank ${i+1}"><option value="">Choose…</option>${shuffle(o).map(x=>`<option>${esc(x)}</option>`).join("")}</select>`});
+    body.innerHTML=`<p class="cloze">${html}</p>`;
+  }
+  $("b-submit").onclick=submit;
+}
+
+function grade(){
+  const q=cur.q,body=$("qbody");
+  if(q.type==="multi"||q.type==="mc"){
+    const attr=q.type==="multi"?"aria-pressed":"aria-checked";
+    const picked=[...body.querySelectorAll(".opt")].filter(b=>b.getAttribute(attr)==="true").map(b=>+b.dataset.i);
+    if(!picked.length) return {incomplete:"Select at least one answer."};
+    const ok=q.options.every((o,i)=>o.ok===picked.includes(i));
+    body.querySelectorAll(".opt").forEach(b=>{
+      const i=+b.dataset.i,o=q.options[i],p=picked.includes(i); b.disabled=true;
+      let note="";
+      if(p&&o.ok){b.classList.add("ok");note="✓ Correct"}
+      else if(p&&!o.ok){b.classList.add("bad");note=q.type==="multi"?"✗ This one is false":"✗ Your answer"}
+      else if(!p&&o.ok){b.classList.add("missed");note=q.type==="multi"?"Missed: this is true":"✓ Correct answer"}
+      if(note) b.insertAdjacentHTML("beforeend",`<span class="note">${note}</span>`);
+    });
+    return {ok,picked};
+  }
+  const sels=[...body.querySelectorAll("select.pick")];
+  if(sels.some(s=>!s.value)) return {incomplete:"Fill in every blank before you submit."};
+  let ok=true;
+  sels.forEach(s=>{
+    const i=+s.dataset.i, ans=q.type==="match"?q.pairs[i].term:q.type==="classify"?q.items[i].cat:cur.answers[i];
+    const good=s.value===ans; ok=ok&&good; s.disabled=true; s.classList.add(good?"ok":"bad");
+    if(!good) s.insertAdjacentHTML("afterend",`<span class="fix">→ ${esc(ans)}</span>`);
+  });
+  return {ok};
+}
+
+function whyRight(q,res){
+  let h="";
+  if(q.type==="mc"){const o=q.options[res.picked[0]];h=`<p style="margin:0">${o.why}</p>`}
+  else if(q.type==="multi") h="<ul>"+cur.order.filter(i=>q.options[i].ok).map(i=>`<li><b>${q.options[i].t}</b> ${q.options[i].why}</li>`).join("")+"</ul>";
+  else if(q.type==="match") h="<ul>"+q.pairs.map(p=>`<li><b>${p.term}:</b> ${p.why}</li>`).join("")+"</ul>";
+  else if(q.type==="classify") h="<ul>"+q.items.map(it=>`<li>${it.t} → <b>${it.cat}</b>. ${it.why}</li>`).join("")+"</ul>";
+  else h=`<p style="margin:0">${q.summary}</p>`;
+  return `<div class="why" id="why"><div class="top" style="display:flex;gap:8px"><div style="flex:1"><b>Why it's correct:</b>${h}</div>${sayBtn("#why")}</div></div>`;
+}
+function explanation(q,res){
+  let solve="";
+  if(q.type==="multi"){
+    solve="<ul>"+cur.order.map(i=>{const o=q.options[i];return `<li><span class="ic ${o.ok?"y":"n"}">${o.ok?"✓":"✗"}</span><div><b>${o.t}</b> <i>(${o.ok?"true":"false"})</i><br>${o.why}</div></li>`}).join("")+"</ul>";
+  } else if(q.type==="mc"){
+    solve="<ul>"+cur.order.map(i=>{const o=q.options[i],you=res.picked.includes(i)?`<span class="you">your answer</span>`:"";return `<li><span class="ic ${o.ok?"y":"n"}">${o.ok?"✓":"✗"}</span><div><b>${o.t}</b>${you}<br>${o.why}</div></li>`}).join("")+"</ul>";
+  } else if(q.type==="match"){
+    solve="<ul>"+q.pairs.map(p=>`<li><span class="ic y">✓</span><div><b>${p.term}:</b> ${p.def}.<br>${p.why}</div></li>`).join("")+"</ul>";
+  } else if(q.type==="classify"){
+    solve="<ul>"+q.items.map(it=>`<li><span class="ic y">✓</span><div>${it.t} → <b>${it.cat}</b><br>${it.why}</div></li>`).join("")+"</ul>";
+  } else solve=`<p style="margin:0">${q.summary}</p>`;
+  return `<div class="exp" id="exp-r"><div class="tag rv">review</div><div class="top"><div style="flex:1">${q.review}</div>${sayBtn("#exp-r")}</div></div>
+          <div class="exp" id="exp-s"><div class="tag sv">solve</div><div class="top"><div style="flex:1">${solve}</div>${sayBtn("#exp-s")}</div></div>`;
+}
+function mins(ids){const t=ids.reduce((n,k)=>n+CLIPS[k].dur,0);return t<60?t+" sec":Math.round(t/60)+" min"}
+function player(ids,title){
+  if(!ids||!ids.length) return "";
+  const list=ids.length>1?`<div class="pl">${ids.map((k,i)=>`<button data-k="${k}" class="${i?"":"on"}">${i+1}. ${esc(CLIPS[k].label)} (${CLIPS[k].dur}s)</button>`).join("")}</div>`:"";
+  return `<div class="player" data-ids="${ids.join(",")}">${title?`<p class="ph">${title}</p>`:""}<video controls playsinline preload="metadata" src="${CLIPS[ids[0]].src}#t=0.1"></video>${list}</div>`;
+}
+function wirePlayers(root){
+  root.querySelectorAll(".player").forEach(p=>{
+    const ids=p.dataset.ids.split(","),v=p.querySelector("video"),btns=[...p.querySelectorAll(".pl button")];
+    let i=0;
+    const go=(n,play)=>{i=n;v.src=CLIPS[ids[i]].src+(play?"":"#t=0.1");btns.forEach((b,j)=>b.classList.toggle("on",j===i));if(play)v.play().catch(()=>{})};
+    btns.forEach((b,j)=>b.onclick=()=>go(j,true));
+    v.addEventListener("ended",()=>{if(i<ids.length-1)go(i+1,true)});
+  });
+}
+
+function submit(){
+  if(cur.done) return;
+  const res=grade();
+  const fb=$("fb");
+  if(res.incomplete){fb.innerHTML=`<p class="instr" style="color:var(--bad);font-weight:600">${res.incomplete}</p>`;return}
+  cur.done=true; $("b-submit").remove();
+  const s=state.topics[cur.topic],q=cur.q,wasMastered=s.mastered;
+  s.answered++; s.timeMs+=Math.min(Date.now()-cur.t0,5*60*1000);
+  if(res.ok){s.correct++;s.streak++}else s.streak=0;
+  let justMastered=false;
+  if(!s.mastered&&s.streak>=STREAK_GOAL){s.mastered=true;s.masteredAt=new Date().toISOString();justMastered=true}
+  state.log.push({topic:cur.topic,id:q.id,short:q.short,ok:res.ok,at:new Date().toISOString()});
+  save(); updateBar();
+
+  const left=STREAK_GOAL-s.streak;
+  let head;
+  if(res.ok) head=`<h3>✓ Correct!</h3><p class="msg">${wasMastered?"Nice work. You've already mastered this skill.":justMastered?"That's "+STREAK_GOAL+" in a row!":`That's ${s.streak} in a row. ${left} more to master this skill.`}</p>`;
+  else head=`<h3>Sorry, incorrect…</h3><p class="msg">${wasMastered?"You've still mastered this skill. Watch the clip and read why below.":`Your streak starts over. Watch the clip and read why below, then get ${STREAK_GOAL} in a row to master this skill.`}</p>`;
+  const nextBtn=justMastered?`<button class="btn green" id="b-next">Continue →</button>`:`<button class="btn" id="b-next">Next question →</button>`;
+  const ids=QCLIPS[q.id]||[];
+  const body=res.ok?whyRight(q,res):player(ids,ids.length>1?`Watch these ${ids.length} short clips (${mins(ids)} total)`:`Watch this clip (${mins(ids)})`)+explanation(q,res);
+  fb.innerHTML=`<div class="fb ${res.ok?"right":"wrong"}" id="fbx">${head}${body}<div class="actions">${nextBtn}</div></div>`;
+  wirePlayers(fb);
+  $("b-next").onclick=()=>justMastered?showMastery():loadQ();
+  fb.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function showMastery(){
+  const k=cur.topic,T=TOPICS[k],s=state.topics[k];
+  const nextK=ORDER.find(x=>!state.topics[x].mastered);
+  const allDone=!nextK;
+  $("q-card").innerHTML=`<div class="mastery"><div class="big">🎉</div><h2>You mastered ${T.name}!</h2><p>You answered ${STREAK_GOAL} questions in a row correctly (${s.correct} correct out of ${s.answered} total).</p>
+   ${allDone?`<p><b>All 3 skills are mastered.</b> Get your PDF report and upload it to Canvas.</p>`:``}
+   <div class="row">${allDone?`<button class="btn green" id="m-rep">Get my PDF for Canvas</button>`:`<button class="btn green" id="m-next">Next skill: ${TOPICS[nextK].name} →</button>`}
+   <button class="btn ghost" id="m-home">All skills</button><button class="link" id="m-more">Keep practicing this skill</button></div></div>`;
+  if(allDone) $("m-rep").onclick=renderReport; else $("m-next").onclick=()=>startTopic(nextK);
+  $("m-home").onclick=renderHome; $("m-more").onclick=loadQ;
+}
+
+/* ===================== REPORT ===================== */
+function fmtTime(ms){const m=Math.round(ms/60000);return m<1?"under 1 min":m+" min"}
+function fmtDate(iso){return new Date(iso).toLocaleString([], {month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})}
+function renderReport(){
+  const done=ORDER.filter(k=>state.topics[k].mastered).length;
+  const rows=ORDER.map(k=>{const s=state.topics[k];return `<tr><td>${TOPICS[k].name}</td><td class="${s.mastered?"yes":"no"}">${s.mastered?"✓ Mastered":"Not yet"}</td><td>${s.answered}</td><td>${s.correct}</td><td>${s.answered?Math.round(100*s.correct/s.answered)+"%":"—"}</td><td>${fmtTime(s.timeMs)}</td></tr>`}).join("");
+  const log=state.log.map((l,i)=>`<tr><td>${i+1}</td><td>${TOPICS[l.topic].name}</td><td>${esc(l.short)}</td><td class="${l.ok?"yes":"no"}">${l.ok?"Correct":"Incorrect"}</td><td>${fmtDate(l.at)}</td></tr>`).join("");
+  $("r-body").innerHTML=`<h1>Cell Transport Practice: Report</h1>
+   <div class="rmeta"><b>Student</b><span>${esc(state.name)}</span>${state.cls?`<b>Class</b><span>${esc(state.cls)}</span>`:""}<b>Started</b><span>${fmtDate(state.startedAt)}</span><b>Report made</b><span>${fmtDate(new Date().toISOString())}</span><b>Skills mastered</b><span class="${done===3?"yes":"no"}">${done} of 3</span><b>Mastery rule</b><span>${STREAK_GOAL} correct in a row</span></div>
+   <table class="rt"><thead><tr><th>Skill</th><th>Status</th><th>Answered</th><th>Correct</th><th>Accuracy</th><th>Time</th></tr></thead><tbody>${rows}</tbody></table>
+   <h2 style="font-size:1.1rem">Question log</h2>
+   ${state.log.length?`<table class="rt"><thead><tr><th>#</th><th>Skill</th><th>Question</th><th>Result</th><th>When</th></tr></thead><tbody>${log}</tbody></table>`:`<p>No questions answered yet.</p>`}`;
+  show("s-report");
+}
+
+/* ===================== INIT ===================== */
+state=load();
+if(state){renderHome()}else{state=fresh();show("s-start")}
+</script>
+</body>
+</html>

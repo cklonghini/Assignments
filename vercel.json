@@ -111,6 +111,26 @@
       "permanent": false
     },
     {
+      "source": "/cell-transport-practice",
+      "destination": "/assignments/practice-cell-transport/",
+      "permanent": false
+    },
+    {
+      "source": "/cell-transport-practice/",
+      "destination": "/assignments/practice-cell-transport/",
+      "permanent": false
+    },
+    {
+      "source": "/practice-cell-transport",
+      "destination": "/assignments/practice-cell-transport/",
+      "permanent": false
+    },
+    {
+      "source": "/practice-cell-transport/",
+      "destination": "/assignments/practice-cell-transport/",
+      "permanent": false
+    },
+    {
       "source": "/support-and-motion",
       "destination": "/assignments/practice-support-and-motion/",
       "permanent": false
