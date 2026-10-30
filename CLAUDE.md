@@ -136,6 +136,8 @@ lab agreement, and a ready-to-go selfie `photo`.
 - Every question, reading, and the warning box has a Listen button (read aloud). The page picks the most natural
   female American English voice on the student’s device (never a British one). There is no voice menu; students can
   change only the speed. This is built into the engine.
+- Every written and highlight box has a "Speak my answer" button (speech to text) so students who prefer to speak can
+  dictate their writing. It shows where the browser supports it (Chrome, Edge, Safari). Built into the engine.
 - Do not remove or restyle these controls.
 
 ## Things to leave alone

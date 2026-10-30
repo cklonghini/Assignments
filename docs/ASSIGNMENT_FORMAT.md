@@ -398,6 +398,11 @@ graph a different factor. The PDF shows every step and a picture of the student'
 the box. There is no button to drop a starter in: students type the starter themselves and finish the sentence. Write starters that fit this question and use the video's words, but never give the
 answer: stop each one before the part the student must think of. Use `…` where the student fills in.
 
+Every written and highlight box also has a **Speak my answer** button (speech to text) under it, so students can
+say their answer instead of typing it. The words go in where the cursor is. It uses the browser's own speech
+recognition, so it shows in Chrome, Edge, and Safari but not in Firefox. The browser does not add periods or commas,
+so the page reminds students to type them and to press "Check my writing." Built into the engine.
+
 Every written and highlight box also has a **Check my writing** button. It runs in the browser (nothing is sent
 anywhere) and marks capital letters at the start of sentences, a capital "I", missing end punctuation, missing
 apostrophes (dont, cant, im), repeated words, spacing around punctuation, mix-ups (their is, more then, should of,

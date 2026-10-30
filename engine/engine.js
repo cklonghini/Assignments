@@ -631,6 +631,7 @@ function speakCard(cid,c,memory,onChange){
     var r=new SR(), text='', alts='', quiet=null, err='';
     r.lang='en-US'; r.continuous=true; r.interimResults=true; r.maxAlternatives=3;
     function stop(){try{r.stop();}catch(e){}}
+    if(DICT&&DICT._stop) DICT._stop();
     micStop=stop; micStop.card=cid; listening(true);
     tell('Listening… Say the word, then its meaning.');
     r.onresult=function(e){
@@ -1659,7 +1660,7 @@ function writtenField(id,placeholder){
   var ta=h('textarea'); ta.id='f-'+id; ta.rows=4; ta.value=st.text||''; ta.spellcheck=true;
   ta.setAttribute('placeholder',placeholder||'Type your answer here');
   ta.setAttribute('aria-label','Your written answer');
-  wrap.append(ta);
+  wrap.append(ta,talkRow(ta));
   var cnt=h('p','words'); var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
   wrap.append(cnt,msg);
   function grow(){ta.style.height='auto';ta.style.height=Math.max(ta.scrollHeight+2,100)+'px';}
@@ -1672,6 +1673,96 @@ function writtenField(id,placeholder){
   ta.addEventListener('input',function(){st.text=ta.value;grow();sync();commit();});
   sync(); setTimeout(grow,0);
   return wrap;
+}
+
+/* Speak my answer: students can say their answer instead of typing it. It uses the browser's own speech
+   recognition (Chrome, Edge, and Safari have it; Firefox does not, so the button does not show there). Words
+   go in where the cursor is. The browser does not add periods or commas, so students type those, and
+   "Check my writing" helps them find what is missing. */
+var DICT=null; /* the box that is listening now */
+function dictateBtn(box,setMsg){
+  if(!SR) return null;
+  var b=h('button','listen talk'); b.type='button'; b.setAttribute('aria-pressed','false');
+  b.setAttribute('aria-label','Speak my answer');
+  var rec=null, on=false, said='';
+  var isTa=box.tagName==='TEXTAREA';
+  b.addEventListener('mousedown',function(e){e.preventDefault();}); /* keeps the cursor where it is in the box */
+  function before(){
+    if(isTa) return box.value.slice(0,box.selectionStart);
+    var sel=window.getSelection();
+    if(!sel.rangeCount||!box.contains(sel.getRangeAt(0).startContainer)) return box.innerText;
+    var r=sel.getRangeAt(0).cloneRange(); r.selectNodeContents(box); r.setEnd(sel.getRangeAt(0).startContainer,sel.getRangeAt(0).startOffset);
+    return r.toString();
+  }
+  function put(t){
+    t=t.trim(); if(!t) return;
+    var pre=before().replace(/ /g,' ');
+    if(!pre.trim()||/[.!?]\s*$/.test(pre)) t=t.charAt(0).toUpperCase()+t.slice(1);
+    t=t.replace(/\bi\b/g,'I');
+    if(pre&&!/\s$/.test(pre)) t=' '+t;
+    if(isTa){
+      box.setRangeText(t,box.selectionStart,box.selectionEnd,'end');
+      box.dispatchEvent(new Event('input',{bubbles:true}));
+    } else {
+      box.focus();
+      var sel=window.getSelection();
+      if(!sel.rangeCount||!box.contains(sel.getRangeAt(0).startContainer)){
+        var r=document.createRange(); r.selectNodeContents(box); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
+      }
+      var ok=false; try{ok=document.execCommand('insertText',false,t);}catch(e){}
+      if(!ok){ var r2=sel.getRangeAt(0), tn=document.createTextNode(t); r2.deleteContents(); r2.insertNode(tn);
+        r2.setStartAfter(tn); r2.collapse(true); sel.removeAllRanges(); sel.addRange(r2);
+        box.dispatchEvent(new Event('input',{bubbles:true})); }
+    }
+  }
+  function stopped(){
+    on=false; b.setAttribute('aria-pressed','false');
+    if(DICT===b) DICT=null;
+  }
+  function stop(){ if(rec){ try{rec.stop();}catch(e){} } }
+  b._stop=stop;
+  b.addEventListener('click',function(){
+    if(on){ stop(); return; }
+    if(DICT&&DICT._stop) DICT._stop();
+    if(micStop) micStop();
+    if(typeof ttsStop==='function') ttsStop();
+    rec=new SR(); rec.lang='en-US'; rec.continuous=true; rec.interimResults=true;
+    said='';
+    rec.onresult=function(e){
+      var live='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal) put(e.results[i][0].transcript);
+        else live+=e.results[i][0].transcript;
+      }
+      if(live.trim()) said=live.trim();
+      setMsg(live.trim()?'Listening… “'+live.trim()+'”':'Listening… Speak your answer. Press Stop when you are done.');
+    };
+    rec.onerror=function(e){
+      var why=e&&e.error;
+      setMsg(why==='not-allowed'||why==='service-not-allowed'?'The microphone is blocked. Select the lock or camera icon next to the web address, allow the microphone, then try again.'
+        :why==='no-speech'?'I did not hear anything. Check that your microphone is on, then press Speak my answer again.'
+        :why==='audio-capture'?'No microphone was found. You can type your answer instead.'
+        :why==='network'?'Speaking needs an internet connection. You can type your answer instead.'
+        :why==='aborted'?'':'Speaking stopped. Press Speak my answer to try again, or type your answer.');
+    };
+    rec.onend=function(){
+      var was=on; stopped();
+      if(was&&/^Listening/.test(lastMsg)) setMsg('Done listening. Read your answer, then type the periods and commas. Press “Check my writing” to find anything missing.');
+    };
+    try{ rec.start(); on=true; DICT=b; b.setAttribute('aria-pressed','true');
+      setMsg('Listening… Speak your answer. Press Stop when you are done.');
+    }catch(err){ stopped(); setMsg('Speaking could not start. Try again, or type your answer.'); }
+  });
+  var lastMsg='', inner=setMsg;
+  setMsg=function(t){ lastMsg=t; inner(t); };
+  return b;
+}
+function talkRow(box){
+  var row=h('div','lrow talkrow'), m=h('span','msg'); m.setAttribute('aria-live','polite');
+  var b=dictateBtn(box,function(t){m.textContent=t;});
+  if(!b) return '';
+  row.append(b,m);
+  return row;
 }
 
 /* ------------------------------------------------------------------ */
@@ -2149,7 +2240,7 @@ function richField(id){
   ed.setAttribute('aria-label','Your written response'); ed.spellcheck=true; ed.setAttribute('data-placeholder','Begin your response here...');
   fillEditor(ed,st.segs);
   var cnt=h('p','words'); var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
-  wrap.append(bar,ed,cnt,msg);
+  wrap.append(bar,ed,talkRow(ed),cnt,msg);
   function sync(){
     var plain=segsPlain(st.segs), n=words(plain), hl=segsHlWords(st.segs), enough=plain.trim().length>=c.min;
     var all=c.cer?(segsHlWords(st.segs,'b')&&segsHlWords(st.segs,'y')&&segsHlWords(st.segs,'g')):hl;

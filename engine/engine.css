@@ -119,6 +119,15 @@ h1{margin:0;font-weight:800;font-size:clamp(2rem,6vw,3.1rem);line-height:1.04;le
 .warn>.listen[aria-pressed="true"]{background:var(--warn-ink);color:var(--warn-bg)}
 .qhead>.listen{flex:none;margin-top:.2em}
 .lrow{margin:2px 0 10px}
+/* Speak my answer (speech to text) */
+.listen.talk::before{
+  -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z'/></svg>") center/contain no-repeat;
+  mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z'/></svg>") center/contain no-repeat}
+.listen.talk::after{content:"Speak my answer"}
+.listen.talk[aria-pressed="true"]{background:#b3261e;border-color:#b3261e;color:#fff}
+.listen.talk[aria-pressed="true"]::after{content:"Stop speaking"}
+.talkrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:8px 0 4px}
+.talkrow .msg{margin:0}
 .ttsrow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin-top:12px;color:var(--muted);font-size:.95rem}
 .ttsrow label{font-weight:700}
 .ttsrow .pair{display:inline-flex;align-items:center;gap:8px}
