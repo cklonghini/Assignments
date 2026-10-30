@@ -61,7 +61,9 @@ lab agreement, and a ready-to-go selfie `photo`.
 **Page**
 - Title format: "Explore - Topic Name" with a dash and capitalized words. The course label sits under the title.
   Exception: hands-on labs have no "Explore - " (for example "Heart Dissection", "Sheep Brain Dissection",
-  "Lung Capacity Lab").
+  "Lung Capacity Lab"). Mastery checks (for students who enroll late and have no grade for a learning period) use
+  "LPn - Course Mastery: Topic", for example "LP2 - Biology Mastery: Inside the Cell". They have no mastery score
+  summary: the teacher reads the written responses to judge what a student knows.
 - Every assignment opens with a "Start here" step: students type their first and last name, read the yellow "Stay on
   this page until you finish" box, and see the sticky progress bars (a "Start" bar, then one per part, with only the
   "Backup saved at" time under them). The rest of the page stays hidden until they select "I’m ready. Start the
@@ -99,7 +101,8 @@ lab agreement, and a ready-to-go selfie `photo`.
 **Questions**
 - Every question must be answerable from the video clips and the reading in its own part.
 - Mix auto-checked questions (drop-downs, multiple choice, typed answers, a memory-trick sentence) with a small
-  number of written responses the teacher grades. Usually 2 written questions per assignment.
+  written responses the teacher grades. There is no set number of written questions: choose what fits each
+  assignment (a bigger mastery check can have one per topic).
 - **Wrong answers get a tip, never the answer.** A tip points to where to look or what to think about. The full
   explanation appears only after a right answer. `node tools/validate.js` warns when a tip contains the answer.
 - **Every written question has a "Check my ideas" list** of 3 to 5 key ideas. Each is a short pattern match that
