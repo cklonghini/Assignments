@@ -44,8 +44,7 @@ window.ASSIGNMENT = {
     support: false,
     src: 'media/balloon-demo.mp4',
     seconds: 294,
-    intro: 'Guiding question: What is lung capacity, and what types of factors affect it? In this lab you will investigate how sex, age, height, and activity level affect lung capacity in humans. Please watch the video Measuring Lung Volume with a Balloon, and then work through the parts below.',
-    after: 'Work from top to bottom. You will learn the lung volumes, make predictions, see how a balloon can measure lung volume, work with one student’s balloon data, and then graph and analyze data from a whole class. Parts 3 and 4 have short clips of just that part of the video. The graph in Part 5 is interactive: you build it yourself and the page checks it. You will also answer three written questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.'
+    intro: 'Guiding question: What is lung capacity, and what types of factors affect it? In this lab you will investigate how sex, age, height, and activity level affect lung capacity in humans. Please watch the video Measuring Lung Volume with a Balloon, and then work through the parts below.'
   },
 
   /* short clips cut from the full video. from/to are the times in the full video (they are shown to students). */

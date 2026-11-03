@@ -22,6 +22,8 @@ function injectPage(){
     tracks+='<div class="track" id="trk'+n+'"><span class="tl">'+lab+'</span><div class="tt" role="progressbar" aria-label="'+lab+' progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tf"></div></div></div>';
   });
   /* the only things that open a new tab are the pictures in a part (figureEl) */
+  var esc=function(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var partLow=String(A2.partWord||'Part').toLowerCase(), gated=!A2.board&&A2.gated!==false&&(A2.parts||[]).length>1;
   var hasPics=!A2.board&&(A2.parts||[]).some(function(p){return (p.images||[]).length;});
   document.body.insertAdjacentHTML('afterbegin',
     '<div class="wrap"><div class="brand"><img src="'+BRAND+'eagle.png" alt="">Elite Academic Academy</div>'
@@ -42,11 +44,14 @@ function injectPage(){
       +A2.courses.map(function(c){c=String(c).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); return '<option value="'+c+'">'+c+'</option>';}).join('')+'</select></div>':'')
     +'<aside class="warn" role="alert" aria-labelledby="warnh"><h2 id="warnh" class="display">Stay on this page until you finish</h2>'
     +'<p><strong>If you close this tab, refresh the page, or leave it for another website, your progress may be lost and you will have to start over.</strong></p>'
-    +'<ul>'+(hasPics?'<li>Selecting a picture opens it full size in a new tab. Keep this tab open and come back to it to enter your answers.</li>':'')
+    +'<ul>'+(gated?'<li>Work from top to bottom. Each '+partLow+' opens when you finish the one before it.</li>':'')
+    +(hasPics?'<li>Selecting a picture opens it full size in a new tab. Keep this tab open and come back to it to enter your answers.</li>':'')
     +'<li>Do not use your browser’s back button or refresh button.</li>'
-    +'<li>When you finish, scroll to the bottom, download your PDF, and upload it to the Canvas assignment.</li></ul>'
+    +'<li>When you finish, scroll to the bottom, download your PDF, and upload it to the Canvas assignment.</li>'
+    /* startNote in assignment.js: one thing students must know before they begin (for example, what to do with no lab kit) */
+    +(A2.startNote?'<li>'+esc(A2.startNote)+'</li>':'')+'</ul>'
     +'<p class="small">This page keeps a backup copy in your browser as you work, but don’t count on it. It disappears if you switch devices, use a private window, or clear your browser data.</p></aside>'
-    +'<p class="intro barnote">The progress bars at the top of the screen show how much of each '+(A2.board?'category':String(A2.partWord||'Part').toLowerCase())+' you have done. They stay at the top as you scroll.</p>'
+    +'<p class="intro barnote">The progress bars at the top of the screen show how much of each '+(A2.board?'category':partLow)+' you have done. They stay at the top as you scroll.</p>'
     +'<div class="sgo"><button type="button" class="btn" id="startGo">I’m ready. Start the assignment</button><span class="msg" id="startMsg" aria-live="polite"></span></div>'
     +'</section>'
     +'<main id="app"></main><noscript><p>This page needs JavaScript. Please open it in a current browser.</p></noscript>'
@@ -182,12 +187,16 @@ if(A.video){
   VIDS.main={n:A.video.seconds,title:A.video.title,label:'Video: '+A.video.title+' (full video)',src:A.video.src};
   VID_ORDER.push('main');
 }
+/* seenFull: the full video (at the top, after an earlier part, or as a "whole" clip) is already above this clip on
+   the page. Before that, a clip is titled "Watch this clip" instead of "Rewatch just this part". */
+var seenFull=!!(A.video&&!A.video.afterPart);
 (BOARD?[]:A.parts||[]).forEach(function(p,pi){
+  if(A.video&&A.video.afterPart&&pi+1>A.video.afterPart) seenFull=true;
   (p.clips||[]).forEach(function(k){
     var c=(A.clips||{})[k];
     if(!c){ if(window.console) console.error('Unknown clip: '+k); return; }
-    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src,of:c.of||'',whole:!!c.whole};
-    if(c.whole) VIDS[k].label='Video ('+(A.partWord||'Part')+' '+(pi+1)+'): '+c.title+' (full video)';
+    VIDS[k]={n:c.seconds,from:c.from,to:c.to,part:pi+1,title:c.title,src:c.src,of:c.of||'',whole:!!c.whole,first:!seenFull};
+    if(c.whole){ VIDS[k].label='Video ('+(A.partWord||'Part')+' '+(pi+1)+'): '+c.title+' (full video)'; if(!c.of||!A.video) seenFull=true; }
     VID_ORDER.push(k);
   });
 });
@@ -219,7 +228,7 @@ function videoBlock(key){
   tr.src=String(info.src).replace(/\.mp4$/i,'.vtt'); tr.default=true; v.append(tr);
   vid.append(v);
   if(info.from!=null){
-    wrap.append(h('p','vidtitle',info.whole?'Watch the video: '+info.title:info.of?'Watch this clip: '+info.title+' ('+clipWhere(info)+')':'Rewatch just this part: '+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
+    wrap.append(h('p','vidtitle',info.whole?'Watch the video: '+info.title:info.of?'Watch this clip: '+info.title+' ('+clipWhere(info)+')':(info.first?'Watch this clip: ':'Rewatch just this part: ')+info.title+' ('+fmt(info.from)+' to '+fmt(info.to)+' in the full video)'),vid,watchEl(v,key));
     return wrap;
   }
   var alt=h('p','vidalt','Captions are on. Use the CC button on the video to turn them off. Watching it here is what your teacher can track.');
@@ -3091,30 +3100,6 @@ function allQuestions(){
   return out;
 }
 
-function photoSentence(qs){
-  var n=qs.filter(function(q){return q.type==='photo';}).length;
-  return n?' You will add '+(NUMWORD[n]||n)+' photo'+(n===1?'':'s')+' of your own work. Each one shows in your PDF.':'';
-}
-
-/* top section when there is no video: start (heading, intro, after) from assignment.js */
-function startSection(){
-  var V=A.start||{}, qs=allQuestions();
-  var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
-  var s=h('section','task vidsec'); s.id='video';
-  s.append(h('h2','display',V.heading||'How this assignment works'));
-  s.append(h('p','intro',V.intro||'Work through each part in order.'));
-  var after=V.after;
-  if(after==null){
-    var pics=(A.parts||[]).some(function(p){return (p.images||[]).length;}), clips=(A.parts||[]).some(function(p){return (p.clips||[]).length;});
-    after='Each part gives you '+(clips?'a short video, something to read, and then lets you':'something to read and then lets you')+' practice and check your work.'+(pics?' Select a picture to open it full size in a new tab.':'');
-    if(nW) after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s')+'.';
-    after+=photoSentence(qs);
-    if(GATED) after+=' Each part opens when you finish the one before it.';
-  }
-  s.append(h('p','intro',after));
-  return s;
-}
-
 /* a picture (station card, diagram). Selecting it opens the full-size image in a new tab.
    text: optional HTML with the words on the picture, shown on request and read by the Listen button */
 function figureEl(im){
@@ -3134,35 +3119,14 @@ function figureEl(im){
   return f;
 }
 
+/* the full video at the top (or after part afterPart). There is no "how this assignment works" overview:
+   Start here tells students how the page works. */
 function videoSection(){
-  if(!A.video) return startSection();
-  var V=A.video, qs=allQuestions();
-  var nHl=qs.filter(function(q){return q.type==='highlight'&&!q.cer;}).length, nCer=qs.filter(function(q){return q.type==='highlight'&&q.cer;}).length;
-  var nW=qs.filter(function(q){return q.type==='written'||q.type==='highlight';}).length;
-  var hasClips=(A.parts||[]).some(function(p){return (p.clips||[]).length;});
+  var V=A.video;
   var s=h('section','task vidsec'); s.id='video';
   s.append(h('h2','display',V.heading||'Watch the video'));
   s.append(h('p','intro',V.intro||('Please watch the video '+V.title+' and then respond to the prompts below.')));
   s.append(videoBlock('main'));
-  var after=V.after;
-  if(after==null){
-    after='Work from top to bottom. Each part gives you '+(hasClips?'a short clip of just that part of the video, ':'')+'a short reading, and then lets you practice and check your work.';
-    if(nW){
-      after+=' You will also answer '+(NUMWORD[nW]||nW)+' written question'+(nW===1?'':'s');
-      if(nHl===1&&nW===1) after+=', and you will use transition words to point to your evidence and highlight them in yellow';
-      else if(nHl===1) after+=', and in one of them you will use transition words to point to your evidence and highlight them in yellow';
-      else if(nHl>1) after+=', and in '+(nHl===nW?'all of them':'some of them')+' you will use transition words to point to your evidence and highlight them in yellow';
-      after+='.';
-      if(nCer) after+=' In '+(nCer===nW?(nW===1?'it':'each one'):(nCer===1?'one of them':'some of them'))+', you will make a claim, support it with evidence, and give your reasoning (expand on your thoughts), then highlight each part in its own color.';
-    }
-    after+=photoSentence(qs);
-    if(GATED) after+=' Each part opens when you finish the one before it.';
-    if(hasClips){
-      var first=null; VID_ORDER.some(function(k){var c=VIDS[k]; if(c.from!=null&&!c.of){first=c;return true;} return false;});
-      if(first) after+=' The times on each clip (like '+fmt(first.from)+' to '+fmt(first.to)+') are times in the full video above.';
-    }
-  }
-  s.append(h('p','intro',after));
   return s;
 }
 
@@ -4526,7 +4490,6 @@ function render(){
   var vAfter=A.video&&A.video.afterPart||0;
   if(SUPPORT&&A.essential) app.append(goalSection());
   if(A.video&&!vAfter) app.append(videoSection());
-  else if(!A.video&&!BOARD) app.append(startSection());
   if(BOARD) app.append(boardSection());
   else (A.parts||[]).forEach(function(p,i){ app.append(buildPart(p,i+1)); if(vAfter===i+1) app.append(videoSection()); });
   gateSetup(app);

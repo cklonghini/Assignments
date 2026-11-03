@@ -13,7 +13,7 @@ assignment is in `assignments/<slug>/assignment.js`.** Building a new assignment
 
 A video (and ideally its captions as an .srt or .vtt), the questions or ideas she wants students to do, the
 course label (for example "Marine Science A"), and a title. Sometimes there is no video, only printed classroom material
-(for example station cards). Then each station becomes a part with its card image; see "No video" in
+(for example station cards). Then each station becomes a part with its card image; see "No video: images" in
 `docs/ASSIGNMENT_FORMAT.md` and `tools/station_images.py`. If something that changes the build is missing, ask
 one short question. If she is not there to answer, make the most reasonable choice and say which one you made.
 
@@ -92,7 +92,10 @@ lab agreement, and a ready-to-go selfie `photo`.
   sits unseen below the screen (in a written answer it waits until they leave the box). Built into the engine.
 - Parts open one at a time. When at least 80% of a part is done (all of a `gate: true` setup part), the student closes it with a button, it folds down, confetti (or seasonal shapes: autumn leaves September 15 to November 30, snowflakes in December and January, hearts in February, clovers and rainbows in March)
   plays, and the next part opens. The Finish and submit section shows only after the last part is closed. The teacher view (`?teacher=tm7k2q` on the link) opens everything. This is built into the engine (see "One part at a time" in `docs/ASSIGNMENT_FORMAT.md`).
-- No "watch for" timestamp boxes. Each clip is titled "Rewatch just this part", with its times in the full video.
+- No "watch for" timestamp boxes. Each clip is titled "Rewatch just this part", with its times in the full video. A clip
+  that comes before the full video on the page (students have not seen it yet) is titled "Watch this clip" instead. Built into the engine.
+- No "How this assignment works" overview section. Start here and its yellow box tell students how the page works; put
+  anything else they must know before they begin (for example, what to do with no lab kit) in `startNote`, which adds it to the yellow box.
 - The full video goes at the top. Do not add the old "Remember, Eagles!" line; the teacher removed it.
 
 **Videos**

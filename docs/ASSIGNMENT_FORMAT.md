@@ -15,7 +15,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `storageKey` | yes | Unique key for saved progress. Change it (`-v2`) if you change the questions after students started |
 | `icon` | no | Inline SVG for the header. Leave out for a play-button icon. May use `var(--primary)`, `var(--receptor)`, `var(--ligand)`, `var(--ink)` |
 | `video` | usually | The full video (below). Leave it out for an assignment with no video, such as station cards |
-| `start` | no | Only when there is no video: the box at the top of the page (below) |
+| `startNote` | no | One thing students must know before they begin (for example, what to do with no lab kit). It shows as the last line in the yellow box in Start here. There is no "How this assignment works" overview: Start here explains how the page works |
 | `partWord` | no | The word before each part number, for example `'Station'` so headings read "Station 1: Overview". Default `'Part'` |
 | `clips` | no | The short clips (below) |
 | `parts` | yes | The parts, in order (below) |
@@ -36,24 +36,16 @@ video: {
   seconds: 324,                      // length, rounded up
   heading: 'Watch the video',        // optional
   intro: '...',                      // optional: replaces the default "Please watch the video..." sentence
-  after: '...',                      // optional: replaces the default "Work from top to bottom..." paragraph
   afterPart: 1                       // optional: show this video section after part 1 instead of at the top
 }
 ```
 
-## No video: start and images
+## No video: images
 
 An assignment can work from pictures instead of a video, for example classroom station cards turned into a
 virtual activity (see `assignments/practice-the-cardiovascular-system`). Leave out `video` and `clips`, and give
-each part `images` (or, for a lab with no pictures, just the `start` box and readings, as in `assignments/lung-capacity-lab`). The top of the page then shows the `start` box instead of a video:
-
-```js
-start: {
-  heading: 'Discovery stations',     // optional, default "How this assignment works"
-  intro: '...',                      // optional: the first paragraph
-  after: '...'                       // optional: the second paragraph
-}
-```
+each part `images` (or, for a lab with no pictures, just readings, as in `assignments/osmosis-lab`). The page then
+starts with Part 1 right after Start here.
 
 Make the images with `tools/station_images.py`: `cards` saves every page of a PDF as a JPEG, and `numbered`
 covers chosen labels on a diagram with numbered circles for "label the diagram" questions (see the notes at the
@@ -155,10 +147,10 @@ with `?support=eagle` on the end. Everyone else uses the plain link.
   Put it on a question, a part, a clip (in `clips`), or the full video (`video: { ..., support: false }`). Keep what a
   student needs to answer the essential question; leave out repeats, extras, harder stretch questions, and a second clip
   that covers the same idea. Usually keep one written question. Leftover questions renumber themselves, and a part
-  whose only clip is left out keeps its reading. Without the full video, the top box explains how the assignment works.
+  whose only clip is left out keeps its reading.
 - When leaving things out makes a sentence wrong (for example "The video stops on its own 5 times" or "You will
-  also answer three written questions"), give the supported version its own wording: `easyIntro` and `easyAfter`
-  on `video` or `start`, and `easyIntro` on a part, replace `intro` and `after` there.
+  also answer three written questions"), give the supported version its own wording: `easyIntro`
+  on `video` or on a part replaces `intro` there.
 - **Goal box.** `essential: { question: 'How does ...?', goals: ['Tell ...', 'Explain ...'] }` at the top level puts
   a "Your goal" box at the top of the supported version: the essential question, then "By the end of this assignment,
   you should feel confident that you can:" and the goals (2 to 4 short "can do" lines in plain words). It has a Listen

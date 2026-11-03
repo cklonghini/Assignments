@@ -26,14 +26,6 @@ window.ASSIGNMENT = {
   partWord: 'Station',            // headings and progress bars say "Station 1" instead of "Part 1"
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="6" y="10" width="52" height="52" rx="12" fill="var(--primary)"/><path d="M32 52 C16 41 13 33 13 27 a9.5 9.5 0 0 1 19 -3 a9.5 9.5 0 0 1 19 3 c0 6 -3 14 -19 25 z" fill="var(--primary-ink)"/></svg>',
 
-  /* no video: this is the box at the top of the page */
-  start: {
-    heading: 'Discovery stations',
-    intro: 'Read each station card, then answer the questions under it.',
-    after: 'Select a card to open it full size in a new tab. If the card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” You will also answer three written questions, and in one of them you will use transition words to point to your evidence and highlight them in yellow.',
-    easyAfter: 'Select a card to open it full size in a new tab. If the card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” You will also answer one written question.'
-  },
-
   parts: [
     /* ---------------------------------------------------------------- Station 1 */
     {

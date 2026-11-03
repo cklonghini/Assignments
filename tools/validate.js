@@ -54,8 +54,10 @@ for (const dir of dirs) {
       if (!im.alt) W(where + ': image ' + im.src + ' has no alt text (screen readers read it)');
     };
     const board = A.board;
+    if (A.start) W('start is no longer shown (Start here explains how the page works). Remove it, and put anything students must know before they begin in startNote');
+    if (A.video && (A.video.after || A.video.easyAfter)) W('video.after is no longer shown. Remove it');
     if (!A.video) {
-      if (!board && !A.start && !(A.parts || []).some(p => (p.images || []).length)) E('Missing video (an assignment with no video needs images in its parts, or a start box)');
+      if (!board && !(A.parts || []).length) E('Missing video or parts');
     } else if (!A.video.src) E('Missing video.src');
     else {
       if (!exists(A.video.src)) E('Video file not found: ' + A.video.src);

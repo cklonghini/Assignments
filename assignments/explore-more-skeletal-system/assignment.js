@@ -37,11 +37,6 @@ window.ASSIGNMENT = {
     + '<path d="M18 33.5 H44" stroke="#fffaf0" stroke-width="2.5" stroke-linecap="round"/></g></svg>',
 
   /* No full video at the top (the teacher's choice): each part has its own clip. */
-  start: {
-    intro: 'Each part has a short clip from the video “The Skeletal System” by Mr. Andersen (Bozeman Science), with just the piece you need for that part. Part 1 starts with a song from Flocabulary, and Part 6 has an article to read.',
-    easyIntro: 'Each part has a short clip from the video “The Skeletal System” by Mr. Andersen (Bozeman Science). Each clip has just the piece you need for that part. Part 6 has an article to read.',
-    after: 'In each part, watch the clip, open the reading, and then practice and check your work. You will also answer three written questions. In one of them you will use transition words to point to your evidence and highlight them in yellow. In another, you will make a claim, support it with evidence, and give your reasoning. Each part opens when you finish the one before it.'
-  },
 
   /* short clips, one or two per part. from/to are the times in Mr. Andersen's video (they are shown to students). */
   clips: {

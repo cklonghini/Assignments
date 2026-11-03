@@ -22,13 +22,6 @@ window.ASSIGNMENT = {
   icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><circle cx="32" cy="14" r="8" fill="var(--ligand)"/><path d="M12 22 Q12 46 32 46 Q52 46 52 22" fill="none" stroke="var(--receptor)" stroke-width="9" stroke-linecap="round"/><rect x="28" y="44" width="8" height="22" fill="var(--receptor)"/></svg>',
 
   /* No single main video: each part has its own whole video. */
-  start: {
-    heading: 'How this assignment works',
-    intro: 'In this assignment you will learn how cells “talk” to each other. You will watch four short videos, read about cell signaling, and try an online interactive.',
-    after: 'Work from top to bottom. Each part gives you a video or a reading, and then lets you practice and check your work. Some questions pop up inside the videos. You will also answer five written questions. Each part opens when you finish the one before it.',
-    easyAfter: 'Work from top to bottom. Each part gives you a video or a reading, and then lets you practice and check your work. Some questions pop up inside the videos. You will also answer two written questions. Each part opens when you finish the one before it.'
-  },
-
   clips: {
     intro:    { src: 'media/intro-cell-signaling.mp4', from: 0, to: 538.4, seconds: 539, title: 'Intro to Cell Signaling', of: 'Intro to Cell Signaling', whole: true },
     overview: { src: 'media/overview-cell-signaling.mp4', from: 0, to: 528.0, seconds: 529, title: 'Overview of Cell Signaling', of: 'Overview of Cell Signaling', whole: true },

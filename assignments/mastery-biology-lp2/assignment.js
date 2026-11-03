@@ -16,12 +16,6 @@ window.ASSIGNMENT = {
   storageKey: 'mastery-biology-lp2-v1',          // must be different for every assignment; change it if the questions change a lot
 
   /* No single main video: each part has its own video or clips. */
-  start: {
-    heading: 'How this assignment works',
-    intro: 'This assignment covers what we learned inside the cell this learning period: cell theory and organelles, homeostasis and feedback loops, cell transport, cell signaling, and enzymes.',
-    after: 'Work from top to bottom. Each part has a video or short clips, a reading, and questions that check your work. Some videos stop on their own and a question pops up. Answer it to keep watching. There is one written question in every part. Write it in your own words, because it shows your teacher what you understand. Each part opens when you finish the one before it.'
-  },
-
   clips: {
     celltheory: { src: 'media/cell-theory.mp4', from: 0, to: 415.5, seconds: 416, title: 'Cell Theory and Organelles', of: 'Cell Theory and Organelles', whole: true },
     homeo:      { src: 'media/clip-homeo.mp4', from: 0, to: 243, seconds: 244, title: 'Homeostasis, stimulus, and response', of: 'Homeostasis' },

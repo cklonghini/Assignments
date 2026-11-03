@@ -40,11 +40,6 @@ window.ASSIGNMENT = {
     + '<circle cx="28" cy="39" r="7" fill="var(--primary-ink)"/><circle cx="28" cy="39" r="3" fill="var(--primary)"/></svg>',
 
   /* No full video at the top (the teacher's choice): each part has its own short clips. */
-  start: {
-    heading: 'How this assignment works',
-    intro: 'This assignment puts joints, movement, and muscles together. First you will practice the vocabulary words out loud. You will never watch a whole long video: each part after that has one to three short clips to watch, then a reading and questions about that part. The clips come from three videos: “Joints” (Crash Course Anatomy & Physiology #20), “Anatomical Terms of Movement” (a short video with music and words on the screen, but no talking), and “Muscles, Part 1: Muscle Cells” (Crash Course Anatomy & Physiology #21). The last two parts use station cards about the muscles of the body.',
-    after: 'Watch each clip before you answer the questions under it. Captions are on. For the movement video, the captions tell you the words on the screen and what the person is doing. Select a picture or station card to open it full size in a new tab. If a card is hard to read, use the Listen button under it, or open “Show the words on this card as text.” Work from top to bottom. Each part opens when you finish the one before it.'
-  },
 
   /* Short clips. from/to are times in the video named by "of" (they are shown to students). */
   clips: {

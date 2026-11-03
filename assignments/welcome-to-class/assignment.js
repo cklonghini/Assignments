@@ -17,12 +17,6 @@ window.ASSIGNMENT = {
   short: 'welcome',
   support: false,
 
-  start: {
-    heading: 'Welcome!',
-    intro: 'I’m so glad you’re here. This assignment helps us get to know each other and shows you the skills you need to do well in our class, and in any online class.',
-    after: 'In Part 1 you will record a short video to introduce yourself. Then you will watch four skill videos. Each video stops on its own a few times, and a question pops up. Answer each question to keep watching. Each part opens when you finish the one before it.'
-  },
-
   clips: {
     setup:      { src: 'media/setting-up.mp4', from: 0, to: 838.4, seconds: 839, title: 'Skill Video: Setting Up for Success', of: 'Skill Video: Setting Up for Success', whole: true },
     cer:        { src: 'media/cer.mp4', from: 0, to: 505.6, seconds: 506, title: 'Skill Video: Claim, Evidence, Reasoning (CER)', of: 'Skill Video: Claim, Evidence, Reasoning (CER)', whole: true },

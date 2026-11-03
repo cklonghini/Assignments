@@ -52,11 +52,8 @@ window.ASSIGNMENT = {
     + '<ellipse cx="32" cy="27" rx="4" ry="3" fill="var(--primary-ink)"/></svg>',
 
   /* No full video at the top. Each lab video sits in its own part as a whole clip. */
-  start: {
-    heading: 'How this lab works',
-    intro: 'In this lab you will use gummy bears to see osmosis in action. Part 1: watch an Amoeba Sisters video about osmosis and answer the questions that pop up in it. Part 2: use an interactive diagram to see what happens to a cell in hypotonic, isotonic, and hypertonic solutions. Part 3: watch the lab setup video, set up your gummy bear experiment in plain water, salt water, and sugar water, write your hypothesis, and measure your gummy bears before they go in the water. You will need some sugar or syrup from home. Part 4: come back about 24 hours later, measure each gummy bear again, and explain your results.',
-    after: 'No lab kit? If you did not get your lab kit, or something is missing from it, let your teacher of record (TOR) know right away so they can get a kit to you. You still do this lab: watch all of the videos, and anywhere you are asked for a photo, add a screenshot of one of the pictures from the videos instead.'
-  },
+  /* startNote: shown in the yellow box in Start here */
+  startNote: 'For this lab you need your lab kit and some sugar or syrup from home. No lab kit? If you did not get your lab kit, or something is missing from it, let your teacher of record (TOR) know right away so they can get a kit to you. You still do this lab: watch all of the videos, and anywhere you are asked for a photo, add a screenshot of one of the pictures from the videos instead.',
 
   clips: {
     /* Part 1: the Amoeba Sisters video, cut before the water potential section */

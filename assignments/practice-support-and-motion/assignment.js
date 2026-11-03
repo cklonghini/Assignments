@@ -28,14 +28,6 @@ window.ASSIGNMENT = {
     + '<path d="M24 20 a6 6 0 1 1 8 5 v22 a6 6 0 1 1 -8 5 a6 6 0 1 1 -2 -9 l8 -2 v-14 l-8 -2 a6 6 0 1 1 2 -5 z" fill="var(--primary-ink)" transform="rotate(35 32 36)"/></svg>',
 
   /* The full video is in Part 2, with questions inside it, so there is no separate video at the top. */
-  start: {
-    heading: 'How this assignment works',
-    intro: 'First you will practice this unit’s vocabulary words out loud. Then you will watch the Amoeba Sisters video “Skeletal System.” The video stops on its own 6 times for a question.',
-    easyIntro: 'First you will practice this unit’s vocabulary words out loud. Then you will watch the Amoeba Sisters video “Skeletal System.” The video stops on its own 2 times for a question.',
-    after: 'After the video, you will label a skeleton and write two short responses. Work from top to bottom. Each part opens when you finish the one before it.',
-    easyAfter: 'After the video, you will label a skeleton and write one short response. Work from top to bottom. Each part opens when you finish the one before it.'
-  },
-
   /* Short clips, one or two per part. from/to are the times in the full video (they are shown to students). */
   clips: {
     connective: { src: 'media/clip-connective.mp4', from: 23.902, to: 37.85, seconds: 14, title: 'Ligaments, tendons, and cartilage' },

@@ -35,17 +35,12 @@ window.ASSIGNMENT = {
     intro: 'Watch this short video from Mrs. Kinzy. She will hand you your case.'
   },
   */
-  start: {
-    heading: 'Your case',
-    intro: 'You are a veterinary technician (vet tech) at Eagle Valley Animal Hospital. A vet tech helps the veterinarian examine animals, run lab tests, and explain care to owners. Today, Mrs. Kinzy brought in her dog, Gus. Gus eats a lot, but he keeps losing weight. Your job is to find out why.',
-    after: 'Work from top to bottom. First you will meet Gus and learn the science you need: chemical reactions, enzymes, and digestion. Then you will run lab tests, rule out possible causes one at a time, and write Gus’s case report. Each part has a short reading, and each part opens when you finish the one before it.'
-  },
 
   parts: [
     /* ---------------------------------------------------------------- Part 1 */
     {
       title: 'Meet your patient',
-      intro: 'Read Gus’s patient chart. Then learn two big ideas that will help you understand his problem: metabolism and homeostasis.',
+      intro: 'You are a veterinary technician (vet tech) at Eagle Valley Animal Hospital. A vet tech helps the veterinarian examine animals, run lab tests, and explain care to owners. Today, Mrs. Kinzy brought in her dog, Gus. Gus eats a lot, but he keeps losing weight. Your job is to find out why. Read Gus’s patient chart. Then learn two big ideas that will help you understand his problem: metabolism and homeostasis.',
       images: [
         { src: 'media/gus-checkin.jpg', width: 320, alt: 'Gus, a yellow Labrador retriever with white fur, a pink nose, and a red leash, looking up at the camera at the animal hospital.', caption: 'Gus at check-in today.' }
       ],
