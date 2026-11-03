@@ -260,6 +260,7 @@ window.ASSIGNMENT = {
     {
       title: 'Cell signals interactive',
       intro: 'Watch the Dropping Signals video. Then open the interactive, and answer the questions below for each cell.',
+      link: { url: 'https://learn.genetics.utah.edu/content/cells/signals/', text: 'Open the Dropping Signals interactive', note: 'You need this website for Part 4. It opens in a new tab. Keep this tab open and come back here to answer.' },
       clips: ['dropping'],
       read: '<p><b>Do this:</b> Open the <a href="https://learn.genetics.utah.edu/content/cells/signals/" target="_blank" rel="noopener noreferrer">Dropping Signals interactive on the Learn Genetics website</a> (it opens in a new tab). For each cell, click the info icon to read about it, then drop each signal onto the cell and watch how it responds. Come back to this tab and choose your answers below.</p>'
         + '<p><b>What the four signals mean:</b></p>'

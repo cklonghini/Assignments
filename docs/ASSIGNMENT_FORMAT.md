@@ -103,6 +103,9 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 {
   title: 'Domains and kingdoms',
   intro: 'Optional plain-text paragraph at the top of the part.',
+  link: { url: 'https://...', text: 'Open the interactive', note: 'Step 1: open this website.' }, // optional:
+                                            // a big always-visible button to a website students must use
+                                            // (`links: [ ... ]` for more than one). Do not hide a needed link only in `read`.
   clips: ['domains', 'kingdoms'],           // clip names, shown in this order
   images: [ { src: 'media/station-card-1.jpg', alt: '...', caption: 'Station 1 card.', text: '<p>...</p>' } ],
   read: '<p><b>Read:</b> ...</p>',          // optional green reading box (HTML), folded until the student opens it
@@ -112,7 +115,7 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 }
 ```
 
-Order on the page: `intro`, clips, images, `read`, `tableHtml`, questions.
+Order on the page: `intro`, `link`, clips, images, `read`, `tableHtml`, questions.
 
 **Focus:** every page has a "Focus" switch at the top (an accommodation). When it is on, every block of a part
 (a video, the reading box, a question) fades out except the one the student clicked, tabbed into, or scrolled to. Nothing

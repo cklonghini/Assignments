@@ -561,3 +561,10 @@ details.readfold>summary:hover{background:rgba(23,112,63,.08)}
 body.masking #app>.task>*:not(h2):not(.lrow):not(.mfocus),body.masking #app>:not(.task):not(.mfocus){opacity:.1;filter:grayscale(1);transition:opacity .2s}
 body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--gold);border-radius:8px}
 @media print{body.masking #app *{opacity:1!important;filter:none!important}}
+
+/* part link: a website students must open, always visible */
+.sitelink{margin:0 0 16px;padding:14px 16px;border:2px solid var(--primary);border-radius:10px;max-width:68ch}
+.sitenote{margin:0 0 10px;font-weight:700}
+.btn.sitebtn{display:inline-block;text-decoration:none;font-size:1.08rem;padding:10px 20px}
+.btn.sitebtn::after{content:" \2197"}
+.siteurl{margin:8px 0 0;font-size:.88rem;word-break:break-all;opacity:.8}

@@ -2867,6 +2867,16 @@ function buildQuestion(q,s,tile){
 function buildPart(p,n){
   var s=part(n,p.title);
   if(p.intro) s.append(h('p','intro',p.intro));
+  /* a website students must open, shown right away (not folded in the reading box) */
+  (p.links||(p.link?[p.link]:[])).forEach(function(L){
+    var box=h('div','sitelink');
+    if(L.note) box.append(h('p','sitenote',L.note));
+    var a=h('a','btn sitebtn',L.text||'Open the website');
+    a.href=L.url; a.target='_blank'; a.rel='noopener noreferrer';
+    box.append(a);
+    box.append(h('p','siteurl',L.url));
+    s.append(box);
+  });
   var first=null;
   (p.clips||[]).forEach(function(k){ if(VIDS[k]){ var b=videoBlock(k); s.append(b); if(!first) first=b; } });
   /* questions with "at" pop up inside the part's first video at that time (seconds into that video) */
