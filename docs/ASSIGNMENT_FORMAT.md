@@ -126,7 +126,7 @@ until everything in this part and every part before it is done (every question a
 photo box filled in). A note under the part says which parts are locked.
 Once the later parts open, they stay open. Use it for a lab's safety and setup step.
 
-`images` (optional): pictures such as station cards. Selecting one opens it full size in a new tab. `alt` is
+`images` (optional): pictures such as station cards. Add `width: 320` to show a picture no wider than that many pixels (for a photo that should not fill the page). Selecting one opens it full size in a new tab. `alt` is
 required for screen readers. `text` (HTML) is the words on the picture: students can open it as text, and a
 Listen button under the picture reads it aloud. Give `text` to any picture that has words students need.
 
@@ -334,6 +334,89 @@ from comparing them. Example: Part 2 of `assignments/osmosis-lab/`.
   explore: true,                             // the "Try it" slider (default true)
   items: [ { name: 'Cell 1', who: 'optional line under the name', outside: 0 },
            { name: 'Cell 2', outside: 4, inside: 3, explain: 'optional; replaces the automatic “Right.” sentence' } ] }
+```
+
+### reaction: a reaction race with and without an enzyme (auto-checked, one point per box)
+
+Two cells hold the same reactants (blue and green dots). Students press "Add enzyme to Cell 2," then "Start the
+reaction," and watch a clock and a product counter in each cell while reactant pairs join into purple product. Each
+product molecule is `each` mg. When the run ends, the number boxes open (they work like a `numbers` question), so
+students can work out each reaction rate from what they saw. `calculator: true` puts the calculator next to those
+boxes. Example: Part 2 of `assignments/explore-enzymes-case-study/`.
+
+```js
+{ type: 'reaction', text: 'Add the enzyme to Cell 2, then start the reaction...',
+  seconds: 4, pairs: 20, each: 1, unit: 'mg',            // run time, reactant pairs per cell, mg per product molecule
+  cells: [ { name: 'Cell 1: no enzyme', rate: 0.5 },     // product molecules per second
+           { name: 'Cell 2: enzyme added', rate: 4, enzyme: true } ],
+  calculator: true,
+  items: [ { label: 'Reaction rate in Cell 1', unit: 'mg/s', between: [0.5, 0.5], tip: '...' } ] }
+```
+
+### lockkey: match substrates to enzymes by shape (auto-checked, one point per enzyme)
+
+Each enzyme is drawn with a notch on its right side (its active site). Students pick a molecule (or drag it) and try it
+in an enzyme. A molecule whose shape matches snaps into the active site and splits into two products; a wrong one
+stays outside with the enzyme's `tip`. Shapes: `square`, `triangle`, `round`, `step`. `mutation` (optional, the name
+of one enzyme) adds a "Try it" switch after that enzyme is solved: it changes the active site's shape, and the
+substrate no longer fits (not scored). Example: Part 3 of `assignments/explore-enzymes-case-study/`.
+
+```js
+{ type: 'lockkey', text: 'Match each substrate to the enzyme whose active site it fits.',
+  enzymes: [ { name: 'Protease', shape: 'square', tip: 'Point, do not tell.', ok: 'Shown when it fits.' } ],
+  substrates: [ { name: 'Protein', shape: 'square' } ],
+  mutation: 'Protease',
+  explain: 'Shown when every enzyme has its substrate.' }
+```
+
+### dial: find an enzyme's best temperature or pH (auto-checked, one point per enzyme)
+
+Students choose an enzyme and move a slider. The enzyme's active site bends out of shape and a rate bar falls as the
+value moves away from the enzyme's best value, until it is denatured. Every value they try adds a dot to a graph of
+their own data. For each enzyme they press "Record ... as the best pH" (checked: within `tol` of `best`; default one
+slider step). The rate is 100% at `best` and falls off on each side: `low` and `high` set how fast (bigger is wider).
+`shape` and `subColor` draw the enzyme and its substrate as in `lockkey`. Examples: the temperature test in Part 3 and
+the pH test in Part 4 of `assignments/explore-enzymes-case-study/`.
+
+```js
+{ type: 'dial', text: 'Find the pH where each enzyme works fastest...',
+  factor: 'pH', sliderLabel: 'pH', xLabel: 'pH', unit: '',      // unit: '°C' for temperature
+  min: 0, max: 12, step: 0.5, start: 6, graphStep: 1, tol: 0.5,
+  tip: 'Shared tip for a wrong value.',
+  enzymes: [ { name: 'Pepsin', where: 'stomach', best: 2, low: 1.3, high: 1.6, shape: 'square', ok: 'Shown when right.' } ] }
+```
+
+### diagnosis: a case board that tests possible causes one at a time (auto-checked, one point per test)
+
+A board shows the possible causes. Students first choose a hypothesis (saved and printed on the PDF, not scored; it can
+be changed until they run Test 1). Then each test opens in order: students read how it works, press its run button to
+see the data (`chart`, `charts`, and/or `result` HTML), and choose what it means for one cause (a menu checked
+against `answer`). The board crosses out each cause that is ruled out and marks the one that is found. When every
+test is right, the `diagnosis` box (HTML) appears. Example: Part 5 of `assignments/explore-enzymes-case-study/`.
+
+```js
+{ type: 'diagnosis', text: 'Case board...',
+  options: ['Ruled out', 'Still possible', 'This is the cause'],   // optional; this is the default
+  causes: [ { key: 'ph', name: 'Abnormal pH', about: 'One short line.' } ],
+  tests: [ { name: 'Test 1: ...', cause: 'ph', run: 'Run the pH test', how: '<p>How the test works.</p>',
+             chart: { ... }, result: '<p>optional words shown with the data</p>',
+             ask: 'optional question above the menu', answer: 'Ruled out', tip: '...', explain: '...' } ],
+  diagnosis: '<p><b>Diagnosis:</b> ...</p>' }
+```
+
+### chart and charts: data to read, on any question
+
+Any question can show line or bar charts drawn from numbers, above its answers: `chart: { ... }` or
+`charts: [ { ... }, { ... } ]` (side by side, two to a row). The first data set is blue and solid, the second pink and
+dashed, so they can be told apart without color; a legend sits under the chart. `alt` describes the chart for screen
+readers (do not give away the answer).
+
+```js
+chart: { title: 'Small intestine: protein', alt: '...',
+  x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Protein left (mg/mL)' },
+  lines: [ { name: 'Healthy dog', pts: [[0, 1], [30, 0.1]] }, { name: 'Gus', pts: [[0, 1], [30, 0.75]] } ] }
+// a bar chart: x: { cats: ['Protease', 'Lipase'], label: 'Enzyme' }, bars: [ { name: 'Healthy dog', values: [100, 100] } ],
+// valueLabels: true and valueUnit: '%' print each bar's value on top of it
 ```
 
 ### numbers: type one or more numbers (auto-checked, one point each)

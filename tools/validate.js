@@ -214,6 +214,53 @@ for (const dir of dirs) {
               nAuto++;
             });
             break;
+          case 'reaction': {
+            const cells = q.cells || [];
+            if (cells.length && !cells.some(c => c.enzyme)) E(w + ': one of the cells needs enzyme: true');
+            cells.forEach((c, i) => { if (!c.name || !(c.rate >= 0)) E(w + ' cell ' + (i + 1) + ' needs a name and a rate'); });
+            (q.items || []).forEach((it, i) => {
+              if (!it.label || !(Array.isArray(it.between) && it.between.length === 2)) E(w + ' item ' + (i + 1) + ' needs label and between: [low, high]');
+              if (!(it.tip || q.tip)) E(w + ' item ' + (i + 1) + ' needs a tip');
+              nAuto++;
+            });
+            break;
+          }
+          case 'lockkey': {
+            const shapes = ['square', 'triangle', 'round', 'step'];
+            if (!(q.enzymes || []).length) E(w + ' has no enzymes');
+            (q.enzymes || []).forEach((e, i) => {
+              if (!e.name || !shapes.includes(e.shape)) E(w + ' enzyme ' + (i + 1) + ' needs a name and a shape (' + shapes.join(', ') + ')');
+              if (!(q.substrates || []).some(sb => sb.shape === e.shape)) E(w + ' enzyme ' + (i + 1) + ': no substrate has its shape');
+              needTip(e.tip, []);
+              nAuto++;
+            });
+            (q.substrates || []).forEach((sb, i) => { if (!sb.name || !shapes.includes(sb.shape)) E(w + ' substrate ' + (i + 1) + ' needs a name and a shape'); });
+            if (q.mutation && !(q.enzymes || []).some(e => e.name === q.mutation)) E(w + ': mutation must be the name of one of the enzymes');
+            if (!q.explain) E(w + ' needs an explanation');
+            break;
+          }
+          case 'dial':
+            if (!(q.max > q.min) || !(q.step > 0)) E(w + ' needs min, max and step');
+            if (!(q.enzymes || []).length) E(w + ' has no enzymes');
+            (q.enzymes || []).forEach((e, i) => {
+              if (!e.name || typeof e.best !== 'number' || !(e.best >= q.min && e.best <= q.max)) E(w + ' enzyme ' + (i + 1) + ' needs a name and a best value inside min to max');
+              if (!(e.tip || q.tip)) E(w + ' enzyme ' + (i + 1) + ' needs a tip');
+              nAuto++;
+            });
+            break;
+          case 'diagnosis': {
+            const keys = (q.causes || []).map(c => c.key), opts = q.options || ['Ruled out', 'Still possible', 'This is the cause'];
+            if ((q.causes || []).length < 2) E(w + ' needs at least 2 causes');
+            (q.tests || []).forEach((t, i) => {
+              if (!keys.includes(t.cause)) E(w + ' test ' + (i + 1) + ': cause must be one of the cause keys (' + keys.join(', ') + ')');
+              if (!opts.includes(t.answer)) E(w + ' test ' + (i + 1) + ': answer must be one of: ' + opts.join(', '));
+              needTip(t.tip, [t.answer]);
+              if (!(t.chart || t.charts || t.result)) W(w + ' test ' + (i + 1) + ' shows no data (chart, charts, or result)');
+              nAuto++;
+            });
+            if (!(q.tests || []).length) E(w + ' has no tests');
+            break;
+          }
           case 'multi':
             if (!Array.isArray(q.options) || q.options.length < 2) E(w + ' needs at least 2 options');
             if (!Array.isArray(q.answers) || !q.answers.length) E(w + ' needs answers');

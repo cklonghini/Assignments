@@ -106,7 +106,7 @@ function fewer(id,options,right,keep){
 }
 /* question ids follow question numbers, so a supported version with questions left out saves under its own key */
 var KEY=(A.storageKey||('assignment-'+TITLE))+(TRIMMED?'|support':'')+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},recs:{},course:'',agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},recs:{},course:'',agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{},sims:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -126,6 +126,7 @@ function copyMeta(f,o){
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
   f.mnRes=Array.isArray(o.mnRes)?o.mnRes.slice(0,20):[];
   f.graphs=(o.graphs&&typeof o.graphs==='object')?o.graphs:{};
+  f.sims=(o.sims&&typeof o.sims==='object')?o.sims:{};
   f.tts=(o.tts===0.8||o.tts===1.15)?o.tts:0.95;
   f.voice=o.voice==='male'?'male':'';
   f.onPart=typeof o.onPart==='number'&&o.onPart>=1?Math.floor(o.onPart):0;
@@ -1096,6 +1097,446 @@ function toniQ(id,q){
     paint();
     wrap.append(card);
   });
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: charts from data (chart / charts on any question)         */
+/* ------------------------------------------------------------------ */
+/* A small line or bar chart drawn from numbers in assignment.js, for data students read (a healthy dog and a patient,
+   for example). c: {title, alt, x: {min, max, step, label} or {cats: [...], label}, y: {min, max, step, label},
+   lines: [{name, pts: [[x, y], ...]}] or bars: [{name, values: [...]}]}. The first series is blue and solid, the
+   second pink and dashed, so the two can be told apart without color. */
+var CHART_COLORS=['#1f6fb2','#d63f78','#2d2926','#3a8a4f'], CHART_DASH=['','10 7','3 5',''];
+function chartSvg(c){
+  var x=c.bars?{cats:c.x.cats,label:c.x.label}:c.x;
+  var fr=gFrame({title:c.title||false,x:x,y:c.y}), s=fr.s, series=c.lines||c.bars||[];
+  if(c.lines) c.lines.forEach(function(ln,i){
+    var pts=ln.pts.map(function(p){return fr.X(p[0]).toFixed(1)+','+fr.Y(Math.max(c.y.min,Math.min(c.y.max,p[1]))).toFixed(1);}).join(' ');
+    s.push('<polyline points="'+pts+'" fill="none" stroke="'+(ln.color||CHART_COLORS[i%4])+'" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"'+(CHART_DASH[i%4]?' stroke-dasharray="'+CHART_DASH[i%4]+'"':'')+'/>');
+  });
+  if(c.bars){
+    var n=c.bars.length, bw=fr.bw/Math.max(1,n)*(n>1?1.5:1);
+    c.x.cats.forEach(function(cat,ci){
+      c.bars.forEach(function(b,bi){
+        var v=b.values[ci], left=fr.band(ci)-bw*n/2+bi*bw, top=fr.Y(v), base=fr.Y(c.y.min);
+        s.push('<rect x="'+left.toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+(bw-4).toFixed(1)+'" height="'+(base-top).toFixed(1)+'" fill="'+(b.color||CHART_COLORS[bi%4])+'"'+(bi%2?' fill-opacity=".85" stroke="#2d2926" stroke-width="1.5" stroke-dasharray="5 4"':'')+'/>');
+        if(c.valueLabels) s.push('<text x="'+(left+(bw-4)/2).toFixed(1)+'" y="'+(top-6).toFixed(1)+'" text-anchor="middle" font-size="14" font-weight="700" fill="'+GC.ink+'">'+esc(nfmt(v)+(c.valueUnit||''))+'</text>');
+      });
+    });
+  }
+  /* the legend is HTML under the chart (chartLegend), so it never covers the data */
+  if(false){
+    var lx=fr.L+fr.pw-210, ly=fr.T+14;
+    s.push('<rect x="'+(lx-10)+'" y="'+(ly-14)+'" width="216" height="'+(series.length*24+10)+'" fill="#ffffff" fill-opacity=".9" stroke="'+GC.grid+'"/>');
+    series.forEach(function(sr,i){
+      var y0=ly+i*24, col=sr.color||CHART_COLORS[i%4];
+      if(c.lines) s.push('<line x1="'+lx+'" x2="'+(lx+36)+'" y1="'+y0+'" y2="'+y0+'" stroke="'+col+'" stroke-width="4"'+(CHART_DASH[i%4]?' stroke-dasharray="'+CHART_DASH[i%4]+'"':'')+'/>');
+      else s.push('<rect x="'+lx+'" y="'+(y0-8)+'" width="36" height="16" fill="'+col+'"/>');
+      s.push('<text x="'+(lx+46)+'" y="'+(y0+5)+'" font-size="15" fill="'+GC.ink+'">'+esc(sr.name)+'</text>');
+    });
+  }
+  s.push('</svg>');
+  return s.join('');
+}
+function chartsEl(list){
+  var wrap=h('div','charts'+(list.length>1?' many':''));
+  list.forEach(function(c){
+    var fig=h('figure','gfig chartfig'); fig.setAttribute('role','img'); fig.setAttribute('aria-label',c.alt||c.title||'Chart');
+    /* charts side by side are drawn smaller, so their words are drawn bigger */
+    fig.innerHTML=list.length>1?chartSvg(c).replace(/font-size="(\d+)"/g,function(m,n){return 'font-size="'+Math.round(n*1.4)+'"';}):chartSvg(c);
+    var ser=c.lines||c.bars||[];
+    if(ser.length>1){
+      var lg=h('p','clegend');
+      ser.forEach(function(sr,i){
+        var col=sr.color||CHART_COLORS[i%4], it=h('span','clitem');
+        it.innerHTML=c.lines?'<svg viewBox="0 0 40 12" aria-hidden="true"><line x1="2" x2="38" y1="6" y2="6" stroke="'+col+'" stroke-width="4"'+(CHART_DASH[i%4]?' stroke-dasharray="'+CHART_DASH[i%4].replace(/\d+/g,function(n){return Math.round(n*0.7);})+'"':'')+'/></svg>':'<svg viewBox="0 0 40 12" aria-hidden="true"><rect x="8" y="0" width="24" height="12" fill="'+col+'"/></svg>';
+        it.append(sr.name); lg.append(it);
+      });
+      fig.append(lg);
+    }
+    if(c.caption){ var cap=h('figcaption'); cap.append(itxt(c.caption)); fig.append(cap); }
+    wrap.append(fig);
+  });
+  return wrap;
+}
+function simState(id){ if(!S.sims) S.sims={}; return S.sims[id]||(S.sims[id]={}); }
+var STILL=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ------------------------------------------------------------------ */
+/* Builders: reaction race (with and without an enzyme)                */
+/* ------------------------------------------------------------------ */
+/* Two cells hold the same reactants. Students add enzyme to one cell, start the reaction, and watch a clock and a
+   product counter in each cell. Each product molecule is 1 mg (or q.each). When the run ends, the number boxes
+   (items, checked like a numbers question) open so students can work out each reaction rate. */
+function rxSvg(cell,ci,made,enz,seed,pairs){
+  var r=rng(seed), s='<svg viewBox="0 0 260 180" role="img" aria-label="'+esc(plain(cell.name)+': '+made+' product molecules made'+(enz?', enzyme added':''))+'">';
+  s+='<rect x="6" y="6" width="248" height="168" rx="34" fill="var(--rxcell)" stroke="var(--ink)" stroke-width="3"/>';
+  var spots=[], tries=0;
+  while(spots.length<pairs&&tries<4000){
+    tries++;
+    var x=26+r()*190, y=26+r()*124;
+    if(enz&&((x>96&&x<164&&y>62&&y<118))) continue;
+    if(spots.some(function(p){return Math.abs(p[0]-x)<30&&Math.abs(p[1]-y)<18;})) continue;
+    spots.push([x,y]);
+  }
+  spots.forEach(function(p,i){
+    if(i<made) s+='<g class="rxprod"><circle cx="'+(p[0]+4).toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="7.5" fill="var(--rxprod)"/><circle cx="'+(p[0]+13).toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="7.5" fill="var(--rxprod)"/></g>';
+    else s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="6.5" fill="var(--rxa)"/><circle cx="'+(p[0]+17).toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="6.5" fill="var(--rxb)"/>';
+  });
+  if(enz) [[112,78],[146,96],[118,108]].forEach(function(p){
+    s+='<path d="M'+p[0]+' '+(p[1]-13)+' a14 14 0 1 0 12 22 l-9 -9 l9 -6 a14 14 0 0 0 -12 -7z" fill="var(--rxenz)" stroke="var(--ink)" stroke-width="1.5"/>';
+  });
+  return s+'</svg>';
+}
+function reactionQ(id,q){
+  var wrap=h('div','rx'), st=simState(id), T=q.seconds||4, pairs=q.pairs||20, each=q.each||1, unit=q.unit||'mg';
+  var cells=q.cells||[{name:'Cell 1: no enzyme',rate:0.5},{name:'Cell 2: with enzyme',rate:4,enzyme:true}];
+  wrap.append(hh('p','tlegend','<span class="rxkey" style="background:var(--rxa)"></span><span class="rxkey" style="background:var(--rxb)"></span> reactants &nbsp; <span class="rxkey wide" style="background:var(--rxprod)"></span> product (1 molecule = '+esc(nfmt(each)+' '+unit)+') &nbsp; <span class="rxkey" style="background:var(--rxenz);border-radius:40% 0 40% 40%"></span> enzyme'));
+  var clock=h('p','rxclock'), grid=h('div','rxcells'), views=[];
+  cells.forEach(function(c,ci){
+    var box=h('div','rxcell'), nm=h('h3','tname'); nm.append(itxt(c.name));
+    var pic=h('div','rxpic'), cnt=h('p','rxcount'); cnt.setAttribute('aria-live','off');
+    box.append(nm,pic,cnt); grid.append(box); views.push({c:c,pic:pic,cnt:cnt});
+  });
+  var row=h('div','row gap'), addB=h('button','btn',q.addLabel||('Add enzyme to '+plain(cells.filter(function(c){return c.enzyme;}).map(function(c){return c.name.split(':')[0];})[0]||'the cell'))), runB=h('button','btn',q.runLabel||'Start the reaction');
+  addB.type=runB.type='button';
+  row.append(addB,runB);
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  var nums=h('div','rxnums');
+  if((q.items||[]).length){ nums.append(h('p','gsteph',q.itemsIntro||'Now use your results. Reaction rate = amount of product made ÷ time.')); if(q.calculator) nums.append(calcEl(id)); nums.append(numbersQ(id,q)); }
+  wrap.append(grid,clock,row,msg,nums);
+  var running=false;
+  function draw(t){
+    views.forEach(function(v,ci){
+      var enz=!!(v.c.enzyme&&st.enz), rate=enz?v.c.rate:(v.c.enzyme?(v.c.without!=null?v.c.without:cells[0].rate):v.c.rate);
+      var made=Math.min(pairs,Math.floor(rate*t/each+1e-9));
+      v.pic.innerHTML=rxSvg(v.c,ci,made,enz,KEY+id+'_'+ci,pairs);
+      v.cnt.textContent='Product made: '+nfmt(made*each)+' '+unit;
+    });
+    clock.textContent='Time: '+t.toFixed(1)+' of '+T+' seconds';
+  }
+  function paint(){
+    addB.disabled=!!st.enz||running; runB.disabled=!st.enz||running;
+    runB.textContent=st.ran?(q.againLabel||'Run it again'):(q.runLabel||'Start the reaction');
+    nums.hidden=!st.ran&&!TEACHER;
+    msg.removeAttribute('data-s');
+    msg.textContent=!st.enz?'Step 1: add the enzyme. Step 2: start the reaction and watch both cells.':(!st.ran?'Now start the reaction and watch the clock and both product counters.':(q.after||'The reaction ran for '+T+' seconds. Read the product counters, then answer below.'));
+  }
+  addB.addEventListener('click',function(){ st.enz=true; draw(0); paint(); commit(); });
+  runB.addEventListener('click',function(){
+    if(running) return;
+    running=true; paint();
+    var t0=null;
+    function step(now){
+      if(!wrap.isConnected){ running=false; return; }
+      if(t0===null) t0=now;
+      var t=Math.min(T,(now-t0)/1000*(q.speed||1));
+      draw(t);
+      if(t<T) requestAnimationFrame(step);
+      else { running=false; st.ran=true; paint(); commit(); }
+    }
+    if(STILL){ draw(T); running=false; st.ran=true; paint(); commit(); }
+    else requestAnimationFrame(step);
+  });
+  draw(st.ran?T:0); paint();
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: enzyme shapes (lock and key)                              */
+/* ------------------------------------------------------------------ */
+/* Each enzyme is drawn with a notch (its active site) on its right side; each substrate has the matching key shape.
+   The notch and key are lists of points from the top of the active site to the bottom (x below 150 is inside the
+   enzyme). */
+var LK_SHAPES={
+  square:[[150,50],[122,50],[122,90],[150,90]],
+  triangle:[[150,46],[118,70],[150,94]],
+  round:(function(){var p=[]; for(var a=270;a>=90;a-=15){var r=a*Math.PI/180; p.push([150+23*Math.cos(r),70-23*Math.sin(r)]);} return p;})(),
+  step:[[150,48],[136,48],[136,62],[120,62],[120,92],[150,92]],
+  mutant:[[150,50],[139,57],[127,49],[121,73],[137,79],[127,91],[150,91]]
+};
+var LK_SUB=['var(--ligand)','#e2a72a','#3a9a5b','#8a6fd6'];
+function lkPts(shape,jit,seed){
+  var base=LK_SHAPES[shape]||LK_SHAPES.square;
+  if(!jit) return base;
+  var r=rng(seed);
+  return base.map(function(p,i){ return (i===0||i===base.length-1)?p:[p[0]+(r()-0.5)*2*jit,p[1]+(r()-0.5)*2*jit]; });
+}
+function ptsStr(pts){return pts.map(function(p){return p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' L');}
+/* o: {site: points, key: points or null, keyColor, at: 'bound' | 'apart' | 'split' | 'off', name, enzColor} */
+function lkSvg(o,label,uid){
+  var s='<svg viewBox="0 0 300 140" role="img" aria-label="'+esc(label)+'">';
+  s+='<defs><clipPath id="'+uid+'t"><rect x="100" y="0" width="200" height="70"/></clipPath><clipPath id="'+uid+'b"><rect x="100" y="70" width="200" height="70"/></clipPath></defs>';
+  s+='<path d="M40 12 L150 12 L'+ptsStr(o.site)+' L150 128 L40 128 Q12 128 12 100 L12 40 Q12 12 40 12 Z" fill="'+(o.enzColor||'var(--receptor)')+'" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>';
+  if(o.name) s+='<text x="66" y="76" text-anchor="middle" font-size="'+(o.name.length>9?14:17)+'" font-weight="700" fill="#16213a">'+esc(o.name)+'</text>';
+  if(o.key){
+    var piece='<path d="M150 36 L'+ptsStr(o.key)+' L150 104 L206 104 Q218 104 218 92 L218 48 Q218 36 206 36 Z" fill="'+o.keyColor+'" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>';
+    s+='<g class="lkkey" data-at="'+o.at+'"><g class="lkt" clip-path="url(#'+uid+'t)">'+piece+'</g><g class="lkb" clip-path="url(#'+uid+'b)">'+piece+'</g></g>';
+  } else {
+    s+='<path d="M150 36 L'+ptsStr(o.site)+' L150 104" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 5" transform="translate(64 0)"/>';
+  }
+  return s+'</svg>';
+}
+function lockKeyQ(id,q){
+  var wrap=h('div','lk'), st=simState(id), enz=q.enzymes||[], subs=q.substrates||[];
+  var color={}; subs.forEach(function(sb,i){color[sb.name]=sb.color||LK_SUB[i%4];});
+  var shapeOf={}; subs.forEach(function(sb){shapeOf[sb.name]=sb.shape;});
+  var ids=enz.map(function(e,i){return id+'_'+i;});
+  enz.forEach(function(e,i){ AUTO[ids[i]]={sum:e.name}; ORDER.push({kind:'auto',id:ids[i],label:e.name,q:CURQ,sub:'Substrate for '+plain(e.name)}); });
+  var picked=null, uid='lk'+id+'_';
+  wrap.append(h('p','whint',q.hint||'Pick a molecule, then press the enzyme it fits (or drag the molecule onto the enzyme). A molecule only works if its shape fits the enzyme’s active site, the notch on its right side.'));
+  var bank=h('div','lkbank'); bank.setAttribute('role','group'); bank.setAttribute('aria-label','Molecules to try');
+  var grid=h('div','lkgrid'), cards=[];
+  var mutRow=null, mutBox=null, mutMsg=null, mutI=-1;
+  if(q.mutation){
+    mutI=enz.map(function(e){return e.name;}).indexOf(q.mutation);
+    mutRow=h('label','lkmut'); mutBox=document.createElement('input'); mutBox.type='checkbox'; mutBox.id='f-'+id+'_mut';
+    mutRow.append(mutBox,h('span',null,q.mutationLabel||('Try it: give the '+q.mutation+' gene a mutation (one amino acid changes)')));
+    mutMsg=h('p','msg'); mutMsg.setAttribute('aria-live','polite');
+    mutBox.addEventListener('change',function(){ st.mut=mutBox.checked; paint(); save(); });
+  }
+  function rec(i){return S.auto[ids[i]]||null;}
+  function ok(i){var r=rec(i); return !!(r&&r.ok);}
+  function tryAt(i,name){
+    if(ok(i)) return;
+    var prev=rec(i)||{}, good=shapeOf[name]===enz[i].shape;
+    S.auto[ids[i]]={v:name,ok:good,miss:(prev.miss||0)+(good?0:1)};
+    picked=null;
+    cards[i].fresh=good;
+    paint(); commit();
+  }
+  enz.forEach(function(e,i){
+    var card=h('div','lkcard'); mark(card); card.dataset.s='idle';
+    var nm=h('h3','tname'); nm.append(itxt(e.name+(e.where?' ('+e.where+')':'')));
+    var pic=h('div','lkpic');
+    var drop=h('button','lkdrop'); drop.type='button'; drop.dataset.i=String(i);
+    var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+    drop.addEventListener('click',function(){ if(picked) tryAt(i,picked); });
+    card.append(nm,pic,drop,msg); grid.append(card);
+    cards.push({card:card,pic:pic,drop:drop,msg:msg,fresh:false});
+  });
+  function chip(sb){
+    var b=h('button','lchip lkchip'); b.type='button'; b.dataset.l=sb.name;
+    b.innerHTML='<svg viewBox="140 30 84 80" aria-hidden="true" focusable="false"><path d="M150 36 L'+ptsStr(LK_SHAPES[sb.shape]||LK_SHAPES.square)+' L150 104 L206 104 Q218 104 218 92 L218 48 Q218 36 206 36 Z" fill="'+color[sb.name]+'" stroke="currentColor" stroke-width="3"/></svg>';
+    b.append(h('span',null,sb.name));
+    b.setAttribute('aria-pressed',picked===sb.name?'true':'false');
+    var sx=null, sy=0, moved=false, ghost=null;
+    function move(ev){
+      if(sx===null) return;
+      if(!moved&&Math.abs(ev.clientX-sx)+Math.abs(ev.clientY-sy)<8) return;
+      if(!moved){ moved=true; ghost=h('span','lchip lghost',sb.name); document.body.append(ghost); }
+      ghost.style.left=(ev.clientX-24)+'px'; ghost.style.top=(ev.clientY-20)+'px';
+    }
+    function up(ev){
+      document.removeEventListener('pointermove',move); document.removeEventListener('pointerup',up); document.removeEventListener('pointercancel',up);
+      if(sx===null) return; sx=null;
+      if(ghost){ghost.remove(); ghost=null;}
+      if(moved&&ev.type==='pointerup'){ var t=document.elementFromPoint(ev.clientX,ev.clientY), c=t&&t.closest?t.closest('.lkcard'):null; if(c){ var d=c.querySelector('.lkdrop'); if(d) tryAt(+d.dataset.i,sb.name); } }
+    }
+    b.addEventListener('pointerdown',function(ev){ if(ev.button) return; sx=ev.clientX; sy=ev.clientY; moved=false;
+      document.addEventListener('pointermove',move); document.addEventListener('pointerup',up); document.addEventListener('pointercancel',up); });
+    b.addEventListener('click',function(){ if(moved){moved=false; return;} picked=picked===sb.name?null:sb.name; paint(); var nb=bank.querySelector('[data-l="'+sb.name+'"]'); if(nb) nb.focus(); });
+    return b;
+  }
+  function paint(){
+    var used={}; enz.forEach(function(e,i){ if(ok(i)) used[rec(i).v]=true; });
+    bank.textContent='';
+    subs.forEach(function(sb){ if(!used[sb.name]) bank.append(chip(sb)); });
+    if(!bank.children.length) bank.append(h('span','whint','Every substrate found its enzyme.'));
+    var all=true;
+    enz.forEach(function(e,i){
+      var c=cards[i], r=rec(i), good=ok(i), mut=!!(st.mut&&i===mutI);
+      if(!good) all=false;
+      c.card.dataset.s=good?'ok':(r&&r.v?'bad':'idle');
+      var site=lkPts(mut?'mutant':e.shape), o={site:site,name:e.name,enzColor:e.color};
+      if(good){ o.key=LK_SHAPES[e.shape]; o.keyColor=color[r.v]; o.at=mut?'off':'split'; }
+      else if(r&&r.v){ o.key=LK_SHAPES[shapeOf[r.v]]||LK_SHAPES.square; o.keyColor=color[r.v]; o.at='off'; }
+      var label=plain(e.name)+(mut?' with a mutated active site':'')+(good?(mut?': '+r.v+' no longer fits':': '+r.v+' fits and is broken into products'):(r&&r.v?': '+r.v+' does not fit':': empty active site'));
+      c.pic.innerHTML=lkSvg(o,label,uid+i);
+      if(good&&!mut&&c.fresh&&!STILL){ var k=c.pic.querySelector('.lkkey'); k.dataset.at='off'; void k.getBoundingClientRect(); requestAnimationFrame(function(){ k.dataset.at='bound'; setTimeout(function(){ if(k.isConnected) k.dataset.at='split'; },900); }); }
+      c.fresh=false;
+      c.drop.hidden=good; c.drop.textContent=picked?'Try '+picked+' here':'Pick a molecule first';
+      c.drop.disabled=!picked;
+      c.msg.textContent='';
+      if(good){ c.msg.dataset.s='ok'; c.msg.append(mut?(q.mutatedMsg||'After the mutation, the active site has a new shape. '+r.v+' no longer fits, so no reaction happens.'):itxt('Correct. '+(e.ok||(r.v+' fits '+e.name+'’s active site like a key in a lock, so the reaction happens.')))); }
+      else if(r&&r.v){ c.msg.dataset.s='bad'; c.msg.append(itxt('Not a fit. '+r.v+'’s shape does not match this active site. Tip: '+(e.tip||'Compare the notch on the enzyme with the shape on each molecule.'))); }
+      else c.msg.removeAttribute('data-s');
+    });
+    if(mutBox){ mutBox.checked=!!st.mut; mutRow.hidden=!ok(mutI)&&!TEACHER;
+      mutMsg.textContent=st.mut?(q.mutationOn||'The mutation changed one amino acid, so the chain folded into a slightly different shape. Look at the active site now.'):''; mutMsg.dataset.s=st.mut?'bad':''; }
+    expl.textContent='';
+    if(all){ expl.dataset.s='ok'; expl.append(itxt(q.explain||'Each enzyme fits only one substrate.')); }
+  }
+  var expl=h('p','msg');
+  wrap.append(bank,grid,expl);
+  if(mutRow) wrap.append(mutRow,mutMsg);
+  paint();
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: temperature and pH dial                                   */
+/* ------------------------------------------------------------------ */
+/* Students turn a slider (temperature or pH) and watch the enzyme's active site change shape and its reaction rate
+   rise and fall. Every value they try adds a dot to the graph. For each enzyme they record the value where it works
+   best (checked: within tol of best). Rate = 100% at best, falling off on each side (low and high set how fast). */
+function dialRate(e,v){ var s=v<e.best?(e.low||2):(e.high||2), d=(v-e.best)/s; return Math.exp(-d*d); }
+function dialQ(id,q){
+  var wrap=h('div','dial'), st=simState(id), enz=q.enzymes||[], fct=q.factor||'pH', unit=q.unit||'';
+  if(!st.pts) st.pts={};
+  var ids=enz.map(function(e,i){return id+'_'+i;});
+  enz.forEach(function(e,i){ AUTO[ids[i]]={sum:'Best '+fct+' for '+plain(e.name)}; ORDER.push({kind:'auto',id:ids[i],label:'Best '+fct,q:CURQ,sub:'Best '+fct+' for '+plain(e.name)}); });
+  var cur=Math.min(st.on||0,enz.length-1);
+  var tabs=h('div','dtabs'); tabs.setAttribute('role','group'); tabs.setAttribute('aria-label','Choose an enzyme');
+  var stage=h('div','dstage'), pic=h('div','lkpic dpic'), side=h('div','dside');
+  var meterW=h('div','dmeter'), meterF=h('div','dfill'); meterW.append(meterF);
+  var stat=h('p','dstat'); stat.setAttribute('aria-live','polite');
+  var row=h('div','row gslide'), lab=h('label'), out=h('b'), sl=h('input');
+  sl.type='range'; sl.id='f-'+id+'_dial'; sl.min=q.min!=null?q.min:0; sl.max=q.max!=null?q.max:14; sl.step=q.step||0.5; lab.htmlFor=sl.id;
+  lab.append((q.sliderLabel||fct)+': ',out); row.append(lab,sl);
+  var fig=h('div','gfig dgraph'); fig.setAttribute('role','img');
+  var recRow=h('div','row gap'), recB=h('button','btn'); recB.type='button'; recRow.append(recB);
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  var list=h('ul','dlist');
+  side.append(h('p','gsteph','Reaction rate'),meterW,stat);
+  stage.append(pic,side);
+  wrap.append(h('p','whint',q.hint||('Choose an enzyme. Move the slider to try different values. Each value you try adds a dot to the graph. Find the '+fct+' where the enzyme works fastest, then record it.')),tabs,row,stage,fig,recRow,msg,list);
+  var DP=(String(sl.step).split('.')[1]||'').length;
+  function fv(v){return (+v).toFixed(DP)+(unit?(unit==='°C'?'':' ')+unit:'');}
+  function rec(i){return S.auto[ids[i]]||null;}
+  function word(a,v,e){
+    if(a>=0.9) return q.best||'Working at its best. The substrate fits the active site.';
+    if(a>=0.5) return q.ok||'Working, but slower. The active site is starting to change shape.';
+    if(a>=0.15) return q.weak||'Barely working. The active site has changed shape, so the substrate hardly fits.';
+    return q.dead||('Denatured. The '+(v>e.best?'high':'low')+' '+fct+' changed the enzyme’s shape, so the substrate no longer fits.');
+  }
+  function graph(i){
+    var e=enz[i], pts=st.pts[i]||{}, keys=Object.keys(pts).map(Number).sort(function(a,b){return a-b;});
+    var fr=gFrame({title:q.graphTitle?q.graphTitle.replace('{name}',plain(e.name)):('Effect of '+fct+' on '+plain(e.name)),x:{min:+sl.min,max:+sl.max,step:q.graphStep||(+sl.max-+sl.min)/7,label:q.xLabel||fct},y:{min:0,max:100,step:20,minor:10,label:'Reaction rate (% of fastest)'}}), s=fr.s;
+    if(keys.length>1) s.push('<polyline points="'+keys.map(function(k){return fr.X(k).toFixed(1)+','+fr.Y(pts[k]).toFixed(1);}).join(' ')+'" fill="none" stroke="'+GC.muted+'" stroke-width="1.5" stroke-dasharray="4 4"/>');
+    keys.forEach(function(k){ s.push(gDot(fr,k,pts[k],k===+sl.value?GC.pick:CHART_COLORS[0],k===+sl.value?8:6)); });
+    s.push('</svg>');
+    fig.innerHTML=s.join('').replace(/font-size="(\d+)"/g,function(m,n){return 'font-size="'+Math.round(n*1.3)+'"';});
+    fig.setAttribute('aria-label','Your data for '+plain(e.name)+': '+(keys.length?keys.map(function(k){return fv(k)+' gives '+Math.round(pts[k])+'%';}).join('; '):'no values tried yet'));
+  }
+  function show(record){
+    var e=enz[cur], v=+sl.value, a=dialRate(e,v);
+    out.textContent=fv(v);
+    if(record){ (st.pts[cur]||(st.pts[cur]={}))[v]=Math.round(a*100); }
+    var jit=(1-a)*16, o={site:lkPts(e.shape||'round',jit,KEY+id+cur+'_'+v),name:e.name,enzColor:e.color,key:LK_SHAPES[e.shape||'round'],keyColor:e.subColor||LK_SUB[cur%4],at:a>=0.5?'bound':'off'};
+    pic.innerHTML=lkSvg(o,plain(e.name)+' at '+fv(v)+': '+word(a,v,e),'dl'+id+cur);
+    meterF.style.width=Math.round(a*100)+'%'; meterF.dataset.lvl=a>=0.9?'hi':(a>=0.5?'mid':'lo');
+    meterW.setAttribute('aria-label','Reaction rate '+Math.round(a*100)+'% of fastest');
+    stat.textContent=Math.round(a*100)+'% of its fastest rate. '+word(a,v,e);
+    graph(cur);
+    var r=rec(cur);
+    recB.textContent='Record '+fv(v)+' as the best '+fct+' for '+plain(e.name);
+    recB.hidden=!!(r&&r.ok);
+  }
+  function paintList(){
+    list.textContent='';
+    enz.forEach(function(e,i){
+      var li=h('li','dli'); mark(li); var r=rec(i);
+      li.dataset.s=r&&r.ok?'ok':(r&&r.v?'bad':'idle');
+      li.append(h('b',null,plain(e.name)+(e.where?' ('+e.where+')':'')+': '),r&&r.v?('best '+fct+' '+r.v+(r.ok?' ✓':' ✗')):'not recorded yet');
+      list.append(li);
+    });
+  }
+  function paintTabs(){
+    tabs.textContent='';
+    enz.forEach(function(e,i){
+      var b=h('button','dtab'+(i===cur?' on':''),plain(e.name)); b.type='button'; b.setAttribute('aria-pressed',i===cur?'true':'false');
+      var r=rec(i); if(r&&r.ok) b.append(' ✓');
+      b.addEventListener('click',function(){ cur=i; st.on=i; msg.textContent=''; msg.removeAttribute('data-s'); paintTabs(); show(false); save(); });
+      tabs.append(b);
+    });
+  }
+  sl.addEventListener('input',function(){ show(true); });
+  sl.addEventListener('change',function(){ save(); });
+  recB.addEventListener('click',function(){
+    var e=enz[cur], v=+sl.value, prev=rec(cur)||{}, good=Math.abs(v-e.best)<=(e.tol!=null?e.tol:(q.tol!=null?q.tol:+sl.step)+1e-9);
+    S.auto[ids[cur]]={v:fv(v),ok:good,miss:(prev.miss||0)+(good?0:1)};
+    msg.textContent='';
+    if(good){ msg.dataset.s='ok'; msg.append(itxt('Correct. '+(e.ok||(plain(e.name)+' works fastest near '+fv(e.best)+'.')))); }
+    else { msg.dataset.s='bad'; msg.append(itxt('Not yet. Tip: '+(e.tip||q.tip||'Try values on both sides. The best value has the tallest dot on your graph.'))); }
+    paintTabs(); paintList(); show(false); commit();
+  });
+  sl.value=q.start!=null?q.start:Math.round((+sl.min+ +sl.max)/2);
+  paintTabs(); show(true); paintList();
+  return wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Builders: diagnosis board                                           */
+/* ------------------------------------------------------------------ */
+/* A case board with the possible causes. Students choose a first hypothesis (saved, not scored), then run each test
+   in order. A test shows its data (charts), and students decide what it means for one cause (a checked menu). The
+   board marks each cause as ruled out or found as students get it right. */
+function diagnosisQ(id,q){
+  var wrap=h('div','dx'), st=simState(id), causes=q.causes||[], tests=q.tests||[];
+  if(!st.ran) st.ran={};
+  var opts=q.options||['Ruled out','Still possible','This is the cause'];
+  var hid=id+'_h';
+  ORDER.push({kind:'written',id:hid,q:CURQ,sub:q.firstLabel||'My first hypothesis'});
+  var board=h('div','dxboard'), cards={};
+  causes.forEach(function(c){
+    var card=h('div','dxcause'); var nm=h('h3','tname'); nm.append(itxt(c.name));
+    var about=h('p','pwho'); about.append(itxt(c.about||''));
+    var badge=h('span','dxbadge'), guess=h('span','dxguess','My first guess');
+    card.append(guess,nm,about,badge); board.append(card); cards[c.key]={card:card,badge:badge,guess:guess};
+  });
+  var pick=h('div','dxpick'), pickMsg=h('p','msg');
+  pick.append(h('p','gsteph',q.firstText||'Before you run any tests, which cause do you think it is? Choose your first hypothesis. (It is fine to be wrong. Scientists change their minds when the data says so.)'));
+  var pickRow=h('div','row gap'); pick.append(pickRow,pickMsg);
+  var stepsEl=h('div','dxtests'), finalBox=h('div','dxfinal');
+  wrap.append(board,pick,stepsEl,finalBox);
+  var testEls=tests.map(function(t,i){
+    var tid=id+'_'+i, cause=causes.filter(function(c){return c.key===t.cause;})[0]||{name:''};
+    var box=h('div','dxtest'), nm=h('h3','tname'); nm.append(itxt(t.name||('Test '+(i+1))));
+    var how=h('div','dxhow'); how.innerHTML=t.how||'';
+    var runB=h('button','btn',t.run||'Run the test'); runB.type='button';
+    var res=h('div','dxres');
+    if(t.charts||t.chart) res.append(chartsEl(t.charts||[t.chart]));
+    if(t.result){ var rp=h('div','dxrtext'); rp.innerHTML=t.result; res.append(rp); }
+    var ask=autoSelect(tid,'Test '+(i+1)+': '+plain(cause.name),opts,t.answer,{label:t.ask||('What does this test tell you about the “'+plain(cause.name)+'” idea?'),sub:plain(t.name||('Test '+(i+1))),hint:t.tip,ok:t.explain});
+    res.append(ask);
+    box.append(nm,how,runB,res);
+    runB.addEventListener('click',function(){ st.ran[i]=true; paint(); commit(); if(!STILL) res.classList.add('dxin'); });
+    stepsEl.append(box);
+    return {box:box,runB:runB,res:res,tid:tid};
+  });
+  function okT(i){var r=S.auto[id+'_'+i]; return !!(r&&r.ok);}
+  function paint(){
+    var guess=(S.written[hid]||{}).text||'', locked=!!st.ran[0];
+    pickRow.textContent='';
+    causes.forEach(function(c){
+      var b=h('button','dtab'+(guess===plain(c.name)?' on':''),plain(c.name)); b.type='button';
+      b.setAttribute('aria-pressed',guess===plain(c.name)?'true':'false'); b.disabled=locked&&guess!==plain(c.name);
+      b.addEventListener('click',function(){ if(locked) return; S.written[hid]={text:plain(c.name)}; paint(); commit(); });
+      pickRow.append(b);
+    });
+    pickMsg.textContent=guess?(locked?'Your first hypothesis is saved: '+guess+'.':'Your first hypothesis: '+guess+'. You can change it until you run Test 1.'):'';
+    pickMsg.dataset.s=guess?'ok':'';
+    causes.forEach(function(c){
+      var k=cards[c.key], t=tests.map(function(x,i){return {x:x,i:i};}).filter(function(o){return o.x.cause===c.key&&okT(o.i);})[0];
+      var res=t?t.x.answer:'';
+      k.card.dataset.st=/cause/i.test(res)?'found':(/ruled/i.test(res)?'out':'open');
+      k.badge.textContent=/cause/i.test(res)?'Cause found':(/ruled/i.test(res)?'Ruled out':'Still possible');
+      k.guess.hidden=guess!==plain(c.name);
+    });
+    var open=!!guess||TEACHER;
+    testEls.forEach(function(te,i){
+      var prevOk=i===0||okT(i-1);
+      te.box.hidden=!(open&&(prevOk||TEACHER));
+      te.runB.hidden=!!st.ran[i];
+      te.res.hidden=!st.ran[i]&&!TEACHER;
+    });
+    var all=tests.every(function(t,i){return okT(i);});
+    finalBox.hidden=!all; finalBox.innerHTML=all?(q.diagnosis||''):'';
+  }
+  wrap.addEventListener('change',function(){ setTimeout(paint,0); });
+  paint();
   return wrap;
 }
 
@@ -2678,6 +3119,7 @@ function startSection(){
    text: optional HTML with the words on the picture, shown on request and read by the Listen button */
 function figureEl(im){
   var f=h('figure','card');
+  if(im.width) f.style.maxWidth=im.width+'px'; /* a photo that should not fill the page */
   var a=h('a'); a.href=im.src; a.target='_blank'; a.rel='noopener noreferrer';
   var img=document.createElement('img'); img.src=im.src; img.alt=im.alt||''; img.loading='lazy';
   a.append(img); f.append(a);
@@ -2762,7 +3204,8 @@ function buildQuestion(q,s,tile){
     if(q.img.caption) fig.append(h('figcaption',null,q.img.caption));
     o.body.append(fig);
   }
-  if(q.calculator) o.body.append(calcEl(id));
+  if(q.chart||q.charts) o.body.append(chartsEl(q.charts||[q.chart]));
+  if(q.calculator&&t!=='reaction') o.body.append(calcEl(id));
   if(t==='selects'){
     ids=q.items.map(function(it,i){return id+'_'+i;});
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
@@ -2801,6 +3244,18 @@ function buildQuestion(q,s,tile){
     o.body.append(toniQ(id,q));
   } else if(t==='bloodlab'){
     o.body.append(labQ(id,q));
+  } else if(t==='reaction'){
+    ids=(q.items||[]).map(function(it,i){return id+'_'+i;});
+    o.body.append(reactionQ(id,q));
+  } else if(t==='lockkey'){
+    ids=(q.enzymes||[]).map(function(e,i){return id+'_'+i;});
+    o.body.append(lockKeyQ(id,q));
+  } else if(t==='dial'){
+    ids=(q.enzymes||[]).map(function(e,i){return id+'_'+i;});
+    o.body.append(dialQ(id,q));
+  } else if(t==='diagnosis'){
+    ids=(q.tests||[]).map(function(x,i){return id+'_'+i;});
+    o.body.append(diagnosisQ(id,q));
   } else if(t==='multi'){
     if(SUPPORT) q=Object.assign({},q,{options:fewer(id,q.options,q.answers,(S.auto[id]||{}).picks)});
     o.body.append(multiQ(id,q));

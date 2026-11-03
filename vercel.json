@@ -41,6 +41,26 @@
       "permanent": false
     },
     {
+      "source": "/enzymes",
+      "destination": "/assignments/explore-enzymes-case-study/",
+      "permanent": false
+    },
+    {
+      "source": "/enzymes/",
+      "destination": "/assignments/explore-enzymes-case-study/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-enzymes-case-study",
+      "destination": "/assignments/explore-enzymes-case-study/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-enzymes-case-study/",
+      "destination": "/assignments/explore-enzymes-case-study/",
+      "permanent": false
+    },
+    {
       "source": "/joints-and-movement",
       "destination": "/assignments/explore-joint-classification-and-movement/",
       "permanent": false

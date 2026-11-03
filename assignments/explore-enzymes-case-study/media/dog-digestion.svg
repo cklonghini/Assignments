@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520">
+  <rect width="900" height="520" fill="#ffffff"/>
+  <g fill="#2d2926">
+    <ellipse cx="490" cy="250" rx="248" ry="98"/>
+    <polygon points="232,128 372,170 372,290 244,256"/>
+    <ellipse cx="190" cy="145" rx="83" ry="65"/>
+    <rect x="67" y="137" width="116" height="61" rx="29"/>
+    <rect x="287" y="287" width="52" height="196" rx="23"/>
+    <rect x="347" y="287" width="52" height="196" rx="23"/>
+    <rect x="597" y="277" width="56" height="206" rx="25"/>
+    <rect x="662" y="267" width="56" height="216" rx="25"/>
+  </g>
+  <path d="M722 222 C770 200 800 180 842 146" fill="none" stroke="#2d2926" stroke-width="34" stroke-linecap="round"/>
+  <g fill="#f1e6cc">
+    <ellipse cx="490" cy="250" rx="245" ry="95"/>
+    <polygon points="236,134 368,174 368,286 248,252"/>
+    <ellipse cx="190" cy="145" rx="80" ry="62"/>
+    <rect x="70" y="140" width="110" height="55" rx="26"/>
+    <rect x="290" y="290" width="46" height="190" rx="20"/>
+    <rect x="350" y="290" width="46" height="190" rx="20"/>
+    <rect x="600" y="280" width="50" height="200" rx="22"/>
+    <rect x="665" y="270" width="50" height="210" rx="22"/>
+  </g>
+  <path d="M722 222 C770 200 800 180 842 146" fill="none" stroke="#f1e6cc" stroke-width="27" stroke-linecap="round"/>
+  <ellipse cx="228" cy="152" rx="28" ry="50" fill="#e2d1aa" stroke="#2d2926" stroke-width="3"/>
+  <circle cx="80" cy="152" r="13" fill="#5a3a35"/>
+  <circle cx="168" cy="122" r="8" fill="#2d2926"/>
+  <path d="M258 200 C300 205 345 214 412 226" fill="none" stroke="#c97a6b" stroke-width="13" stroke-linecap="round"/>
+  <path d="M405 215 C415 185 470 182 487 208 C503 240 492 282 455 284 C428 286 418 265 430 250 C438 240 420 238 405 215 Z" fill="#e58a8a" stroke="#2d2926" stroke-width="3"/>
+  <path d="M470 292 C500 302 540 302 566 289 C574 298 546 311 505 309 C484 308 468 302 470 292 Z" fill="#f2c14e" stroke="#2d2926" stroke-width="3"/>
+  <path d="M488 262 C520 250 532 230 562 235 C602 240 594 266 562 269 C532 272 536 290 570 292 C612 295 632 270 617 248 C607 232 630 222 647 238" fill="none" stroke="#2d2926" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M488 262 C520 250 532 230 562 235 C602 240 594 266 562 269 C532 272 536 290 570 292 C612 295 632 270 617 248 C607 232 630 222 647 238" fill="none" stroke="#f3a98f" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M647 238 C667 252 682 232 692 206 C702 190 722 196 732 216" fill="none" stroke="#2d2926" stroke-width="20" stroke-linecap="round"/>
+  <path d="M647 238 C667 252 682 232 692 206 C702 190 722 196 732 216" fill="none" stroke="#b5734f" stroke-width="14" stroke-linecap="round"/>
+</svg>
