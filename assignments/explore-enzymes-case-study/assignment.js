@@ -348,15 +348,15 @@ window.ASSIGNMENT = {
         {
           type: 'label',
           text: 'Label the parts of Gus’s digestive system.',
-          viewBox: '0 0 900 520', image: { src: 'media/dog-digestion.svg', width: 900, height: 520 },
-          alt: 'A side view drawing of a dog with its digestive organs shown inside its body. Five numbered markers point to a tube in the neck, an organ in the belly, a thin organ under it, a long, tightly coiled tube, and a wider tube that runs up the side and along the back to the tail.',
-          markerSize: 28,
+          viewBox: '0 0 699 490', image: { src: 'media/dog-digestion.png', width: 699, height: 490 },
+          alt: 'A drawing of a dog seen from the side, with its skeleton faint and its digestive organs shown inside. Five numbered markers point to a tube running down the neck, an organ in the upper belly, a small yellowish organ below it, a mass of tightly coiled tubes, and a wider tube that loops up along the back toward the tail.',
+          markerSize: 22,
           spots: [
-            { x: 300, y: 110, to: [[305, 210]], label: 'Esophagus', tip: 'This is the tube food travels through right after Gus swallows.' },
-            { x: 440, y: 105, to: [[448, 225]], label: 'Stomach', tip: 'This is where food goes first after the tube from the mouth. Pepsin works here.' },
-            { x: 470, y: 420, to: [[482, 304]], label: 'Pancreas', tip: 'This organ sits next to the stomach and sends enzymes into the small intestine.' },
-            { x: 560, y: 420, to: [[560, 313]], label: 'Small intestine', tip: 'This is the long, coiled tube where most nutrients are broken down and absorbed.' },
-            { x: 800, y: 330, to: [[710, 280]], label: 'Large intestine', tip: 'This is the last part of the path. Food that was not absorbed passes through here as waste.' }
+            { x: 255, y: 34, to: [[233, 186]], label: 'Esophagus', tip: 'This is the tube food travels through right after Gus swallows.' },
+            { x: 395, y: 34, to: [[393, 185]], label: 'Stomach', tip: 'This is where food goes first after the tube from the mouth. Pepsin works here.' },
+            { x: 350, y: 395, to: [[372, 242]], label: 'Pancreas', tip: 'This organ sits next to the stomach and sends enzymes into the small intestine.' },
+            { x: 450, y: 395, to: [[475, 215]], label: 'Small intestine', tip: 'This is the long, coiled tube where most nutrients are broken down and absorbed.' },
+            { x: 545, y: 34, to: [[527, 140]], label: 'Large intestine', tip: 'This is the last part of the path. Food that was not absorbed passes through here as waste.' }
           ],
           explain: 'Food goes down the esophagus to the stomach, then to the small intestine, where enzymes from the pancreas finish digestion. The large intestine handles the waste.'
         },
