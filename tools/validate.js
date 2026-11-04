@@ -145,6 +145,11 @@ for (const dir of dirs) {
         switch (q.type) {
           case 'selects':
             if (!(q.items || []).length) E(w + ' has no items');
+            Object.keys(q.rowImages || {}).forEach(k => {
+              const im = q.rowImages[k] || {};
+              if (!im.src || !exists(im.src)) E(w + ' row picture not found: ' + (im.src || k));
+              if (!im.alt) E(w + ' row picture "' + k + '" needs alt text');
+            });
             (q.items || []).forEach((it, i) => {
               const opts = it.options || q.options || [];
               if (!opts.length) E(w + ' item ' + (i + 1) + ' has no options');

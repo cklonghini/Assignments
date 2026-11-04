@@ -213,6 +213,12 @@ Every question has `type` and `text`. Numbers are added automatically.
 
 Use `items` with different `options` for paired menus such as domain and kingdom. Each item is auto-checked on its own.
 
+**Rows with a picture:** give items a `row` name to put them on one line together (for example the two menus about
+pepsin), and `rowImages: { pepsin: { src: 'media/enzyme-pepsin.svg', alt: '...' } }` to show a small picture at the
+start of that row. Items without `row` sit on their own line. **A chart beside each menu:** give each item a `chart`
+(same format as "chart and charts" below), and each menu shows in a card right under its own chart, so students can
+tell which menu goes with which graph. Examples: Part 4 and Part 5 of `assignments/explore-enzymes-case-study/`.
+
 ### choice: multiple choice (auto-checked)
 
 ```js

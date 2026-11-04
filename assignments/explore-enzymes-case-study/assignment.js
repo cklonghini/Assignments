@@ -1,6 +1,6 @@
 /*
   Explore - Enzymes Case Study (Biology A)
-  Students work as a veterinary technician to find out why Gus, a yellow Labrador retriever (Mrs. Kinzy's own dog),
+  Students work as a veterinary technician to find out why Gus, a yellow Labrador retriever (Ms. Kinzy's own dog),
   is losing weight even though he eats a lot. The science follows the ideas of the Enzymes STEM Case the class used
   before, but every word, picture, and data set here is our own.
   Everything a student sees is written in this file. The shared engine in /engine builds the page, progress bars,
@@ -10,7 +10,7 @@
 window.ASSIGNMENT = {
   title: 'Explore - Enzymes Case Study',
   course: 'Biology A',
-  storageKey: 'explore-enzymes-case-study-v1',
+  storageKey: 'explore-enzymes-case-study-v2',
   short: 'enzymes',
 
   /* supported version (?support=eagle): the goal box at the top */
@@ -24,23 +24,23 @@ window.ASSIGNMENT = {
     ]
   },
 
-  /* INTRO VIDEO: placeholder. When Mrs. Kinzy's intro video is ready, put it in source/, run
-       python3 tools/video_tools.py cut source/VIDEO.mp4 --out assignments/explore-enzymes-case-study/media --main intro-video --captions source/CAPTIONS.vtt
-     then delete the start: box below and uncomment this block (fix seconds):
-  video: {
-    title: 'Welcome to the Clinic',
-    src: 'media/intro-video.mp4',
-    seconds: 120,
-    heading: 'Meet your patient',
-    intro: 'Watch this short video from Mrs. Kinzy. She will hand you your case.'
+  /* Clips. The intro is Ms. Kinzy's own video (captions from her transcript). The others are cut from two videos she
+     chose: "Enzymes" (Amoeba Sisters) and "Digestive Enzymes" (FuseSchool). from/to are times in those videos.
+     The originals and caption files are in source/ (not saved to GitHub). */
+  clips: {
+    intro: { src: 'media/intro-video.mp4', from: 0, to: 37.3, seconds: 38, whole: true, title: 'Welcome to Eagle Valley Animal Hospital', of: 'Welcome to Eagle Valley Animal Hospital' },
+    rate: { src: 'media/clip-rate.mp4', from: 102.0, to: 197.0, seconds: 95, title: 'Enzymes speed up reactions: the lactase example', of: 'Enzymes (Amoeba Sisters)' },
+    shape: { src: 'media/clip-shape.mp4', from: 31.0, to: 102.0, seconds: 71, title: 'Active sites, substrates, and products', of: 'Enzymes (Amoeba Sisters)' },
+    denature: { src: 'media/clip-denature.mp4', from: 242.0, to: 302.0, seconds: 60, title: 'When an enzyme is denatured', of: 'Enzymes (Amoeba Sisters)' },
+    digest: { src: 'media/clip-digest.mp4', from: 44.0, to: 178.0, seconds: 135, title: 'Enzymes that digest carbohydrates and proteins', of: 'Digestive Enzymes (FuseSchool)' },
+    lipids: { src: 'media/clip-lipids.mp4', from: 178.0, to: 247.0, seconds: 70, title: 'Lipase, and a recap of the digestive enzymes', of: 'Digestive Enzymes (FuseSchool)' }
   },
-  */
 
   parts: [
     /* ---------------------------------------------------------------- Part 1 */
     {
       title: 'Meet your patient',
-      intro: 'You are a veterinary technician (vet tech) at Eagle Valley Animal Hospital. A vet tech helps the veterinarian examine animals, run lab tests, and explain care to owners. Today, Mrs. Kinzy brought in her dog, Gus. Gus eats a lot, but he keeps losing weight. Your job is to find out why. Read Gus’s patient chart. Then learn two big ideas that will help you understand his problem: metabolism and homeostasis.',
+      clips: ['intro'],
       images: [
         { src: 'media/gus-checkin.jpg', width: 320, alt: 'Gus, a yellow Labrador retriever with white fur, a pink nose, and a red leash, looking up at the camera at the animal hospital.', caption: 'Gus at check-in today.' }
       ],
@@ -50,7 +50,7 @@ window.ASSIGNMENT = {
         + '<tr><th scope="row">Age and sex</th><td>2 years old, male</td></tr>'
         + '<tr><th scope="row">Weight 6 months ago</th><td>80 pounds (lb), a healthy weight for Gus</td></tr>'
         + '<tr><th scope="row">Weight today</th><td>60 pounds (lb)</td></tr>'
-        + '<tr><th scope="row">Owner’s notes</th><td>“Gus is always hungry. He eats more than he used to, but he keeps getting thinner. He is tired and does not want to play fetch anymore. His poops are large, pale, and greasy.”</td></tr>'
+        + '<tr><th scope="row">Owner’s notes</th><td>“Gus is always hungry. He eats more than he used to, but he keeps getting thinner. He is tired and does not want to play fetch anymore.”</td></tr>'
         + '<tr><th scope="row">Temperature, heart, lungs</th><td>Normal. No fever. No cough. He walks normally.</td></tr>'
         + '</table>',
       read: '<p><b>Metabolism</b> is all of the chemical reactions that happen in a living thing. A <b>chemical reaction</b> changes substances into different substances. The substances you start with are the <b>reactants</b>. The new substances made are the <b>products</b>.</p>'
@@ -61,23 +61,35 @@ window.ASSIGNMENT = {
         + '<p>Gus is eating a lot but losing weight, and he has low energy. That is a clue that something is wrong with his metabolism.</p>',
       questions: [
         {
+          type: 'speak',
+          text: 'Vocabulary check. Open “Read this before you answer” above. Then press Say it on each card and say the word and its definition out loud.',
+          easy: 'Read the reading above. Then press Say it on each card. Say the word and what it means.',
+          cards: [
+            { term: 'Metabolism', def: 'All of the chemical reactions that happen in a living thing.', say: /metabol/, keys: [/reaction/, /living|body|organism/] },
+            { term: 'Homeostasis', def: 'The body’s way of keeping conditions inside it stable.', say: /homeo|home ?o ?stasis|homie/, keys: [/stable|steady|balance|same/, /condition|inside|internal/] },
+            { term: 'Chemical reaction', def: 'A change that turns substances into different substances.', say: /reaction/, keys: [/substance|chemical/, /different|new/] },
+            { term: 'Reactants', def: 'The substances you start with in a chemical reaction.', say: /reactant|re ?act ?ants?/, keys: [/start|begin/] },
+            { term: 'Products', def: 'The new substances a chemical reaction makes.', say: /product/, keys: [/new|make|made/] }
+          ]
+        },
+        {
           type: 'multi',
           text: 'Use the patient chart. Which of these are Gus’s symptoms? Choose all that apply.',
           easy: 'Look at the patient chart. Which of these are Gus’s symptoms? Choose all that apply.',
-          options: ['He eats a lot (he is always hungry)', 'He is losing weight', 'He has low energy', 'He has large, pale, greasy poops', 'He has a fever', 'He is coughing', 'He is limping'],
-          answers: ['He eats a lot (he is always hungry)', 'He is losing weight', 'He has low energy', 'He has large, pale, greasy poops'],
+          options: ['He eats a lot (he is always hungry)', 'He is losing weight', 'He has low energy', 'He has a fever', 'He is coughing', 'He is limping'],
+          answers: ['He eats a lot (he is always hungry)', 'He is losing weight', 'He has low energy'],
           rules: [{ any: ['He has a fever', 'He is coughing', 'He is limping'], tip: 'Read the last row of the chart. It lists what the veterinarian checked and found normal.' }],
           tip: 'There are more symptoms. Read the owner’s notes again, one sentence at a time.',
-          explain: 'Gus is hungry, losing weight, tired, and has large, greasy poops. His temperature, heart, and lungs are normal.'
+          explain: 'Gus is hungry, losing weight, and tired. His temperature, heart, and lungs are normal.'
         },
         {
           type: 'numbers',
-          text: 'How much weight has Gus lost? Use the chart. Then find what percent of his healthy weight he lost: divide the weight lost by his healthy weight, then multiply by 100.',
-          easy: 'Use the chart. How many pounds did Gus lose? Then find the percent: weight lost ÷ 80 × 100.',
+          text: 'How much weight has Gus lost? Use the chart. Then find what percent of his healthy weight he lost. Hint: percent lost = weight lost ÷ healthy weight × 100. For example, a 50 lb dog that lost 10 lb lost 10 ÷ 50 × 100 = 20% of its weight.',
+          easy: 'Use the chart. How many pounds did Gus lose? Then find the percent: weight lost ÷ 80 × 100. (Example: a 50 lb dog that lost 10 lb lost 10 ÷ 50 × 100 = 20%.)',
           calculator: true,
           items: [
             { label: 'Weight lost', unit: 'lb', between: [20, 20], tip: 'Subtract his weight today from his weight 6 months ago.' },
-            { label: 'Percent of his healthy weight lost', unit: '%', between: [24.5, 25.5], tip: 'Divide the pounds he lost by 80 (his healthy weight). Then multiply by 100.' }
+            { label: 'Percent of his healthy weight lost', unit: '%', between: [24.5, 25.5], tip: 'Use your answer for weight lost. Divide it by 80 (his healthy weight), then multiply by 100. Follow the example in the question.' }
           ]
         },
         {
@@ -112,7 +124,8 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 2 */
     {
       title: 'Reaction rate and enzymes',
-      intro: 'Gus’s body needs its chemical reactions to happen fast. In this part, you will see how enzymes speed reactions up.',
+      intro: 'Gus’s body needs its chemical reactions to happen fast. In this part, you will see how enzymes speed reactions up. The video stops 3 times to ask you a question.',
+      clips: ['rate'],
       read: '<p><b>Reaction rate</b> is how fast a chemical reaction happens: how much product is made in a certain amount of time.</p>'
         + '<p class="eq">Reaction rate = amount of product made ÷ time</p>'
         + '<p>For example, if a reaction makes 16 mg (milligrams) of product in 4 seconds, its rate is 16 ÷ 4 = 4 mg per second (4 mg/s).</p>'
@@ -120,6 +133,19 @@ window.ASSIGNMENT = {
         + '<p><b>Enzymes</b> are proteins that make chemical reactions happen faster. A substance that speeds up a chemical reaction is called a <b>catalyst</b>, so enzymes are biological catalysts. An enzyme is not used up by the reaction. It can be used again and again.</p>'
         + '<p>Every chemical reaction needs a small push of energy to get started. This is called the <b>activation energy</b>. Enzymes speed up reactions by <b>lowering the activation energy</b>. They do not change the energy of the reactants or the products.</p>',
       questions: [
+        { at: 13, type: 'choice', text: 'According to the video, what can an enzyme do to a chemical reaction?',
+          options: ['Speed it up', 'Stop it from happening', 'Make it use more energy'], answer: 0,
+          tip: 'Rewind to the start of the clip and listen to the first sentence.',
+          explain: 'An enzyme can really speed up a reaction, so processes happen fast enough for life.' },
+        { at: 60, type: 'choice', text: 'What does the enzyme lactase do to lactose (milk sugar)?',
+          easy: 'What does lactase do to lactose (milk sugar)?',
+          options: ['Breaks it into smaller parts the body can digest', 'Builds it into a bigger sugar', 'Turns it into a protein'], answer: 0,
+          tip: 'Rewind about 30 seconds and listen to what lactase has “the ability” to do.',
+          explain: 'Lactase breaks lactose into smaller parts, so the body can digest it quickly.' },
+        { at: 94, type: 'choice', text: 'Why are enzymes called catalysts?',
+          options: ['They are not used up, so they can be used over and over', 'They are used up in each reaction', 'They only work one time'], answer: 0,
+          tip: 'Listen to the end of the clip. What happens to lactase after the reaction?',
+          explain: 'An enzyme is not used up by the reaction. It can be used again and again, so it is a catalyst.' },
         {
           type: 'choice',
           text: 'Predict: Two cells have the same reactants. You add an enzyme to one cell. In that cell, what will happen to the amount of product made in 4 seconds?',
@@ -191,13 +217,30 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 3 */
     {
       title: 'An enzyme’s shape: lock and key',
-      intro: 'Every enzyme has its own shape, and that shape decides which reaction it can speed up.',
+      intro: 'Every enzyme has its own shape, and that shape decides which reaction it can speed up. The first video stops 3 times to ask you a question.',
+      clips: ['shape', 'denature'],
       read: '<p>Enzymes are proteins. Like all proteins, an enzyme is made of small building blocks called <b>amino acids</b>, linked together in a chain. Each enzyme has its own <b>sequence</b> (order) of amino acids. The chain folds into a shape, so every enzyme has a different <b>structure</b> (shape). There are more than 75,000 different enzymes in the body, and each one has its own job.</p>'
         + '<p>Each enzyme has an <b>active site</b>. This is the area where the reactants are changed into products. The reactants that attach to an enzyme’s active site are called its <b>substrates</b>.</p>'
         + '<p>Just like a lock only opens with the right key, only a substrate with the right shape fits an enzyme’s active site. This is called the <b>lock and key model</b>. So enzymes are <b>specific</b>: each enzyme only speeds up one kind of reaction. If a substrate does not fit, no reaction happens, no matter how much of it there is.</p>'
         + '<p>A <b>mutation</b> is a change in DNA. A mutation can change one of the amino acids in an enzyme. Then the chain folds into a different shape, and the substrate may no longer fit.</p>'
         + '<p>An enzyme’s shape also depends on <b>temperature</b> and <b>pH</b> (how acidic or basic its surroundings are). Each enzyme works best at a certain temperature and pH. Too far from those, and its shape changes so the substrate no longer fits. When an enzyme loses its shape and stops working, it is <b>denatured</b>.</p>',
       questions: [
+        { at: 21, type: 'choice', text: 'According to the video, most enzymes are what kind of molecule?',
+          options: ['Proteins', 'Sugars', 'Fats'], answer: 0,
+          tip: 'Listen for how the video remembers it: “P for Pac-Man and P for …”',
+          explain: 'Most enzymes are proteins.' },
+        { at: 35, type: 'selects', text: 'Complete the sentences from the video.',
+          options: ['Active site', 'Substrates', 'Products'],
+          hint: 'Rewind a few seconds and listen for the two words the video names.',
+          items: [
+            { label: 'The specifically shaped area on an enzyme is called the', answer: 'Active site' },
+            { label: 'The items that bind there are called', answer: 'Substrates' }
+          ] },
+        { at: 70, type: 'choice', text: 'An enzyme builds up or breaks down the substrates that bind to it. What is the resulting item called?',
+          easy: 'What do we call what the enzyme makes?',
+          options: ['The product', 'The substrate', 'The active site'], answer: 0,
+          tip: 'Listen to the last sentence of the clip.',
+          explain: 'The enzyme changes its substrates, and the result is the product.' },
         {
           type: 'order',
           text: 'Put these steps in order to show how an enzyme gets its shape and does its job.',
@@ -274,7 +317,8 @@ window.ASSIGNMENT = {
     /* ---------------------------------------------------------------- Part 4 */
     {
       title: 'A tour of Gus’s digestive system',
-      intro: 'Gus eats a lot, but he is still losing weight. That suggests his food is not being broken down. Follow the food through his body to see which enzymes work where.',
+      intro: 'Gus eats a lot, but he is still losing weight. That suggests his food is not being broken down. Follow the food through his body to see which enzymes work where. The first video stops 3 times to ask you a question.',
+      clips: ['digest', 'lipids'],
       read: '<p>Food contains many <b>nutrients</b>, including <b>proteins</b>, <b>carbohydrates</b>, and <b>lipids</b> (fats). These are big molecules. <b>Digestion</b> is the process of breaking food down into small molecules that the body can <b>absorb</b> (take in). Enzymes speed up the reactions that break food down.</p>'
         + '<p><b>1. Esophagus.</b> When Gus swallows, food moves down a tube called the esophagus to his stomach.</p>'
         + '<p><b>2. Stomach.</b> In the stomach, an enzyme called <b>pepsin</b> breaks down proteins. Pepsin works best at a low pH (very acidic, about pH 2). The stomach keeps its pH low by releasing hydrochloric acid.</p>'
@@ -282,20 +326,37 @@ window.ASSIGNMENT = {
         + '<ul><li><b>Protease</b> breaks down proteins.</li><li><b>Lipase</b> breaks down lipids (fats).</li><li><b>Carbohydrase</b> breaks down carbohydrates.</li></ul>'
         + '<p>The small intestine is slightly basic (about pH 8), so these enzymes work best near pH 8. The small molecules made here are absorbed into the blood.</p>'
         + '<p><b>4. Pancreas.</b> Protease, lipase, and carbohydrase are made in the <b>pancreas</b>, an organ next to the stomach. The pancreas <b>secretes</b> (sends out) these enzymes into the small intestine.</p>'
-        + '<p><b>5. Large intestine.</b> Whatever was not digested and absorbed moves on to the large intestine and leaves the body as waste (poop).</p>',
+        + '<p><b>5. Large intestine.</b> Whatever was not digested and absorbed moves on to the large intestine and leaves the body as waste (poop).</p>'
+        + '<p><b>In the video:</b> the protease the pancreas sends to the small intestine is called <b>trypsin</b>, and <b>amylase</b> is a carbohydrase that breaks down starch.</p>',
       questions: [
+        { at: 55, type: 'choice', text: 'Amylase is a type of carbohydrase. According to the video, what does amylase break down?',
+          easy: 'What does amylase break down?',
+          options: ['Starch, a big carbohydrate', 'Proteins', 'Lipids (fats)'], answer: 0,
+          tip: 'Rewind a few seconds. Listen for the big carbohydrate the video names.',
+          explain: 'Amylase breaks starch into smaller molecules, and then into glucose that can move into the blood.' },
+        { at: 98, type: 'choice', text: 'Where does the protease pepsin break down proteins?',
+          options: ['In the stomach', 'In the small intestine', 'In the mouth'], answer: 0,
+          tip: 'Rewind a few seconds and listen for where pepsin works, and where it stops working.',
+          explain: 'Pepsin works in the stomach. In the small intestine, a different protease (trypsin) takes over.' },
+        { at: 133, type: 'selects', text: 'What pH does the video give for each place?',
+          options: ['About 2 (very acidic)', 'About 8', 'About 12'],
+          hint: 'Rewind about 15 seconds. Listen for the pH of the stomach and of the small intestine.',
+          items: [
+            { label: 'Stomach', answer: 'About 2 (very acidic)' },
+            { label: 'Small intestine', answer: 'About 8' }
+          ] },
         {
           type: 'label',
           text: 'Label the parts of Gus’s digestive system.',
           viewBox: '0 0 900 520', image: { src: 'media/dog-digestion.svg', width: 900, height: 520 },
-          alt: 'A side view drawing of a dog with its digestive organs shown inside its body. Five numbered markers point to a tube in the neck, an organ in the belly, a thin organ under it, a long coiled tube, and a wider tube near the tail.',
+          alt: 'A side view drawing of a dog with its digestive organs shown inside its body. Five numbered markers point to a tube in the neck, an organ in the belly, a thin organ under it, a long, tightly coiled tube, and a wider tube that runs up the side and along the back to the tail.',
           markerSize: 28,
           spots: [
             { x: 300, y: 110, to: [[305, 210]], label: 'Esophagus', tip: 'This is the tube food travels through right after Gus swallows.' },
             { x: 440, y: 105, to: [[448, 225]], label: 'Stomach', tip: 'This is where food goes first after the tube from the mouth. Pepsin works here.' },
-            { x: 500, y: 420, to: [[515, 300]], label: 'Pancreas', tip: 'This organ sits next to the stomach and sends enzymes into the small intestine.' },
-            { x: 600, y: 105, to: [[580, 262]], label: 'Small intestine', tip: 'This is the long, coiled tube where most nutrients are broken down and absorbed.' },
-            { x: 800, y: 290, to: [[728, 214]], label: 'Large intestine', tip: 'This is the last part of the path. Food that was not absorbed passes through here as waste.' }
+            { x: 470, y: 420, to: [[482, 304]], label: 'Pancreas', tip: 'This organ sits next to the stomach and sends enzymes into the small intestine.' },
+            { x: 560, y: 420, to: [[560, 313]], label: 'Small intestine', tip: 'This is the long, coiled tube where most nutrients are broken down and absorbed.' },
+            { x: 800, y: 330, to: [[710, 280]], label: 'Large intestine', tip: 'This is the last part of the path. Food that was not absorbed passes through here as waste.' }
           ],
           explain: 'Food goes down the esophagus to the stomach, then to the small intestine, where enzymes from the pancreas finish digestion. The large intestine handles the waste.'
         },
@@ -303,15 +364,21 @@ window.ASSIGNMENT = {
           type: 'selects',
           text: 'Fill in the digestive enzyme chart. For each enzyme, choose where it works and what it breaks down.',
           easy: 'For each enzyme, choose where it works and what it breaks down.',
+          rowImages: {
+            pepsin: { src: 'media/enzyme-pepsin.svg', alt: 'A cartoon enzyme with a name tag that says Pepsin.' },
+            protease: { src: 'media/enzyme-protease.svg', alt: 'A cartoon enzyme with a name tag that says Protease.' },
+            lipase: { src: 'media/enzyme-lipase.svg', alt: 'A cartoon enzyme with a name tag that says Lipase.' },
+            carbohydrase: { src: 'media/enzyme-carbohydrase.svg', alt: 'A cartoon enzyme with a name tag that says Carbohydrase.' }
+          },
           items: [
-            { label: 'Pepsin works in the', options: ['Stomach', 'Small intestine'], answer: 'Stomach', hint: 'Read part 2 of the tour.' },
-            { label: 'Pepsin breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Proteins', hint: 'Read part 2 of the tour.' },
-            { label: 'Protease works in the', options: ['Stomach', 'Small intestine'], answer: 'Small intestine', hint: 'Read part 3 of the tour.' },
-            { label: 'Protease breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Proteins', hint: 'The enzyme’s name comes from its substrate. Read part 3 of the tour.' },
-            { label: 'Lipase works in the', options: ['Stomach', 'Small intestine'], answer: 'Small intestine', hint: 'Read part 3 of the tour.' },
-            { label: 'Lipase breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Lipids (fats)', hint: 'The enzyme’s name comes from its substrate. Read part 3 of the tour.' },
-            { label: 'Carbohydrase works in the', options: ['Stomach', 'Small intestine'], answer: 'Small intestine', hint: 'Read part 3 of the tour.' },
-            { label: 'Carbohydrase breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Carbohydrates', hint: 'The enzyme’s name comes from its substrate. Read part 3 of the tour.' },
+            { row: 'pepsin', label: 'Pepsin works in the', options: ['Stomach', 'Small intestine'], answer: 'Stomach', hint: 'Read part 2 of the tour.' },
+            { row: 'pepsin', label: 'Pepsin breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Proteins', hint: 'Read part 2 of the tour.' },
+            { row: 'protease', label: 'Protease works in the', options: ['Stomach', 'Small intestine'], answer: 'Small intestine', hint: 'Read part 3 of the tour.' },
+            { row: 'protease', label: 'Protease breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Proteins', hint: 'The enzyme’s name comes from its substrate. Read part 3 of the tour.' },
+            { row: 'lipase', label: 'Lipase works in the', options: ['Stomach', 'Small intestine'], answer: 'Small intestine', hint: 'Read part 3 of the tour.' },
+            { row: 'lipase', label: 'Lipase breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Lipids (fats)', hint: 'The enzyme’s name comes from its substrate. Read part 3 of the tour.' },
+            { row: 'carbohydrase', label: 'Carbohydrase works in the', options: ['Stomach', 'Small intestine'], answer: 'Small intestine', hint: 'Read part 3 of the tour.' },
+            { row: 'carbohydrase', label: 'Carbohydrase breaks down', options: ['Proteins', 'Lipids (fats)', 'Carbohydrates'], answer: 'Carbohydrates', hint: 'The enzyme’s name comes from its substrate. Read part 3 of the tour.' },
             { label: 'Protease, lipase, and carbohydrase are made in the', options: ['Stomach', 'Pancreas', 'Large intestine'], answer: 'Pancreas', hint: 'Read part 4 of the tour.' }
           ]
         },
@@ -327,13 +394,6 @@ window.ASSIGNMENT = {
             { name: 'Lipase', where: 'small intestine', best: 8, low: 1.8, high: 1.6, shape: 'triangle', subColor: '#e2a72a', ok: 'Lipase works best near pH 8, the slightly basic pH of the small intestine.' },
             { name: 'Carbohydrase', where: 'small intestine', best: 7.5, low: 2, high: 2, shape: 'round', subColor: '#3a9a5b', ok: 'Carbohydrase works best near pH 7.5. It still works well at pH 8 in the small intestine.' }
           ]
-        },
-        {
-          type: 'mnemonic',
-          text: 'Make a memory trick for the four digestive enzymes. Write a silly sentence whose words start with P, P, L, and C, for pepsin, protease, lipase, and carbohydrase.',
-          easy: 'Write a silly sentence. Its words start with P, P, L, and C (pepsin, protease, lipase, carbohydrase).',
-          words: ['Pepsin', 'Protease', 'Lipase', 'Carbohydrase'],
-          support: false
         }
       ]
     },
@@ -352,29 +412,27 @@ window.ASSIGNMENT = {
       questions: [
         {
           type: 'selects',
-          text: 'Here is the digestion test data. Compared to the healthy dog, did Gus’s enzymes break down each nutrient at a low, normal, or high rate?',
-          easy: 'Compare Gus (pink dashed line) to the healthy dog (blue line). Is Gus’s rate low, normal, or high?',
-          charts: [
-            { title: 'Stomach: protein', alt: 'Stomach protein test. Both lines start at 1 milligram per milliliter and drop to 0.2 by 30 minutes. The healthy dog line and Gus’s line are on top of each other.',
-              x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Protein left (mg/mL)' },
-              lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.2]] }, { name: 'Gus', pts: [[0, 1], [30, 0.2]] }] },
-            { title: 'Small intestine: protein', alt: 'Small intestine protein test. The healthy dog line drops from 1 to 0.1 by 30 minutes. Gus’s line only drops from 1 to 0.75.',
-              x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Protein left (mg/mL)' },
-              lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.1]] }, { name: 'Gus', pts: [[0, 1], [30, 0.75]] }] },
-            { title: 'Small intestine: lipid (fat)', alt: 'Small intestine lipid test. The healthy dog line drops from 1 to 0.15 by 30 minutes. Gus’s line only drops from 1 to 0.8.',
-              x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Lipid left (mg/mL)' },
-              lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.15]] }, { name: 'Gus', pts: [[0, 1], [30, 0.8]] }] },
-            { title: 'Small intestine: carbohydrate', alt: 'Small intestine carbohydrate test. The healthy dog line drops from 1 to 0.1 by 30 minutes. Gus’s line only drops from 1 to 0.7.',
-              x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Carbohydrate left (mg/mL)' },
-              lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.1]] }, { name: 'Gus', pts: [[0, 1], [30, 0.7]] }] }
-          ],
+          text: 'Here is the digestion test data. Compared to the healthy dog, did Gus’s enzymes break down each nutrient at a low, normal, or high rate? Answer under each graph.',
+          easy: 'Compare Gus (pink dashed line) to the healthy dog (blue line). Is Gus’s rate low, normal, or high? Answer under each graph.',
           options: ['Low', 'Normal', 'High'],
-          hint: 'Find the chart with this title. Does Gus’s pink dashed line drop as fast as the healthy dog’s blue line, slower, or faster?',
+          hint: 'Look at the graph right above this menu. Does Gus’s pink dashed line drop as fast as the healthy dog’s blue line, slower, or faster?',
           items: [
-            { label: 'Stomach: protein', answer: 'Normal' },
-            { label: 'Small intestine: protein', answer: 'Low' },
-            { label: 'Small intestine: lipid (fat)', answer: 'Low' },
-            { label: 'Small intestine: carbohydrate', answer: 'Low' }
+            { label: 'Stomach: protein', answer: 'Normal',
+              chart: { title: 'Stomach: protein', alt: 'Stomach protein test. Both lines start at 1 milligram per milliliter and drop to 0.2 by 30 minutes. The healthy dog line and Gus’s line are on top of each other.',
+                x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Protein left (mg/mL)' },
+                lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.2]] }, { name: 'Gus', pts: [[0, 1], [30, 0.2]] }] } },
+            { label: 'Small intestine: protein', answer: 'Low',
+              chart: { title: 'Small intestine: protein', alt: 'Small intestine protein test. The healthy dog line drops from 1 to 0.1 by 30 minutes. Gus’s line only drops from 1 to 0.75.',
+                x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Protein left (mg/mL)' },
+                lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.1]] }, { name: 'Gus', pts: [[0, 1], [30, 0.75]] }] } },
+            { label: 'Small intestine: lipid (fat)', answer: 'Low',
+              chart: { title: 'Small intestine: lipid (fat)', alt: 'Small intestine lipid test. The healthy dog line drops from 1 to 0.15 by 30 minutes. Gus’s line only drops from 1 to 0.8.',
+                x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Lipid left (mg/mL)' },
+                lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.15]] }, { name: 'Gus', pts: [[0, 1], [30, 0.8]] }] } },
+            { label: 'Small intestine: carbohydrate', answer: 'Low',
+              chart: { title: 'Small intestine: carbohydrate', alt: 'Small intestine carbohydrate test. The healthy dog line drops from 1 to 0.1 by 30 minutes. Gus’s line only drops from 1 to 0.7.',
+                x: { min: 0, max: 30, step: 10, label: 'Time (minutes)' }, y: { min: 0, max: 1, step: 0.2, label: 'Carbohydrate left (mg/mL)' },
+                lines: [{ name: 'Healthy dog', pts: [[0, 1], [30, 0.1]] }, { name: 'Gus', pts: [[0, 1], [30, 0.7]] }] } }
           ]
         },
         {
@@ -438,7 +496,7 @@ window.ASSIGNMENT = {
               explain: 'Gus’s pancreas makes far less of all three enzymes than a healthy dog’s pancreas. With fewer enzymes in his small intestine, his food is broken down too slowly.'
             }
           ],
-          diagnosis: '<p><b>Diagnosis: Exocrine pancreatic insufficiency (EPI).</b> In EPI, the cells of the pancreas that make digestive enzymes are damaged, so the pancreas cannot secrete enough enzymes into the small intestine. Gus’s food is not broken down fast enough, so his body cannot absorb the nutrients. That is why he is hungry, thin, and tired, and why his poops are large and greasy: undigested fat is leaving his body.</p>'
+          diagnosis: '<p><b>Diagnosis: Exocrine pancreatic insufficiency (EPI).</b> In EPI, the cells of the pancreas that make digestive enzymes are damaged, so the pancreas cannot secrete enough enzymes into the small intestine. Gus’s food is not broken down fast enough, so his body cannot absorb the nutrients. That is why he is hungry, thin, and tired.</p>'
         },
         {
           type: 'written',
@@ -468,7 +526,7 @@ window.ASSIGNMENT = {
       intro: 'You found the cause. Now help Gus get better, and write his case report for the veterinarian.',
       read: '<p><b>Treatment for EPI.</b> Gus’s pancreas cannot make enough digestive enzymes, so the veterinarian prescribes an <b>enzyme supplement</b>: a powder mixed into every meal. The powder contains protease, lipase, and carbohydrase.</p>'
         + '<p>The supplement raises the <b>concentration</b> (amount) of enzymes in Gus’s small intestine. More enzymes means a faster reaction rate, so his food is broken down quickly. Now his body can absorb the nutrients and use them to build muscle and make energy.</p>'
-        + '<p><b>Results.</b> Mrs. Kinzy weighed Gus every week after he started the supplement. Two months later, Gus is back near his healthy weight, and he is energetic and playful again. EPI cannot be cured, so Gus will take the supplement with every meal for the rest of his life.</p>',
+        + '<p><b>Results.</b> Ms. Kinzy weighed Gus every week after he started the supplement. Two months later, Gus is back near his healthy weight, and he is energetic and playful again. EPI cannot be cured, so Gus will take the supplement with every meal for the rest of his life.</p>',
       images: [
         { src: 'media/gus-home.jpg', width: 300, alt: 'Gus, a yellow Labrador retriever, lying on a patterned rug at home. He looks full-bodied and healthy.', caption: 'Gus at home, two months after starting his enzyme supplement.' }
       ],

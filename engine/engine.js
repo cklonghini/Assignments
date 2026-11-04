@@ -1148,12 +1148,12 @@ function chartSvg(c){
   s.push('</svg>');
   return s.join('');
 }
-function chartsEl(list){
+function chartsEl(list,small){
   var wrap=h('div','charts'+(list.length>1?' many':''));
   list.forEach(function(c){
     var fig=h('figure','gfig chartfig'); fig.setAttribute('role','img'); fig.setAttribute('aria-label',c.alt||c.title||'Chart');
     /* charts side by side are drawn smaller, so their words are drawn bigger */
-    fig.innerHTML=list.length>1?chartSvg(c).replace(/font-size="(\d+)"/g,function(m,n){return 'font-size="'+Math.round(n*1.4)+'"';}):chartSvg(c);
+    fig.innerHTML=(list.length>1||small)?chartSvg(c).replace(/font-size="(\d+)"/g,function(m,n){return 'font-size="'+Math.round(n*1.4)+'"';}):chartSvg(c);
     var ser=c.lines||c.bars||[];
     if(ser.length>1){
       var lg=h('p','clegend');
@@ -1405,12 +1405,14 @@ function dialQ(id,q){
   sl.type='range'; sl.id='f-'+id+'_dial'; sl.min=q.min!=null?q.min:0; sl.max=q.max!=null?q.max:14; sl.step=q.step||0.5; lab.htmlFor=sl.id;
   lab.append((q.sliderLabel||fct)+': ',out); row.append(lab,sl);
   var fig=h('div','gfig dgraph'); fig.setAttribute('role','img');
-  var recRow=h('div','row gap'), recB=h('button','btn'); recB.type='button'; recRow.append(recB);
+  var recB=h('button','btn'); recB.type='button'; row.append(recB);
   var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
-  var list=h('ul','dlist');
   side.append(h('p','gsteph','Reaction rate'),meterW,stat);
   stage.append(pic,side);
-  wrap.append(h('p','whint',q.hint||('Choose an enzyme. Move the slider to try different values. Each value you try adds a dot to the graph. Find the '+fct+' where the enzyme works fastest, then record it.')),tabs,row,stage,fig,recRow,msg,list);
+  /* the enzyme and its graph sit side by side, so students see both without scrolling */
+  var view=h('div','dview'); view.append(stage,fig);
+  var steps=hh('ol','dsteps','<li>Choose an enzyme.</li><li>Move the slider. Watch the enzyme’s shape, the reaction rate, and the dots on the graph.</li><li>When you find the '+esc(fct)+' with the tallest dot, press <b>Record</b>. Its best '+esc(fct)+' shows on its button.</li>');
+  wrap.append(q.hint?h('p','whint',q.hint):steps,tabs,row,msg,view);
   var DP=(String(sl.step).split('.')[1]||'').length;
   function fv(v){return (+v).toFixed(DP)+(unit?(unit==='°C'?'':' ')+unit:'');}
   function rec(i){return S.auto[ids[i]]||null;}
@@ -1440,23 +1442,17 @@ function dialQ(id,q){
     stat.textContent=Math.round(a*100)+'% of its fastest rate. '+word(a,v,e);
     graph(cur);
     var r=rec(cur);
-    recB.textContent='Record '+fv(v)+' as the best '+fct+' for '+plain(e.name);
+    recB.textContent='Record '+fv(v)+' as the best '+fct;
+    recB.setAttribute('aria-label','Record '+fv(v)+' as the best '+fct+' for '+plain(e.name));
     recB.hidden=!!(r&&r.ok);
-  }
-  function paintList(){
-    list.textContent='';
-    enz.forEach(function(e,i){
-      var li=h('li','dli'); mark(li); var r=rec(i);
-      li.dataset.s=r&&r.ok?'ok':(r&&r.v?'bad':'idle');
-      li.append(h('b',null,plain(e.name)+(e.where?' ('+e.where+')':'')+': '),r&&r.v?('best '+fct+' '+r.v+(r.ok?' ✓':' ✗')):'not recorded yet');
-      list.append(li);
-    });
   }
   function paintTabs(){
     tabs.textContent='';
     enz.forEach(function(e,i){
-      var b=h('button','dtab'+(i===cur?' on':''),plain(e.name)); b.type='button'; b.setAttribute('aria-pressed',i===cur?'true':'false');
-      var r=rec(i); if(r&&r.ok) b.append(' ✓');
+      var r=rec(i), b=h('button','dtab dcard'+(i===cur?' on':'')); b.type='button'; b.setAttribute('aria-pressed',i===cur?'true':'false');
+      mark(b); b.dataset.s=r&&r.ok?'ok':(r&&r.v?'bad':'idle');
+      b.append(h('span','dname',plain(e.name)+(e.where?' ('+e.where+')':'')),
+        h('span','dbest','Best '+fct+': '+(r&&r.v?r.v+(r.ok?' ✓':' ✗ try again'):'not recorded')));
       b.addEventListener('click',function(){ cur=i; st.on=i; msg.textContent=''; msg.removeAttribute('data-s'); paintTabs(); show(false); save(); });
       tabs.append(b);
     });
@@ -1469,10 +1465,10 @@ function dialQ(id,q){
     msg.textContent='';
     if(good){ msg.dataset.s='ok'; msg.append(itxt('Correct. '+(e.ok||(plain(e.name)+' works fastest near '+fv(e.best)+'.')))); }
     else { msg.dataset.s='bad'; msg.append(itxt('Not yet. Tip: '+(e.tip||q.tip||'Try values on both sides. The best value has the tallest dot on your graph.'))); }
-    paintTabs(); paintList(); show(false); commit();
+    paintTabs(); show(false); commit();
   });
   sl.value=q.start!=null?q.start:Math.round((+sl.min+ +sl.max)/2);
-  paintTabs(); show(true); paintList();
+  paintTabs(); show(true);
   return wrap;
 }
 
@@ -3173,13 +3169,27 @@ function buildQuestion(q,s,tile){
   if(t==='selects'){
     ids=q.items.map(function(it,i){return id+'_'+i;});
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
-    var grid=h('div','sigs');
+    /* items can sit in rows (row: 'Pepsin', with an optional picture in rowImages) or each beside its own chart */
+    var grid=h('div','sigs'), byChart=q.items.some(function(it){return it.chart;}), lastRow=null, rowBox=null;
+    if(byChart) grid=h('div','selcharts');
     q.items.forEach(function(it,i){
       var sid=id+'_'+i, ops=fewer(sid,it.options||q.options,[it.answer],[(S.auto[sid]||{}).v]);
       var sel=autoSelect(sid,'Q'+num+' '+plain(it.label).replace(/:/g,''),ops,it.answer,{label:(SUPPORT&&it.easy)||it.label,hint:it.hint||q.hint});
       if(it.sci||q.sci) sel.classList.add('sci');
-      grid.append(sel);
+      if(byChart){
+        var card=h('div','selchart');
+        if(it.chart) card.append(chartsEl([it.chart],true));
+        card.append(sel); grid.append(card);
+      } else if(it.row!=null){
+        if(it.row!==lastRow){
+          var row=h('div','selrow'), im=(q.rowImages||{})[it.row];
+          if(im){ var pic=document.createElement('img'); pic.src=im.src; pic.alt=im.alt||''; pic.className='selrowimg'; row.append(pic); }
+          rowBox=h('div','sigs'); row.append(rowBox); grid.append(row); lastRow=it.row;
+        }
+        rowBox.append(sel);
+      } else { lastRow=null; grid.append(sel); }
     });
+    if(!byChart&&q.items.some(function(it){return it.row!=null;})) grid.className='selrows';
     o.body.append(grid);
   } else if(t==='choice'){
     var cops=fewer(id,q.options,[q.options[q.answer]],[(S.auto[id]||{}).v]);
