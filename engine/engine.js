@@ -176,6 +176,18 @@ function itxt(t){
   return f;
 }
 function plain(t){return String(t).replace(/\*/g,'');}
+/* Keep a shown tip (the highlight color tips, the Focus switch tip) inside the screen, so it is never cut off or
+   pushes the page sideways on a phone. */
+function fitTips(){
+  document.querySelectorAll('.tipwrap>.tip').forEach(function(t){
+    t.style.transform='';
+    var r=t.getBoundingClientRect(); if(!r.width) return;
+    var W=document.documentElement.clientWidth, dx=0;
+    if(r.right>W-8) dx=W-8-r.right; if(r.left+dx<8) dx=8-r.left;
+    if(dx) t.style.transform='translateX('+Math.round(dx)+'px)';
+  });
+}
+['pointerover','focusin','click'].forEach(function(ev){ document.addEventListener(ev,function(e){ if(e.target.closest&&e.target.closest('.tipwrap')) requestAnimationFrame(fitTips); },true); });
 function words(t){var m=String(t||'').trim().match(/\S+/g); return m?m.length:0;}
 
 /* Video watch tracking: records each second actually played at normal flow */
