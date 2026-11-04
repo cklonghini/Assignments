@@ -1213,7 +1213,7 @@ function reactionQ(id,q){
   row.append(addB,runB);
   var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
   var nums=h('div','rxnums');
-  if((q.items||[]).length){ nums.append(h('p','gsteph',q.itemsIntro||'Now use your results. Reaction rate = amount of product made ÷ time.')); if(q.calculator) nums.append(calcEl(id)); nums.append(numbersQ(id,q)); }
+  if((q.items||[]).length){ nums.append(h('p','rxask',q.itemsIntro||'Now use your results. Reaction rate = amount of product made ÷ time.')); if(q.calculator) nums.append(calcEl(id,q.calculator!=='open')); nums.append(numbersQ(id,q)); }
   wrap.append(grid,clock,row,msg,nums);
   var running=false;
   function draw(t){
@@ -1450,9 +1450,11 @@ function dialQ(id,q){
     tabs.textContent='';
     enz.forEach(function(e,i){
       var r=rec(i), b=h('button','dtab dcard'+(i===cur?' on':'')); b.type='button'; b.setAttribute('aria-pressed',i===cur?'true':'false');
+      var shut=!!(q.inOrder&&!TEACHER&&i>0&&!(rec(i-1)&&rec(i-1).ok));
+      b.disabled=shut;
       mark(b); b.dataset.s=r&&r.ok?'ok':(r&&r.v?'bad':'idle');
       b.append(h('span','dname',plain(e.name)+(e.where?' ('+e.where+')':'')),
-        h('span','dbest','Best '+fct+': '+(r&&r.v?r.v+(r.ok?' ✓':' ✗ try again'):'not recorded')));
+        h('span','dbest',shut?'Opens after '+plain(enz[i-1].name):'Best '+fct+': '+(r&&r.v?r.v+(r.ok?' ✓':' ✗ try again'):'not recorded')));
       b.addEventListener('click',function(){ cur=i; st.on=i; msg.textContent=''; msg.removeAttribute('data-s'); paintTabs(); show(false); save(); });
       tabs.append(b);
     });
@@ -1606,8 +1608,8 @@ function calcEval(src){
   var v=sum(); if(i!==t.length||!isFinite(v)) throw 0;
   return Math.round(v*1e8)/1e8;
 }
-function calcEl(id){
-  var d=h('details','calc'); d.open=true;
+function calcEl(id,closed){
+  var d=h('details','calc'); d.open=!closed;
   d.append(h('summary',null,'Calculator'));
   var inp=h('input'); inp.type='text'; inp.id='calc-'+id; inp.autocomplete='off'; inp.spellcheck=false; inp.inputMode='decimal';
   inp.setAttribute('aria-label','Calculator. Type a math problem, then press Enter or the equals button.');
@@ -1660,6 +1662,14 @@ function numbersQ(id,q){
       return 'Not yet. Tip: '+plain(it.tip||q.tip||'Look back at the reading and try again.');
     },plain(it.label),{sub:it.label,unit:it.unit||q.unit});
     var l=h('label'); l.append(itxt(it.label)); l.htmlFor='f-'+iid; w.prepend(l);
+    /* help: a "?" button that shows how to set up the problem (never the answer) */
+    if(it.help){
+      var hb=h('button','nhelpbtn','?'); hb.type='button'; hb.setAttribute('aria-expanded','false');
+      hb.setAttribute('aria-label','Help setting up: '+plain(it.label)); hb.title='Help setting up this problem';
+      var hp=h('p','nhelp'); hp.hidden=true; hp.append(itxt(it.help));
+      hb.addEventListener('click',function(){ hp.hidden=!hp.hidden; hb.setAttribute('aria-expanded',hp.hidden?'false':'true'); });
+      var head=h('div','nhead'); l.replaceWith(head); head.append(l,hb); head.after(hp);
+    }
     grid.append(w);
   });
   return grid;
@@ -3165,7 +3175,7 @@ function buildQuestion(q,s,tile){
     o.body.append(fig);
   }
   if(q.chart||q.charts) o.body.append(chartsEl(q.charts||[q.chart]));
-  if(q.calculator&&t!=='reaction') o.body.append(calcEl(id));
+  if(q.calculator&&t!=='reaction') o.body.append(calcEl(id,q.calculator==='closed'));
   if(t==='selects'){
     ids=q.items.map(function(it,i){return id+'_'+i;});
     if(q.note) o.body.append(hh('div','ends','<span>'+q.note+'</span>'));
@@ -3312,9 +3322,14 @@ function buildPart(p,n){
   var inVid=(p.questions||[]).filter(function(q){return q.at!=null;});
   if(inVid.length&&first) s.append(videoStops(first,inVid));
   (p.images||[]).forEach(function(im){ s.append(figureEl(im)); });
-  if(p.read) s.append(readBox(p.read,p.readLabel));
+  var readLater=!!(p.read&&(p.questions||[]).some(function(q){return q.readBefore;}));
+  if(p.read&&!readLater) s.append(readBox(p.read,p.readLabel));
   if(p.tableHtml){ var tw=h('div','tablewrap'); tw.innerHTML=p.tableHtml; s.append(tw); }
-  (p.questions||[]).forEach(function(q){ if(!(q.at!=null&&first)) buildQuestion(q,s); });
+  (p.questions||[]).forEach(function(q){
+    if(readLater&&q.readBefore){ s.append(readBox(p.read,p.readLabel)); readLater=false; }
+    if(!(q.at!=null&&first)) buildQuestion(q,s);
+  });
+  if(readLater) s.append(readBox(p.read,p.readLabel));
   if(GATED) gateEls(s,n);
   return s;
 }

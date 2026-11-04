@@ -10,7 +10,7 @@
 window.ASSIGNMENT = {
   title: 'Explore - Enzymes Case Study',
   course: 'Biology A',
-  storageKey: 'explore-enzymes-case-study-v2',
+  storageKey: 'explore-enzymes-case-study-v3',
   short: 'enzymes',
 
   /* supported version (?support=eagle): the goal box at the top */
@@ -61,18 +61,6 @@ window.ASSIGNMENT = {
         + '<p>Gus is eating a lot but losing weight, and he has low energy. That is a clue that something is wrong with his metabolism.</p>',
       questions: [
         {
-          type: 'speak',
-          text: 'Vocabulary check. Open “Read this before you answer” above. Then press Say it on each card and say the word and its definition out loud.',
-          easy: 'Read the reading above. Then press Say it on each card. Say the word and what it means.',
-          cards: [
-            { term: 'Metabolism', def: 'All of the chemical reactions that happen in a living thing.', say: /metabol/, keys: [/reaction/, /living|body|organism/] },
-            { term: 'Homeostasis', def: 'The body’s way of keeping conditions inside it stable.', say: /homeo|home ?o ?stasis|homie/, keys: [/stable|steady|balance|same/, /condition|inside|internal/] },
-            { term: 'Chemical reaction', def: 'A change that turns substances into different substances.', say: /reaction/, keys: [/substance|chemical/, /different|new/] },
-            { term: 'Reactants', def: 'The substances you start with in a chemical reaction.', say: /reactant|re ?act ?ants?/, keys: [/start|begin/] },
-            { term: 'Products', def: 'The new substances a chemical reaction makes.', say: /product/, keys: [/new|make|made/] }
-          ]
-        },
-        {
           type: 'multi',
           text: 'Use the patient chart. Which of these are Gus’s symptoms? Choose all that apply.',
           easy: 'Look at the patient chart. Which of these are Gus’s symptoms? Choose all that apply.',
@@ -90,6 +78,20 @@ window.ASSIGNMENT = {
           items: [
             { label: 'Weight lost', unit: 'lb', between: [20, 20], tip: 'Subtract his weight today from his weight 6 months ago.' },
             { label: 'Percent of his healthy weight lost', unit: '%', between: [24.5, 25.5], tip: 'Use your answer for weight lost. Divide it by 80 (his healthy weight), then multiply by 100. Follow the example in the question.' }
+          ]
+        },
+        {
+          type: 'speak',
+          readBefore: true,
+          deck: true,
+          text: 'Vocabulary check. Open “Read this before you answer” above. Then press Say it and say the word and its definition out loud. The next card opens when the card turns green.',
+          easy: 'Read the reading above. Then press Say it on each card. Say the word and what it means.',
+          cards: [
+            { term: 'Metabolism', def: 'All of the chemical reactions that happen in a living thing.', say: /metabol/, keys: [/reaction/, /living|body|organism/] },
+            { term: 'Homeostasis', def: 'The body’s way of keeping conditions inside it stable.', say: /homeo|home ?o ?stasis|homie/, keys: [/stable|steady|balance|same/, /condition|inside|internal/] },
+            { term: 'Chemical reaction', def: 'A change that turns substances into different substances.', say: /reaction/, keys: [/substance|chemical/, /different|new/] },
+            { term: 'Reactants', def: 'The substances you start with in a chemical reaction.', say: /reactant|re ?act ?ants?/, keys: [/start|begin/] },
+            { term: 'Products', def: 'The new substances a chemical reaction makes.', say: /product/, keys: [/new|make|made/] }
           ]
         },
         {
@@ -166,9 +168,9 @@ window.ASSIGNMENT = {
           ],
           calculator: true,
           items: [
-            { label: 'Reaction rate in Cell 1', unit: 'mg/s', between: [0.5, 0.5], tip: 'Read how much product Cell 1 made, then divide by the 4 seconds the reaction ran.' },
-            { label: 'Reaction rate in Cell 2', unit: 'mg/s', between: [4, 4], tip: 'Read how much product Cell 2 made, then divide by the 4 seconds the reaction ran.' },
-            { label: 'How many times faster was Cell 2?', unit: 'times', between: [8, 8], tip: 'Divide the rate in Cell 2 by the rate in Cell 1.' }
+            { label: 'Reaction rate in Cell 1', unit: 'mg/s', between: [0.5, 0.5], help: 'Reaction rate = product made ÷ time. Read the product counter under Cell 1: ___ mg ÷ 4 seconds = ___ mg/s.', tip: 'Read how much product Cell 1 made, then divide by the 4 seconds the reaction ran.' },
+            { label: 'Reaction rate in Cell 2', unit: 'mg/s', between: [4, 4], help: 'Reaction rate = product made ÷ time. Read the product counter under Cell 2: ___ mg ÷ 4 seconds = ___ mg/s.', tip: 'Read how much product Cell 2 made, then divide by the 4 seconds the reaction ran.' },
+            { label: 'How many times faster was Cell 2?', unit: 'times', between: [8, 8], help: 'Times faster = rate in Cell 2 ÷ rate in Cell 1. Use your two answers: ___ mg/s ÷ ___ mg/s = ___ times.', tip: 'Divide the rate in Cell 2 by the rate in Cell 1.' }
           ]
         },
         {
@@ -283,14 +285,20 @@ window.ASSIGNMENT = {
         },
         {
           type: 'dial',
-          text: 'Temperature test. Move the temperature slider and watch the enzyme’s active site and its reaction rate. Find the temperature where this dog enzyme works best, and record it. Then try a high temperature to see what happens.',
-          easy: 'Move the slider. Find the temperature where the enzyme works fastest. Record it. Then try a very high temperature.',
+          text: 'Temperature test. Move the temperature slider and watch each enzyme’s active site and its reaction rate. Find the temperature where each dog enzyme works best, and record it. The next enzyme opens when you finish one. Try a high temperature too, to see what happens.',
+          easy: 'Move the slider. Find the temperature where each enzyme works fastest. Record it. Then the next enzyme opens. Try a very high temperature too.',
           factor: 'temperature', sliderLabel: 'Temperature', unit: '°C', xLabel: 'Temperature (°C)',
-          min: 0, max: 70, step: 1, start: 20, graphStep: 10,
+          min: 0, max: 70, step: 1, start: 20, graphStep: 10, inOrder: true,
           enzymes: [
             { name: 'Protease', where: 'a dog enzyme', best: 38, low: 14, high: 7, tol: 2, shape: 'square', subColor: '#d63f78',
               tip: 'Try temperatures on both sides of your tallest dot. The best temperature has the tallest dot on your graph.',
-              ok: 'This enzyme works best at about 38 °C, which is a dog’s normal body temperature. Now try 55 °C or more and watch the active site.' }
+              ok: 'This enzyme works best at about 38 °C, which is a dog’s normal body temperature. Now try 55 °C or more and watch the active site.' },
+            { name: 'Lipase', where: 'a dog enzyme', best: 40, low: 15, high: 7, tol: 2, shape: 'triangle', subColor: '#e2a72a',
+              tip: 'Try temperatures on both sides of your tallest dot. The best temperature has the tallest dot on your graph.',
+              ok: 'Lipase works best at about 40 °C, close to a dog’s body temperature (about 38 to 39 °C).' },
+            { name: 'Carbohydrase', where: 'a dog enzyme', best: 37, low: 14, high: 7, tol: 2, shape: 'round', subColor: '#3a9a5b',
+              tip: 'Try temperatures on both sides of your tallest dot. The best temperature has the tallest dot on your graph.',
+              ok: 'Carbohydrase works best at about 37 °C. All three enzymes work best near a dog’s body temperature, and all three are denatured when it gets too hot.' }
           ]
         },
         {

@@ -107,7 +107,9 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 }
 ```
 
-Order on the page: `intro`, `link`, clips, images, `read`, `tableHtml`, questions.
+Order on the page: `intro`, `link`, clips, images, `read`, `tableHtml`, questions. To put the reading box further down,
+between questions, give the question it should come right before `readBefore: true` (for example, so students answer
+questions about a patient chart first and then read the vocabulary).
 
 **Focus:** every page has a "Focus" switch at the top (an accommodation). When it is on, every block of a part
 (a video, the reading box, a question) fades out except the one the student clicked, tabbed into, or scrolled to. Nothing
@@ -373,7 +375,8 @@ Students choose an enzyme and move a slider. The enzyme's active site bends out 
 value moves away from the enzyme's best value, until it is denatured. Every value they try adds a dot to a graph of
 their own data. For each enzyme they press "Record ... as the best pH" (checked: within `tol` of `best`; default one
 slider step). The rate is 100% at `best` and falls off on each side: `low` and `high` set how fast (bigger is wider).
-`shape` and `subColor` draw the enzyme and its substrate as in `lockkey`. Examples: the temperature test in Part 3 and
+`shape` and `subColor` draw the enzyme and its substrate as in `lockkey`. `inOrder: true` opens the enzymes one at a
+time: each button says "Opens after ..." until the enzyme before it is recorded. Examples: the temperature test in Part 3 and
 the pH test in Part 4 of `assignments/explore-enzymes-case-study/`.
 
 ```js
@@ -421,6 +424,9 @@ chart: { title: 'Small intestine: protein', alt: '...',
 
 Each box accepts any number inside `between` (low and high, inclusive). Commas and units are ignored, so
 "3,300 cm3" counts as 3300. Use a range when students read a value off a graph or round.
+
+A box can have `help: '...'`: a small "?" button next to its label shows that text, to set up the problem (for example
+"Reaction rate = product made ÷ time: ___ mg ÷ 4 seconds = ___ mg/s"). Never put the answer in it.
 
 ```js
 { type: 'numbers', text: 'Find the average diameter for each volume.', unit: 'cm',     // unit shows after every box
@@ -642,6 +648,8 @@ board: {
 - `img: { src: 'media/heart.png', alt: 'Description that does not give the answer', caption: 'optional' }` shows a
   picture under the question. `alt` is required.
 - `calculator: true` shows a basic calculator under the question text (add, subtract, multiply, divide, parentheses).
+  `calculator: 'closed'` shows it folded, so students open it only if they need it (on a `reaction` question it starts
+  folded; use `calculator: 'open'` there to start it open).
   It is for working out averages and sums. It is not saved or graded.
 - `typed` questions can use `accept: ['cellular respiration', 'cell respiration']` instead of `expected`. Capital
   letters and an end period are ignored.
