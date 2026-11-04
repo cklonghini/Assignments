@@ -1486,18 +1486,29 @@ function diagnosisQ(id,q){
   var opts=q.options||['Ruled out','Still possible','This is the cause'];
   var hid=id+'_h';
   ORDER.push({kind:'written',id:hid,q:CURQ,sub:q.firstLabel||'My first hypothesis'});
+  /* The board sits on a clipboard with the student's hypothesis at the top. While students run the tests, a small copy
+     of the clipboard rides along under the progress bars, so the case board follows them from test to test. */
   var board=h('div','dxboard'), cards={};
+  var clip=h('div','dxclip'), paper=h('div','dxpaper'), hyp=h('p','dxhyp');
+  paper.append(h('p','dxtitle',q.boardTitle||'Case board'),hyp,board);
+  clip.append(h('span','dxclamp'),paper);
+  var mini=h('div','dxclip dxmini'), mpaper=h('div','dxpaper'), mhyp=h('p','dxhyp'), mrow=h('div','dxmrow'), mchips={};
+  mini.setAttribute('aria-hidden','true'); mini.hidden=true;
+  mpaper.append(h('p','dxtitle',q.boardTitle||'Case board'),mhyp,mrow); mini.append(h('span','dxclamp'),mpaper);
+  document.body.append(mini);
   causes.forEach(function(c){
     var card=h('div','dxcause'); var nm=h('h3','tname'); nm.append(itxt(c.name));
     var about=h('p','pwho'); about.append(itxt(c.about||''));
     var badge=h('span','dxbadge'), guess=h('span','dxguess','My first guess');
     card.append(guess,nm,about,badge); board.append(card); cards[c.key]={card:card,badge:badge,guess:guess};
+    var chip=h('span','dxchip'), mark=h('span','dxmark'), cn=h('span','dxcn'); cn.append(itxt(c.name));
+    chip.append(mark,cn); mrow.append(chip); mchips[c.key]={chip:chip,mark:mark};
   });
   var pick=h('div','dxpick'), pickMsg=h('p','msg');
   pick.append(h('p','gsteph',q.firstText||'Before you run any tests, which cause do you think it is? Choose your first hypothesis. (It is fine to be wrong. Scientists change their minds when the data says so.)'));
   var pickRow=h('div','row gap'); pick.append(pickRow,pickMsg);
   var stepsEl=h('div','dxtests'), finalBox=h('div','dxfinal');
-  wrap.append(board,pick,stepsEl,finalBox);
+  wrap.append(clip,pick,stepsEl,finalBox);
   var testEls=tests.map(function(t,i){
     var tid=id+'_'+i, cause=causes.filter(function(c){return c.key===t.cause;})[0]||{name:''};
     var box=h('div','dxtest'), nm=h('h3','tname'); nm.append(itxt(t.name||('Test '+(i+1))));
@@ -1525,12 +1536,19 @@ function diagnosisQ(id,q){
     });
     pickMsg.textContent=guess?(locked?'Your first hypothesis is saved: '+guess+'.':'Your first hypothesis: '+guess+'. You can change it until you run Test 1.'):'';
     pickMsg.dataset.s=guess?'ok':'';
+    [hyp,mhyp].forEach(function(el){
+      el.textContent=''; el.append(h('b',null,'My hypothesis: '),guess?guess:h('span','dxblank','not chosen yet'));
+    });
     causes.forEach(function(c){
-      var k=cards[c.key], t=tests.map(function(x,i){return {x:x,i:i};}).filter(function(o){return o.x.cause===c.key&&okT(o.i);})[0];
-      var res=t?t.x.answer:'';
-      k.card.dataset.st=/cause/i.test(res)?'found':(/ruled/i.test(res)?'out':'open');
-      k.badge.textContent=/cause/i.test(res)?'Cause found':(/ruled/i.test(res)?'Ruled out':'Still possible');
+      var k=cards[c.key], m=mchips[c.key], t=tests.map(function(x,i){return {x:x,i:i};}).filter(function(o){return o.x.cause===c.key&&okT(o.i);})[0];
+      var res=t?t.x.answer:'', was=k.card.dataset.st;
+      var stt=/cause/i.test(res)?'found':(/ruled/i.test(res)?'out':'open');
+      k.card.dataset.st=stt; m.chip.dataset.st=stt;
+      k.badge.textContent=stt==='found'?'Cause found':(stt==='out'?'Ruled out':'Still possible');
+      m.mark.textContent=stt==='found'?'✓':(stt==='out'?'✗':'?');
       k.guess.hidden=guess!==plain(c.name);
+      m.chip.classList.toggle('mine',!!guess&&guess===plain(c.name));
+      if(was&&was!==stt&&!STILL){ [k.card,m.chip].forEach(function(el){ el.classList.remove('dxstamp'); void el.offsetWidth; el.classList.add('dxstamp'); }); }
     });
     var open=!!guess||TEACHER;
     testEls.forEach(function(te,i){
@@ -1541,7 +1559,25 @@ function diagnosisQ(id,q){
     });
     var all=tests.every(function(t,i){return okT(i);});
     finalBox.hidden=!all; finalBox.innerHTML=all?(q.diagnosis||''):'';
+    follow();
   }
+  /* Show the small clipboard once the big one has scrolled up under the progress bars, while the tests are still on
+     the screen. It is fixed in place, so showing it never moves the page. */
+  var ticking=false;
+  function follow(){
+    var bar=document.querySelector('.bar'), top=bar?Math.max(0,bar.getBoundingClientRect().bottom):0;
+    mini.style.top=top+'px';
+    var on=false;
+    if(wrap.offsetParent!==null&&((S.written[hid]||{}).text||TEACHER)){
+      var b=clip.getBoundingClientRect(), last=(finalBox.hidden?stepsEl:finalBox).getBoundingClientRect();
+      on=b.bottom<top+8&&last.bottom>top+(mini.offsetHeight||80)+40;
+    }
+    if(on!==!mini.hidden){ mini.hidden=!on; if(on&&!STILL){ mini.classList.remove('dxdrop'); void mini.offsetWidth; mini.classList.add('dxdrop'); } }
+  }
+  function onScroll(){ if(ticking) return; ticking=true; requestAnimationFrame(function(){ ticking=false; follow(); }); }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  document.addEventListener('click',function(){ setTimeout(follow,50); });
   wrap.addEventListener('change',function(){ setTimeout(paint,0); });
   paint();
   return wrap;

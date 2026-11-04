@@ -393,7 +393,10 @@ A board shows the possible causes. Students first choose a hypothesis (saved and
 be changed until they run Test 1). Then each test opens in order: students read how it works, press its run button to
 see the data (`chart`, `charts`, and/or `result` HTML), and choose what it means for one cause (a menu checked
 against `answer`). The board crosses out each cause that is ruled out and marks the one that is found. When every
-test is right, the `diagnosis` box (HTML) appears. Example: Part 5 of `assignments/explore-enzymes-case-study/`.
+test is right, the `diagnosis` box (HTML) appears. The board sits on a clipboard with the student's hypothesis at the top.
+Once the student scrolls past it into the tests, a small copy of the clipboard (hypothesis plus each cause marked ?, ✗, or ✓)
+stays under the progress bars until the tests end, so the board follows them from test to test. `boardTitle` changes the
+clipboard's heading (default "Case board"). Example: Part 5 of `assignments/explore-enzymes-case-study/`.
 
 ```js
 { type: 'diagnosis', text: 'Case board...',
