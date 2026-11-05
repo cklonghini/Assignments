@@ -232,6 +232,12 @@ tell which menu goes with which graph. Examples: Part 4 and Part 5 of `assignmen
 
 True/false is a choice question with two options.
 
+The page mixes the order of the options, so the right answer is not always first. Write the options in any order and set
+`answer` to the right one's position in your list. The mixed order is the same for every student and every reload. It
+does not mix: questions with two options (true/false, yes/no), options that all start with a number (kept in your
+order), and "All of the above" or "None of the above" (kept last). Add `keepOrder: true` to keep any other question in
+your order (for example choices that go from smallest to largest).
+
 ### typed: the student types the exact answer and presses Check (auto-checked)
 
 ```js

@@ -550,6 +550,18 @@ function shuffled(arr,seed){
   for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t;}
   return a;
 }
+/* Multiple choice options show in a mixed order, so the right answer is not always first. The order is the same for every
+   student and on every reload (it is seeded by the assignment and question). These stay put: true/false and yes/no pairs,
+   lists of numbers (kept in order), "All/None of the above" type choices (kept at the end), and any question with
+   keepOrder: true. Saved answers are stored as the option text, so mixing the order never breaks saved progress. */
+function mixChoices(id,q){
+  var o=q.options||[];
+  if(q.keepOrder||o.length<3) return o;
+  if(o.every(function(t){return /^\s*[-−+]?\$?\d/.test(plain(t));})) return o;
+  var pin=/^(all|none|both|neither)\b.*\b(above|these|of them)\b|^(all|none) of the (above|choices)/i;
+  var rest=o.filter(function(t){return !pin.test(plain(t));}), end=o.filter(function(t){return pin.test(plain(t));});
+  return shuffled(rest,'mix|'+(A.storageKey||TITLE)+'|'+id+'|'+plain(q.text||'')).concat(end);
+}
 function setAuto(id,v,ok,extra){
   var prev=S.auto[id]||{}, o={v:v,ok:ok,miss:(prev.miss||0)};
   if(extra) Object.keys(extra).forEach(function(k){o[k]=extra[k];});
@@ -3250,7 +3262,7 @@ function buildQuestion(q,s,tile){
     if(!byChart&&q.items.some(function(it){return it.row!=null;})) grid.className='selrows';
     o.body.append(grid);
   } else if(t==='choice'){
-    var cops=fewer(id,q.options,[q.options[q.answer]],[(S.auto[id]||{}).v]);
+    var cops=fewer(id,mixChoices(id,q),[q.options[q.answer]],[(S.auto[id]||{}).v]);
     o.body.append(choiceQ(id,'Q'+num,cops,cops.indexOf(q.options[q.answer]),q.explain,q.tip));
   } else if(t==='typed'){
     var exp=q.expected;
