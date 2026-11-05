@@ -33,21 +33,15 @@ window.ASSIGNMENT = {
     + '<circle cx="32" cy="32" r="8"/><circle cx="32" cy="15" r="7"/><circle cx="32" cy="49" r="7"/>'
     + '<circle cx="17" cy="23.5" r="7"/><circle cx="47" cy="23.5" r="7"/><circle cx="17" cy="40.5" r="7"/><circle cx="47" cy="40.5" r="7"/></g></svg>',
 
-  video: {
-    title: 'Model a Muscle Lab Overview',
-    src: 'media/muscle-model-video.mp4',
-    seconds: 419,
-    intro: 'Watch the video Model a Muscle Lab Overview before you start building. Then keep this page open next to you and follow along, one step at a time, while you build your own model. This page is your lab sheet: when the video says to add your pictures to the document, add them here instead. Before you start, do Step 1 to get set up.'
-  },
-
-  /* one clip per build step. from/to are times in the full video. */
+  /* one clip per build step, cut from the teacher's video. from/to are times in that video. There is no full video at
+     the top: the teacher wants students to start with the short setup clip, then watch each clip as they build. */
   clips: {
-    setup:      { src: 'media/clip-setup.mp4',      from: 0.0,   to: 23.0,  seconds: 24,  title: 'What you need for this lab' },
-    myofibrils: { src: 'media/clip-myofibrils.mp4', from: 23.0,  to: 63.0,  seconds: 41,  title: 'Step 1 in the video: fill your straws with spaghetti' },
-    fiber:      { src: 'media/clip-fiber.mp4',      from: 63.0,  to: 185.0, seconds: 123, title: 'Step 2 in the video: bundle seven straws and wrap them in endomysium' },
-    fascicle:   { src: 'media/clip-fascicle.mp4',   from: 185.0, to: 276.0, seconds: 92,  title: 'Step 3 in the video: bundle muscle fibers and wrap them in perimysium' },
-    muscle:     { src: 'media/clip-muscle.mp4',     from: 276.0, to: 361.0, seconds: 86,  title: 'Step 4 in the video: bundle the fascicles and wrap them in epimysium' },
-    recap:      { src: 'media/clip-recap.mp4',      from: 361.0, to: 418.5, seconds: 58,  title: 'Looking back at every part of the model' }
+    setup:      { src: 'media/clip-setup.mp4',      from: 0.0,   to: 23.0,  seconds: 24,  of: 'Model a Muscle Lab Overview', title: 'What you need for this lab' },
+    myofibrils: { src: 'media/clip-myofibrils.mp4', from: 23.0,  to: 63.0,  seconds: 41,  of: 'Model a Muscle Lab Overview', title: 'Step 1 in the video: fill your straws with spaghetti' },
+    fiber:      { src: 'media/clip-fiber.mp4',      from: 63.0,  to: 185.0, seconds: 123, of: 'Model a Muscle Lab Overview', title: 'Step 2 in the video: bundle seven straws and wrap them in endomysium' },
+    fascicle:   { src: 'media/clip-fascicle.mp4',   from: 185.0, to: 276.0, seconds: 92,  of: 'Model a Muscle Lab Overview', title: 'Step 3 in the video: bundle muscle fibers and wrap them in perimysium' },
+    muscle:     { src: 'media/clip-muscle.mp4',     from: 276.0, to: 361.0, seconds: 86,  of: 'Model a Muscle Lab Overview', title: 'Step 4 in the video: bundle the fascicles and wrap them in epimysium' },
+    recap:      { src: 'media/clip-recap.mp4',      from: 361.0, to: 418.5, seconds: 58,  of: 'Model a Muscle Lab Overview', title: 'Looking back at every part of the model' }
   },
 
   parts: [
@@ -55,7 +49,7 @@ window.ASSIGNMENT = {
     {
       title: 'Get set up',
       gate: true,                 // the build steps stay hidden until everything in this step is done
-      intro: 'Do all of this before you start building. The rest of the lab opens when you finish this step: agree to the lab rules, answer the setup questions, and take a selfie with your materials.',
+      intro: 'Keep this page open next to you and follow along, one step at a time, while you build your own model. Each step has a short clip from the video Model a Muscle Lab Overview. This page is your lab sheet: when the video says to add your pictures to the document, add them here instead. Do all of this step before you start building. The rest of the lab opens when you finish it: agree to the lab rules, answer the setup questions, and take a selfie with your materials.',
       clips: ['setup'],
       read: '<p><b>Today you will build a physical model of a skeletal muscle.</b> Afterward, you will reflect on how well the model shows the real structure of a skeletal muscle.</p>'
         + '<p><b>Materials</b> (from your lab bag):</p><ul>'
