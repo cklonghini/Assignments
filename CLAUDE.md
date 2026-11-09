@@ -58,11 +58,19 @@ lab agreement, and a ready-to-go selfie `photo`.
 
 ## Research writing (the CER writing space)
 
-At the end of every 7-week learning period students choose a topic, research it on two websites, and write a
-claim-evidence-reasoning response. `assignments/cer-writing-space/` is that assignment: `source` questions (the
-website link is the only box where students can paste), `notes` questions (a fact typed from the site plus the
-student's own annotation), and a `cer: true` highlight question with `notesBeside: true` so their notes sit next to
-the writing box. See "source and notes" in `docs/ASSIGNMENT_FORMAT.md`. Topics are the student's choice, so its
+At the end of every 7-week learning period students choose ONE research question from the teacher's list (or their
+own, with her approval), research it on two websites, and write a claim-evidence-reasoning response ("Research and
+Report"). There is a separate link for each learning period and course, so saved work never carries over from the last
+period: `assignments/cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/`. Each has a short
+`assignment.js` that calls `CER_PROJECT({...})` with its title ("LP3 - Biology Research and Report"), course,
+`storageKey`, `short` link, the research `questions` (with `{ heading: '...' }` lines to group them), `sites` to
+suggest, and a `searchExample`. Everything else is shared in `assignments/cer-common/cer-project.js`, which the
+folder's `index.html` loads before `assignment.js`. For a new period, copy an LP3 folder, rename it (`cer-lp4-...`),
+and change the title, `storageKey`, `short`, and questions.
+
+The project uses `pick` (choose the question), `source` (the website link is the only box where students can paste),
+`notes` (a fact typed from the site plus the student's own annotation), and a `cer: true` highlight question with
+`notesBeside: true` so the question and notes sit next to the writing box. See `docs/ASSIGNMENT_FORMAT.md`. The
 "Check my ideas" lists look for CER moves (naming a source, a specific fact, reasoning words), not one topic's science.
 
 ## House rules (the teacher decided these; keep them)

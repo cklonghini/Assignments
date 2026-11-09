@@ -111,7 +111,7 @@ function fewer(id,options,right,keep){
 }
 /* question ids follow question numbers, so a supported version with questions left out saves under its own key */
 var KEY=(A.storageKey||('assignment-'+TITLE))+(TRIMMED?'|support':'')+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},recs:{},sources:{},notes:{},course:'',agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{},sims:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},recs:{},sources:{},notes:{},picks:{},course:'',agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{},sims:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -128,6 +128,7 @@ function copyMeta(f,o){
   f.recs=(o.recs&&typeof o.recs==='object')?o.recs:{};
   f.sources=(o.sources&&typeof o.sources==='object')?o.sources:{};
   f.notes=(o.notes&&typeof o.notes==='object')?o.notes:{};
+  f.picks=(o.picks&&typeof o.picks==='object')?o.picks:{};
   f.course=typeof o.course==='string'&&(A.courses||[]).indexOf(o.course)>=0?o.course:'';
   f.open=!!o.open;
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
@@ -352,6 +353,7 @@ function hasProgress(){
   if(Object.keys(S.agree).some(function(k){return S.agree[k]&&((S.agree[k].on||[]).some(Boolean)||S.agree[k].sign);})) return true;
   if(Object.keys(S.photos).some(function(k){return S.photos[k]&&(S.photos[k].has||S.photos[k].cap);})) return true;
   if(Object.keys(S.recs||{}).some(function(k){return S.recs[k]&&(S.recs[k].has||S.recs[k].text);})) return true;
+  if(Object.keys(S.picks||{}).some(function(k){return S.picks[k]&&S.picks[k].v;})) return true;
   if(Object.keys(S.sources||{}).some(function(k){return S.sources[k]&&(S.sources[k].url||'').trim();})) return true;
   if(Object.keys(S.notes||{}).some(function(k){return S.notes[k]&&(S.notes[k].rows||[]).some(function(r){return (r.from||'').trim()||(r.mine||'').trim();});})) return true;
   if(Object.keys(S.graphs||{}).some(function(k){var g=S.graphs[k]; return g&&g.f;})) return true;
@@ -2795,6 +2797,42 @@ function notesField(id,q){
   return wrap;
 }
 
+/* choose ONE research question from the teacher's list, or write your own (other: '...'). Not scored. */
+var PICKS=[];
+function pickText(id){ var st=S.picks[id]; if(!st||!st.v) return ''; return st.v==='__other'?(st.other||'').trim():st.v; }
+function pickDone(id){ var st=S.picks[id]; return !!(st&&st.v&&(st.v!=='__other'||words(st.other)>=4)); }
+function pickField(id,q){
+  PICKS.push(id);
+  ORDER.push({kind:'pick',id:id,q:CURQ,sub:'',other:q.other});
+  var st=S.picks[id]||(S.picks[id]={v:'',other:''});
+  var wrap=h('div','ctl'); mark(wrap); wrap.setAttribute('role','radiogroup'); wrap.setAttribute('aria-label','Choose one');
+  /* options can include { heading: 'Topic' } lines that group the questions under it */
+  var opts=(q.options||[]).filter(function(o){return typeof o==='string';}).map(function(o){return [o,o];});
+  if(q.other) opts.push(['__other',q.other]);
+  var heads={}, k=0; (q.options||[]).forEach(function(o){ if(o&&o.heading) (heads[k]=heads[k]||[]).push(o.heading); else if(typeof o==='string') k++; });
+  var labs=opts.map(function(o,i){
+    (heads[i]||[]).forEach(function(t){ wrap.append(h('p','pickhead',t)); });
+    var lab=h('label','opt'), inp=document.createElement('input'); inp.type='radio'; inp.name='pick-'+id; inp.value=o[0]; inp.checked=st.v===o[0];
+    var sp=h('span'); sp.append(itxt(o[1])); lab.append(inp,sp); wrap.append(lab);
+    inp.addEventListener('change',function(){ if(inp.checked){ st.v=o[0]; srcChanged(); paint(); commit(); if(o[0]==='__other') own.focus(); } });
+    return lab;
+  });
+  var ob=h('div','pickown'), ol=h('label',null,q.otherLabel||'Type your own research question'); ol.htmlFor='f-'+id+'-own';
+  var own=h('input'); own.type='text'; own.id=ol.htmlFor; own.value=st.other||''; own.spellcheck=true;
+  ob.append(ol); if(q.otherNote) ob.append(h('p','inote',q.otherNote)); ob.append(own); wrap.append(ob);
+  own.addEventListener('input',function(){ st.other=own.value; srcChanged(); paint(); commit(); });
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite'); wrap.append(msg);
+  function paint(){
+    labs.forEach(function(l,i){ if(st.v===opts[i][0]) l.dataset.s='ok'; else l.removeAttribute('data-s'); });
+    ob.hidden=st.v!=='__other';
+    var d=pickDone(id); wrap.dataset.s=d?'ok':'idle';
+    msg.dataset.s=d?'ok':''; if(!d) msg.removeAttribute('data-s');
+    msg.textContent=d?'Saved. This is your research question.':st.v==='__other'?'Type your question in the box.':'Choose one question.';
+  }
+  paint();
+  return wrap;
+}
+
 /* the student's notes, shown beside the writing box (notesBeside: true on a highlight question) */
 function notesPanel(){
   var d=h('details','notespanel'); d.open=!window.matchMedia||window.matchMedia('(min-width:1080px)').matches; /* folded on a phone, so the writing box is close */
@@ -2803,6 +2841,8 @@ function notesPanel(){
   var me={ver:-1,paint:function(){
     if(me.ver===NOTESVER) return; me.ver=NOTESVER;
     body.textContent='';
+    var rq=PICKS.map(pickText).filter(Boolean)[0];
+    if(rq){ var rp=h('p','nprq'); rp.append(h('b',null,'My research question: '),itxt(rq)); body.append(rp); }
     body.append(h('p','inote','Use these notes to write your response. Type your evidence in your own words, or put exact words in “quotation marks.”'));
     if(!NOTELIST.length) body.append(h('p','inote','You have no notes yet.'));
     NOTELIST.forEach(function(nid){
@@ -3538,6 +3578,9 @@ function buildQuestion(q,s,tile){
   } else if(t==='source'){
     ids=[];
     o.body.append(sourceField(id,q));
+  } else if(t==='pick'){
+    ids=[];
+    o.body.append(pickField(id,q));
   } else if(t==='notes'){
     ids=[];
     o.body.append(notesField(id,q));
@@ -4103,6 +4146,10 @@ function answerGroups(){
         'Published by: '+((sc0.by||'').trim()||'(not entered)'),'Date: '+((sc0.date||'').trim()||'(not entered)')];
       if(citation(sc0)) it.resp.push('Citation: '+citation(sc0));
       it.tag=srcDone(o.id)?'source complete':(srcDup(o.id)?'same website as an earlier source':'source not finished');
+    } else if(o.kind==='pick'){
+      var pk=S.picks[o.id]||{};
+      it.resp=[pickText(o.id)||'(not chosen)'];
+      it.tag=pk.v==='__other'?'the student’s own question (needs teacher approval)':(pk.v?'from the list':'');
     } else if(o.kind==='notes'){
       var nr=((S.notes[o.id]||{}).rows||[]).filter(function(r){return (r.from||'').trim()||(r.mine||'').trim();});
       it.resp=[];
@@ -4782,7 +4829,7 @@ function render(){
   recStopAll(); photoUrlsDrop();
   Object.keys(REC).forEach(function(k){delete REC[k];});
   Object.keys(SRC).forEach(function(k){delete SRC[k];}); Object.keys(NOTES).forEach(function(k){delete NOTES[k];});
-  SRCLIST.length=0; NOTELIST.length=0; NPANELS.length=0;
+  SRCLIST.length=0; NOTELIST.length=0; NPANELS.length=0; PICKS.length=0;
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;

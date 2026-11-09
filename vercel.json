@@ -1,23 +1,63 @@
 {
   "redirects": [
     {
-      "source": "/cer",
-      "destination": "/assignments/cer-writing-space/",
+      "source": "/lp3-ap-cer",
+      "destination": "/assignments/cer-lp3-anatomy-physiology/",
       "permanent": false
     },
     {
-      "source": "/cer/",
-      "destination": "/assignments/cer-writing-space/",
+      "source": "/lp3-ap-cer/",
+      "destination": "/assignments/cer-lp3-anatomy-physiology/",
       "permanent": false
     },
     {
-      "source": "/cer-writing-space",
-      "destination": "/assignments/cer-writing-space/",
+      "source": "/cer-lp3-anatomy-physiology",
+      "destination": "/assignments/cer-lp3-anatomy-physiology/",
       "permanent": false
     },
     {
-      "source": "/cer-writing-space/",
-      "destination": "/assignments/cer-writing-space/",
+      "source": "/cer-lp3-anatomy-physiology/",
+      "destination": "/assignments/cer-lp3-anatomy-physiology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp3-bio-cer",
+      "destination": "/assignments/cer-lp3-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp3-bio-cer/",
+      "destination": "/assignments/cer-lp3-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp3-biology",
+      "destination": "/assignments/cer-lp3-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp3-biology/",
+      "destination": "/assignments/cer-lp3-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp3-marine-cer",
+      "destination": "/assignments/cer-lp3-marine-science/",
+      "permanent": false
+    },
+    {
+      "source": "/lp3-marine-cer/",
+      "destination": "/assignments/cer-lp3-marine-science/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp3-marine-science",
+      "destination": "/assignments/cer-lp3-marine-science/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp3-marine-science/",
+      "destination": "/assignments/cer-lp3-marine-science/",
       "permanent": false
     },
     {

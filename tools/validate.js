@@ -18,8 +18,18 @@ const keys = {};
 let totalErrors = 0;
 
 function load(dir) {
-  const sandbox = { window: {} };
+  const sandbox = {}; sandbox.window = sandbox; /* window is the global, as in a browser */
   vm.createContext(sandbox);
+  /* shared content scripts the page loads before assignment.js (for example ../cer-common/cer-project.js) */
+  const page = path.join(base, dir, 'index.html');
+  if (fs.existsSync(page)) {
+    const html = fs.readFileSync(page, 'utf8');
+    const before = html.slice(0, html.indexOf('src="assignment.js"'));
+    for (const m of before.matchAll(/<script src="(?!https?:)([^"]+)"/g)) {
+      const f = path.join(base, dir, m[1]);
+      vm.runInContext(fs.readFileSync(f, 'utf8'), sandbox, { filename: path.relative(root, f) });
+    }
+  }
   vm.runInContext(fs.readFileSync(path.join(base, dir, 'assignment.js'), 'utf8'), sandbox, { filename: dir + '/assignment.js' });
   return sandbox.window.ASSIGNMENT;
 }
@@ -337,6 +347,10 @@ for (const dir of dirs) {
               if (it.highlight && q.type !== 'highlight') W(w + ' idea ' + (i + 1) + ' checks for highlighting but this is not a highlight question');
               if (it.highlight && it.highlight !== true && !['claim', 'evidence', 'expand'].includes(it.highlight)) E(w + ' idea ' + (i + 1) + ': highlight must be true, or claim, evidence or expand');
             });
+            break;
+          case 'pick':
+            if (!(q.options || []).some(o => typeof o === 'string')) E(w + ' needs options (the questions to choose from)');
+            if ((q.options || []).some(o => typeof o !== 'string' && !(o && o.heading))) E(w + ': each option must be text or { heading: \'...\' }');
             break;
           case 'source':
             nSrc++;

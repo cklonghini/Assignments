@@ -539,9 +539,25 @@ and the video'`). The engine adds three "Check my ideas" items (claim, evidence,
 `[REASONING/EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
 A question changed from `written` to `highlight` keeps any answer a student already typed: it moves into the new box.
 
+### pick: choose one item from a list (not scored)
+
+Students choose ONE item, for example the research question for a project. `other` adds a last choice that opens a
+text box for the student's own item. `{ heading: '...' }` lines group the items under a topic. It is done when a
+choice is made (and, for `other`, at least 4 words are typed). The PDF shows the choice, and marks an `other` answer
+"the student’s own question (needs teacher approval)". The chosen item also shows at the top of a `notesBeside` panel.
+
+```js
+{ type: 'pick', text: 'Choose ONE question to research...',
+  options: [ { heading: 'Energy Flow in Ecosystems' }, 'Why does energy decrease as it moves up an energy pyramid?', ... ],
+  other: 'My own related question (my teacher must approve it)',
+  otherLabel: 'Type your own research question',            // optional
+  otherNote: 'Send your question to your teacher, and wait for approval.' }   // optional
+```
+
 ### source and notes: research on websites the student chooses (teacher graded)
 
-For a research project, such as the end-of-learning-period CER (example: `assignments/cer-writing-space/`).
+For a research project, such as the end-of-learning-period CER (example: `assignments/cer-lp3-biology/`, built from
+`assignments/cer-common/cer-project.js`).
 
 ```js
 { type: 'source', label: 'Source 1',

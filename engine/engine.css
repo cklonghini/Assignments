@@ -756,3 +756,10 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
   .besidegrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
   .notespanel{position:sticky;top:110px;max-height:calc(100vh - 130px);overflow:auto;margin:0}
 }
+.pickown{margin:10px 0 4px;max-width:68ch}
+.pickown[hidden]{display:none}
+.pickown>label{display:block;font-weight:700;font-size:.95rem;margin-bottom:2px}
+.pickown .inote{font-size:.9rem;color:var(--muted);margin:0 0 6px}
+.pickown input[type=text]{width:100%}
+.nprq{margin:4px 0 8px;padding:8px 10px;background:var(--surface);border-radius:8px;overflow-wrap:anywhere}
+.pickhead{margin:16px 0 4px;font-weight:700;color:var(--gold-ink)}
