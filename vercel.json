@@ -1,6 +1,26 @@
 {
   "redirects": [
     {
+      "source": "/cer",
+      "destination": "/assignments/cer-writing-space/",
+      "permanent": false
+    },
+    {
+      "source": "/cer/",
+      "destination": "/assignments/cer-writing-space/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-writing-space",
+      "destination": "/assignments/cer-writing-space/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-writing-space/",
+      "destination": "/assignments/cer-writing-space/",
+      "permanent": false
+    },
+    {
       "source": "/cell-signaling",
       "destination": "/assignments/explore-cell-signaling/",
       "permanent": false

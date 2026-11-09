@@ -56,6 +56,15 @@ example). Put the lab handout's steps for each part in its reading box so studen
 Start the lab with a setup and safety part that has `gate: true` (the rest stays hidden until it is done), an `agree`
 lab agreement, and a ready-to-go selfie `photo`.
 
+## Research writing (the CER writing space)
+
+At the end of every 7-week learning period students choose a topic, research it on two websites, and write a
+claim-evidence-reasoning response. `assignments/cer-writing-space/` is that assignment: `source` questions (the
+website link is the only box where students can paste), `notes` questions (a fact typed from the site plus the
+student's own annotation), and a `cer: true` highlight question with `notesBeside: true` so their notes sit next to
+the writing box. See "source and notes" in `docs/ASSIGNMENT_FORMAT.md`. Topics are the student's choice, so its
+"Check my ideas" lists look for CER moves (naming a source, a specific fact, reasoning words), not one topic's science.
+
 ## House rules (the teacher decided these; keep them)
 
 **Page**

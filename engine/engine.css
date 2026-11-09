@@ -711,3 +711,48 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .btn.sitebtn{display:inline-block;text-decoration:none;font-size:1.08rem;padding:10px 20px}
 .btn.sitebtn::after{content:" \2197"}
 .siteurl{margin:8px 0 0;font-size:.88rem;word-break:break-all;opacity:.8}
+
+/* research: website source cards, notes, and the notes panel beside a writing box */
+.srccard{max-width:68ch}
+.srcrow{margin:0 0 12px}
+.srcrow>label{display:block;font-weight:700;font-size:.95rem;margin-bottom:2px}
+.srcrow .inote,.note .inote,.notehead .inote{font-size:.9rem;color:var(--muted);margin:0 0 6px}
+.srcrow input[type=text]{width:100%}
+.srccard[data-s="ok"] input[type=text]{border-color:var(--ok)}
+.srcopen{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:0 0 14px}
+.srcopen[hidden]{display:none}
+.srcopen .siteurl{margin:0}
+.srccite{margin:6px 0 4px;padding:10px 14px;border-left:5px solid var(--primary);background:var(--surface);border-radius:0 8px 8px 0;overflow-wrap:anywhere}
+.notesbox{max-width:72ch}
+.notehead{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:0 0 10px}
+.notehead .inote{margin:0}
+.notelist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.note{border:2px solid var(--line);border-radius:10px;padding:10px 14px 12px;background:var(--surface)}
+.note[data-s="ok"]{border-color:var(--ok)}
+.note[data-s="ok"] .notetop b::after{content:" \2713";color:var(--ok)}
+.notetop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.note>label{display:block;font-weight:700;font-size:.95rem;margin:8px 0 2px}
+.note textarea{min-height:64px}
+.noteuse{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:10px}
+.noteuse label{font-weight:700;font-size:.95rem}
+.notesbox>.row{margin-top:12px}
+.notespanel{border:2px solid var(--learn-line);background:var(--learn);border-radius:10px;padding:0;margin:0 0 14px}
+.notespanel>summary{cursor:pointer;font-weight:700;padding:10px 14px}
+.notespanel>.listen{margin:0 14px}
+.npbody{padding:4px 14px 12px;font-size:.93rem}
+.npbody .inote{color:var(--muted);margin:4px 0 8px}
+.npsrc{margin:10px 0 0}
+.nphead{margin:0;overflow-wrap:anywhere}
+.npby{margin:0 0 4px;color:var(--muted);font-size:.88rem}
+.npbody ol{margin:4px 0 0;padding-left:1.4em}
+.npbody li{margin:0 0 8px}
+.npfrom,.npmine,.npuse{display:block}
+.npmine{font-style:italic}
+.npmine::before{content:"My note: ";font-style:normal;font-weight:700}
+.npuse{font-size:.82rem;color:var(--muted)}
+.besidemain{min-width:0}
+@media (min-width:1080px){
+  .q.beside{width:min(1240px,calc(100vw - 56px));margin-left:calc(50% - min(620px,50vw - 28px))}
+  .besidegrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+  .notespanel{position:sticky;top:110px;max-height:calc(100vh - 130px);overflow:auto;margin:0}
+}

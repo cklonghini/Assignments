@@ -89,7 +89,7 @@ for (const dir of dirs) {
       if (!Array.isArray(A.parts) || !A.parts.length) E('The assignment needs at least one part');
       groups = (A.parts || []).map((p, pi) => ({ where: 'Part ' + (pi + 1) + (p.title ? ' (' + p.title + ')' : ''), title: p.title, clips: p.clips, questions: p.questions || [] }));
     }
-    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nRec = 0, nEasy = 0, nOut = 0;
+    let qn = 0, nAuto = 0, nWritten = 0, nPhoto = 0, nRec = 0, nSrc = 0, nNotes = 0, nEasy = 0, nOut = 0;
     /* the supported version (?support=eagle): the goal box, and what it leaves out (support: false) */
     const ES = A.essential;
     if (ES != null) {
@@ -337,6 +337,17 @@ for (const dir of dirs) {
               if (it.highlight && q.type !== 'highlight') W(w + ' idea ' + (i + 1) + ' checks for highlighting but this is not a highlight question');
               if (it.highlight && it.highlight !== true && !['claim', 'evidence', 'expand'].includes(it.highlight)) E(w + ' idea ' + (i + 1) + ': highlight must be true, or claim, evidence or expand');
             });
+            break;
+          case 'source':
+            nSrc++;
+            if (board) E(w + ': source questions do not work on a game board');
+            break;
+          case 'notes':
+            nNotes++;
+            if (board) E(w + ': notes questions do not work on a game board');
+            if (q.source != null && !(Number.isInteger(q.source) && q.source >= 1)) E(w + ': source must be the number of a source question (1 for the first one)');
+            else if ((q.source || nNotes) > nSrc) E(w + ': notes need source question ' + (q.source || nNotes) + ' to come before them');
+            if (q.min != null && !(q.min >= 1 && q.min <= 12)) E(w + ': min must be 1 to 12 notes');
             break;
           case 'agree':
             if (!(q.items || []).length) E(w + ' needs items (the statements to agree to)');

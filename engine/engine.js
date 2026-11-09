@@ -111,7 +111,7 @@ function fewer(id,options,right,keep){
 }
 /* question ids follow question numbers, so a supported version with questions left out saves under its own key */
 var KEY=(A.storageKey||('assignment-'+TITLE))+(TRIMMED?'|support':'')+(TEACHER?'|teacher':''), storageOK=true, lastSaved=null, finished=false;
-function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},recs:{},course:'',agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{},sims:{}};}
+function fresh(){return {tts:0.95,voice:'',name:'',first:'',last:'',time:0,started:new Date().toISOString(),auto:{},written:{},rich:{},photos:{},recs:{},sources:{},notes:{},course:'',agree:{},open:false,mn:[],mnRes:[],vids:{},graphs:{},sims:{}};}
 function fullName(){return ((S.first||'').trim()+' '+(S.last||'').trim()).trim();}
 function copyMeta(f,o){
   f.name=typeof o.name==='string'?o.name:'';
@@ -126,6 +126,8 @@ function copyMeta(f,o){
   f.photos=(o.photos&&typeof o.photos==='object')?o.photos:{};
   f.agree=(o.agree&&typeof o.agree==='object')?o.agree:{};
   f.recs=(o.recs&&typeof o.recs==='object')?o.recs:{};
+  f.sources=(o.sources&&typeof o.sources==='object')?o.sources:{};
+  f.notes=(o.notes&&typeof o.notes==='object')?o.notes:{};
   f.course=typeof o.course==='string'&&(A.courses||[]).indexOf(o.course)>=0?o.course:'';
   f.open=!!o.open;
   f.mn=Array.isArray(o.mn)?o.mn.slice(0,20).map(function(x){return String(x==null?'':x);}):[];
@@ -350,6 +352,8 @@ function hasProgress(){
   if(Object.keys(S.agree).some(function(k){return S.agree[k]&&((S.agree[k].on||[]).some(Boolean)||S.agree[k].sign);})) return true;
   if(Object.keys(S.photos).some(function(k){return S.photos[k]&&(S.photos[k].has||S.photos[k].cap);})) return true;
   if(Object.keys(S.recs||{}).some(function(k){return S.recs[k]&&(S.recs[k].has||S.recs[k].text);})) return true;
+  if(Object.keys(S.sources||{}).some(function(k){return S.sources[k]&&(S.sources[k].url||'').trim();})) return true;
+  if(Object.keys(S.notes||{}).some(function(k){return S.notes[k]&&(S.notes[k].rows||[]).some(function(r){return (r.from||'').trim()||(r.mine||'').trim();});})) return true;
   if(Object.keys(S.graphs||{}).some(function(k){var g=S.graphs[k]; return g&&g.f;})) return true;
   return (S.mn||[]).some(function(x){return x;});
 }
@@ -371,6 +375,7 @@ function updateBar(){
     var bad=c.some(function(e){return e.dataset.s==='bad';});
     q.dataset.s= ok===c.length?'done':(bad?'bad':(ok>0?'partial':'idle'));
   });
+  NPANELS.forEach(function(p){p.paint();});
   if(BOARD) paintBoard(); else applyGate();
   var sv=$('#sSaved');
   if(!storageOK) sv.textContent='This browser can’t keep a backup. Stay on this page.';
@@ -2645,6 +2650,183 @@ function agreeField(id,q){
   return wrap;
 }
 
+/* ------------------------------------------------------------------ */
+/* Research: website sources and notes (for a research project, such  */
+/* as a claim-evidence-reasoning writing space)                        */
+/* ------------------------------------------------------------------ */
+/* A source card holds one website: its link (the only box on the page where students may paste), its title, who
+   published it, and its date. A notes box holds the student's notes on one source: a fact, number, or short quote
+   they type from the website, and their annotation (what it means, in their own words). A highlight question with
+   notesBeside: true shows every note in a panel next to the writing box, so students draft from their notes. */
+var SRC={}, SRCLIST=[], NOTES={}, NOTELIST=[], NPANELS=[], NOTESVER=0;
+var NOTE_USES=['Evidence for my claim','Background information','Something surprising','A question I still have'];
+function urlOk(u){ u=String(u||'').trim(); if(!/^https?:\/\/\S+$/i.test(u)) return false; try{ return /\.[a-z]{2,}$/i.test(new URL(u).hostname); }catch(e){ return false; } }
+function hostOf(u){ try{ return new URL(String(u).trim()).hostname.replace(/^www\./,''); }catch(e){ return ''; } }
+function urlKey(u){ return String(u||'').trim().toLowerCase().replace(/^https?:\/\/(www\.)?/,'').replace(/[#?].*$/,'').replace(/\/+$/,''); }
+function srcLabel(id){ var s=SRC[id]; return s?s.label:'Source'; }
+/* the same website as an earlier source card */
+function srcDup(id){
+  var st=S.sources[id], k=st&&urlKey(st.url), i=SRCLIST.indexOf(id);
+  return !!k&&SRCLIST.slice(0,i).some(function(o){ var x=S.sources[o]; return x&&urlKey(x.url)===k; });
+}
+function srcDone(id){ var st=S.sources[id]; return !!(st&&urlOk(st.url)&&!srcDup(id)&&words(st.title)>=1&&words(st.by)>=1); }
+function citation(st){
+  if(!st||!urlOk(st.url)) return '';
+  var t=(st.title||'').trim(), b=(st.by||'').trim(), d=(st.date||'').trim();
+  return (t?'“'+t.replace(/[.\s]+$/,'')+(/[?!]$/.test(t)?'':'.')+'” ':'')+(b?b.replace(/[.\s]+$/,'')+(d?', '+d.replace(/[.\s]+$/,''):'')+'. ':(d?d.replace(/[.\s]+$/,'')+'. ':''))
+    +st.url.trim()+(st.at?' Accessed '+new Date(st.at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'.':'');
+}
+function noteDone(r){ return !!r&&words(r.from)>=4&&words(r.mine)>=5; }
+function notesDoneCount(id){ var st=S.notes[id]; return st?(st.rows||[]).filter(noteDone).length:0; }
+function notesDone(id){ return notesDoneCount(id)>=NOTES[id].min; }
+function srcChanged(){ NOTESVER++; }
+
+function sourceField(id,q){
+  var label=q.label||('Source '+(SRCLIST.length+1));
+  SRC[id]={label:label}; SRCLIST.push(id);
+  ORDER.push({kind:'source',id:id,q:CURQ,sub:''});
+  var st=S.sources[id]||(S.sources[id]={url:'',title:'',by:'',date:'',at:''});
+  var wrap=h('div','ctl srccard'); mark(wrap); wrap.dataset.s='idle';
+  function field(key,lab,ph,help){
+    var row=h('div','srcrow'), l=h('label',null,lab); l.htmlFor='f-'+id+'-'+key;
+    var inp=h('input'); inp.type='text'; inp.id=l.htmlFor; inp.value=st[key]||''; inp.setAttribute('placeholder',ph); inp.spellcheck=key!=='url';
+    row.append(l);
+    if(help) row.append(h('p','inote',help));
+    row.append(inp); wrap.append(row);
+    return inp;
+  }
+  var url=field('url','Website link (paste it here)','https://...','Copy the link from your browser’s address bar and paste it here. This is the only box on the page where you can paste.');
+  url.setAttribute('data-paste',''); url.inputMode='url'; url.autocomplete='off'; url.autocapitalize='off';
+  var openRow=h('div','row srcopen'), open=h('a','btn sitebtn','Open this website'); open.target='_blank'; open.rel='noopener noreferrer';
+  var host=h('span','siteurl'); openRow.append(open,host); wrap.append(openRow);
+  var title=field('title','Title of the page or article','For example: How Coral Reefs Are Formed');
+  var by=field('by','Who published it (the organization or author)','For example: NOAA, National Ocean Service');
+  var date=field('date','Date it was published or last updated (if you can find it)','For example: January 20, 2024, or “no date”');
+  var cite=h('p','srccite'), msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  wrap.append(cite,msg);
+  function paint(){
+    var ok=urlOk(st.url), dup=ok&&srcDup(id);
+    openRow.hidden=!ok; if(ok){ open.href=st.url.trim(); host.textContent=hostOf(st.url); }
+    var c=citation(st); cite.textContent=''; if(c&&!dup){ cite.append(h('b',null,'Your source: '),c); }
+    cite.hidden=!c||dup;
+    var d=srcDone(id); wrap.dataset.s=d?'ok':'idle';
+    if(d){ msg.dataset.s='ok'; msg.textContent='Saved. Open the website and take your notes.'; return; }
+    msg.removeAttribute('data-s');
+    if(!(st.url||'').trim()) msg.textContent='Paste the link to your website.';
+    else if(!ok){ msg.dataset.s='bad'; msg.textContent='That doesn’t look like a full website link. It should start with https:// . Copy it again from the address bar.'; }
+    else if(dup){ msg.dataset.s='bad'; msg.textContent='This is the same website as an earlier source. Use a different website.'; }
+    else msg.textContent='Now type the title and who published it.';
+  }
+  [['url',url],['title',title],['by',by],['date',date]].forEach(function(p){
+    p[1].addEventListener('input',function(){
+      st[p[0]]=p[1].value;
+      if(p[0]==='url'){ st.at=urlOk(st.url)?(st.at||new Date().toISOString()):''; }
+      srcChanged(); paint(); commit();
+    });
+  });
+  paint();
+  return wrap;
+}
+
+function notesField(id,q){
+  var min=q.min||4, max=Math.max(min,q.max||12), uses=q.uses||NOTE_USES;
+  var sid=SRCLIST[(q.source||NOTELIST.length+1)-1]||null;
+  NOTES[id]={min:min,src:sid}; NOTELIST.push(id);
+  ORDER.push({kind:'notes',id:id,q:CURQ,sub:''});
+  var st=S.notes[id]||(S.notes[id]={rows:[]});
+  if(!Array.isArray(st.rows)) st.rows=[];
+  while(st.rows.length<min) st.rows.push({from:'',mine:'',use:''});
+  var wrap=h('div','ctl notesbox'); mark(wrap); wrap.dataset.s='idle';
+  var head=h('div','notehead'); wrap.append(head);
+  var list=h('ol','notelist'); wrap.append(list);
+  var foot=h('div','row'), add=h('button','btn ghost','Add another note'); add.type='button';
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  foot.append(add); wrap.append(foot,msg);
+  function paintHead(){
+    head.textContent='';
+    var s=sid&&S.sources[sid];
+    if(s&&urlOk(s.url)){
+      var p=h('p','inote'); p.append(h('b',null,'Notes on '+srcLabel(sid)+': '),(s.title||'').trim()||hostOf(s.url));
+      var a=h('a','btn ghost small','Open the website'); a.href=s.url.trim(); a.target='_blank'; a.rel='noopener noreferrer';
+      head.append(p,a);
+    } else if(sid) head.append(h('p','inote','Add your '+srcLabel(sid)+' link above first, so you can open the website while you take notes.'));
+  }
+  function row(r,i){
+    var li=h('li','note'); li.dataset.s=noteDone(r)?'ok':'';
+    var top=h('div','notetop'); top.append(h('b',null,'Note '+(i+1)));
+    if(st.rows.length>min){
+      var del=h('button','btn ghost small','Remove this note'); del.type='button';
+      del.addEventListener('click',function(){ st.rows.splice(i,1); srcChanged(); paint(); commit(); add.focus(); });
+      top.append(del);
+    }
+    li.append(top);
+    function box(key,lab,help,ph){
+      var l=h('label',null,lab); l.htmlFor='f-'+id+'-'+i+'-'+key;
+      var ta=h('textarea'); ta.id=l.htmlFor; ta.rows=2; ta.value=r[key]||''; ta.spellcheck=true; ta.setAttribute('placeholder',ph);
+      li.append(l,h('p','inote',help),ta,talkRow(ta));
+      function grow(){ta.style.height='auto';ta.style.height=Math.max(ta.scrollHeight+2,64)+'px';}
+      ta.addEventListener('input',function(){ r[key]=ta.value; grow(); li.dataset.s=noteDone(r)?'ok':''; srcChanged(); sync(); commit(); });
+      setTimeout(grow,0);
+    }
+    box('from','From the website','Type a fact, a number, or a short quote from the website. Put “quotation marks” around exact words.','What does the website say?');
+    box('mine','My annotation','In your own words: what does this mean, and how does it help answer your research question?','What does this mean? Why does it matter?');
+    var ul=h('label',null,'How will I use this note?'); ul.htmlFor='f-'+id+'-'+i+'-use';
+    var sel=h('select'); sel.id=ul.htmlFor;
+    [''].concat(uses).forEach(function(u){ var o=h('option',null,u||'Choose one (optional)'); o.value=u; sel.append(o); });
+    sel.value=r.use||'';
+    sel.addEventListener('change',function(){ r.use=sel.value; srcChanged(); commit(); });
+    var ur=h('div','noteuse'); ur.append(ul,sel); li.append(ur);
+    return li;
+  }
+  function sync(){
+    var n=notesDoneCount(id), d=n>=min;
+    wrap.dataset.s=d?'ok':'idle';
+    add.hidden=st.rows.length>=max;
+    msg.dataset.s=d?'ok':''; if(!d) msg.removeAttribute('data-s');
+    msg.textContent=(d?'Saved. ':'')+n+' of '+min+' notes finished'+(d?'. You can add more if you find more good information.':'. A note is finished when both boxes have a full thought.');
+  }
+  function paint(){ list.textContent=''; st.rows.forEach(function(r,i){ list.append(row(r,i)); }); paintHead(); sync(); }
+  add.addEventListener('click',function(){
+    st.rows.push({from:'',mine:'',use:''}); paint(); commit();
+    var t=list.lastChild&&list.lastChild.querySelector('textarea'); if(t) t.focus();
+  });
+  NPANELS.push({ver:-1,paint:function(){ if(this.ver===NOTESVER) return; this.ver=NOTESVER; paintHead(); }});
+  paint();
+  return wrap;
+}
+
+/* the student's notes, shown beside the writing box (notesBeside: true on a highlight question) */
+function notesPanel(){
+  var d=h('details','notespanel'); d.open=!window.matchMedia||window.matchMedia('(min-width:1080px)').matches; /* folded on a phone, so the writing box is close */
+  d.append(h('summary',null,'My research notes'));
+  var body=h('div','npbody'); d.append(body);
+  var me={ver:-1,paint:function(){
+    if(me.ver===NOTESVER) return; me.ver=NOTESVER;
+    body.textContent='';
+    body.append(h('p','inote','Use these notes to write your response. Type your evidence in your own words, or put exact words in “quotation marks.”'));
+    if(!NOTELIST.length) body.append(h('p','inote','You have no notes yet.'));
+    NOTELIST.forEach(function(nid){
+      var sid=NOTES[nid].src, s=sid&&S.sources[sid], sec=h('div','npsrc');
+      var hd=h('p','nphead'); hd.append(h('b',null,(sid?srcLabel(sid):'Notes')+': '),s&&urlOk(s.url)?((s.title||'').trim()||hostOf(s.url)):'(no website added yet)');
+      sec.append(hd);
+      if(s&&(s.by||'').trim()) sec.append(h('p','npby',s.by.trim()+(s.date&&s.date.trim()?', '+s.date.trim():'')));
+      var ol=h('ol');
+      ((S.notes[nid]||{}).rows||[]).forEach(function(r){
+        if(!(r.from||'').trim()&&!(r.mine||'').trim()) return;
+        var li=h('li');
+        if((r.from||'').trim()) li.append(h('span','npfrom',r.from.trim()));
+        if((r.mine||'').trim()){ li.append(h('span','npmine',r.mine.trim())); }
+        if(r.use) li.append(h('span','npuse',r.use));
+        ol.append(li);
+      });
+      if(!ol.childNodes.length) sec.append(h('p','inote','No notes yet.')); else sec.append(ol);
+      body.append(sec);
+    });
+  }};
+  NPANELS.push(me);
+  return d;
+}
+
 /* A part with gate: true hides every later part, and the Finish section, until everything in that part and in every
    part before it is done. Once open it stays open. */
 var GATE=null;
@@ -3347,6 +3529,18 @@ function buildQuestion(q,s,tile){
       {done:'You highlighted your evidence in yellow.',q:'Did you highlight your evidence in yellow?',tip:'Select the facts or examples you used to support your claim, then press the yellow Evidence button.',highlight:'evidence'},
       {done:'You highlighted your reasoning in green.',q:'Did you highlight your reasoning (where you expand on your thoughts) in green?',tip:'Select the sentences that explain how your evidence supports your claim, then press the green Reasoning/Expand button.',highlight:'expand'}]);
     if(ideas.length) o.body.append(ideaCheck(function(){return segsPlain((S.rich[id]||{}).segs);},function(){return (S.rich[id]||{}).segs;},ideasFrom(ideas)));
+    /* notesBeside: the student's research notes sit in a panel next to the writing box (above it on a narrow screen) */
+    if(q.notesBeside){
+      var grid=h('div','besidegrid'), main=h('div','besidemain');
+      while(o.body.firstChild) main.append(o.body.firstChild);
+      grid.append(notesPanel(),main); o.body.append(grid); o.q.classList.add('beside');
+    }
+  } else if(t==='source'){
+    ids=[];
+    o.body.append(sourceField(id,q));
+  } else if(t==='notes'){
+    ids=[];
+    o.body.append(notesField(id,q));
   } else if(t==='agree'){
     ids=[];
     o.body.append(agreeField(id,q));
@@ -3903,6 +4097,22 @@ function answerGroups(){
       it.resp=o.items.map(function(x,i){return ((ag.on||[])[i]?'[x] ':'[ ] ')+plain(x);});
       if(o.sign) it.resp.push('Signed: '+((ag.sign||'').trim()||'(not signed)'));
       it.tag=ag.at?'agreed on '+fmtDate(new Date(ag.at)):'not finished';
+    } else if(o.kind==='source'){
+      var sc0=S.sources[o.id]||{};
+      it.resp=['Website: '+((sc0.url||'').trim()||'(no link)'),'Title: '+((sc0.title||'').trim()||'(not entered)'),
+        'Published by: '+((sc0.by||'').trim()||'(not entered)'),'Date: '+((sc0.date||'').trim()||'(not entered)')];
+      if(citation(sc0)) it.resp.push('Citation: '+citation(sc0));
+      it.tag=srcDone(o.id)?'source complete':(srcDup(o.id)?'same website as an earlier source':'source not finished');
+    } else if(o.kind==='notes'){
+      var nr=((S.notes[o.id]||{}).rows||[]).filter(function(r){return (r.from||'').trim()||(r.mine||'').trim();});
+      it.resp=[];
+      nr.forEach(function(r,i){
+        it.resp.push('Note '+(i+1)+(r.use?' ('+r.use+')':'')+':');
+        it.resp.push('   From the website: '+((r.from||'').trim()||'(blank)'));
+        it.resp.push('   My annotation: '+((r.mine||'').trim()||'(blank)'));
+      });
+      if(!it.resp.length) it.resp=['(no notes)'];
+      it.tag=notesDoneCount(o.id)+' finished notes ('+NOTES[o.id].min+' needed)';
     } else if(o.kind==='photo'){
       var ph=S.photos[o.id]||{}, cap=(ph.cap||'').trim();
       it.photo=ph.has?o.id:null; it.cap=!!cap;
@@ -3932,7 +4142,7 @@ function summaryParts(){
   }
   var res=videoRows().concat(board,[
     ['Auto-checked items',sc.a+' / '+TOTAL_A+' correct']
-  ].concat(TOTAL_W?[['Written responses',sc.w+' / '+TOTAL_W+' completed']]:[]).concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]).concat(Object.keys(REC).length?[['Video recordings',Object.keys(REC).filter(recDone).length+' / '+Object.keys(REC).length+' recorded with a transcript']]:[]));
+  ].concat(TOTAL_W?[['Written responses',sc.w+' / '+TOTAL_W+' completed']]:[]).concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]).concat(SRCLIST.length?[['Website sources',SRCLIST.filter(srcDone).length+' / '+SRCLIST.length+' complete']]:[]).concat(NOTELIST.length?[['Research notes',NOTELIST.map(function(k){return srcLabel(NOTES[k].src)+': '+notesDoneCount(k)+' finished ('+NOTES[k].min+' needed)';}).join('; ')]]:[]).concat(Object.keys(REC).length?[['Video recordings',Object.keys(REC).filter(recDone).length+' / '+Object.keys(REC).length+' recorded with a transcript']]:[]));
   return {date:fmtDate(new Date()),res:res,groups:answerGroups()};
 }
 function buildSummary(){
@@ -4437,6 +4647,9 @@ function decorate(){
   app.querySelectorAll('.stbox').forEach(function(el){
     el.prepend(listenBtn(function(){return [].map.call(el.querySelectorAll('li span'),function(x){return x.innerText;}).join('. ');}));
   });
+  app.querySelectorAll('.npbody').forEach(function(el){
+    el.parentNode.querySelector('summary').after(listenBtn(function(){return el.innerText;}));
+  });
   app.querySelectorAll('.wfor,.learn,.howbox').forEach(function(el){
     el.prepend(listenBtn(function(){return el.innerText;}));
   });
@@ -4488,7 +4701,7 @@ function decorate(){
 (function(){
   if(A.copyPaste===true||TEACHER) return;
   var tell=null;
-  function allowed(e){ var t=e.target; t=t&&t.nodeType===3?t.parentNode:t; return !!(t&&t.closest&&t.closest('#finish')); }
+  function allowed(e){ var t=e.target; t=t&&t.nodeType===3?t.parentNode:t; return !!(t&&t.closest&&t.closest('#finish,[data-paste]')); }
   function stop(e,msg){
     if(allowed(e)) return;
     e.preventDefault(); e.stopPropagation();
@@ -4568,6 +4781,8 @@ function render(){
   Object.keys(W).forEach(function(k){delete W[k];}); Object.keys(R).forEach(function(k){delete R[k];}); Object.keys(P).forEach(function(k){delete P[k];});
   recStopAll(); photoUrlsDrop();
   Object.keys(REC).forEach(function(k){delete REC[k];});
+  Object.keys(SRC).forEach(function(k){delete SRC[k];}); Object.keys(NOTES).forEach(function(k){delete NOTES[k];});
+  SRCLIST.length=0; NOTELIST.length=0; NPANELS.length=0;
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;

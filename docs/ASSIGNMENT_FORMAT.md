@@ -166,7 +166,7 @@ differ), so a student should stay on one link. With nothing left out, both links
 ## Copy and paste are off
 
 So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
-into any box. A short message says copying or pasting is turned off and that students can reach out to their teacher if they need help. The Finish section still copies (the "Copy my
+into any box, except the website-link box of a `source` question. A short message says copying or pasting is turned off and that students can reach out to their teacher if they need help. The Finish section still copies (the "Copy my
 answers as text" fallback and the backup code), and the restore box still takes a pasted code. Spell-check
 suggestions still work. This stops the easy shortcut, not a determined student (anyone can retype or take a picture
 of the screen). It can also block assistive tools that type by pasting; set `copyPaste: true` for an assignment if a
@@ -538,6 +538,34 @@ and the video'`). The engine adds three "Check my ideas" items (claim, evidence,
 `highlight: true` idea. The PDF shows the three colors, and the text fallback marks them `[CLAIM: …]`, `[EVIDENCE: …]`,
 `[REASONING/EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
 A question changed from `written` to `highlight` keeps any answer a student already typed: it moves into the new box.
+
+### source and notes: research on websites the student chooses (teacher graded)
+
+For a research project, such as the end-of-learning-period CER (example: `assignments/cer-writing-space/`).
+
+```js
+{ type: 'source', label: 'Source 1',
+  text: 'Paste the link to your first website. Then type its title, who published it, and the date.' },
+{ type: 'notes', source: 1, min: 4,          // source: which source question (1 = the first); min: notes needed (default 4)
+  max: 12,                                   // optional: most notes allowed (default 12)
+  uses: ['Evidence for my claim', '...'],    // optional: the "How will I use this note?" menu
+  text: 'Take at least 4 notes on Source 1...' }
+```
+
+- A **source** card has a website-link box, the title, who published it, and the date. **The link box is the only place
+  on the page where students can paste** (copy and paste stay off everywhere else). Once the link looks like a real web
+  address, an "Open this website" button opens it in a new tab, and the card shows a citation with the date the
+  student added it. A link that repeats an earlier source is not accepted. It is done when the link, title, and
+  publisher are in.
+- A **notes** box is a list of note cards. Each card has "From the website" (a fact, number, or short quote the
+  student types) and "My annotation" (what it means, in their own words), each with Speak my answer, and an optional
+  "How will I use this note?" menu. Students can add and remove cards. A card is finished when "From the website" has
+  4 or more words and "My annotation" has 5 or more; the box is done when `min` cards are finished.
+- `notesBeside: true` on a `highlight` question puts every note from every notes box in a "My research notes" panel
+  next to the writing box (on a wide screen the question widens and the panel stays in view while the student
+  scrolls; on a phone the panel sits folded above the box). Students write their CER from their notes.
+- The PDF and the text fallback list each source (link, title, publisher, date, citation) and every note, and the
+  Results add "Website sources" and "Research notes" lines.
 
 ### photo: the student adds a photo of their own work (teacher graded)
 
