@@ -962,7 +962,7 @@ summary.wphead{cursor:pointer}
 .tmap{margin:8px 0}
 .tmboxes{display:flex;flex-direction:column;gap:14px}
 .tmbox{flex:1 1 220px;min-width:0;border:3px solid;border-radius:12px;padding:8px 10px 10px;
-  transition:border-color .6s,background-color .6s,padding .6s}
+  transition:border-color .6s,background-color .6s,box-shadow .3s}
 .tmbox.tmc{border-color:#00a3a3;background:rgba(0,255,255,.12)}
 .tmbox.tme{border-color:#b89f00;background:rgba(255,230,0,.14)}
 .tmbox.tmr{border-color:#00a300;background:rgba(0,255,0,.11)}
@@ -972,21 +972,43 @@ summary.wphead{cursor:pointer}
 .tmc .tmlab{background:#00ffff}
 .tme .tmlab{background:#ffe600}
 .tmr .tmlab{background:#00ff00}
-.tmbox textarea{min-height:76px}
+.tmbox textarea{min-height:76px;transition:border-color .6s,color .4s,background-color .6s}
 .tmwhy{margin:6px 0 0;font-weight:700;color:#c0392b}
 .tmrm{font:inherit;font-size:.85rem;background:transparent;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:2px 4px}
 .tmpair{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
 .tmarrow{align-self:center;font-size:1.5rem;font-weight:800;color:var(--muted)}
-.tmacts{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+/* small: only needed for more evidence */
+.tmadd{align-self:flex-start;font:inherit;font-size:.85rem;font-weight:700;color:var(--muted);background:transparent;
+  border:2px dashed var(--line);border-radius:99px;padding:4px 14px;cursor:pointer;margin-top:-4px}
+.tmadd:hover{color:var(--ink);border-color:var(--muted)}
+.tmacts{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px}
+/* the main button: school gold, bigger, with a soft glow once every box is ready */
+.tmgo{font:inherit;font-size:1.1rem;font-weight:800;color:#1b1916;background:#c1a01e;border:3px solid #1b1916;
+  border-radius:12px;padding:12px 22px;cursor:pointer;box-shadow:0 4px 0 #1b1916;transition:transform .1s,box-shadow .1s}
+.tmgo::before{content:"✨ "}
+.tmgo:hover{background:#d4b22a}
+.tmgo:active{transform:translateY(3px);box-shadow:0 1px 0 #1b1916}
+.tmgo:disabled{opacity:.6;cursor:default}
+.tmgo.tmready{animation:tmglow 1.8s ease-in-out infinite}
+@keyframes tmglow{0%,100%{box-shadow:0 4px 0 #1b1916,0 0 0 0 rgba(193,160,30,.7)}50%{box-shadow:0 4px 0 #1b1916,0 0 0 10px rgba(193,160,30,0)}}
 .tmnote{border:3px solid #c0392b;border-radius:10px;padding:10px 14px;margin:10px 0;background:var(--surface);color:var(--ink)}
 .tmnote p{margin:4px 0}
 .tmnoteh{font-weight:800}
 .tmpara .tmback{margin-top:10px}
-/* "Turn my thinking map into a paragraph": the boxes melt away, then the paragraph fades in */
-.tmmelt .tmbox{border-color:transparent;background:transparent;padding:0}
-.tmmelt .tmlab,.tmmelt .tmarrow,.tmmelt .tmacts,.tmmelt .talkrow,.tmmelt>.inote{opacity:0;transition:opacity .5s}
-.tmmelt textarea{border-color:transparent;transition:border-color .6s}
+/* "Turn my thinking map into a paragraph": the box borders melt away, each sentence flies to its place in the
+   paragraph, then the empty map folds up */
+.tmmelt .tmbox{border-color:transparent}
+.tmmelt .tmlab,.tmmelt .tmarrow,.tmmelt .tmacts,.tmmelt .tmadd,.tmmelt .talkrow,.tmmelt .tmrm,.tmmelt>.inote{opacity:0;transition:opacity .5s}
+.tmmelt textarea{border-color:transparent;background:transparent;resize:none}
+.tmmelt .tmglow{box-shadow:0 0 0 3px var(--primary)}
+.tmgone textarea{color:transparent}
+.tmghost{position:fixed;z-index:1000;pointer-events:none;transform-origin:top left;padding:6px 10px;border-radius:8px;
+  font:inherit;line-height:1.5;color:#16213a;box-shadow:0 8px 24px rgba(0,0,0,.25);box-sizing:border-box}
+.tmgc{background:#00ffff}.tmge{background:#ffe600}.tmgr{background:#00ff00}
+.tmbuild>.inote,.tmbuild .evbar,.tmbuild .talkrow,.tmbuild .tmback{display:none}
+.tmbuild .ev{min-height:120px;border-color:var(--primary);border-width:3px}
+.tmcap{font-weight:800;color:var(--primary);margin:6px 0 8px}
 .tmin{animation:tmin .5s ease-out}
 @keyframes tmin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.tmin{animation:none}}
+@media (prefers-reduced-motion:reduce){.tmin,.tmgo.tmready{animation:none}}
 @media (max-width:600px){.tmarrow{display:none}}

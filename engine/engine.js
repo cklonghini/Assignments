@@ -3380,14 +3380,16 @@ function thinkingMap(id,st,ed,para,refresh){
     st.view=segsPlain(st.segs).trim()?'para':'map';   /* an answer started before the map stays a paragraph */
   }
   var root=h('div','tmap'), boxes=h('div','tmboxes'), note=h('div','tmnote'); note.setAttribute('role','alert'); note.hidden=true;
-  var add=h('button','btn ghost tmadd','+ Add another piece of evidence'); add.type='button';
-  var go=h('button','btn tmgo','Turn my thinking map into a paragraph'); go.type='button';
+  var add=h('button','tmadd','+ Add another piece of evidence'); add.type='button';
+  var go=h('button','tmgo','Turn my thinking map into a paragraph'); go.type='button';
   var back=h('button','btn ghost tmback','Go back to my thinking map'); back.type='button';
-  var acts=h('div','tmacts'); acts.append(add,go);
+  var acts=h('div','tmacts'); acts.append(go);
   root.append(h('p','inote','Plan your answer in the boxes. Type your claim in the blue box. Then add evidence in a yellow box and your reasoning about that evidence in the green box next to it. Each box needs at least one complete sentence, and you can write more.'),boxes,acts,note);
   para.append(back);
   var fields=[];
   function grow(ta){ta.style.height='auto'; ta.style.height=Math.max(ta.scrollHeight+2,76)+'px';}
+  /* the paragraph button glows once every box has complete sentences */
+  function ready(){ go.classList.toggle('tmready',fields.every(function(f){return !tmSentenceIssue(f.get());})); }
   function box(kind,label,ph,get,set,extra){
     var b=h('div','tmbox tm'+kind), head=h('div','tmhead');
     var lab=h('label','tmlab',label), ta=h('textarea');
@@ -3399,9 +3401,9 @@ function thinkingMap(id,st,ed,para,refresh){
     ta.addEventListener('input',function(){
       set(ta.value); grow(ta);
       if(!why.hidden&&!tmSentenceIssue(ta.value)){ why.hidden=true; b.removeAttribute('data-fix'); }
-      st.segs=tmSegs(st.map); refresh();
+      st.segs=tmSegs(st.map); refresh(); ready();
     });
-    fields.push({el:b,ta:ta,why:why,label:label,get:get});
+    fields.push({el:b,ta:ta,why:why,label:label,get:get,kind:kind});
     setTimeout(function(){grow(ta);},0);
     return b;
   }
@@ -3424,11 +3426,15 @@ function thinkingMap(id,st,ed,para,refresh){
         box('r','Reasoning'+n,'Provide reasoning here that supports your evidence.',function(){return p.r;},function(v){p.r=v;}));
       boxes.append(pair);
     });
+    boxes.append(add);
     add.hidden=st.map.pairs.length>=TM_MAX;
+    ready();
   }
   function show(){
     root.hidden=st.view!=='map'; para.hidden=st.view==='map';
-    root.classList.remove('tmmelt'); para.classList.remove('tmin');
+    root.classList.remove('tmmelt'); para.classList.remove('tmin','tmbuild');
+    root.style.height=''; go.disabled=false;
+    fields.forEach(function(f){f.el.classList.remove('tmgone','tmglow');});
   }
   add.addEventListener('click',function(){
     st.map.pairs.push({e:'',r:''}); draw(); refresh();
@@ -3449,12 +3455,69 @@ function thinkingMap(id,st,ed,para,refresh){
       return;
     }
     note.hidden=true;
-    st.segs=tmSegs(st.map); fillEditor(ed,st.segs);
+    st.segs=tmSegs(st.map);
     var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-    function swap(){ st.view='para'; show(); para.classList.add('tmin'); refresh(); ed.focus(); }
-    if(reduce) swap(); else { root.classList.add('tmmelt'); setTimeout(swap,750); }
+    if(reduce||!document.body.animate){ fillEditor(ed,st.segs); st.view='para'; show(); refresh(); ed.focus(); return; }
+    build();
   });
+  /* the change to a paragraph, step by step so students see where each box goes: the box borders melt away, then
+     each box's sentences fly down, in order, to their place in the paragraph (in the box's color) while a caption
+     says what is happening; then the empty map folds up and the paragraph stays. */
+  function build(){
+    go.disabled=true;
+    var items=fields.filter(function(f){return tmClean(f.get());});
+    var col={c:'b',e:'y',r:'g'};
+    var cap=h('p','tmcap'); cap.setAttribute('aria-live','polite');
+    root.classList.add('tmmelt');
+    ed.textContent=''; para.classList.add('tmbuild'); para.hidden=false;
+    para.insertBefore(cap,ed);
+    cap.textContent='Watch your thinking map become a paragraph…';
+    setTimeout(function(){
+      para.scrollIntoView({behavior:'smooth',block:'end'});
+      setTimeout(function(){fly(0);},500);
+    },650);
+    function fly(i){
+      if(i>=items.length) return done();
+      var f=items[i], txt=tmClean(f.get()), n=(f.label.match(/\d+$/)||[''])[0];
+      cap.textContent=f.kind==='c'?'Your claim starts the paragraph.'
+        :f.kind==='e'?'Next comes your evidence'+(n?' '+n:'')+'.'
+        :'Then your reasoning'+(n?' '+n:'')+' explains that evidence.';
+      if(ed.childNodes.length) ed.append(document.createTextNode(' '));
+      var sp=document.createElement('span'); sp.style.backgroundColor=HLC[col[f.kind]]; sp.textContent=txt; sp.style.opacity='0';
+      ed.append(sp);
+      var a=f.ta.getBoundingClientRect(), r=sp.getClientRects()[0]||sp.getBoundingClientRect();
+      var gh=h('div','tmghost tmg'+f.kind); gh.textContent=txt;
+      gh.style.left=a.left+'px'; gh.style.top=a.top+'px'; gh.style.width=a.width+'px';
+      document.body.append(gh);
+      f.el.classList.add('tmglow','tmgone');
+      var g=gh.getBoundingClientRect(), sc=Math.min(1,Math.max(.35,(r.height*2)/g.height));
+      var anim=gh.animate([
+        {transform:'translate(0,0) scale(1)',opacity:1},
+        {transform:'translate(0,-8px) scale(1.04)',opacity:1,offset:.15},
+        {transform:'translate('+(r.left-g.left)+'px,'+(r.top-g.top)+'px) scale('+sc+')',opacity:.25}],
+        {duration:900,easing:'cubic-bezier(.45,0,.25,1)',fill:'forwards'});
+      anim.onfinish=function(){
+        gh.remove(); f.el.classList.remove('tmglow');
+        sp.style.transition='opacity .35s'; sp.style.opacity='1';
+        setTimeout(function(){fly(i+1);},350);
+      };
+    }
+    function done(){
+      cap.textContent='Done! Your thinking map is now a paragraph. Each sentence kept its color.';
+      var hgt=root.offsetHeight;
+      var fold=root.animate([{height:hgt+'px',opacity:1},{height:'0px',opacity:0}],{duration:500,easing:'ease-in',fill:'forwards'});
+      root.style.overflow='hidden';
+      fold.onfinish=function(){
+        fold.cancel(); root.style.overflow='';
+        fillEditor(ed,st.segs); st.view='para'; show(); refresh();
+        para.classList.add('tmin');
+        setTimeout(function(){ if(cap.parentNode) cap.remove(); },6000);
+        para.scrollIntoView({behavior:'smooth',block:'center'});
+      };
+    }
+  }
   back.addEventListener('click',function(){
+    var c0=para.querySelector('.tmcap'); if(c0) c0.remove();
     st.segs=extract(ed); st.map=tmFromSegs(st.segs); st.view='map';
     note.hidden=true; draw(); show(); refresh();
     if(fields[0]) fields[0].ta.focus();
