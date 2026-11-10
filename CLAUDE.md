@@ -87,7 +87,7 @@ and change the title, `storageKey`, `short`, and questions. **Give every new per
 `{ topic, claim, evidence, reasoning }`) and `evidence` (`{ claim, best, others: [3 weaker choices] }`) on a different
 topic**; LP3 uses sea turtles and sleep (the defaults in `cer-project.js`); LP4 uses honeybees and drinking water for
 athletes; LP2 uses bike helmets and eating breakfast. Do not reuse these. A question written
-`{ text: '...', badge: 'Challenge' }` gets a purple tag (for questions where the evidence is still debated). The teacher wants a new topic each time. `kicker` adds the period's topic above the title.
+`{ text: '...', badge: 'Challenge' }` gets a purple tag (for questions where the evidence is still debated). The teacher wants a new topic each time. `kicker` adds the period's topic above the title. When the questions already state a claim (LP2 Biology), `givenClaim: true` has students restate it in their own words in the CER.
 
 There is no "propose your own question" option (the teacher removed it). Part 3 starts with a short "Before you start"
 box (do your research, split your screen, two fold-down help sections) with a `confirm` checkbox; the rest of Part 3

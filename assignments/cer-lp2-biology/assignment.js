@@ -2,7 +2,7 @@
   LP2 - Biology Research and Report (Biology A): Homeostasis and Energy Flow
   The end-of-Learning-Period-2 CER research project. The research questions are the teacher's
   ("Homeostasis and Energy Flow: Research and Report - CER Essential Questions"). Each one gives a claim and what to
-  explain. Everything else is shared with the other CER projects in assignments/cer-common/cer-project.js.
+  explain, so the CER step asks students to restate the claim in their own words (givenClaim). Everything else is shared with the other CER projects in assignments/cer-common/cer-project.js.
   Part 1's practice CER (bike helmets) and evidence example (breakfast) match the other LP2 projects.
 */
 window.ASSIGNMENT = CER_PROJECT({
@@ -12,6 +12,7 @@ window.ASSIGNMENT = CER_PROJECT({
   short: 'lp2-bio-cer',
   accent: 'biology',          // green: the Biology class color
   kicker: 'Research and Report · Homeostasis and Energy Flow',
+  givenClaim: true,           // each question gives a claim; students restate it in their own words
   sample: {
     topic: 'bike helmets',
     claim: 'Wearing a helmet protects a bike rider’s brain in a crash.',

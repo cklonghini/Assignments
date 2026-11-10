@@ -27,6 +27,8 @@ window.CER_PROJECT = function (o) {
       'My friend says she does better on tests when she sleeps more.',
       'Everyone knows you need sleep to do well in school.']
   };
+  /* givenClaim: true when each research question already states a claim (LP2 Biology): students restate it in their
+     own words instead of writing their own answer. */
   return {
     title: o.title,
     course: o.course,
@@ -214,7 +216,9 @@ window.CER_PROJECT = function (o) {
         step: 'Write your CER',
         intro: 'Now answer your research question with a CER. Your notes from both websites are next to the writing box (above it on a small screen). Use evidence from both of your sources.',
         read: '<p><b>Plan before you write</b></p>'
-          + '<ol><li><b>Claim:</b> read your notes again. What is your answer to your research question now? Write it in one clear sentence. It can be different from what you thought before you researched.</li>'
+          + (o.givenClaim
+            ? '<ol><li><b>Claim:</b> your research question already gives you a claim. Restate it in your own words, in one clear sentence. Do not copy it word for word.</li>'
+            : '<ol><li><b>Claim:</b> read your notes again. What is your answer to your research question now? Write it in one clear sentence. It can be different from what you thought before you researched.</li>')
           + '<li><b>Evidence:</b> choose 2 to 4 of your best notes, with at least one from each website. Give each one in a sentence, and name where it came from: “According to …,” “The website … states that …,” or “Research from … shows that …”</li>'
           + '<li><b>Reasoning:</b> after your evidence, explain how it supports your claim. Use science ideas, and words like “This means that …,” “This happens because …,” or “Therefore …”</li>'
           + '<li><b>Highlight:</b> when you finish, highlight your claim in blue, your evidence in yellow, and your reasoning in green.</li></ol>'
@@ -230,7 +234,7 @@ window.CER_PROJECT = function (o) {
             text: 'Answer your research question with a claim, evidence from both of your websites, and reasoning. (At least 2 paragraphs, or 6 to 10 sentences)',
             easy: 'Answer your research question. Give your claim, evidence from both websites, and your reasoning. (At least 6 sentences)',
             min: 450,
-            starters: ['My research question is … My claim is that …', 'According to …, …', 'The website … states that “…”', 'This evidence supports my claim because …', 'This means that …'],
+            starters: [o.givenClaim ? 'In my own words, my claim is that …' : 'My research question is … My claim is that …', 'According to …, …', 'The website … states that “…”', 'This evidence supports my claim because …', 'This means that …'],
             ideas: [
               { done: 'You named where your evidence came from.', q: 'Did you name the websites your evidence came from?', tip: 'Start your evidence with “According to …” or “The website … states that …” and name the organization.',
                 re: /according to (the )?[a-z0-9]{3,}|\bthe (website|article|source|author|page) [a-z]{3,}|\b(states|reports|explains|says|said|found|writes|wrote|shows|showed) that [a-z]+ [a-z]+|\bsource (1|2|one|two)\b|\b(noaa|nasa|usgs|cdc|nih|medlineplus|mayo clinic|cleveland clinic|smithsonian|national geographic)\b/ },
