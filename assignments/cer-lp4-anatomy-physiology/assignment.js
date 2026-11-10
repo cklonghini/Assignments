@@ -6,7 +6,7 @@
   Part 1's practice CER (honeybees) and evidence example (water and athletes) are new for LP4.
 */
 window.ASSIGNMENT = CER_PROJECT({
-  title: 'LP4 - Anatomy and Physiology Research and Report',
+  title: 'LP4 - Anatomy & Physiology Research and Report',
   course: 'Anatomy & Physiology B',
   storageKey: 'cer-lp4-anatomy-physiology-v1',
   short: 'lp4-ap-cer',

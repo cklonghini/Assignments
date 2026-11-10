@@ -6,7 +6,7 @@
   Part 1's practice CER (bike helmets) and evidence example (breakfast) are new for LP2.
 */
 window.ASSIGNMENT = CER_PROJECT({
-  title: 'LP2 - Anatomy and Physiology Research and Report',
+  title: 'LP2 - Anatomy & Physiology Research and Report',
   course: 'Anatomy & Physiology A',
   storageKey: 'cer-lp2-anatomy-physiology-v1',
   short: 'lp2-ap-cer',

@@ -4,7 +4,7 @@
   endocrine systems). Everything else is shared with the other CER projects in assignments/cer-common/cer-project.js.
 */
 window.ASSIGNMENT = CER_PROJECT({
-  title: 'LP3 - Anatomy and Physiology Research and Report',
+  title: 'LP3 - Anatomy & Physiology Research and Report',
   course: 'Anatomy & Physiology A',
   storageKey: 'cer-lp3-anatomy-physiology-v1',
   short: 'lp3-ap-cer',
