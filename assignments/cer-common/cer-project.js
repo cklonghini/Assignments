@@ -18,7 +18,7 @@ window.CER_PROJECT = function (o) {
     storageKey: o.storageKey,
     short: o.short,
     icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="10" y="8" width="44" height="56" rx="6" fill="var(--primary)"/><rect x="18" y="20" width="28" height="5" rx="2" fill="#00e5ff"/><rect x="18" y="32" width="28" height="5" rx="2" fill="#ffe600"/><rect x="18" y="44" width="20" height="5" rx="2" fill="#39e75f"/></svg>',
-    startNote: 'Your websites show right on this page, next to your notes. If a website will not show, open it in a new tab, and keep this tab open to take your notes and write.',
+    startNote: 'You will open your websites in their own window and split your screen, so you can see the website and this page side by side. Keep this page open the whole time.',
 
     essential: {
       question: 'How can I use facts from reliable websites to support a claim?',
@@ -111,7 +111,15 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Source 1: Research and take notes',
-        intro: 'Find your first reliable website and paste its link below. The website shows on one side and your notes on the other, so you can read and take notes at the same time.',
+        intro: 'Find your first reliable website and paste its link below. Then split your screen so you can read the website and take notes at the same time.',
+        box: '<p><b>See your website and your notes at the same time: split your screen</b></p>'
+          + '<ol><li>Paste your website link below, then select <b>Open this website</b>. It opens in a new tab.</li>'
+          + '<li>Drag that new tab out of your browser window and let go, so the website is in its own window.</li>'
+          + '<li>Put the two windows side by side:<ul>'
+          + '<li><b>Windows:</b> drag a window to the left or right edge of the screen until it snaps, or press the <b>Windows key + left arrow</b> or <b>right arrow</b>. Then choose the other window to fill the other side.</li>'
+          + '<li><b>Mac:</b> hold your pointer over the green button in the top-left corner of a window, and choose the option to put it on the left or right of the screen. Then choose the other window for the other side.</li>'
+          + '<li><b>Chromebook:</b> press <b>Alt + [</b> to move a window to the left side, and <b>Alt + ]</b> to move a window to the right side.</li></ul></li>'
+          + '<li>Read the website on one side and type your notes on this page on the other side. Keep this page open until you finish.</li></ol>',
         read: '<p><b>Finding a good website</b></p>'
           + '<ul><li>Search for your research question, or the key words in it.</li>'
           + '<li>To find government and university websites, add <b>site:.gov</b> or <b>site:.edu</b> to your search, for example “' + o.searchExample + '”.</li>'
@@ -133,7 +141,6 @@ window.CER_PROJECT = function (o) {
             type: 'notes',
             source: 1,
             min: 3,
-            site: true,
             text: 'Take at least 3 notes on Source 1. For each note, type what the website says, then write your annotation in your own words.',
             easy: 'Take 3 notes on Source 1. In each note, type a fact from the website. Then say what it means in your own words.'
           },
@@ -144,7 +151,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Source 2: Research and take notes',
-        intro: 'Find a second reliable website, from a different organization than Source 1. A second source lets you check your facts and find new evidence.',
+        intro: 'Find a second reliable website, from a different organization than Source 1. A second source lets you check your facts and find new evidence. Split your screen again, the same way you did for Source 1.',
         read: '<p><b>Choosing your second website</b></p>'
           + '<ul><li>Use a different website than Source 1, from a different organization if you can.</li>'
           + '<li>Look for facts that agree with Source 1, and for new evidence Source 1 did not have.</li>'
@@ -162,7 +169,6 @@ window.CER_PROJECT = function (o) {
             type: 'notes',
             source: 2,
             min: 3,
-            site: true,
             text: 'Take at least 3 notes on Source 2. For each note, type what the website says, then write your annotation in your own words.',
             easy: 'Take 3 notes on Source 2. In each note, type a fact from the website. Then say what it means in your own words.'
           },

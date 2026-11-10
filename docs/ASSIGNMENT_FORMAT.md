@@ -107,7 +107,10 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 }
 ```
 
-Order on the page: `intro`, `link`, clips, images, `read`, `tableHtml`, questions. To put the reading box further down,
+`box` (optional, HTML): short instructions students need right away, shown in an always-open green box under `intro`
+(with a Listen button), for example how to split the screen in a research project.
+
+Order on the page: `intro`, `box`, `link`, clips, images, `read`, `tableHtml`, questions. To put the reading box further down,
 between questions, give the question it should come right before `readBefore: true` (for example, so students answer
 questions about a patient chart first and then read the vocabulary).
 

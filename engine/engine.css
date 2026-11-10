@@ -786,3 +786,4 @@ summary.wphead{cursor:pointer}
 .pinq[hidden]{display:none}
 .pinlab{display:block;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink)}
 .pintext{margin:2px 0 0;font-size:1.15rem;font-weight:700;color:var(--ink);line-height:1.35}
+.partbox{margin:0 0 16px}

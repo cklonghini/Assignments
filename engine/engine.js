@@ -3656,6 +3656,8 @@ function buildPart(p,n){
     s.append(box);
   });
   if(p.intro) s.append(h('p','intro',p.intro));
+  /* box: short instructions (HTML) students need right away, always open (not folded like read), with a Listen button */
+  if(p.box) s.append(hh('div','learn partbox',p.box));
   /* a website students must open, shown right away (not folded in the reading box) */
   (p.links||(p.link?[p.link]:[])).forEach(function(L){
     var box=h('div','sitelink');

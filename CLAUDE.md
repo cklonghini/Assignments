@@ -69,7 +69,9 @@ folder's `index.html` loads before `assignment.js`. For a new period, copy an LP
 and change the title, `storageKey`, `short`, and questions.
 
 The project uses `pick` (choose the question), `source` (the website link is the only box where students can paste),
-`notes` (a fact typed from the site plus the student's own annotation), and a `cer: true` highlight question with
+`notes` (a fact typed from the site plus the student's own annotation; students split their screen to see the
+website beside this page, with the steps in Part 3's always-open `box`, and the teacher chose this over showing the
+website inside the page with `site: true`), and a `cer: true` highlight question with
 `notesBeside: true` so the question and notes sit next to the writing box. See `docs/ASSIGNMENT_FORMAT.md`. The
 "Check my ideas" lists look for CER moves (naming a source, a specific fact, reasoning words), not one topic's science.
 
