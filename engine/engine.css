@@ -1012,3 +1012,8 @@ summary.wphead{cursor:pointer}
 @keyframes tmin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.tmin,.tmgo.tmready{animation:none}}
 @media (max-width:600px){.tmarrow{display:none}}
+.tmtipwrap{align-items:center;gap:6px}
+.tmtipwrap .tmlab{cursor:help}
+.tmq{font:inherit;font-size:.8rem;font-weight:800;width:22px;height:22px;border-radius:50%;padding:0;cursor:help;
+  background:var(--surface);color:var(--ink);border:2px solid var(--muted);line-height:1}
+.tmmelt .tmq{opacity:0;transition:opacity .5s}

@@ -224,12 +224,27 @@ window.CER_PROJECT = function (o) {
           + '<li><b>Highlight:</b> when you finish, highlight your claim in blue, your evidence in yellow, and your reasoning in green.</li></ol>'
           + '<p>Type everything yourself. If you use a website’s exact words, put them in “quotation marks” and name the website.</p>',
         readLabel: 'How to plan and write your CER',
+        /* the supported version plans the CER in a thinking map (built into the engine), so its reading says so */
+        easyReadLabel: 'How to plan your CER',
+        easyRead: '<p><b>Plan in your thinking map</b></p>'
+          + (o.givenClaim
+            ? '<ol><li><b>Claim (blue box):</b> your research question already gives you a claim. Say it in your own words, in one sentence. Do not copy it word for word.</li>'
+            : '<ol><li><b>Claim (blue box):</b> read your notes again. What is your answer to your research question? Write it in one sentence.</li>')
+          + '<li><b>Evidence (yellow box):</b> choose your 2 best notes, one from each website. Put each one in its own yellow box. Say where it came from: “According to …”</li>'
+          + '<li><b>Reasoning (green box):</b> next to each piece of evidence, explain why that evidence is important. How does it support your claim? Try “This means that …” or “This shows that …”</li>'
+          + '<li><b>Make your paragraph:</b> each box needs at least one complete sentence. Start with a capital letter and end with a period. Then press “Turn my thinking map into a paragraph.” Your sentences keep their colors, so you do not need to highlight anything.</li></ol>'
+          + '<p>Type everything yourself. If you use a website’s exact words, put them in “quotation marks” and name the website.</p>',
         questions: [
           {
             type: 'highlight',
             pdfFirst: 2,
             cer: true,
             notesBeside: true,
+            mapTips: {   // the supported version's thinking map: what each box is for
+              claim: 'This is your answer to the question you researched.',
+              evidence: 'This is the information you found on your websites when you researched your topic.',
+              reasoning: 'This explains why your evidence is important and how it supports your claim.'
+            },
             from: 'your two websites',
             text: 'Answer your research question with a claim, evidence from both of your websites, and reasoning. (At least 2 paragraphs, or 6 to 10 sentences)',
             easy: 'Answer your research question. Give your claim, evidence from both websites, and your reasoning. (At least 6 sentences)',

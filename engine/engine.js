@@ -86,8 +86,10 @@ if(!A||!(A.video||A.board||A.parts)){ document.body.textContent='This page needs
 var SUPPORT=A.support!==false&&/[?&]support=eagle(&|$)/.test(location.search), TRIMMED=false;
 if(SUPPORT&&!A.board){
   var keep=function(x){ if(x&&x.support===false){ TRIMMED=true; return false; } return true; };
-  /* easyIntro and easyAfter replace intro and after (counts like "stops 5 times" can change when questions are left out) */
-  var easier=function(x){ if(!x) return x; x=Object.assign({},x); if(x.easyIntro) x.intro=x.easyIntro; if(x.easyAfter) x.after=x.easyAfter; return x; };
+  /* easyIntro, easyAfter, easyRead and easyReadLabel replace intro, after, read and readLabel (counts like "stops 5
+     times" can change when questions are left out, and a CER part's reading talks about the thinking map) */
+  var easier=function(x){ if(!x) return x; x=Object.assign({},x); if(x.easyIntro) x.intro=x.easyIntro; if(x.easyAfter) x.after=x.easyAfter;
+    if(x.easyRead) x.read=x.easyRead; if(x.easyReadLabel) x.readLabel=x.easyReadLabel; return x; };
   A=window.ASSIGNMENT=Object.assign({},A);
   if(A.video&&!keep(A.video)) delete A.video;
   A.video=easier(A.video); A.start=easier(A.start);
@@ -3395,7 +3397,20 @@ function thinkingMap(id,st,ed,para,refresh){
     var lab=h('label','tmlab',label), ta=h('textarea');
     ta.id='tm-'+id+'-'+fields.length; lab.htmlFor=ta.id; ta.rows=3; ta.spellcheck=true;
     ta.setAttribute('placeholder',ph); ta.value=get();
-    head.append(lab); if(extra) head.append(extra);
+    /* the label's tip: what this box is for (hover, keyboard focus on the "?", or a tap) */
+    var tips=R[id].tips||{}, tt=tips[{c:'claim',e:'evidence',r:'reasoning'}[kind]];
+    if(tt){
+      var tw=h('span','tipwrap tmtipwrap'), qb=h('button','tmq','?'), tip=h('span','tip',tt);
+      qb.type='button'; tip.id=ta.id+'-tip'; tip.setAttribute('role','tooltip');
+      qb.setAttribute('aria-label','What goes in the '+label+' box?'); qb.setAttribute('aria-describedby',tip.id);
+      ta.setAttribute('aria-describedby',tip.id);
+      tw.addEventListener('pointerdown',function(e){
+        if(e.pointerType==='mouse') return;
+        tw.classList.add('tipon'); clearTimeout(tw._t); tw._t=setTimeout(function(){tw.classList.remove('tipon');},4000);
+      });
+      tw.append(lab,qb,tip); head.append(tw);
+    } else head.append(lab);
+    if(extra) head.append(extra);
     var why=h('p','tmwhy'); why.hidden=true;
     b.append(head,ta,talkRow(ta),why);
     ta.addEventListener('input',function(){
@@ -4053,6 +4068,11 @@ function buildQuestion(q,s,tile){
   } else if(t==='highlight'){
     ids=[];
     R[id]={min:q.min||40,cer:!!q.cer,map:!!(SUPPORT&&q.cer&&q.map!==false)};
+    /* what each thinking-map box is for, shown when the student points at (or taps) its label; mapTips changes them */
+    if(R[id].map) R[id].tips=Object.assign({
+      claim:'Your claim is your answer to the question.',
+      evidence:'Your evidence is the information you found in '+(q.from||'the video')+' that supports your claim.',
+      reasoning:'Your reasoning explains why your evidence is important and how it supports your claim.'},q.mapTips||{});
     /* the how-to folds into a box; what each color means is shown when the student points at that highlight button */
     var how=h('details','fold howfold'), howin=h('div','howbox');
     how.append(h('summary',null,'How to answer this question'), howin);

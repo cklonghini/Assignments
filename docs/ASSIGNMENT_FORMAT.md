@@ -164,7 +164,8 @@ with `?support=eagle` on the end. Everyone else uses the plain link.
   whose only clip is left out keeps its reading.
 - When leaving things out makes a sentence wrong (for example "The video stops on its own 5 times" or "You will
   also answer three written questions"), give the supported version its own wording: `easyIntro`
-  on `video` or on a part replaces `intro` there.
+  on `video` or on a part replaces `intro` there. On a part, `easyRead` (and `easyReadLabel`) replace its reading box
+  (`read`, `readLabel`), for example to talk about the thinking map instead of highlighting.
 - **Goal box.** `essential: { question: 'How does ...?', goals: ['Tell ...', 'Explain ...'] }` at the top level puts
   a "Your goal" box at the top of the supported version: the essential question, then "By the end of this assignment,
   you should feel confident that you can:" and the goals (2 to 4 short "can do" lines in plain words). It has a Listen
@@ -567,7 +568,8 @@ least 4 words, a capital letter at the start of each sentence, a period at the e
 box names it and reminds the student about capitals and periods. Then the boxes melt away and the sentences join into
 one paragraph in the usual highlight box, already in their CER colors. Students can keep editing the paragraph, or go
 back to the map: the paragraph is sorted into boxes by color (text with no color stays with the sentence before it).
-The answer is always saved as the paragraph, so the PDF shows only the final paragraph. An answer a student started
+Each box label has a "?" tip that says what the box is for (point at it or tap it); the defaults use `from`, and
+`mapTips: { claim, evidence, reasoning }` changes them. The answer is always saved as the paragraph, so the PDF shows only the final paragraph. An answer a student started
 before `map` was added opens as a paragraph.
 
 ### pick: choose one item from a list (not scored)
