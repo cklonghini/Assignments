@@ -21,6 +21,26 @@
       "permanent": false
     },
     {
+      "source": "/lp2-bio-cer",
+      "destination": "/assignments/cer-lp2-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp2-bio-cer/",
+      "destination": "/assignments/cer-lp2-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp2-biology",
+      "destination": "/assignments/cer-lp2-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp2-biology/",
+      "destination": "/assignments/cer-lp2-biology/",
+      "permanent": false
+    },
+    {
       "source": "/lp2-marine-cer",
       "destination": "/assignments/cer-lp2-marine-science/",
       "permanent": false

@@ -73,7 +73,7 @@ At the end of every 7-week learning period students choose ONE research question
 own, with her approval), research it on two websites, and write a claim-evidence-reasoning response ("Research and
 Report"). There is a separate link for each learning period and course, so saved work never carries over from the last
 period: `assignments/cer-lp2-marine-science/` (Natural Selection, Evolution, and Classification),
-`cer-lp2-anatomy-physiology/` (Support and Motion), `cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/` (semester A), and
+`cer-lp2-anatomy-physiology/` (Support and Motion), `cer-lp2-biology/` (Homeostasis and Energy Flow), `cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/` (semester A), and
 `cer-lp4-biology/` (Heredity and Genetics), `cer-lp4-marine-science/` (The Ocean's Role in Weather and Climate),
 `cer-lp4-anatomy-physiology/` (blood, circulation, lymphatic system) (semester B courses). Each has a short
 `assignment.js` that calls `CER_PROJECT({...})` with its title ("LP3 - Biology Research and Report"), course,
