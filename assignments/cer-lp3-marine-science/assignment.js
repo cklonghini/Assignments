@@ -10,6 +10,7 @@ window.ASSIGNMENT = CER_PROJECT({
   storageKey: 'cer-lp3-marine-science-v1',
   short: 'lp3-marine-cer',
   accent: 'marine',           // blue: the Marine Science class color
+  kicker: 'Research and Report · Ocean Currents, Waves, and Tides',
   searchExample: 'how tides work site:.gov',
   sites: 'NOAA’s National Ocean Service, NOAA Ocean Exploration, NASA, the U.S. Geological Survey (USGS), the Woods Hole Oceanographic Institution, the Smithsonian Ocean website, and university (.edu) websites',
   questions: [

@@ -10,6 +10,7 @@ window.ASSIGNMENT = CER_PROJECT({
   storageKey: 'cer-lp3-biology-v1',
   short: 'lp3-bio-cer',
   accent: 'biology',          // green: the Biology class color
+  kicker: 'Research and Report · Homeostasis and Energy Flow',
   searchExample: 'ATP cells site:.edu',
   sites: 'the National Institutes of Health (NIH), Khan Academy, Britannica, National Geographic, the Smithsonian, the U.S. Department of Agriculture (USDA), and university (.edu) websites',
   questions: [
