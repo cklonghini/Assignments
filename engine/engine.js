@@ -37,11 +37,13 @@ function injectPage(){
     +'<span id="maskHint" class="tip" role="tooltip">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></span></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
-    /* look.tracker: a row of steps under the title (one per part) that fills in as the student works */
+    /* look.tracker: the sticky bar is a row of steps (one per part) that fills in as the student works, in place of
+       the plain progress bars */
+    +'<div class="bar'+(LOOK&&LOOK.tracker&&!A2.board?' hassteps':'')+'" aria-label="Your progress">'
     +(LOOK&&LOOK.tracker&&!A2.board?'<nav class="steps" id="steps" aria-label="Your steps">'+(A2.parts||[]).map(function(p,i){
         return (i?'<span class="sln"><b></b></span>':'')+'<button type="button" class="sst" data-n="'+(i+1)+'"><i>'+(i+1)+'</i><span>'+esc(p.step||p.title)+'</span></button>';
       }).join('')+'</nav>':'')
-    +'<div class="bar" aria-label="Your progress"><div class="tracks">'+tracks+'</div>'
+    +'<div class="tracks">'+tracks+'</div>'
     +'<div class="statsrow"><span class="minipin" id="miniPin" hidden></span><span id="sSaved"></span></div></div>'
     +'<section class="task startstep" id="start"><h2 class="display">Start here</h2>'
     +'<p class="intro">Do these things before you begin. The rest of the assignment opens when you finish.</p>'
@@ -389,7 +391,7 @@ function updateBar(){
   var mp=$('#miniPin'), mt=PINS.length?pickText(PINS[0].id):'';
   mp.hidden=!mt;
   if(mt&&mp.dataset.t!==mt){ mp.dataset.t=mt; mp.textContent=''; mp.append(h('b',null,'My question'),itxt(mt)); }
-  paintSteps(); paintReady();
+  paintSteps(); paintReady(); paintHolds();
   document.querySelectorAll('.pinq').forEach(function(b){ var t=pickText(b.dataset.pin); b.hidden=!t; var pt=b.querySelector('.pintext'); if(pt.textContent!==t){ pt.textContent=''; pt.append(itxt(t)); } });
   if(BOARD) paintBoard(); else applyGate();
   var sv=$('#sSaved');
@@ -3753,6 +3755,8 @@ function buildQuestion(q,s,tile){
       var sid=id+'_'+i, ops=fewer(sid,it.options||q.options,[it.answer],[(S.auto[sid]||{}).v]);
       var sel=autoSelect(sid,'Q'+num+' '+plain(it.label).replace(/:/g,''),ops,it.answer,{label:(SUPPORT&&it.easy)||it.label,hint:it.hint||q.hint});
       if(it.sci||q.sci) sel.classList.add('sci');
+      /* cerColors: true — once a sentence is sorted right it takes its CER highlight color */
+      if(q.cerColors){ var cc={claim:'b',evidence:'y',reasoning:'g'}[String(it.answer).toLowerCase()]; if(cc) sel.dataset.cer=cc; }
       if(byChart){
         var card=h('div','selchart');
         if(it.chart) card.append(chartsEl([it.chart],true));
@@ -3905,7 +3909,20 @@ function buildPart(p,n){
   });
   if(p.intro) s.append(h('p','intro',p.intro));
   /* box: short instructions (HTML) students need right away, always open (not folded like read), with a Listen button */
-  if(p.box) s.append(hh('div','learn partbox',p.box));
+  var hold=null;
+  if(p.box){
+    var bx=hh('div','learn partbox',p.box); s.append(bx);
+    /* confirm: 'I know how to ...' — a checkbox at the bottom of the box. The rest of the part stays hidden until it is
+       checked. It is not a numbered question, and it is saved by the part's title. */
+    if(p.confirm){
+      var ck='confirm:'+p.title, cst=S.agree[ck]||(S.agree[ck]={on:[],sign:'',at:''});
+      var clab=h('label','opt confirm'), cin=document.createElement('input'); cin.type='checkbox'; cin.checked=!!(cst.on||[])[0];
+      var csp=h('span'); csp.append(itxt(p.confirm)); clab.append(cin,csp); bx.append(clab);
+      cin.addEventListener('change',function(){ cst.on=[cin.checked]; cst.at=cin.checked?new Date().toISOString():''; commit(); });
+      hold={key:ck,lab:clab,note:h('p','holdnote',p.confirmNote||'Check the box above to open the rest of this part.')};
+      s.append(hold.note);
+    }
+  }
   /* a website students must open, shown right away (not folded in the reading box) */
   (p.links||(p.link?[p.link]:[])).forEach(function(L){
     var box=h('div','sitelink');
@@ -3930,6 +3947,8 @@ function buildPart(p,n){
     if(!(q.at!=null&&first)) buildQuestion(q,s);
   });
   if(readLater) s.append(readBox(p.read,p.readLabel));
+  /* box with confirm: everything after the box waits until the student checks its box */
+  if(hold){ var nx=hold.note.nextElementSibling; hold.els=[]; while(nx){ hold.els.push(nx); nx=nx.nextElementSibling; } HOLDS.push(hold); }
   if(GATED) gateEls(s,n);
   return s;
 }
@@ -4011,7 +4030,9 @@ function videoStops(block,qs){
 /* part before it and selects Continue. Finished parts fold down to   */
 /* their banner and can be opened again. gated: false turns this off. */
 /* ------------------------------------------------------------------ */
-var GATED=!BOARD&&!TEACHER&&A.gated!==false&&(A.parts||[]).length>1, REOPEN={};
+var GATED=!BOARD&&!TEACHER&&A.gated!==false&&(A.parts||[]).length>1, REOPEN={}, HOLDS=[];
+function holdDone(hd){ return !!((S.agree[hd.key]||{}).on||[])[0]; }
+function paintHolds(){ HOLDS.forEach(function(hd){ var on=holdDone(hd), ok=TEACHER||on; hd.els.forEach(function(e){ e.classList.toggle('held',!ok); }); hd.note.hidden=ok; if(on) hd.lab.dataset.s='ok'; else hd.lab.removeAttribute('data-s'); }); }
 function partWord(n){return (A.partWord||'Part')+' '+n;}
 function partDone(sec){return partShare(sec)>=1;}
 /* share of a part's checked items that are done (1 when the part has none) */
@@ -5145,7 +5166,7 @@ function render(){
   Object.keys(REC).forEach(function(k){delete REC[k];});
   Object.keys(SRC).forEach(function(k){delete SRC[k];}); Object.keys(NOTES).forEach(function(k){delete NOTES[k];});
   SRCLIST.length=0; NOTELIST.length=0; NPANELS.length=0; PICKS.length=0; PINS.length=0;
-  Object.keys(CHECKS).forEach(function(k){delete CHECKS[k];});
+  Object.keys(CHECKS).forEach(function(k){delete CHECKS[k];}); HOLDS.length=0;
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;

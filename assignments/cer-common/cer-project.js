@@ -12,6 +12,21 @@
   fact, reasoning words), not one topic's science.
 */
 window.CER_PROJECT = function (o) {
+  /* Part 1's practice CER and evidence example. Give each learning period its own (sample: and evidence: in that
+     period's assignment.js), so students practice on a new topic every time. These are the LP3 ones. */
+  var smp = o.sample || {
+    topic: 'sea turtles',
+    claim: 'Plastic in the ocean is harmful to sea turtles.',
+    evidence: 'According to the article, sea turtles can mistake floating plastic bags for jellyfish, which they eat.',
+    reasoning: 'If a turtle swallows plastic, it can block its stomach, so the turtle cannot eat real food and may starve.'
+  };
+  var evq = o.evidence || {
+    claim: 'Sleep helps people remember what they learn.',
+    best: 'According to a university study, students who slept 8 hours did better on a memory test than students who slept 5 hours.',
+    others: ['I think sleep is really important for everyone.',
+      'My friend says she does better on tests when she sleeps more.',
+      'Everyone knows you need sleep to do well in school.']
+  };
   return {
     title: o.title,
     course: o.course,
@@ -51,27 +66,25 @@ window.CER_PROJECT = function (o) {
         questions: [
           {
             type: 'selects',
-            text: 'Here is a short CER about sea turtles. Choose whether each sentence is the claim, the evidence, or the reasoning.',
+            cerColors: true,      // each sentence takes its CER highlight color once it is sorted right
+            text: 'Here is a short CER about ' + smp.topic + '. Choose whether each sentence is the claim, the evidence, or the reasoning.',
             easy: 'Is each sentence the claim, the evidence, or the reasoning?',
             options: ['Claim', 'Evidence', 'Reasoning'],
             items: [
-              { label: 'Plastic in the ocean is harmful to sea turtles.', answer: 'Claim',
+              { label: smp.claim, answer: 'Claim',
                 hint: 'Which part of a CER is the answer to the question, said in one sentence?' },
-              { label: 'According to the article, sea turtles can mistake floating plastic bags for jellyfish, which they eat.', answer: 'Evidence',
+              { label: smp.evidence, answer: 'Evidence',
                 hint: 'Look at how the sentence starts. Which part of a CER comes from a source?' },
-              { label: 'If a turtle swallows plastic, it can block its stomach, so the turtle cannot eat real food and may starve.', answer: 'Reasoning',
+              { label: smp.reasoning, answer: 'Reasoning',
                 hint: 'This sentence explains how or why. Which part of a CER connects the evidence to the claim?' }
             ]
           },
           {
             type: 'choice',
-            text: 'A student’s claim is “Sleep helps people remember what they learn.” Which sentence is the strongest evidence for this claim?',
-            easy: 'The claim is “Sleep helps people remember what they learn.” Which sentence is the best evidence?',
-            options: ['I think sleep is really important for everyone.',
-              'My friend says she does better on tests when she sleeps more.',
-              'Everyone knows you need sleep to do well in school.',
-              'According to a university study, students who slept 8 hours did better on a memory test than students who slept 5 hours.'],
-            answer: 3,
+            text: 'A student’s claim is “' + evq.claim + '” Which sentence is the strongest evidence for this claim?',
+            easy: 'The claim is “' + evq.claim + '” Which sentence is the best evidence?',
+            options: evq.others.concat([evq.best]),
+            answer: evq.others.length,
             tip: 'Evidence is a fact from a source you can check. Which choice tells where the information came from and gives results, not an opinion?',
             explain: 'Right. It names its source (a university study) and gives results you could check. The others are opinions.'
           },
@@ -104,13 +117,9 @@ window.CER_PROJECT = function (o) {
             type: 'pick',
             tiles: true,          // Step 1: a tile per category, Step 2: its questions
             pdfFirst: 1,          // the PDF starts with the research question, then the CER, then the sources and notes
-            text: 'Choose ONE question to research (or propose your own related question, with teacher approval).',
-            easy: 'Choose ONE question to research.',
+            text: 'Choose ONE question to research.',
             options: o.questions,
-            pin: true,
-            other: 'My own related question (my teacher must approve it)',
-            otherLabel: 'Type your own research question',
-            otherNote: 'Send your question to your teacher, and wait for approval before you start your research.'
+            pin: true
           }
         ]
       },
@@ -119,25 +128,29 @@ window.CER_PROJECT = function (o) {
       {
         title: 'Source 1: Research and take notes',
         step: 'Source 1',
-        intro: 'Find your first reliable website and paste its link below. Then split your screen so you can read the website and take notes at the same time.',
-        box: '<p><b>See your website and your notes at the same time: split your screen</b></p>'
-          + '<ol><li>Open your website in its own browser tab (the tab you copy the link from), and paste its link below.</li>'
-          + '<li>Drag that website tab out of your browser window and let go, so the website is in its own window.</li>'
-          + '<li>Put the two windows side by side:<ul>'
-          + '<li><b>Windows:</b> drag a window to the left or right edge of the screen until it snaps, or press the <b>Windows key + left arrow</b> or <b>right arrow</b>. Then choose the other window to fill the other side.</li>'
-          + '<li><b>Mac:</b> hold your pointer over the green button in the top-left corner of a window, and choose the option to put it on the left or right of the screen. Then choose the other window for the other side.</li>'
-          + '<li><b>Chromebook:</b> press <b>Alt + [</b> to move a window to the left side, and <b>Alt + ]</b> to move a window to the right side.</li></ul></li>'
-          + '<li>Read the website on one side and type your notes on this page on the other side. Keep this page open until you finish.</li></ol>',
-        read: '<p><b>Finding a good website</b></p>'
-          + '<ul><li>Search for your research question, or the key words in it.</li>'
+        intro: 'Find your first reliable website, and take notes on it as you read.',
+        box: '<p><b>Before you start</b></p>'
+          + '<ol><li><b>Do your research.</b> Find one reliable website that helps answer your research question.</li>'
+          + '<li><b>Split your screen</b> so you can see your website and this page side by side. Then take your notes as you read.</li></ol>'
+          + '<details><summary>Need help finding a good website?</summary><ul>'
+          + '<li>Search for your research question, or the key words in it.</li>'
           + '<li>To find government and university websites, add <b>site:.gov</b> or <b>site:.edu</b> to your search, for example “' + o.searchExample + '”.</li>'
-          + '<li>Good places to look: ' + o.sites + '.</li></ul>'
-          + '<p><b>How to take notes</b></p>'
+          + '<li>Good places to look: ' + o.sites + '.</li>'
+          + '<li>Check the clues from Part 1: who made it, when, and where its facts came from.</li></ul></details>'
+          + '<details><summary>Need help splitting your screen?</summary>'
+          + '<p>Drag your website’s tab out of the browser so it is in its own window. Then put the two windows side by side:</p><ul>'
+          + '<li><b>Windows:</b> drag a window to the left or right edge of the screen until it snaps (or press the <b>Windows key + left arrow</b> or <b>right arrow</b>), then choose the other window for the other side.</li>'
+          + '<li><b>Mac:</b> hold your pointer over the green button in the top-left corner of a window, and choose the option to put it on the left or right of the screen.</li>'
+          + '<li><b>Chromebook:</b> press <b>Alt + [</b> for the left side and <b>Alt + ]</b> for the right side.</li></ul></details>',
+        /* the rest of Part 3 opens when the student checks this box (at the bottom of the box above) */
+        confirm: 'I know how to find a reliable website for my research question, and how to split my screen so I can see my website and my notes side by side.',
+        confirmNote: 'Check the box above to open the rest of Part 3.',
+        read: '<p><b>How to take notes</b></p>'
           + '<ul><li><b>From the website:</b> type one fact, number, or short quote that helps answer your research question. If you use the website’s exact words, put them in “quotation marks.”</li>'
           + '<li><b>My annotation:</b> explain the note in your own words. What does it mean? How does it help answer your question? Is there a word you had to look up?</li>'
           + '<li>Each note should be a different idea. Look for facts you can use as evidence for your claim.</li></ul>'
           + '<p>You cannot paste into your notes. Typing the information yourself helps you understand and remember it.</p>',
-        readLabel: 'How to find a good website and take notes',
+        readLabel: 'How to take notes',
         questions: [
           {
             type: 'source',

@@ -934,3 +934,24 @@ summary.wphead{cursor:pointer}
 .ppanel[hidden]{display:none}
 .ppanel .pickstep{color:var(--primary)}
 .linkbtn{font:inherit;font-weight:700;color:var(--primary);background:none;border:0;padding:4px 0;text-decoration:underline;cursor:pointer}
+/* look.tracker: the steps sit in the sticky bar in place of the plain progress bars */
+.bar.hassteps .tracks{display:none}
+.bar.hassteps .steps{margin:0;padding:2px 0 0;border:0;border-radius:0;background:none}
+.bar.hassteps .sst{width:88px;font-size:.74rem;gap:2px}
+.bar.hassteps .sst i{width:26px;height:26px;font-size:.78rem}
+.bar.hassteps .sln{margin-top:12px}
+@media (max-width:560px){.bar.hassteps .sst{width:56px;font-size:.62rem}.bar.hassteps .sst i{width:22px;height:22px;border-width:2px}.bar.hassteps .sln{margin-top:10px}}
+/* holds: true — the rest of the part waits for the agree box */
+.held{display:none!important}
+.holdnote{margin:6px 0 0;font-weight:700;color:var(--muted)}
+.holdnote[hidden]{display:none}
+/* selects cerColors: a sentence sorted right takes its CER color */
+.ctl[data-cer][data-s="ok"]>label{display:table;color:#16213a;border-radius:3px;padding:1px 6px;margin-left:-6px}
+.ctl[data-cer="b"][data-s="ok"]>label{background:#00ffff}
+.ctl[data-cer="y"][data-s="ok"]>label{background:#ffff00}
+.ctl[data-cer="g"][data-s="ok"]>label{background:#00ff00}
+/* the research project's Part 3 box: short steps with fold-down help */
+.partbox details{margin:8px 0 0;border-top:1px solid var(--learn-line);padding-top:6px}
+.partbox details>summary{cursor:pointer;font-weight:700}
+.partbox details>*:not(summary){margin-top:6px}
+.partbox .confirm{margin:12px 0 0;max-width:none;font-weight:700}

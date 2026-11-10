@@ -69,8 +69,14 @@ suggest, a `searchExample`, and an `accent` (the class color: `'biology'` green,
 header card with a subject pattern, tinted part banners in the class color) so they stand apart from the Explore
 assignments; the school branding stays gold. Everything else is shared in `assignments/cer-common/cer-project.js`, which the
 folder's `index.html` loads before `assignment.js`. For a new period, copy an LP3 folder, rename it (`cer-lp4-...`),
-and change the title, `storageKey`, `short`, and questions.
+and change the title, `storageKey`, `short`, and questions. **Give every new period its own `sample` (Part 1's practice CER:
+`{ topic, claim, evidence, reasoning }`) and `evidence` (`{ claim, best, others: [3 weaker choices] }`) on a different
+topic**; LP3 uses sea turtles and sleep (the defaults in `cer-project.js`). The teacher wants a new topic each time.
 
+There is no "propose your own question" option (the teacher removed it). Part 3 starts with a short "Before you start"
+box (do your research, split your screen, two fold-down help sections) with a `confirm` checkbox; the rest of Part 3
+opens when it is checked. The sticky bar is the step tracker only. Part 1's sample CER sentences turn their CER colors
+when sorted right (`cerColors`).
 The question list is category tiles (Step 1 "What do you want to learn more about?", Step 2 the questions). The PDF
 starts with the research question and the CER, then the sources and notes (`pdfFirst`). The source card has no "Open
 this website" button (`noOpen`), since students split their screen with the website already open.

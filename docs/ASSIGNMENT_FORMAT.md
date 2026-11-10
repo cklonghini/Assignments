@@ -25,7 +25,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `essential` | no | The goal box at the top of the supported version: `{ question: '...', goals: ['...', ...] }` (see "Supported version") |
 | `courses` | no | For one assignment that every class uses: a list of class names, for example `['Biology A', 'Marine Science A']`. Start here then has a "Which class is this for?" drop-down that students must fill in before they start, and their choice replaces `course` under the title and on the PDF. Example: `assignments/welcome-to-class/` |
 | `support` | no | Set `support: false` when the assignment is the same for every student: `?support=eagle` then changes nothing |
-| `look` | no | A different style for one kind of assignment: `{ style: 'research', accent: 'biology', kicker: 'Research and Report', tracker: true }`. `tracker: true` adds a row of step circles under the title, one per part (named by each part's `step`, or its title), that fill in with a check mark as parts are finished; students can select a step to go to it. `research` gives serif headings, a header card with a subject pattern, and tinted part banners, all in the class color: `accent` is `'biology'` (green), `'anatomy'` (red), or `'marine'` (blue). The school branding stays gold. Used by the CER research projects |
+| `look` | no | A different style for one kind of assignment: `{ style: 'research', accent: 'biology', kicker: 'Research and Report', tracker: true }`. `tracker: true` makes the sticky progress bar a row of step circles, one per part, in place of the plain bars (named by each part's `step`, or its title), that fill in with a check mark as parts are finished; students can select a step to go to it. `research` gives serif headings, a header card with a subject pattern, and tinted part banners, all in the class color: `accent` is `'biology'` (green), `'anatomy'` (red), or `'marine'` (blue). The school branding stays gold. Used by the CER research projects |
 | `ready` | no | `ready: true` puts a "Ready to submit?" checklist at the top of Finish. It checks itself: the chosen question, each source and its notes, each `checks` question, each written answer, and (for a `cer` answer) each highlight color. Missing items have a "Go to it" button. Students can still download the PDF |
 | `pdfNumbers` | no | `pdfNumbers: false` leaves the question numbers out of the PDF and the text copy (the page keeps them). The research projects use it |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
@@ -114,6 +114,10 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 (with a Listen button), for example how to split the screen in a research project.
 
 A part can have `step: 'Source 1'`, its short name in the step tracker (`look.tracker`).
+
+`confirm: 'I know how to …'` (with `box`) puts a checkbox at the bottom of the box. Everything after the box in that
+part stays hidden until the student checks it (`confirmNote` is the line shown until then; the teacher view skips
+it). It is not a numbered question, so adding it does not change any question numbers or saved answers.
 
 Order on the page: `intro`, `box`, `link`, clips, images, `read`, `tableHtml`, questions. To put the reading box further down,
 between questions, give the question it should come right before `readBefore: true` (for example, so students answer
@@ -221,7 +225,8 @@ Every question has `type` and `text`. Numbers are added automatically.
   items: [ { label: 'Makes its own food', answer: 'Autotroph', hint: 'Think about photosynthesis.' } ] }
 ```
 
-Use `items` with different `options` for paired menus such as domain and kingdom. Each item is auto-checked on its own.
+Use `items` with different `options` for paired menus such as domain and kingdom. `cerColors: true` (with answers Claim, Evidence, Reasoning)
+colors each sentence in its CER highlight color (blue, yellow, green) once it is sorted right. Each item is auto-checked on its own.
 
 **Rows with a picture:** give items a `row` name to put them on one line together (for example the two menus about
 pepsin), and `rowImages: { pepsin: { src: 'media/enzyme-pepsin.svg', alt: '...' } }` to show a small picture at the
