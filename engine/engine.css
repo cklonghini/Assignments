@@ -368,6 +368,15 @@ details.backup textarea{min-height:90px;margin-top:8px;font:.8rem/1.3 ui-monospa
 .lblegend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.88rem;margin:8px 4px 2px}
 .lblegend .sw{display:inline-block;width:.9em;height:.9em;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .lbcredit{font-size:.8rem;margin:6px 4px 0}
+.lbkey{border:2px solid var(--line);border-radius:12px;padding:10px 12px 12px;margin:6px 0 16px;background:var(--surface)}
+.lbkeyhd{font-weight:700;margin:0 0 2px}
+.lbcard{max-width:560px;margin:8px auto 10px;perspective:1600px;cursor:pointer}
+.lbcardin{display:grid;transition:transform .55s ease;transform-style:preserve-3d}
+.lbcardin.flipped{transform:rotateY(180deg)}
+.lbface{grid-area:1/1;background:#ffffff;border:1px solid var(--line);border-radius:12px;padding:8px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.lbface svg,.lbface img{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain}
+.lbback{transform:rotateY(180deg)}
+.lbflip{display:block;margin:0 auto}
 .lbslots{display:grid;gap:7px;margin:0;padding:0;list-style:none}
 .lbslot{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .lbdrop{flex:1;min-width:0;min-height:40px;font:inherit;font-size:.95rem;text-align:left;border:2px dashed var(--line);border-radius:8px;background:var(--surface);color:var(--muted);padding:5px 10px;cursor:pointer}
