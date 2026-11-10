@@ -141,6 +141,26 @@
       "permanent": false
     },
     {
+      "source": "/label-the-cardiovascular-system",
+      "destination": "/assignments/explore-label-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
+      "source": "/label-the-cardiovascular-system/",
+      "destination": "/assignments/explore-label-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-label-the-cardiovascular-system",
+      "destination": "/assignments/explore-label-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
+      "source": "/explore-label-the-cardiovascular-system/",
+      "destination": "/assignments/explore-label-the-cardiovascular-system/",
+      "permanent": false
+    },
+    {
       "source": "/skeletal-system",
       "destination": "/assignments/explore-more-skeletal-system/",
       "permanent": false
