@@ -957,3 +957,36 @@ summary.wphead{cursor:pointer}
 .partbox .confirm{margin:12px 0 0;max-width:none;font-weight:700}
 .pbadge{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#5b2a86;color:#fff;border-radius:99px;padding:1px 8px;vertical-align:1px}
 .pbnote{margin:0 0 6px}
+
+/* thinking map (supported version of a cer question with map: true): claim blue, evidence yellow, reasoning green */
+.tmap{margin:8px 0}
+.tmboxes{display:flex;flex-direction:column;gap:14px}
+.tmbox{flex:1 1 220px;min-width:0;border:3px solid;border-radius:12px;padding:8px 10px 10px;
+  transition:border-color .6s,background-color .6s,padding .6s}
+.tmbox.tmc{border-color:#00a3a3;background:rgba(0,255,255,.12)}
+.tmbox.tme{border-color:#b89f00;background:rgba(255,230,0,.14)}
+.tmbox.tmr{border-color:#00a300;background:rgba(0,255,0,.11)}
+.tmbox[data-fix]{outline:3px dashed #c0392b;outline-offset:3px}
+.tmhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px}
+.tmlab{font-weight:800;padding:2px 10px;border-radius:99px;color:#16213a;transition:opacity .5s}
+.tmc .tmlab{background:#00ffff}
+.tme .tmlab{background:#ffe600}
+.tmr .tmlab{background:#00ff00}
+.tmbox textarea{min-height:76px}
+.tmwhy{margin:6px 0 0;font-weight:700;color:#c0392b}
+.tmrm{font:inherit;font-size:.85rem;background:transparent;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:2px 4px}
+.tmpair{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
+.tmarrow{align-self:center;font-size:1.5rem;font-weight:800;color:var(--muted)}
+.tmacts{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+.tmnote{border:3px solid #c0392b;border-radius:10px;padding:10px 14px;margin:10px 0;background:var(--surface);color:var(--ink)}
+.tmnote p{margin:4px 0}
+.tmnoteh{font-weight:800}
+.tmpara .tmback{margin-top:10px}
+/* "Turn my thinking map into a paragraph": the boxes melt away, then the paragraph fades in */
+.tmmelt .tmbox{border-color:transparent;background:transparent;padding:0}
+.tmmelt .tmlab,.tmmelt .tmarrow,.tmmelt .tmacts,.tmmelt .talkrow,.tmmelt>.inote{opacity:0;transition:opacity .5s}
+.tmmelt textarea{border-color:transparent;transition:border-color .6s}
+.tmin{animation:tmin .5s ease-out}
+@keyframes tmin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tmin{animation:none}}
+@media (max-width:600px){.tmarrow{display:none}}

@@ -3267,12 +3267,19 @@ function richField(id){
   ed.setAttribute('aria-label','Your written response'); ed.spellcheck=true; ed.setAttribute('data-placeholder','Begin your response here...');
   fillEditor(ed,st.segs);
   var cnt=h('p','words'); var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
-  wrap.append(bar,ed,talkRow(ed),cnt,msg);
+  if(c.map){
+    /* supported version: the student plans in a thinking map, then turns it into a paragraph (both stay editable) */
+    var para=h('div','tmpara');
+    para.append(h('p','inote','This is your thinking map as a paragraph. You can keep writing here. If you add a sentence, highlight it in its color (claim blue, evidence yellow, reasoning green) so it goes into the right box if you go back to your thinking map.'),bar,ed,talkRow(ed));
+    wrap.append(thinkingMap(id,st,ed,para,function(){sync();commit();}),para,cnt,msg);
+  } else wrap.append(bar,ed,talkRow(ed),cnt,msg);
   function sync(){
     var plain=segsPlain(st.segs), n=words(plain), hl=segsHlWords(st.segs), enough=plain.trim().length>=c.min;
     var all=c.cer?(segsHlWords(st.segs,'b')&&segsHlWords(st.segs,'y')&&segsHlWords(st.segs,'g')):hl;
-    cnt.textContent=n+(n===1?' word':' words')+', '+hl+' highlighted';
-    msg.textContent=!enough?'Write at least a couple of sentences.':all?'Saved. Your teacher grades this one.'
+    cnt.textContent=n+(n===1?' word':' words')+(c.map&&st.view==='map'?'':', '+hl+' highlighted');
+    msg.textContent=!enough?'Write at least a couple of sentences.'
+      :c.map&&st.view==='map'?'Saved. When every box has a complete sentence, press “Turn my thinking map into a paragraph.”'
+      :all?'Saved. Your teacher grades this one.'
       :c.cer?'Saved. Remember to highlight your claim in blue, your evidence in yellow, and your reasoning (where you expand on your thoughts) in green.'
       :'Saved. Remember to highlight your transition words in yellow.';
     wrap.dataset.s=enough?'ok':'idle';
@@ -3310,6 +3317,151 @@ function richField(id){
   });
   sync();
   return wrap;
+}
+
+/* Thinking map (supported version only: map: true on a cer highlight question, with ?support=eagle).
+   A blue claim box, then yellow evidence and green reasoning boxes in pairs ("Add another piece of evidence" adds a
+   pair). "Turn my thinking map into a paragraph" first checks that every box has complete sentences (a capital at the
+   start of each sentence, a period at the end), then the boxes melt away and the sentences join into one paragraph,
+   each still in its CER color, in the usual highlight box. Students can edit either one: going back to the map sorts
+   the paragraph into boxes again by color (text with no color stays with the sentence before it).
+   The answer is always saved as the paragraph (st.segs), so the PDF, the text fallback, "Check my ideas," and the
+   Ready checklist work as for any cer answer. The boxes are saved in st.map and the view in st.view. */
+var TM_MAX=5;
+function tmClean(t){return String(t||'').replace(/\s+/g,' ').trim();}
+function tmSegs(m){
+  var segs=[], parts=[[m.claim,'b']];
+  (m.pairs||[]).forEach(function(p){parts.push([p.e,'y'],[p.r,'g']);});
+  parts.forEach(function(p){
+    var t=tmClean(p[0]); if(!t) return;
+    if(segs.length) segs.push([' ',false]);
+    segs.push([t,p[1]]);
+  });
+  return segs;
+}
+function tmFromSegs(segs){
+  var m={claim:'',pairs:[]}, cur=null, lead='';
+  function put(kind,t){
+    if(kind==='c') m.claim+=t;
+    else { var p=m.pairs[m.pairs.length-1]; p[kind]+=t; }
+    cur=kind;
+  }
+  (segs||[]).forEach(function(s){
+    var c=hlCode(s[1]), t=String(s[0]).replace(/\n/g,' ');
+    if(!t.trim()&&!c){ if(cur) put(cur,t); return; }
+    var p=m.pairs[m.pairs.length-1];
+    if(c==='b') put('c',t);
+    else if(c==='y'){ if(!(p&&cur==='e')) m.pairs.push({e:'',r:''}); put('e',t); }
+    else if(c==='g'){ if(!(p&&(cur==='r'||(cur==='e'&&!p.r)))) m.pairs.push({e:'',r:''}); put('r',t); }
+    else if(cur) put(cur,t);
+    else lead+=t;
+    if(lead&&cur){ var L=lead; lead=''; if(cur==='c') m.claim=L+m.claim; else { var q=m.pairs[m.pairs.length-1]; q[cur]=L+q[cur]; } }
+  });
+  if(lead) m.claim=lead+m.claim;
+  m.claim=tmClean(m.claim);
+  m.pairs=m.pairs.map(function(p){return {e:tmClean(p.e),r:tmClean(p.r)};});
+  if(!m.pairs.length) m.pairs.push({e:'',r:''});
+  return m;
+}
+/* what is missing for a box to count as complete sentences (null when it is fine) */
+function tmSentenceIssue(t){
+  t=tmClean(t);
+  if(!t) return 'Type at least one complete sentence.';
+  if(words(t)<4) return 'Write a complete sentence with at least 4 words.';
+  if(/^[^A-Za-z0-9]*[a-z]/.test(t)) return 'Start your sentence with a capital letter.';
+  if(!/[.!?]["”’')\]]*$/.test(t)) return 'End your sentence with a period.';
+  var re=/[.!?]["”’')\]]*\s+["“‘'(\[]*([a-z])/g;
+  if(re.test(t)) return 'Start each new sentence with a capital letter.';
+  return null;
+}
+function thinkingMap(id,st,ed,para,refresh){
+  if(!st.map){
+    st.map=tmFromSegs(st.segs);
+    st.view=segsPlain(st.segs).trim()?'para':'map';   /* an answer started before the map stays a paragraph */
+  }
+  var root=h('div','tmap'), boxes=h('div','tmboxes'), note=h('div','tmnote'); note.setAttribute('role','alert'); note.hidden=true;
+  var add=h('button','btn ghost tmadd','+ Add another piece of evidence'); add.type='button';
+  var go=h('button','btn tmgo','Turn my thinking map into a paragraph'); go.type='button';
+  var back=h('button','btn ghost tmback','Go back to my thinking map'); back.type='button';
+  var acts=h('div','tmacts'); acts.append(add,go);
+  root.append(h('p','inote','Plan your answer in the boxes. Type your claim in the blue box. Then add evidence in a yellow box and your reasoning about that evidence in the green box next to it. Each box needs at least one complete sentence, and you can write more.'),boxes,acts,note);
+  para.append(back);
+  var fields=[];
+  function grow(ta){ta.style.height='auto'; ta.style.height=Math.max(ta.scrollHeight+2,76)+'px';}
+  function box(kind,label,ph,get,set,extra){
+    var b=h('div','tmbox tm'+kind), head=h('div','tmhead');
+    var lab=h('label','tmlab',label), ta=h('textarea');
+    ta.id='tm-'+id+'-'+fields.length; lab.htmlFor=ta.id; ta.rows=3; ta.spellcheck=true;
+    ta.setAttribute('placeholder',ph); ta.value=get();
+    head.append(lab); if(extra) head.append(extra);
+    var why=h('p','tmwhy'); why.hidden=true;
+    b.append(head,ta,talkRow(ta),why);
+    ta.addEventListener('input',function(){
+      set(ta.value); grow(ta);
+      if(!why.hidden&&!tmSentenceIssue(ta.value)){ why.hidden=true; b.removeAttribute('data-fix'); }
+      st.segs=tmSegs(st.map); refresh();
+    });
+    fields.push({el:b,ta:ta,why:why,label:label,get:get});
+    setTimeout(function(){grow(ta);},0);
+    return b;
+  }
+  function draw(){
+    boxes.textContent=''; fields=[];
+    boxes.append(box('c','Claim','Type your claim here.',function(){return st.map.claim;},function(v){st.map.claim=v;}));
+    st.map.pairs.forEach(function(p,i){
+      var n=st.map.pairs.length>1?' '+(i+1):'';
+      var pair=h('div','tmpair'), rm=null;
+      if(i>0){
+        rm=h('button','tmrm','Remove'); rm.type='button'; rm.setAttribute('aria-label','Remove evidence'+n+' and reasoning'+n);
+        rm.addEventListener('click',function(){
+          if((p.e+p.r).trim()&&!confirm('Remove Evidence'+n+' and Reasoning'+n+'? What you typed in them will be deleted.')) return;
+          st.map.pairs.splice(i,1); st.segs=tmSegs(st.map); draw(); refresh();
+        });
+      }
+      pair.append(
+        box('e','Evidence'+n,'Type your evidence here.',function(){return p.e;},function(v){p.e=v;},rm),
+        h('span','tmarrow','→'),
+        box('r','Reasoning'+n,'Provide reasoning here that supports your evidence.',function(){return p.r;},function(v){p.r=v;}));
+      boxes.append(pair);
+    });
+    add.hidden=st.map.pairs.length>=TM_MAX;
+  }
+  function show(){
+    root.hidden=st.view!=='map'; para.hidden=st.view==='map';
+    root.classList.remove('tmmelt'); para.classList.remove('tmin');
+  }
+  add.addEventListener('click',function(){
+    st.map.pairs.push({e:'',r:''}); draw(); refresh();
+    var f=fields[fields.length-2]; if(f) f.ta.focus();
+  });
+  go.addEventListener('click',function(){
+    var bad=[];
+    fields.forEach(function(f){
+      var why=tmSentenceIssue(f.get());
+      f.why.hidden=!why; f.why.textContent=why||'';
+      if(why){ f.el.dataset.fix=''; bad.push(f); } else f.el.removeAttribute('data-fix');
+    });
+    if(bad.length){
+      note.hidden=false; note.textContent='';
+      note.append(h('p','tmnoteh','Hold on! Each box needs at least one complete sentence before your thinking map can become a paragraph.'),
+        h('p',null,'Remember: start each sentence with a capital letter and end it with a period. Check these boxes: '+bad.map(function(f){return f.label;}).join(', ')+'.'));
+      bad[0].ta.focus();
+      return;
+    }
+    note.hidden=true;
+    st.segs=tmSegs(st.map); fillEditor(ed,st.segs);
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function swap(){ st.view='para'; show(); para.classList.add('tmin'); refresh(); ed.focus(); }
+    if(reduce) swap(); else { root.classList.add('tmmelt'); setTimeout(swap,750); }
+  });
+  back.addEventListener('click',function(){
+    st.segs=extract(ed); st.map=tmFromSegs(st.segs); st.view='map';
+    note.hidden=true; draw(); show(); refresh();
+    if(fields[0]) fields[0].ta.focus();
+  });
+  draw(); show();
+  if(st.view==='map') st.segs=tmSegs(st.map);
+  return root;
 }
 
 /* ------------------------------------------------------------------ */
@@ -3837,11 +3989,15 @@ function buildQuestion(q,s,tile){
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return (S.written[id]||{}).text;},null,ideasFrom(q.ideas)));
   } else if(t==='highlight'){
     ids=[];
-    R[id]={min:q.min||40,cer:!!q.cer};
+    R[id]={min:q.min||40,cer:!!q.cer,map:!!(SUPPORT&&q.cer&&q.map)};
     /* the how-to folds into a box; what each color means is shown when the student points at that highlight button */
     var how=h('details','fold howfold'), howin=h('div','howbox');
     how.append(h('summary',null,'How to answer this question'), howin);
-    (q.cer?[
+    (R[id].map?[
+      h('p',null,'Plan your answer in the thinking map below. Type your claim (your answer) in the blue box.'),
+      h('p',null,'Type evidence from '+(q.from||'the video')+' in a yellow box. In the green box next to it, give your reasoning: explain how that evidence supports your claim. Press “Add another piece of evidence” for more evidence.'),
+      h('p',null,'Each box needs at least one complete sentence. Start with a capital letter and end with a period. Then press “Turn my thinking map into a paragraph.” Your sentences keep their colors, so your paragraph is already highlighted. You can still change it after.')
+    ]:q.cer?[
       h('p',null,'Respond to the question in the space below. Remember to answer the question fully.'),
       h('p',null,'Make a claim (your answer), use evidence from '+(q.from||'the video')+' to support your view, and then give your reasoning: expand on your thoughts to explain how your evidence supports your claim.'),
       h('p',null,'Once you have finished, highlight parts of your response. Select the words, then press the matching color button. Point at a button to see what it is for.')
@@ -3858,7 +4014,11 @@ function buildQuestion(q,s,tile){
       grammarCheck(function(){return segsPlain((S.rich[id]||{}).segs);}));
     /* a cer answer checks each color instead of one yellow highlight */
     var ideas=(q.ideas||[]).filter(function(it){return !(q.cer&&it.highlight===true);});
-    if(q.cer) ideas=ideas.concat([
+    if(R[id].map) ideas=ideas.concat([
+      {done:'You wrote your claim (blue).',q:'Did you write your claim in the blue box?',tip:'Type your answer to the question in the blue Claim box.',highlight:'claim'},
+      {done:'You gave evidence (yellow).',q:'Did you give evidence in a yellow box?',tip:'Type a fact from your notes in a yellow Evidence box.',highlight:'evidence'},
+      {done:'You gave your reasoning (green).',q:'Did you give your reasoning in a green box?',tip:'In the green Reasoning box, explain how your evidence supports your claim.',highlight:'expand'}]);
+    else if(q.cer) ideas=ideas.concat([
       {done:'You highlighted your claim in blue.',q:'Did you highlight your claim in blue?',tip:'Select the sentence that gives your answer, then press the blue Claim button.',highlight:'claim'},
       {done:'You highlighted your evidence in yellow.',q:'Did you highlight your evidence in yellow?',tip:'Select the facts or examples you used to support your claim, then press the yellow Evidence button.',highlight:'evidence'},
       {done:'You highlighted your reasoning in green.',q:'Did you highlight your reasoning (where you expand on your thoughts) in green?',tip:'Select the sentences that explain how your evidence supports your claim, then press the green Reasoning/Expand button.',highlight:'expand'}]);

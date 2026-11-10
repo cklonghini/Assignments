@@ -229,6 +229,7 @@ window.CER_PROJECT = function (o) {
             type: 'highlight',
             pdfFirst: 2,
             cer: true,
+            map: !!o.thinkingMap,   // thinkingMap: true → the supported version plans the CER in a thinking map first
             notesBeside: true,
             from: 'your two websites',
             text: 'Answer your research question with a claim, evidence from both of your websites, and reasoning. (At least 2 paragraphs, or 6 to 10 sentences)',
