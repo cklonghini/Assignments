@@ -39,6 +39,12 @@ one short question. If she is not there to answer, make the most reasonable choi
    branch. Vercel redeploys on its own. The student link is `https://PROJECT.vercel.app/assignments/SLUG/`, and
    `build_index.py` also makes a short link, `https://PROJECT.vercel.app/SHORT` (the slug without "explore-", or the
    assignment's `short:` name), by writing `vercel.json`. Do not edit `vercel.json` by hand.
+   The home page (`index.html`, also written by `build_index.py`) has one section per class (Biology A, Biology B,
+   Marine Science A, Marine Science B, Anatomy & Physiology A, Anatomy & Physiology B, then "Every class"), grouped by
+   type (Research and Report, Explore, Practice, Labs, Tests and reviews, Mastery checks), with class and type filters,
+   search, and a "Copy student link" button. **Give every assignment a course label with A or B** (for example
+   "Biology B"); one without lands in "Not sorted yet". The type comes from the title ("Explore - ", "Practice - ",
+   "Test - ", "Mastery", "Research and Report"); anything else is listed under Labs.
 
 ## Game boards (tests and reviews)
 
