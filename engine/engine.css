@@ -787,3 +787,61 @@ summary.wphead{cursor:pointer}
 .pinlab{display:block;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink)}
 .pintext{margin:2px 0 0;font-size:1.15rem;font-weight:700;color:var(--ink);line-height:1.35}
 .partbox{margin:0 0 16px}
+
+/* ------------------------------------------------------------------ */
+/* look: { style: 'research', accent: ... } in assignment.js            */
+/* The research projects (CER Research and Report) have their own look  */
+/* in the class color: green Biology, red Anatomy & Physiology, blue    */
+/* Marine Science. The school branding (eagle, name, logo) stays gold.  */
+/* ------------------------------------------------------------------ */
+:root[data-accent="biology"]{--accent:#2e7d32; --accent-deep:#1b5e20; --accent-tint:#e6f2e6; --accent-bg:#f3f8f1}
+:root[data-accent="anatomy"]{--accent:#c62828; --accent-deep:#8e1b1b; --accent-tint:#fbe8e6; --accent-bg:#fbf4f2}
+:root[data-accent="marine"]{--accent:#1565c0; --accent-deep:#0d47a1; --accent-tint:#e2eefb; --accent-bg:#f1f6fb}
+@media (prefers-color-scheme:dark){
+  :root[data-accent="biology"]:not([data-theme="light"]){--accent:#6cc474; --accent-deep:#a3dea8; --accent-tint:#18301b; --accent-bg:#101611}
+  :root[data-accent="anatomy"]:not([data-theme="light"]){--accent:#ef8079; --accent-deep:#f7b3ae; --accent-tint:#3a1715; --accent-bg:#171010}
+  :root[data-accent="marine"]:not([data-theme="light"]){--accent:#74abee; --accent-deep:#a9cbf5; --accent-tint:#132740; --accent-bg:#0e131a}
+}
+:root[data-theme="dark"][data-accent="biology"]{--accent:#6cc474; --accent-deep:#a3dea8; --accent-tint:#18301b; --accent-bg:#101611}
+:root[data-theme="dark"][data-accent="anatomy"]{--accent:#ef8079; --accent-deep:#f7b3ae; --accent-tint:#3a1715; --accent-bg:#171010}
+:root[data-theme="dark"][data-accent="marine"]{--accent:#74abee; --accent-deep:#a9cbf5; --accent-tint:#132740; --accent-bg:#0e131a}
+
+/* the class color takes over the page colors (buttons, lines, banners, progress bars) */
+:root[data-look="research"][data-accent]{
+  --primary:var(--accent-deep); --primary-ink:#ffffff; --gold:var(--accent); --gold-ink:var(--accent-deep);
+  --banner-ink:var(--accent-deep); --pin-bg:var(--accent-tint); --bg:var(--accent-bg);
+}
+@media (prefers-color-scheme:dark){ :root[data-look="research"][data-accent]:not([data-theme="light"]){--primary:var(--accent); --primary-ink:#111111} }
+:root[data-look="research"][data-theme="dark"][data-accent]{--primary:var(--accent); --primary-ink:#111111}
+
+/* school branding stays gold */
+:root[data-look="research"] .brand{border-bottom-color:#c1a01e;color:#7f6810}
+:root[data-look="research"] .sitefoot{border-top-color:#c1a01e}
+@media (prefers-color-scheme:dark){ :root[data-look="research"]:not([data-theme="light"]) .brand{color:#dcbc3c} }
+:root[data-look="research"][data-theme="dark"] .brand{color:#dcbc3c}
+
+/* a report feel: serif headings */
+:root[data-look="research"] .display{font-family:"Fraunces",Georgia,"Times New Roman",serif;letter-spacing:-.01em}
+:root[data-look="research"] h1{font-weight:800}
+
+/* the header is a card in the class color, with a pattern for the subject */
+:root[data-look="research"] header.top{margin-top:16px;padding:22px 24px 16px;border:2px solid var(--accent);border-radius:18px;
+  background-color:var(--accent-tint);background-repeat:no-repeat;background-position:right 10px center;background-size:auto 82%}
+.kicker{margin:0 0 6px;font-weight:700;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-ink)}
+:root[data-look="research"] .course{color:var(--accent-deep)}
+:root[data-look="research"] .maskrow,:root[data-look="research"] .ttsrow{position:relative}
+/* cells and leaves for Biology, a heartbeat line for Anatomy & Physiology, waves for Marine Science */
+:root[data-look="research"][data-accent="biology"] header.top{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 160' fill='none' stroke='%232e7d32' stroke-opacity='.2' stroke-width='3'%3E%3Ccircle cx='70' cy='60' r='34'/%3E%3Ccircle cx='70' cy='60' r='11' fill='%232e7d32' fill-opacity='.15'/%3E%3Ccircle cx='150' cy='118' r='22'/%3E%3Ccircle cx='150' cy='118' r='7' fill='%232e7d32' fill-opacity='.15'/%3E%3Cpath d='M190 30 C240 20 255 70 215 95 C200 70 190 55 190 30 Z'/%3E%3Cpath d='M190 30 C205 55 212 75 215 95'/%3E%3Ccircle cx='235' cy='140' r='12'/%3E%3C/svg%3E")}
+:root[data-look="research"][data-accent="anatomy"] header.top{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 160' fill='none' stroke='%23c62828' stroke-opacity='.2' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M0 90 H70 L85 90 L98 40 L112 135 L126 70 L136 90 H170 L180 78 L190 90 H260'/%3E%3Cpath d='M205 38 C205 26 222 24 226 36 C230 24 247 26 247 38 C247 52 226 62 226 66 C226 62 205 52 205 38 Z' fill='%23c62828' fill-opacity='.12'/%3E%3C/svg%3E")}
+:root[data-look="research"][data-accent="marine"] header.top{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 160' fill='none' stroke='%231565c0' stroke-opacity='.2' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M0 60 Q32 35 65 60 T130 60 T195 60 T260 60'/%3E%3Cpath d='M0 95 Q32 70 65 95 T130 95 T195 95 T260 95'/%3E%3Cpath d='M0 130 Q32 105 65 130 T130 130 T195 130 T260 130'/%3E%3C/svg%3E")}
+
+/* part banners: a tinted band with a thick class-color edge, instead of the black bar */
+:root[data-look="research"] .task{border-top:3px solid var(--accent)}
+:root[data-look="research"] .task::before{border-top-color:transparent}
+:root[data-look="research"] .task h2{background:var(--accent-tint);color:var(--accent-deep);border-left:12px solid var(--accent);border-radius:6px 16px 16px 6px;padding:14px 18px}
+:root[data-look="research"] .startstep .warn h2{background:none;color:inherit;border:0;padding:0;border-radius:0}
+:root[data-look="research"] .qnum{background:var(--primary);color:var(--primary-ink)}
+:root[data-look="research"] .q{border-left-color:var(--accent-tint)}
+:root[data-look="research"] .pinq{border-color:var(--accent)}
+:root[data-look="research"] .wphead{background:var(--accent-tint)}
+@media (max-width:560px){:root[data-look="research"] header.top{padding:16px 16px 12px;background-size:120px auto;background-position:right 8px top 8px}}

@@ -9,9 +9,13 @@ var BRAND=new URL('brand/',(document.currentScript&&document.currentScript.src)|
 function injectPage(){
   var A2=window.ASSIGNMENT, head=document.head;
   document.title=A2.title;
+  /* look in assignment.js: a different style for one kind of assignment (for example the research projects), in the
+     class color. The school branding (eagle, name, logo) stays gold. */
+  var LOOK=A2.look||null;
+  if(LOOK){ document.documentElement.dataset.look=LOOK.style||''; if(LOOK.accent) document.documentElement.dataset.accent=LOOK.accent; }
   if(!document.documentElement.lang) document.documentElement.lang='en';
   [['preconnect','https://fonts.googleapis.com',false],['preconnect','https://fonts.gstatic.com',true],
-   ['stylesheet','https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:wght@600;800&family=Cabin:wght@700&display=swap',false]
+   ['stylesheet','https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:wght@600;800&family=Cabin:wght@700'+(LOOK&&LOOK.style==='research'?'&family=Fraunces:opsz,wght@9..144,600;9..144,800':'')+'&display=swap',false]
   ].forEach(function(l){var e=document.createElement('link'); e.rel=l[0]; e.href=l[1]; if(l[2]) e.crossOrigin=''; head.appendChild(e);});
   if(!head.querySelector('link[rel~="icon"]')){ var fav=document.createElement('link'); fav.rel='icon'; fav.type='image/png'; fav.href=BRAND+'favicon.png'; head.appendChild(fav); }
   var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#2d2926'; head.appendChild(tc);
@@ -27,7 +31,7 @@ function injectPage(){
   var hasPics=!A2.board&&(A2.parts||[]).some(function(p){return (p.images||[]).length;});
   document.body.insertAdjacentHTML('afterbegin',
     '<div class="wrap"><div class="brand"><img src="'+BRAND+'eagle.png" alt="">Elite Academic Academy</div>'
-    +'<header class="top"><div class="titlerow">'+icon+'<div><h1 class="display"></h1><p class="course"></p></div></div>'
+    +'<header class="top"><div class="titlerow">'+icon+'<div>'+(LOOK&&LOOK.kicker?'<p class="kicker">'+esc(LOOK.kicker)+'</p>':'')+'<h1 class="display"></h1><p class="course"></p></div></div>'
     +'<div class="maskrow"><span class="tipwrap" id="maskWrap"><button type="button" class="switch" id="maskSw" role="switch" aria-checked="false" aria-labelledby="maskLbl" aria-describedby="maskHint"><span class="knob"></span></button>'
     +'<label for="maskSw" id="maskLbl" class="masklbl">Focus</label>'
     +'<span id="maskHint" class="tip" role="tooltip">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></span></div>'

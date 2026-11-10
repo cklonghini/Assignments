@@ -8,6 +8,7 @@ window.ASSIGNMENT = CER_PROJECT({
   course: 'Anatomy & Physiology A',
   storageKey: 'cer-lp3-anatomy-physiology-v1',
   short: 'lp3-ap-cer',
+  accent: 'anatomy',          // red: the Anatomy & Physiology class color
   searchExample: 'myelin sheath multiple sclerosis site:.gov',
   sites: 'MedlinePlus, the National Institutes of Health (NIH), the National Institute of Neurological Disorders and Stroke (NINDS), the CDC, the Cleveland Clinic, the Mayo Clinic, and university (.edu) websites',
   questions: [

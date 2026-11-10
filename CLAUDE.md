@@ -64,7 +64,10 @@ Report"). There is a separate link for each learning period and course, so saved
 period: `assignments/cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/`. Each has a short
 `assignment.js` that calls `CER_PROJECT({...})` with its title ("LP3 - Biology Research and Report"), course,
 `storageKey`, `short` link, the research `questions` (with `{ heading: '...' }` lines to group them), `sites` to
-suggest, and a `searchExample`. Everything else is shared in `assignments/cer-common/cer-project.js`, which the
+suggest, a `searchExample`, and an `accent` (the class color: `'biology'` green, `'anatomy'` red,
+`'marine'` blue). The research projects have their own look (`look: { style: 'research' }`: serif headings, a
+header card with a subject pattern, tinted part banners in the class color) so they stand apart from the Explore
+assignments; the school branding stays gold. Everything else is shared in `assignments/cer-common/cer-project.js`, which the
 folder's `index.html` loads before `assignment.js`. For a new period, copy an LP3 folder, rename it (`cer-lp4-...`),
 and change the title, `storageKey`, `short`, and questions.
 

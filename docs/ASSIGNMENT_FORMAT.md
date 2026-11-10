@@ -25,6 +25,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `essential` | no | The goal box at the top of the supported version: `{ question: '...', goals: ['...', ...] }` (see "Supported version") |
 | `courses` | no | For one assignment that every class uses: a list of class names, for example `['Biology A', 'Marine Science A']`. Start here then has a "Which class is this for?" drop-down that students must fill in before they start, and their choice replaces `course` under the title and on the PDF. Example: `assignments/welcome-to-class/` |
 | `support` | no | Set `support: false` when the assignment is the same for every student: `?support=eagle` then changes nothing |
+| `look` | no | A different style for one kind of assignment: `{ style: 'research', accent: 'biology', kicker: 'Research and Report' }`. `research` gives serif headings, a header card with a subject pattern, and tinted part banners, all in the class color: `accent` is `'biology'` (green), `'anatomy'` (red), or `'marine'` (blue). The school branding stays gold. Used by the CER research projects |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
