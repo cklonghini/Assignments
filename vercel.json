@@ -61,6 +61,66 @@
       "permanent": false
     },
     {
+      "source": "/lp4-ap-cer",
+      "destination": "/assignments/cer-lp4-anatomy-physiology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp4-ap-cer/",
+      "destination": "/assignments/cer-lp4-anatomy-physiology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp4-anatomy-physiology",
+      "destination": "/assignments/cer-lp4-anatomy-physiology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp4-anatomy-physiology/",
+      "destination": "/assignments/cer-lp4-anatomy-physiology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp4-bio-cer",
+      "destination": "/assignments/cer-lp4-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp4-bio-cer/",
+      "destination": "/assignments/cer-lp4-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp4-biology",
+      "destination": "/assignments/cer-lp4-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp4-biology/",
+      "destination": "/assignments/cer-lp4-biology/",
+      "permanent": false
+    },
+    {
+      "source": "/lp4-marine-cer",
+      "destination": "/assignments/cer-lp4-marine-science/",
+      "permanent": false
+    },
+    {
+      "source": "/lp4-marine-cer/",
+      "destination": "/assignments/cer-lp4-marine-science/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp4-marine-science",
+      "destination": "/assignments/cer-lp4-marine-science/",
+      "permanent": false
+    },
+    {
+      "source": "/cer-lp4-marine-science/",
+      "destination": "/assignments/cer-lp4-marine-science/",
+      "permanent": false
+    },
+    {
       "source": "/cell-signaling",
       "destination": "/assignments/explore-cell-signaling/",
       "permanent": false

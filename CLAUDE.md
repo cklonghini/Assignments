@@ -61,7 +61,9 @@ lab agreement, and a ready-to-go selfie `photo`.
 At the end of every 7-week learning period students choose ONE research question from the teacher's list (or their
 own, with her approval), research it on two websites, and write a claim-evidence-reasoning response ("Research and
 Report"). There is a separate link for each learning period and course, so saved work never carries over from the last
-period: `assignments/cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/`. Each has a short
+period: `assignments/cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/` (semester A), and
+`cer-lp4-biology/` (Heredity and Genetics), `cer-lp4-marine-science/` (The Ocean's Role in Weather and Climate),
+`cer-lp4-anatomy-physiology/` (blood, circulation, lymphatic system) (semester B courses). Each has a short
 `assignment.js` that calls `CER_PROJECT({...})` with its title ("LP3 - Biology Research and Report"), course,
 `storageKey`, `short` link, the research `questions` (with `{ heading: '...' }` lines to group them), `sites` to
 suggest, a `searchExample`, and an `accent` (the class color: `'biology'` green, `'anatomy'` red,
@@ -71,7 +73,8 @@ assignments; the school branding stays gold. Everything else is shared in `assig
 folder's `index.html` loads before `assignment.js`. For a new period, copy an LP3 folder, rename it (`cer-lp4-...`),
 and change the title, `storageKey`, `short`, and questions. **Give every new period its own `sample` (Part 1's practice CER:
 `{ topic, claim, evidence, reasoning }`) and `evidence` (`{ claim, best, others: [3 weaker choices] }`) on a different
-topic**; LP3 uses sea turtles and sleep (the defaults in `cer-project.js`). The teacher wants a new topic each time.
+topic**; LP3 uses sea turtles and sleep (the defaults in `cer-project.js`); LP4 uses honeybees and drinking water for
+athletes. Do not reuse these. The teacher wants a new topic each time. `kicker` adds the period's topic above the title.
 
 There is no "propose your own question" option (the teacher removed it). Part 3 starts with a short "Before you start"
 box (do your research, split your screen, two fold-down help sections) with a `confirm` checkbox; the rest of Part 3
