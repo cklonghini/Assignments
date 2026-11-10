@@ -955,3 +955,5 @@ summary.wphead{cursor:pointer}
 .partbox details>summary{cursor:pointer;font-weight:700}
 .partbox details>*:not(summary){margin-top:6px}
 .partbox .confirm{margin:12px 0 0;max-width:none;font-weight:700}
+.pbadge{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#5b2a86;color:#fff;border-radius:99px;padding:1px 8px;vertical-align:1px}
+.pbnote{margin:0 0 6px}

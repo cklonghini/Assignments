@@ -5,7 +5,7 @@ adding an assignment. The home page groups assignments by subject (the course la
 A standalone page (an index.html with no assignment.js and no engine) is listed when its <head> has
 <meta name="assignment-title" content="..."> and <meta name="assignment-course" content="...">
 (and optionally assignment-short). Folders without these, such as redirect pages, are skipped."""
-import html, json, os, re
+import html, json, os, re, subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -177,6 +177,7 @@ def main():
     <p id="none" hidden>No assignments match. Try another class, type, or search.</p>
   </main>
   <script>
+  function init(){
     var box = document.getElementById('find'), cur = {cls: '', kind: ''};
     try { var saved = JSON.parse(localStorage.getItem('eaa-index') || '{}'); cur.cls = saved.cls || ''; cur.kind = saved.kind || ''; } catch (e) {}
     function apply(){
@@ -210,11 +211,77 @@ def main():
       });
     });
     apply();
+  }
+  if (!document.getElementById('locked')) init();
   </script>
 </body>
 </html>
 """ % (pills, kchips, '\n'.join(secs))
-    open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(page)
+    # ---- password: when INDEX_PASSWORD is set, the list is encrypted and the page asks for the password ----
+    a = page.index('    <div class="tools">')
+    b = page.index('</p>', page.index('<p id="none"')) + len('</p>')
+    inner = page[a:b]
+    out = os.path.join(ROOT, 'index.html')
+    pw = os.environ.get('INDEX_PASSWORD', '')
+    if pw:
+        r = subprocess.run(['node', os.path.join(ROOT, 'tools', 'lock_page.js')], input=inner, capture_output=True, text=True,
+                           env=dict(os.environ, INDEX_PASSWORD=pw))
+        if r.returncode:
+            raise SystemExit('Could not lock the home page: ' + r.stderr.strip())
+        lock = """    <form id="lockform" class="lock" autocomplete="off">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" autocomplete="current-password" required>
+      <label class="rem"><input type="checkbox" id="remember" checked> Remember this computer</label>
+      <button type="submit" class="go">Unlock</button>
+      <p id="lockmsg" role="alert"></p>
+    </form>
+    <div id="content"></div>
+    <script type="application/json" id="locked">%s</script>
+    <script>
+    (function(){
+      var L = JSON.parse(document.getElementById('locked').textContent), K = 'eaa-index-key';
+      var b64 = function(t){ return Uint8Array.from(atob(t), function(c){ return c.charCodeAt(0); }); };
+      function open(key){
+        return crypto.subtle.decrypt({name: 'AES-GCM', iv: b64(L.iv)}, key, b64(L.ct)).then(function(buf){
+          document.getElementById('content').innerHTML = new TextDecoder().decode(buf);
+          document.getElementById('lockform').remove(); document.querySelector('.lead').hidden = false; init();
+        });
+      }
+      function keyFrom(pw){
+        return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']).then(function(base){
+          return crypto.subtle.deriveKey({name: 'PBKDF2', salt: new TextEncoder().encode(L.salt), iterations: L.rounds, hash: 'SHA-256'},
+            base, {name: 'AES-GCM', length: 256}, true, ['decrypt']);
+        });
+      }
+      var saved = null; try { saved = localStorage.getItem(K); } catch (e) {}
+      if (saved) crypto.subtle.importKey('raw', b64(saved), 'AES-GCM', true, ['decrypt']).then(open).catch(function(){ try { localStorage.removeItem(K); } catch (e) {} });
+      document.getElementById('lockform').addEventListener('submit', function(e){
+        e.preventDefault();
+        var msg = document.getElementById('lockmsg'), keep = document.getElementById('remember').checked; msg.textContent = 'Checking...';
+        keyFrom(document.getElementById('pw').value).then(function(key){
+          return open(key).then(function(){
+            if (keep) return crypto.subtle.exportKey('raw', key).then(function(raw){
+              try { localStorage.setItem(K, btoa(String.fromCharCode.apply(null, new Uint8Array(raw)))); } catch (e) {}
+            });
+          });
+        }).catch(function(){ msg.textContent = 'That password is not right. Try again.'; });
+      });
+    })();
+    </script>""" % r.stdout.replace('</', '<\\/')
+        page = page[:a] + lock + page[b:]
+        page = page.replace('<p class="lead">', '<p class="lead" hidden>', 1)
+        page = page.replace('  #none{color:var(--muted)}', '  #none{color:var(--muted)}\n  .lock{display:grid;gap:10px;max-width:360px;margin:10px 0}.lock label{font-weight:700}.lock .rem{font-weight:400;display:flex;gap:8px;align-items:center}.lock .rem input{width:auto}.go{background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:10px 16px;font-weight:700;justify-self:start}#lockmsg{color:#a8321f;margin:0}', 1)
+        print('The home page is locked with the password in INDEX_PASSWORD.')
+    else:
+        try:
+            if 'id="locked"' in open(out, encoding='utf-8').read():
+                print('INDEX_PASSWORD is not set, so index.html was left as it is (it is locked and cannot be rebuilt without the password).')
+                print('index.html NOT updated; vercel.json was updated. Set INDEX_PASSWORD and run this again.')
+                return
+        except FileNotFoundError:
+            pass
+        print('Note: INDEX_PASSWORD is not set, so the home page is not password protected.')
+    open(out, 'w', encoding='utf-8').write(page)
     print('index.html lists %d assignment(s)' % len(items))
 
 

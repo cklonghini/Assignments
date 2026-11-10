@@ -352,8 +352,8 @@ for (const dir of dirs) {
             if (!(q.items || []).length) E(w + ' needs items (the clues to check)');
             break;
           case 'pick':
-            if (!(q.options || []).some(o => typeof o === 'string')) E(w + ' needs options (the questions to choose from)');
-            if ((q.options || []).some(o => typeof o !== 'string' && !(o && o.heading))) E(w + ': each option must be text or { heading: \'...\' }');
+            if (!(q.options || []).some(o => typeof o === 'string' || (o && o.text))) E(w + ' needs options (the questions to choose from)');
+            if ((q.options || []).some(o => typeof o !== 'string' && !(o && (o.heading || o.text)))) E(w + ': each option must be text, { text, badge }, or { heading: \'...\' }');
             break;
           case 'source':
             nSrc++;

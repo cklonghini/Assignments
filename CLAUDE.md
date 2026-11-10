@@ -45,6 +45,11 @@ one short question. If she is not there to answer, make the most reasonable choi
    search, and a "Copy student link" button. **Give every assignment a course label with A or B** (for example
    "Biology B"); one without lands in "Not sorted yet". The type comes from the title ("Explore - ", "Practice - ",
    "Test - ", "Mastery", "Research and Report"); anything else is listed under Labs.
+   **The home page is password protected** when the `INDEX_PASSWORD` environment variable is set (the teacher adds it in
+   the cloud environment's settings; never write the password in the repository or ask for it in chat). Then
+   `build_index.py` encrypts the list (`tools/lock_page.js`), and the page asks for the password (with "Remember this
+   computer"). Without `INDEX_PASSWORD`, it will not rebuild a locked page: tell the teacher the variable is missing.
+   Assignment links themselves stay open, so students' links keep working.
 
 ## Game boards (tests and reviews)
 
@@ -67,7 +72,8 @@ lab agreement, and a ready-to-go selfie `photo`.
 At the end of every 7-week learning period students choose ONE research question from the teacher's list (or their
 own, with her approval), research it on two websites, and write a claim-evidence-reasoning response ("Research and
 Report"). There is a separate link for each learning period and course, so saved work never carries over from the last
-period: `assignments/cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/` (semester A), and
+period: `assignments/cer-lp2-marine-science/` (Natural Selection, Evolution, and Classification),
+`cer-lp2-anatomy-physiology/` (Support and Motion), `cer-lp3-biology/`, `cer-lp3-marine-science/`, `cer-lp3-anatomy-physiology/` (semester A), and
 `cer-lp4-biology/` (Heredity and Genetics), `cer-lp4-marine-science/` (The Ocean's Role in Weather and Climate),
 `cer-lp4-anatomy-physiology/` (blood, circulation, lymphatic system) (semester B courses). Each has a short
 `assignment.js` that calls `CER_PROJECT({...})` with its title ("LP3 - Biology Research and Report"), course,
@@ -80,7 +86,8 @@ folder's `index.html` loads before `assignment.js`. For a new period, copy an LP
 and change the title, `storageKey`, `short`, and questions. **Give every new period its own `sample` (Part 1's practice CER:
 `{ topic, claim, evidence, reasoning }`) and `evidence` (`{ claim, best, others: [3 weaker choices] }`) on a different
 topic**; LP3 uses sea turtles and sleep (the defaults in `cer-project.js`); LP4 uses honeybees and drinking water for
-athletes. Do not reuse these. The teacher wants a new topic each time. `kicker` adds the period's topic above the title.
+athletes; LP2 uses bike helmets and eating breakfast. Do not reuse these. A question written
+`{ text: '...', badge: 'Challenge' }` gets a purple tag (for questions where the evidence is still debated). The teacher wants a new topic each time. `kicker` adds the period's topic above the title.
 
 There is no "propose your own question" option (the teacher removed it). Part 3 starts with a short "Before you start"
 box (do your research, split your screen, two fold-down help sections) with a `confirm` checkbox; the rest of Part 3

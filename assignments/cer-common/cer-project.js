@@ -119,6 +119,8 @@ window.CER_PROJECT = function (o) {
             pdfFirst: 1,          // the PDF starts with the research question, then the CER, then the sources and notes
             text: 'Choose ONE question to research.',
             options: o.questions,
+            /* a question written { text: '...', badge: 'Challenge' } gets a tag, and this line shows above its category's list */
+            badgeNote: o.badgeNote || 'Challenge questions: scientists still debate the evidence, so you will need to compare your sources and decide what the evidence shows.',
             pin: true
           }
         ]

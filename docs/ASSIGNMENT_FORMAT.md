@@ -577,7 +577,8 @@ in the `research` look it is a yellow sticky note), and as a small sticky note i
 
 `tiles: true` (with `{ heading: '...', icon: '🌊' }` lines) shows the list in two steps: Step 1 is a tile per category
 ("What do you want to learn more about?", change it with `tilesAsk`), and selecting one opens Step 2, that category's
-questions. Only one category is open at a time. The student's own question is a link under the box. A list with no
+questions. Only one category is open at a time. An option can be `{ text: '...', badge: 'Challenge' }` to show a small purple tag on it;
+`badgeNote` is a line shown above a category's questions when it has one. The student's own question is a link under the box. A list with no
 headings shows as a plain list.
 
 ### checks: a quick checklist and one sentence (teacher graded)

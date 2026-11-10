@@ -2924,6 +2924,10 @@ var PICKS=[], PINS=[];
 function pickText(id){ var st=S.picks[id]; if(!st||!st.v) return ''; return st.v==='__other'?(st.other||'').trim():st.v; }
 function pickDone(id){ var st=S.picks[id]; return !!(st&&st.v&&(st.v!=='__other'||words(st.other)>=4)); }
 function pickField(id,q){
+  /* an option can be { text: '...', badge: 'Challenge' } to show a small tag on it; the saved answer is its text */
+  var badges={};
+  q=Object.assign({},q,{options:(q.options||[]).map(function(o){ if(o&&o.text){ if(o.badge) badges[o.text]=o.badge; return o.text; } return o; })});
+  q._badges=badges;
   PICKS.push(id); if(q.pin) PINS.push({id:id,label:q.pinLabel||'My research question'});
   ORDER.push({kind:'pick',id:id,q:CURQ,sub:'',other:q.other});
   var st=S.picks[id]||(S.picks[id]={v:'',other:''});
@@ -2979,9 +2983,10 @@ function pickTiles(id,q,st){
     var pn=h('div','ppanel'); pn.setAttribute('role','radiogroup');
     var ph=h('p','pickstep',(q.tilesStep2||'Step 2: Choose a question about')+' '+g.name); ph.id='pp-'+id+'-'+gi; pn.setAttribute('aria-labelledby',ph.id);
     pn.append(ph);
+    if(q.badgeNote&&g.opts.some(function(x){return q._badges[x];})) pn.append(h('p','inote pbnote',q.badgeNote));
     g.opts.forEach(function(o){
       var lab=h('label','opt'), inp=document.createElement('input'); inp.type='radio'; inp.name='pick-'+id; inp.value=o; inp.checked=st.v===o;
-      var sp=h('span'); sp.append(itxt(o)); lab.append(inp,sp); pn.append(lab);
+      var sp=h('span'); sp.append(itxt(o)); if(q._badges[o]) sp.append(' ',h('span','pbadge',q._badges[o])); lab.append(inp,sp); pn.append(lab);
       inp.addEventListener('change',function(){ if(inp.checked){ st.v=o; srcChanged(); paint(); commit(); } });
       radios.push([lab,inp,o]);
     });

@@ -55,9 +55,9 @@
       <button type="button" class="pill" data-class="" aria-pressed="true">All classes</button>
       <button type="button" class="pill" data-class="biology-a" aria-pressed="false">Biology A <span>7</span></button>
       <button type="button" class="pill" data-class="biology-b" aria-pressed="false">Biology B <span>1</span></button>
-      <button type="button" class="pill" data-class="marine-science-a" aria-pressed="false">Marine Science A <span>2</span></button>
+      <button type="button" class="pill" data-class="marine-science-a" aria-pressed="false">Marine Science A <span>3</span></button>
       <button type="button" class="pill" data-class="marine-science-b" aria-pressed="false">Marine Science B <span>1</span></button>
-      <button type="button" class="pill" data-class="anatomy-physiology-a" aria-pressed="false">Anatomy &amp; Physiology A <span>6</span></button>
+      <button type="button" class="pill" data-class="anatomy-physiology-a" aria-pressed="false">Anatomy &amp; Physiology A <span>7</span></button>
       <button type="button" class="pill" data-class="anatomy-physiology-b" aria-pressed="false">Anatomy &amp; Physiology B <span>7</span></button>
       <button type="button" class="pill" data-class="every-class" aria-pressed="false">Every class <span>1</span></button>
       </div>
@@ -109,10 +109,11 @@
         </ul>
     </section>
     <section id="marine-science-a" data-class="marine-science-a">
-      <h2>Marine Science A <span>2</span></h2>
+      <h2>Marine Science A <span>3</span></h2>
       
         <h3 data-kind="research-and-report">Research and Report</h3>
         <ul>
+          <li data-kind="research-and-report"><div class="t"><a href="assignments/cer-lp2-marine-science/">LP2 - Marine Science Research and Report</a><span class="sl">/lp2-marine-cer</span></div><div class="act"><button type="button" class="copy" data-short="lp2-marine-cer">Copy student link</button><a class="sm" href="assignments/cer-lp2-marine-science/?teacher=tm7k2q">Teacher view</a><a class="sm" href="assignments/cer-lp2-marine-science/?support=eagle">Supported version</a></div></li>
           <li data-kind="research-and-report"><div class="t"><a href="assignments/cer-lp3-marine-science/">LP3 - Marine Science Research and Report</a><span class="sl">/lp3-marine-cer</span></div><div class="act"><button type="button" class="copy" data-short="lp3-marine-cer">Copy student link</button><a class="sm" href="assignments/cer-lp3-marine-science/?teacher=tm7k2q">Teacher view</a><a class="sm" href="assignments/cer-lp3-marine-science/?support=eagle">Supported version</a></div></li>
         </ul>
         <h3 data-kind="explore">Explore</h3>
@@ -129,10 +130,11 @@
         </ul>
     </section>
     <section id="anatomy-physiology-a" data-class="anatomy-physiology-a">
-      <h2>Anatomy &amp; Physiology A <span>6</span></h2>
+      <h2>Anatomy &amp; Physiology A <span>7</span></h2>
       
         <h3 data-kind="research-and-report">Research and Report</h3>
         <ul>
+          <li data-kind="research-and-report"><div class="t"><a href="assignments/cer-lp2-anatomy-physiology/">LP2 - Anatomy and Physiology Research and Report</a><span class="sl">/lp2-ap-cer</span></div><div class="act"><button type="button" class="copy" data-short="lp2-ap-cer">Copy student link</button><a class="sm" href="assignments/cer-lp2-anatomy-physiology/?teacher=tm7k2q">Teacher view</a><a class="sm" href="assignments/cer-lp2-anatomy-physiology/?support=eagle">Supported version</a></div></li>
           <li data-kind="research-and-report"><div class="t"><a href="assignments/cer-lp3-anatomy-physiology/">LP3 - Anatomy and Physiology Research and Report</a><span class="sl">/lp3-ap-cer</span></div><div class="act"><button type="button" class="copy" data-short="lp3-ap-cer">Copy student link</button><a class="sm" href="assignments/cer-lp3-anatomy-physiology/?teacher=tm7k2q">Teacher view</a><a class="sm" href="assignments/cer-lp3-anatomy-physiology/?support=eagle">Supported version</a></div></li>
         </ul>
         <h3 data-kind="explore">Explore</h3>
@@ -187,6 +189,7 @@
     <p id="none" hidden>No assignments match. Try another class, type, or search.</p>
   </main>
   <script>
+  function init(){
     var box = document.getElementById('find'), cur = {cls: '', kind: ''};
     try { var saved = JSON.parse(localStorage.getItem('eaa-index') || '{}'); cur.cls = saved.cls || ''; cur.kind = saved.kind || ''; } catch (e) {}
     function apply(){
@@ -220,6 +223,8 @@
       });
     });
     apply();
+  }
+  if (!document.getElementById('locked')) init();
   </script>
 </body>
 </html>
