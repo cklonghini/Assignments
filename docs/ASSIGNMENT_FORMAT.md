@@ -545,6 +545,8 @@ Students choose ONE item, for example the research question for a project. `othe
 text box for the student's own item. `{ heading: '...' }` lines group the items under a topic. It is done when a
 choice is made (and, for `other`, at least 4 words are typed). The PDF shows the choice, and marks an `other` answer
 "the student’s own question (needs teacher approval)". The chosen item also shows at the top of a `notesBeside` panel.
+`pin: true` keeps the chosen item in a gold "My research question" box at the top of every later part (`pinLabel`
+changes the label).
 
 ```js
 { type: 'pick', text: 'Choose ONE question to research...',
@@ -577,6 +579,11 @@ For a research project, such as the end-of-learning-period CER (example: `assign
   student types) and "My annotation" (what it means, in their own words), each with Speak my answer, and an optional
   "How will I use this note?" menu. Students can add and remove cards. A card is finished when "From the website" has
   4 or more words and "My annotation" has 5 or more; the box is done when `min` cards are finished.
+- `site: true` on a `notes` question shows the source's website inside the page, beside the notes, so students read and
+  take notes in one tab. Some websites do not allow being shown inside another page (the box stays blank or says it
+  refused to connect) and the page cannot detect that, so an "Open in a new tab" button and a short note are always
+  there. The frame is sandboxed: the website cannot take over the tab. A link that starts with http:// cannot show
+  and says so.
 - `notesBeside: true` on a `highlight` question puts every note from every notes box in a "My research notes" panel
   next to the writing box (on a wide screen the question widens and the panel stays in view while the student
   scrolls; on a phone the panel sits folded above the box). Students write their CER from their notes.

@@ -378,6 +378,7 @@ function updateBar(){
     q.dataset.s= ok===c.length?'done':(bad?'bad':(ok>0?'partial':'idle'));
   });
   NPANELS.forEach(function(p){p.paint();});
+  document.querySelectorAll('.pinq').forEach(function(b){ var t=pickText(b.dataset.pin); b.hidden=!t; var pt=b.querySelector('.pintext'); if(pt.textContent!==t){ pt.textContent=''; pt.append(itxt(t)); } });
   if(BOARD) paintBoard(); else applyGate();
   var sv=$('#sSaved');
   if(!storageOK) sv.textContent='This browser can’t keep a backup. Stay on this page.';
@@ -2750,7 +2751,7 @@ function notesField(id,q){
     if(s&&urlOk(s.url)){
       var p=h('p','inote'); p.append(h('b',null,'Notes on '+srcLabel(sid)+': '),(s.title||'').trim()||hostOf(s.url));
       var a=h('a','btn ghost small','Open the website'); a.href=s.url.trim(); a.target='_blank'; a.rel='noopener noreferrer';
-      head.append(p,a);
+      if(q.site) head.append(p); else head.append(p,a);
     } else if(sid) head.append(h('p','inote','Add your '+srcLabel(sid)+' link above first, so you can open the website while you take notes.'));
   }
   function row(r,i){
@@ -2794,15 +2795,56 @@ function notesField(id,q){
   });
   NPANELS.push({ver:-1,paint:function(){ if(this.ver===NOTESVER) return; this.ver=NOTESVER; paintHead(); }});
   paint();
-  return wrap;
+  if(!q.site) return wrap;
+  /* site: true puts the source's website in a viewer beside the notes, so students read and take notes in one tab */
+  var grid=h('div','besidegrid'), main=h('div','wpanel besidemain');
+  var mh=h('div','wphead'); mh.append(h('span','wptitle','My notes'),h('span','wpsub',min+' or more notes'));
+  var mb=h('div','wpbody'); mb.append(wrap); main.append(mh,mb);
+  grid.append(siteViewer(sid),main);
+  return grid;
+}
+
+/* a source's website shown inside the page. Some websites do not allow this (the box stays blank or says it refused to
+   connect); the page cannot tell, so "Open in a new tab" is always there. The frame is sandboxed so the website can
+   never take over this tab and lose the student's work. */
+function siteViewer(sid){
+  var d=h('details','wpanel siteview'); d.open=!window.matchMedia||window.matchMedia('(min-width:1080px)').matches;
+  var sum=h('summary','wphead'), ttl=h('span','wptitle','Website'), sub=h('span','wpsub');
+  sum.append(ttl,sub); d.append(sum);
+  var bar=h('div','svbar'), open=h('a','btn ghost small','Open in a new tab'); open.target='_blank'; open.rel='noopener noreferrer';
+  var reload=h('button','btn ghost small','Reload'); reload.type='button';
+  bar.append(open,reload);
+  var note=h('p','svnote','Blank box, or a message that it “refused to connect”? That website does not allow itself to be shown inside another page. Use “Open in a new tab” and switch back to this tab to take notes.');
+  var empty=h('p','svempty');
+  var fr=document.createElement('iframe'); fr.className='svframe'; fr.title='Your website'; fr.loading='lazy';
+  fr.setAttribute('referrerpolicy','no-referrer');
+  fr.setAttribute('sandbox','allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms');
+  d.append(bar,note,empty,fr);
+  var shown='';
+  reload.addEventListener('click',function(){ if(shown){ fr.src='about:blank'; setTimeout(function(){fr.src=shown;},50); } });
+  var me={ver:-1,paint:function(){
+    if(me.ver===NOTESVER) return; me.ver=NOTESVER;
+    var st=sid&&S.sources[sid], ok=!!(st&&urlOk(st.url)), u=ok?st.url.trim():'';
+    ttl.textContent=(sid?srcLabel(sid):'Website')+(ok&&(st.title||'').trim()?': '+st.title.trim():'');
+    sub.textContent=ok?hostOf(u):'';
+    var insecure=ok&&/^http:/i.test(u)&&location.protocol==='https:';
+    bar.hidden=!ok; note.hidden=!ok||insecure; fr.hidden=!ok||insecure; empty.hidden=ok&&!insecure;
+    empty.textContent=!ok?'Paste your website link in the box above. The website will show here.'
+      :'This website starts with “http://” (not “https://”), so it cannot be shown here. Use “Open in a new tab.”';
+    if(ok) open.href=u;
+    if(ok&&!insecure&&u!==shown){ shown=u; fr.src=u; }
+    if(!ok&&shown){ shown=''; fr.removeAttribute('src'); }
+  }};
+  NPANELS.push(me);
+  return d;
 }
 
 /* choose ONE research question from the teacher's list, or write your own (other: '...'). Not scored. */
-var PICKS=[];
+var PICKS=[], PINS=[];
 function pickText(id){ var st=S.picks[id]; if(!st||!st.v) return ''; return st.v==='__other'?(st.other||'').trim():st.v; }
 function pickDone(id){ var st=S.picks[id]; return !!(st&&st.v&&(st.v!=='__other'||words(st.other)>=4)); }
 function pickField(id,q){
-  PICKS.push(id);
+  PICKS.push(id); if(q.pin) PINS.push({id:id,label:q.pinLabel||'My research question'});
   ORDER.push({kind:'pick',id:id,q:CURQ,sub:'',other:q.other});
   var st=S.picks[id]||(S.picks[id]={v:'',other:''});
   var wrap=h('div','ctl'); mark(wrap); wrap.setAttribute('role','radiogroup'); wrap.setAttribute('aria-label','Choose one');
@@ -2835,8 +2877,8 @@ function pickField(id,q){
 
 /* the student's notes, shown beside the writing box (notesBeside: true on a highlight question) */
 function notesPanel(){
-  var d=h('details','notespanel'); d.open=!window.matchMedia||window.matchMedia('(min-width:1080px)').matches; /* folded on a phone, so the writing box is close */
-  d.append(h('summary',null,'My research notes'));
+  var d=h('details','wpanel notespanel'); d.open=!window.matchMedia||window.matchMedia('(min-width:1080px)').matches; /* folded on a phone, so the writing box is close */
+  var sm=h('summary','wphead'); sm.append(h('span','wptitle','My research notes'),h('span','wpsub','From both websites')); d.append(sm);
   var body=h('div','npbody'); d.append(body);
   var me={ver:-1,paint:function(){
     if(me.ver===NOTESVER) return; me.ver=NOTESVER;
@@ -3573,6 +3615,10 @@ function buildQuestion(q,s,tile){
     if(q.notesBeside){
       var grid=h('div','besidegrid'), main=h('div','besidemain');
       while(o.body.firstChild) main.append(o.body.firstChild);
+      main.className='wpanel besidemain';
+      var wb=h('div','wpbody'); while(main.firstChild) wb.append(main.firstChild);
+      var wh=h('div','wphead'); wh.append(h('span','wptitle','My writing'),h('span','wpsub','Claim (blue), evidence (yellow), reasoning (green)'));
+      main.append(wh,wb);
       grid.append(notesPanel(),main); o.body.append(grid); o.q.classList.add('beside');
     }
   } else if(t==='source'){
@@ -3584,6 +3630,7 @@ function buildQuestion(q,s,tile){
   } else if(t==='notes'){
     ids=[];
     o.body.append(notesField(id,q));
+    if(q.site) o.q.classList.add('beside');
   } else if(t==='agree'){
     ids=[];
     o.body.append(agreeField(id,q));
@@ -3602,6 +3649,12 @@ function buildQuestion(q,s,tile){
 
 function buildPart(p,n){
   var s=part(n,p.title);
+  /* the student's research question (a pick with pin: true in an earlier part), kept at the top of every later part */
+  PINS.forEach(function(pn){
+    var box=h('div','pinq'); box.dataset.pin=pn.id; box.hidden=true;
+    box.append(h('span','pinlab',pn.label),h('p','pintext'));
+    s.append(box);
+  });
   if(p.intro) s.append(h('p','intro',p.intro));
   /* a website students must open, shown right away (not folded in the reading box) */
   (p.links||(p.link?[p.link]:[])).forEach(function(L){
@@ -4829,7 +4882,7 @@ function render(){
   recStopAll(); photoUrlsDrop();
   Object.keys(REC).forEach(function(k){delete REC[k];});
   Object.keys(SRC).forEach(function(k){delete SRC[k];}); Object.keys(NOTES).forEach(function(k){delete NOTES[k];});
-  SRCLIST.length=0; NOTELIST.length=0; NPANELS.length=0; PICKS.length=0;
+  SRCLIST.length=0; NOTELIST.length=0; NPANELS.length=0; PICKS.length=0; PINS.length=0;
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;

@@ -14,6 +14,7 @@
   --learn:#eaf4e4; --learn-line:#a9c99a; --hl:#ffe600; --hl-ink:#16213a;
   --blood:#b3202f; --plasma:#f2c7cb; --clump:#8e1220; --tray:#e9edf3;
   --rxcell:#fff3d6; --rxa:#2f7fd0; --rxb:#4bb36b; --rxprod:#8a4fc8; --rxenz:#9be27a;
+  --pin-bg:#fff7d6;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -25,6 +26,7 @@
     --learn:#16322d; --learn-line:#3f6e5f;
     --blood:#c2303e; --plasma:#5a2a30; --clump:#ff5a6a; --tray:#222c47;
     --rxcell:#3a3423; --rxa:#5fa8f0; --rxb:#6fd08d; --rxprod:#b98af0; --rxenz:#9be27a;
+    --pin-bg:#2e2710;
   }
 }
 :root[data-theme="dark"]{
@@ -36,6 +38,7 @@
   --learn:#16322d; --learn-line:#3f6e5f;
   --blood:#c2303e; --plasma:#5a2a30; --clump:#ff5a6a; --tray:#222c47;
   --rxcell:#3a3423; --rxa:#5fa8f0; --rxb:#6fd08d; --rxprod:#b98af0; --rxenz:#9be27a;
+  --pin-bg:#2e2710;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 90px)}
@@ -736,9 +739,6 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .noteuse{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:10px}
 .noteuse label{font-weight:700;font-size:.95rem}
 .notesbox>.row{margin-top:12px}
-.notespanel{border:2px solid var(--learn-line);background:var(--learn);border-radius:10px;padding:0;margin:0 0 14px}
-.notespanel>summary{cursor:pointer;font-weight:700;padding:10px 14px}
-.notespanel>.listen{margin:0 14px}
 .npbody{padding:4px 14px 12px;font-size:.93rem}
 .npbody .inote{color:var(--muted);margin:4px 0 8px}
 .npsrc{margin:10px 0 0}
@@ -753,8 +753,11 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .besidemain{min-width:0}
 @media (min-width:1080px){
   .q.beside{width:min(1240px,calc(100vw - 56px));margin-left:calc(50% - min(620px,50vw - 28px))}
-  .besidegrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+  .besidegrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+  .siteview{position:sticky;top:110px;height:calc(100vh - 130px);display:flex;flex-direction:column;margin:0}
+  .siteview .svframe{flex:1;height:auto;min-height:0}
   .notespanel{position:sticky;top:110px;max-height:calc(100vh - 130px);overflow:auto;margin:0}
+  .besidemain{margin:0}
 }
 .pickown{margin:10px 0 4px;max-width:68ch}
 .pickown[hidden]{display:none}
@@ -763,3 +766,23 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .pickown input[type=text]{width:100%}
 .nprq{margin:4px 0 8px;padding:8px 10px;background:var(--surface);border-radius:8px;overflow-wrap:anywhere}
 .pickhead{margin:16px 0 4px;font-weight:700;color:var(--gold-ink)}
+/* side-by-side panels (a website or notes on one side, the student's work on the other): cards with a header strip */
+.wpanel{border:1px solid var(--line);border-radius:12px;background:var(--surface);margin:0 0 14px;overflow:hidden}
+.wphead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 14px;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
+summary.wphead{cursor:pointer}
+.wptitle{font-weight:700;font-size:1.08rem;color:var(--gold-ink);overflow-wrap:anywhere}
+.wpsub{font-size:.88rem;color:var(--muted);overflow-wrap:anywhere}
+.wpbody{padding:12px 16px 16px}
+.wpbody>.notesbox{max-width:none}
+.notespanel>.listen{margin:10px 16px 0}
+.notespanel .npbody{padding:6px 16px 14px}
+.svbar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px 0}
+.svbar[hidden],.svnote[hidden],.svempty[hidden],.svframe[hidden]{display:none}
+.svnote{margin:8px 16px;font-size:.84rem;color:var(--muted)}
+.svempty{margin:16px;color:var(--muted)}
+.svframe{display:block;width:100%;height:70vh;border:0;border-top:1px solid var(--line);background:#fff}
+/* the student's research question, at the top of every part after they choose it */
+.pinq{margin:0 0 16px;padding:12px 16px;border:2px solid var(--gold);border-left:8px solid var(--gold);border-radius:10px;background:var(--pin-bg);max-width:none}
+.pinq[hidden]{display:none}
+.pinlab{display:block;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink)}
+.pintext{margin:2px 0 0;font-size:1.15rem;font-weight:700;color:var(--ink);line-height:1.35}

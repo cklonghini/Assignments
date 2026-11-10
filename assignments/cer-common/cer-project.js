@@ -18,7 +18,7 @@ window.CER_PROJECT = function (o) {
     storageKey: o.storageKey,
     short: o.short,
     icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="10" y="8" width="44" height="56" rx="6" fill="var(--primary)"/><rect x="18" y="20" width="28" height="5" rx="2" fill="#00e5ff"/><rect x="18" y="32" width="28" height="5" rx="2" fill="#ffe600"/><rect x="18" y="44" width="20" height="5" rx="2" fill="#39e75f"/></svg>',
-    startNote: 'You will open your two websites in new tabs. Keep this tab open, and switch back to it to take your notes and write.',
+    startNote: 'Your websites show right on this page, next to your notes. If a website will not show, open it in a new tab, and keep this tab open to take your notes and write.',
 
     essential: {
       question: 'How can I use facts from reliable websites to support a claim?',
@@ -93,42 +93,17 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Choose your research question',
-        intro: 'Read through the research questions below. Choose ONE that sounds interesting to you and that you would like to learn more about.',
+        intro: 'Read through the research questions below. Choose ONE that sounds interesting to you and that you would like to learn more about. The question you choose will stay at the top of each part, so you can keep it in mind as you research and write.',
         questions: [
           {
             type: 'pick',
             text: 'Choose ONE question to research (or propose your own related question, with teacher approval).',
             easy: 'Choose ONE question to research.',
             options: o.questions,
+            pin: true,
             other: 'My own related question (my teacher must approve it)',
             otherLabel: 'Type your own research question',
             otherNote: 'Send your question to your teacher, and wait for approval before you start your research.'
-          },
-          {
-            type: 'written',
-            text: 'Why did you choose this question? What do you want to find out? (2 to 3 sentences)',
-            easy: 'Why did you pick this question? (2 to 3 sentences)',
-            min: 60,
-            starters: ['I chose this question because …', 'I want to find out …', 'I first became curious about this when …'],
-            ideas: [
-              { done: 'You told why it interests you.', q: 'Did you say why you chose it?', tip: 'Tell what made you curious, or why it matters to you or to other people.',
-                all: [/\b(interest(ed|ing|s)?|curious|wonder(ed)?|want(ed)? to (learn|know|find out|understand)|care about|matters? to|fascinat\w*|chose|picked)\b/, /\b(because|since|when|after|so)\s+[a-z']+\s+[a-z']+/] },
-              { done: 'You told what you want to find out.', q: 'Did you say what you want to find out?', tip: 'Finish the sentence “I want to find out …” with something specific.',
-                re: /\b(find out|learn|know|understand|figure out|discover) (how|why|what|if|whether|about) [a-z']+ [a-z']+/ },
-              { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Add a sentence that explains your choice.', sentences: 2 }
-            ]
-          },
-          {
-            type: 'written',
-            support: false,
-            text: 'Before you research: what do you think the answer to your question is right now, and why? It is fine if your research changes your mind. (2 sentences)',
-            min: 50,
-            starters: ['Right now I think …', 'I think this because …', 'One thing I already know about this is …'],
-            ideas: [
-              { done: 'You gave a first answer.', q: 'Did you say what you think the answer is?', tip: 'Start with “Right now I think …” and answer your research question.',
-                writing: true, re: /\b(i think|i predict|i believe|my guess|probably|i expect|my prediction|my hypothesis)\b/ },
-              { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Add a sentence that tells why you think so.', sentences: 2 }
-            ]
           }
         ]
       },
@@ -136,7 +111,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Source 1: Research and take notes',
-        intro: 'Find your first reliable website. Paste its link below, then open it in a new tab. Read it, and take notes here as you go. Switch between the two tabs.',
+        intro: 'Find your first reliable website and paste its link below. The website shows on one side and your notes on the other, so you can read and take notes at the same time.',
         read: '<p><b>Finding a good website</b></p>'
           + '<ul><li>Search for your research question, or the key words in it.</li>'
           + '<li>To find government and university websites, add <b>site:.gov</b> or <b>site:.edu</b> to your search, for example “' + o.searchExample + '”.</li>'
@@ -158,6 +133,7 @@ window.CER_PROJECT = function (o) {
             type: 'notes',
             source: 1,
             min: 4,
+            site: true,
             text: 'Take at least 4 notes on Source 1. For each note, type what the website says, then write your annotation in your own words.',
             easy: 'Take 4 notes on Source 1. In each note, type a fact from the website. Then say what it means in your own words.'
           },
@@ -186,6 +162,7 @@ window.CER_PROJECT = function (o) {
             type: 'notes',
             source: 2,
             min: 4,
+            site: true,
             text: 'Take at least 4 notes on Source 2. For each note, type what the website says, then write your annotation in your own words.',
             easy: 'Take 4 notes on Source 2. In each note, type a fact from the website. Then say what it means in your own words.'
           },
@@ -210,7 +187,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Write your CER',
-        intro: 'Now answer your research question with a CER. Your research question and your notes from both websites are next to the writing box (above it on a small screen). Use evidence from both of your sources.',
+        intro: 'Now answer your research question with a CER. Your notes from both websites are next to the writing box (above it on a small screen). Use evidence from both of your sources.',
         read: '<p><b>Plan before you write</b></p>'
           + '<ol><li><b>Claim:</b> read your notes again. What is your answer to your research question now? Write it in one clear sentence. It can be different from what you thought before you researched.</li>'
           + '<li><b>Evidence:</b> choose 2 to 4 of your best notes, with at least one from each website. Give each one in a sentence, and name where it came from: “According to …,” “The website … states that …,” or “Research from … shows that …”</li>'
