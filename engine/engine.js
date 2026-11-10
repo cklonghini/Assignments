@@ -3319,7 +3319,7 @@ function richField(id){
   return wrap;
 }
 
-/* Thinking map (supported version only: map: true on a cer highlight question, with ?support=eagle).
+/* Thinking map (supported version only: every cer highlight question with ?support=eagle; map: false turns it off).
    A blue claim box, then yellow evidence and green reasoning boxes in pairs ("Add another piece of evidence" adds a
    pair). "Turn my thinking map into a paragraph" first checks that every box has complete sentences (a capital at the
    start of each sentence, a period at the end), then the boxes melt away and the sentences join into one paragraph,
@@ -4052,7 +4052,7 @@ function buildQuestion(q,s,tile){
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return (S.written[id]||{}).text;},null,ideasFrom(q.ideas)));
   } else if(t==='highlight'){
     ids=[];
-    R[id]={min:q.min||40,cer:!!q.cer,map:!!(SUPPORT&&q.cer&&q.map)};
+    R[id]={min:q.min||40,cer:!!q.cer,map:!!(SUPPORT&&q.cer&&q.map!==false)};
     /* the how-to folds into a box; what each color means is shown when the student points at that highlight button */
     var how=h('details','fold howfold'), howin=h('div','howbox');
     how.append(h('summary',null,'How to answer this question'), howin);

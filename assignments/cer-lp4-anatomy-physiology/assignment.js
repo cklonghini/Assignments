@@ -10,7 +10,6 @@ window.ASSIGNMENT = CER_PROJECT({
   course: 'Anatomy & Physiology B',
   storageKey: 'cer-lp4-anatomy-physiology-v1',
   short: 'lp4-ap-cer',
-  thinkingMap: true,          // test: the supported version (?support=eagle) writes the CER in a thinking map first
   accent: 'anatomy',          // red: the Anatomy & Physiology class color
   kicker: 'Research and Report · Blood, Circulation, and the Lymphatic System',
   sample: {

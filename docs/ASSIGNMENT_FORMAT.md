@@ -558,7 +558,8 @@ and the video'`). The engine adds three "Check my ideas" items (claim, evidence,
 `[REASONING/EXPAND: …]`. An idea can also check one color with `highlight: 'claim'`, `'evidence'` or `'expand'`.
 A question changed from `written` to `highlight` keeps any answer a student already typed: it moves into the new box.
 
-**Thinking map (supported version only):** add `map: true` to a `cer: true` question. With `?support=eagle`, students
+**Thinking map (supported version only):** every `cer: true` question gets it with `?support=eagle` (the teacher wants
+this for every CER; `map: false` turns it off for one question). Students
 plan the answer in a thinking map instead of one box: a blue Claim box, then a yellow Evidence box and a green Reasoning
 box side by side, with "+ Add another piece of evidence" for more pairs (up to 5; added pairs can be removed). Each box
 needs at least one complete sentence (more is fine). "Turn my thinking map into a paragraph" first checks every box (at
@@ -567,7 +568,7 @@ box names it and reminds the student about capitals and periods. Then the boxes 
 one paragraph in the usual highlight box, already in their CER colors. Students can keep editing the paragraph, or go
 back to the map: the paragraph is sorted into boxes by color (text with no color stays with the sentence before it).
 The answer is always saved as the paragraph, so the PDF shows only the final paragraph. An answer a student started
-before `map` was added opens as a paragraph. In a research project, pass `thinkingMap: true` to `CER_PROJECT`.
+before `map` was added opens as a paragraph.
 
 ### pick: choose one item from a list (not scored)
 
