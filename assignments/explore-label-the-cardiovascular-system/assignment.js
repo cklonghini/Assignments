@@ -1,5 +1,5 @@
 /*
-  Explore - Label the Cardiovascular System (Anatomy & Physiology B)
+  Label the Cardiovascular System (Anatomy & Physiology B)
   Everything a student sees is written in this file. The shared engine in /engine builds the page,
   progress bars, PDF printout, Listen buttons, and captions from it.
   No video. The diagrams come from the teacher's handout "The Cardiovascular System Big Body Diagram (Key)"
@@ -10,14 +10,14 @@
   Full guide: docs/ASSIGNMENT_FORMAT.md
 */
 window.ASSIGNMENT = {
-  title: 'Explore - Label the Cardiovascular System',
+  title: 'Label the Cardiovascular System',
   course: 'Anatomy & Physiology B',
-  storageKey: 'explore-label-the-cardiovascular-system-v1',
+  storageKey: 'explore-label-the-cardiovascular-system-v2',
   /* supported version (?support=eagle): the goal box at the top */
   essential: {
     question: 'What are the parts of the heart, and how does blood flow through them?',
     goals: [
-      'Say and match the words for the parts of the heart and its blood vessels.',
+      'Say the words for the parts of the heart and its blood vessels.',
       'Label the chambers, valves, and blood vessels on a heart diagram.',
       'Trace the path of blood through the heart, the lungs, and the body.'
     ]
@@ -101,44 +101,6 @@ window.ASSIGNMENT = {
             { term: 'Apex', def: 'The pointed bottom tip of the heart.',
               say: /\bapex\b|\bay ?pecks\b|\bapec?ks\b/, keys: [/\b(point|pointed|pointy|tip)\b/, /\b(bottom|lower)\b/] }
           ]
-        },
-        {
-          type: 'selects',
-          text: 'Blood vessels: match each description to the correct word.',
-          easy: 'Read each sentence about a blood vessel. Pick the word it describes.',
-          options: ['Aorta', 'Superior vena cava', 'Inferior vena cava', 'Pulmonary trunk', 'Pulmonary veins', 'Coronary arteries', 'Capillary beds'],
-          items: [
-            { label: 'The largest artery. It carries oxygen-rich blood from the left ventricle to the body.', answer: 'Aorta', hint: 'Find the word that leaves the LEFT ventricle and goes to the whole body.' },
-            { label: 'Brings oxygen-poor blood from the head and arms back to the right atrium.', answer: 'Superior vena cava', hint: '“Superior” and “inferior” tell you above or below. Which one is the upper body?' },
-            { label: 'Brings oxygen-poor blood from the legs and lower body back to the right atrium.', answer: 'Inferior vena cava', hint: '“Superior” and “inferior” tell you above or below. Which one is the lower body?' },
-            { label: 'Carries oxygen-poor blood out of the right ventricle toward the lungs.', answer: 'Pulmonary trunk', hint: '“Pulmonary” means the lungs. Which lung vessel leaves the heart?' },
-            { label: 'Carries oxygen-rich blood from the lungs back to the left atrium.', answer: 'Pulmonary veins', hint: 'Veins bring blood back to the heart. Which ones come from the lungs?' },
-            { label: 'Brings oxygen-rich blood to the heart muscle itself.', answer: 'Coronary arteries', hint: 'Reread the vessels that sit on the surface of the heart.' },
-            { label: 'Tiny vessels in the body’s tissues where blood drops off oxygen.', easy: 'Tiny vessels in the body where blood drops off oxygen.', answer: 'Capillary beds', hint: 'Look for the smallest vessels in the reading.' }
-          ]
-        },
-        {
-          type: 'selects',
-          text: 'Valves and other parts: match each description to the correct word.',
-          easy: 'Read each sentence about a part of the heart. Pick the word it describes.',
-          options: ['Tricuspid valve', 'Pulmonary valve', 'Mitral (bicuspid) valve', 'Aortic valve', 'Chordae tendineae', 'Interventricular septum', 'Auricle', 'Apex'],
-          items: [
-            { label: 'Between the right atrium and the right ventricle', answer: 'Tricuspid valve', hint: 'Which valve is on the right side, between the upper and lower chambers?' },
-            { label: 'Between the left atrium and the left ventricle', answer: 'Mitral (bicuspid) valve', hint: 'Which valve is on the left side, between the upper and lower chambers?' },
-            { label: 'Between the right ventricle and the pulmonary trunk', answer: 'Pulmonary valve', hint: 'This valve is named after the vessel that the blood goes into next.' },
-            { label: 'Between the left ventricle and the aorta', answer: 'Aortic valve', hint: 'This valve is named after the vessel that the blood goes into next.' },
-            { label: 'Strong cords that keep two valves from flipping backward', answer: 'Chordae tendineae', hint: 'Look for the part described as being like strings.' },
-            { label: 'The thick wall between the two ventricles', answer: 'Interventricular septum', hint: '“Inter” means between. Which word has “ventricular” in it?' },
-            { label: 'A small, ear-shaped flap on the outside of an atrium', answer: 'Auricle', hint: 'Which word comes from the Latin word for ear?' },
-            { label: 'The pointed bottom tip of the heart', answer: 'Apex', hint: 'Reread the last word in the “Other parts” list.' }
-          ]
-        },
-        {
-          support: false,
-          type: 'mnemonic',
-          text: 'Make your own memory trick for the four heart valves, in the order blood flows through them. Write a sentence where each word starts with the same letter as the valve: Tricuspid, Pulmonary, Mitral, Aortic.',
-          easy: 'Make a memory trick for the four heart valves. Write one word in each box. Each word must start with the same letter as the valve: Tricuspid, Pulmonary, Mitral, Aortic.',
-          words: ['Tricuspid', 'Pulmonary', 'Mitral', 'Aortic']
         }
       ]
     },
@@ -160,6 +122,7 @@ window.ASSIGNMENT = {
           easy: 'Label the Blood Flow diagram. Drag each label to the box with the same number. Then press “Check my labels.” The heart’s right side is on your left.',
           viewBox: '0 0 755 1590',
           image: { src: 'media/label-blood-flow.jpg', width: 755, height: 1590 },
+          key: { src: 'media/key-blood-flow.jpg', alt: 'The Blood Flow diagram with every part labeled: the lungs where blood is oxygenated, the aorta, the pulmonary trunk, the four chambers, and the capillary beds in tissues throughout the entire body.' },
           markerSize: 28,
           alt: 'Blood flow diagram: a pair of lungs at the top, a cutaway heart in the middle, and a bed of tiny blood vessels at the bottom, with dotted arrows connecting them and 8 numbered parts',
           legend: '<span><span class="sw" style="background:#2f6fd6"></span>Oxygen-poor blood</span><span><span class="sw" style="background:#d61f2c"></span>Oxygen-rich blood</span><span>Diagram colors only. Real blood is always red.</span>',
@@ -216,6 +179,7 @@ window.ASSIGNMENT = {
           easy: 'Label the blood vessels on the inside view of the heart. Drag each label to the box with the same number. Then press “Check my labels.”',
           viewBox: '0 0 1095 1000',
           image: { src: 'media/label-heart-internal-vessels.jpg', width: 1095, height: 990 },
+          key: { src: 'media/key-heart-internal.jpg', alt: 'The Internal View with every part labeled: the blood vessels, the four chambers, the four valves, the chordae tendineae, and the interventricular septum.' },
           alt: 'Cutaway drawing of the inside of the heart. The chambers and valves are labeled, and 9 blood vessels are numbered.',
           credit: 'Diagram: It’s Not Rocket Science®, The Cardiovascular System',
           spots: [
@@ -277,6 +241,7 @@ window.ASSIGNMENT = {
           easy: 'Label the chambers, valves, and other parts inside the heart. Drag each label to the box with the same number. Then press “Check my labels.” The blood vessel names can help you.',
           viewBox: '0 0 1095 990',
           image: { src: 'media/label-heart-internal-chambers.jpg', width: 1095, height: 990 },
+          key: { src: 'media/key-heart-internal.jpg', alt: 'The Internal View with every part labeled: the blood vessels, the four chambers, the four valves, the chordae tendineae, and the interventricular septum.' },
           alt: 'Cutaway drawing of the inside of the heart. The blood vessels are labeled, and 10 parts inside the heart are numbered.',
           credit: 'Diagram: It’s Not Rocket Science®, The Cardiovascular System',
           spots: [
@@ -333,6 +298,7 @@ window.ASSIGNMENT = {
           easy: 'Label the outside of the heart. Drag each label to the box with the same number. Then press “Check my labels.” The heart’s right side is on your left.',
           viewBox: '0 0 766 850',
           image: { src: 'media/label-heart-external.jpg', width: 766, height: 850 },
+          key: { src: 'media/key-heart-external.jpg', alt: 'The External View with every part labeled: the large blood vessels, the auricles, the coronary arteries and cardiac veins, and the apex.' },
           markerSize: 26,
           alt: 'Drawing of the outside of the heart with its large blood vessels and the small blood vessels on its surface, with 13 numbered parts',
           credit: 'Diagram: It’s Not Rocket Science®, The Cardiovascular System',

@@ -310,6 +310,12 @@ than the picture to leave room for markers at the sides. `to` draws pointer line
   explain: 'Shown when every label is right.' }
 ```
 
+`key` (optional) puts a flip card above the labels: `key: { src: 'media/key-heart.jpg', alt: '...' }`. The front is the
+numbered diagram and the back is the key, the same picture with every term printed on it (same size as `image`).
+Students click to flip it, study the terms, flip it back to quiz themselves, and then drag the labels. It is not
+scored and does not print. `title` and `note` change its heading and instructions. Example:
+`assignments/explore-label-the-cardiovascular-system/`.
+
 ### order: put steps in order (auto-checked)
 
 Students drag the steps (or use the arrow buttons). After a wrong try the steps in the right spot turn green.

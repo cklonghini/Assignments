@@ -779,6 +779,7 @@ function labelQ(id,q){
   var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
   var exp=h('p','msg');
   wrap.append(bank,grid,row,msg,exp);
+  if(q.key) wrap.insertBefore(keyCard(svg,q),wrap.firstChild);
   function val(i){var r=S.auto[ids[i]]; return r&&r.v?r.v:'';}
   function locked(i){var r=S.auto[ids[i]]; return !!(r&&r.ok);}
   function setV(i,v){var prev=S.auto[ids[i]]||{}; S.auto[ids[i]]={v:v,ok:false,miss:prev.miss||0,pend:!!v};}
@@ -862,6 +863,29 @@ function labelQ(id,q){
   });
   paint();
   return wrap;
+}
+
+/* The answer key as a flip card above a label question (q.key): the front is the numbered diagram, the back is
+   the same picture with every term printed on it. Students flip it to study, then drag the labels below. Not scored. */
+function keyCard(svg,q){
+  var k=q.key, box=h('div','lbkey');
+  box.append(h('p','lbkeyhd',k.title||'Study the key'));
+  box.append(h('p','whint',k.note||'Flip the card to see the terms on the diagram. Flip it back to quiz yourself. When you are ready, drag the labels below.'));
+  var card=h('div','lbcard'), inner=h('div','lbcardin');
+  var front=h('div','lbface'), back=h('div','lbface lbback');
+  var sv=svg.cloneNode(true); sv.setAttribute('aria-label',(q.alt||'Diagram with numbered parts')+' (front of the key card)'); front.append(sv);
+  var img=document.createElement('img'); img.src=k.src; img.alt=k.alt||'The same diagram with every part labeled'; img.loading='lazy'; back.append(img);
+  inner.append(front,back); card.append(inner);
+  var btn=h('button','btn small lbflip','Flip to see the key'); btn.type='button'; btn.setAttribute('aria-pressed','false');
+  function flip(){
+    var on=!inner.classList.contains('flipped'); inner.classList.toggle('flipped',on);
+    btn.setAttribute('aria-pressed',on?'true':'false'); btn.textContent=on?'Flip back to the numbers':'Flip to see the key';
+    front.setAttribute('aria-hidden',on?'true':'false'); back.setAttribute('aria-hidden',on?'false':'true');
+  }
+  back.setAttribute('aria-hidden','true');
+  btn.addEventListener('click',flip); card.addEventListener('click',flip);
+  box.append(card,btn);
+  return box;
 }
 
 /* ------------------------------------------------------------------ */
