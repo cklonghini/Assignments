@@ -132,10 +132,10 @@ window.CER_PROJECT = function (o) {
           {
             type: 'notes',
             source: 1,
-            min: 4,
+            min: 3,
             site: true,
-            text: 'Take at least 4 notes on Source 1. For each note, type what the website says, then write your annotation in your own words.',
-            easy: 'Take 4 notes on Source 1. In each note, type a fact from the website. Then say what it means in your own words.'
+            text: 'Take at least 3 notes on Source 1. For each note, type what the website says, then write your annotation in your own words.',
+            easy: 'Take 3 notes on Source 1. In each note, type a fact from the website. Then say what it means in your own words.'
           },
           trustQ(1, true)
         ]
@@ -161,26 +161,12 @@ window.CER_PROJECT = function (o) {
           {
             type: 'notes',
             source: 2,
-            min: 4,
+            min: 3,
             site: true,
-            text: 'Take at least 4 notes on Source 2. For each note, type what the website says, then write your annotation in your own words.',
-            easy: 'Take 4 notes on Source 2. In each note, type a fact from the website. Then say what it means in your own words.'
+            text: 'Take at least 3 notes on Source 2. For each note, type what the website says, then write your annotation in your own words.',
+            easy: 'Take 3 notes on Source 2. In each note, type a fact from the website. Then say what it means in your own words.'
           },
-          trustQ(2, false),
-          {
-            type: 'written',
-            support: false,
-            text: 'Compare your two sources. Do they agree? What did Source 2 add that Source 1 did not have? (2 to 3 sentences)',
-            min: 60,
-            starters: ['Both sources say that …', 'Source 2 added …', 'One difference between the sources is …'],
-            ideas: [
-              { done: 'You told where the sources agree or disagree.', q: 'Did you say whether the sources agree?', tip: 'Look at your notes. Is there a fact that both websites give?',
-                all: [/\b(both (sources|websites|articles|sites)|agree[sd]?|disagree[sd]?|similar(ly)?|unlike|in contrast|whereas|on the other hand)\b/, /\b(that|about|on|how|because)\s+[a-z']+\s+[a-z']+/] },
-              { done: 'You told what Source 2 added.', q: 'Did you say what new evidence Source 2 gave you?', tip: 'Find a note from Source 2 with a fact that is not in your Source 1 notes.',
-                all: [/source 2|second (source|website|article|site)/, /\b(add(ed|s)?|new|also|more|another|explain(ed|s)?|gave|give[sn]?|had|has|include[sd]?)\s+([a-z'“"]+\s+){2,}[a-z]/] },
-              { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Add a sentence about what is different.', sentences: 2 }
-            ]
-          }
+          trustQ(2, false)
         ]
       },
 
