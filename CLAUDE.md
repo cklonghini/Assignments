@@ -174,6 +174,10 @@ website inside the page with `site: true`), and a `cer: true` highlight question
 - Highlight questions that ask students to argue a point with evidence use claim-evidence-reasoning colors
   (`cer: true`): claim in blue, evidence in yellow, reasoning/expand on your thoughts in green. Use the plain yellow
   transition-word highlight for answers that describe a process instead of arguing a claim.
+- In the supported version (`?support=eagle`), every `cer: true` question is a thinking map: a blue claim box, yellow
+  evidence and green reasoning boxes in pairs (students can add more evidence), each needing at least one complete
+  sentence, then a gold "Turn my thinking map into a paragraph" button that shows each sentence moving into a colored
+  paragraph. Students can edit the map or the paragraph; the PDF shows only the paragraph. Built into the engine.
 - **Every written question has 2 to 5 sentence starters** (`starters`) written for that question. They help students
   begin, use the video's words, and stop before the answer. Students
   type the starters themselves; there is no button that drops one in. Every written box also has a "Check my writing" button
