@@ -101,6 +101,8 @@ window.CER_PROJECT = function (o) {
         questions: [
           {
             type: 'pick',
+            tiles: true,          // Step 1: a tile per category, Step 2: its questions
+            pdfFirst: 1,          // the PDF starts with the research question, then the CER, then the sources and notes
             text: 'Choose ONE question to research (or propose your own related question, with teacher approval).',
             easy: 'Choose ONE question to research.',
             options: o.questions,
@@ -118,8 +120,8 @@ window.CER_PROJECT = function (o) {
         step: 'Source 1',
         intro: 'Find your first reliable website and paste its link below. Then split your screen so you can read the website and take notes at the same time.',
         box: '<p><b>See your website and your notes at the same time: split your screen</b></p>'
-          + '<ol><li>Paste your website link below, then select <b>Open this website</b>. It opens in a new tab.</li>'
-          + '<li>Drag that new tab out of your browser window and let go, so the website is in its own window.</li>'
+          + '<ol><li>Open your website in its own browser tab (the tab you copy the link from), and paste its link below.</li>'
+          + '<li>Drag that website tab out of your browser window and let go, so the website is in its own window.</li>'
           + '<li>Put the two windows side by side:<ul>'
           + '<li><b>Windows:</b> drag a window to the left or right edge of the screen until it snaps, or press the <b>Windows key + left arrow</b> or <b>right arrow</b>. Then choose the other window to fill the other side.</li>'
           + '<li><b>Mac:</b> hold your pointer over the green button in the top-left corner of a window, and choose the option to put it on the left or right of the screen. Then choose the other window for the other side.</li>'
@@ -138,12 +140,16 @@ window.CER_PROJECT = function (o) {
         questions: [
           {
             type: 'source',
+            noOpen: true,
+            pdfFirst: 3,
             label: 'Source 1',
             text: 'Paste the link to your first website. Then type its title, who published it, and the date.',
             easy: 'Paste the link to your first website. Then type its title, who made it, and the date.'
           },
           {
             type: 'notes',
+            noOpen: true,
+            pdfFirst: 4,
             source: 1,
             min: 3,
             text: 'Take at least 3 notes on Source 1. For each note, type what the website says, then write your annotation in your own words.',
@@ -167,12 +173,16 @@ window.CER_PROJECT = function (o) {
         questions: [
           {
             type: 'source',
+            noOpen: true,
+            pdfFirst: 5,
             label: 'Source 2',
             text: 'Paste the link to your second website. Then type its title, who published it, and the date.',
             easy: 'Paste the link to your second website. Then type its title, who made it, and the date.'
           },
           {
             type: 'notes',
+            noOpen: true,
+            pdfFirst: 6,
             source: 2,
             min: 3,
             text: 'Take at least 3 notes on Source 2. For each note, type what the website says, then write your annotation in your own words.',
@@ -197,6 +207,7 @@ window.CER_PROJECT = function (o) {
         questions: [
           {
             type: 'highlight',
+            pdfFirst: 2,
             cer: true,
             notesBeside: true,
             from: 'your two websites',

@@ -2730,7 +2730,7 @@ function sourceField(id,q){
   var form=h('div','srcform'), slip=h('div','srcslip');
   var sltxt=h('p','sltitle'), slsub=h('span','slsub'), slopen=h('a','btn small','Open website ↗'), sledit=h('button','btn ghost small','Edit');
   slopen.target='_blank'; slopen.rel='noopener noreferrer'; sledit.type='button';
-  slip.append(h('span','slck','✓'),sltxt,slopen,sledit);
+  slip.append(h('span','slck','✓'),sltxt); if(!q.noOpen) slip.append(slopen); slip.append(sledit);
   wrap.append(form,slip);
   var folded=srcDone(id);
   function field(key,lab,ph,help){
@@ -2743,8 +2743,9 @@ function sourceField(id,q){
   }
   var url=field('url','Website link (paste it here)','https://...','Copy the link from your browser’s address bar and paste it here. This is the only box on the page where you can paste.');
   url.setAttribute('data-paste',''); url.inputMode='url'; url.autocomplete='off'; url.autocapitalize='off';
+  /* noOpen: true (the research projects): no "Open this website" button, since students already have it open beside the page */
   var openRow=h('div','row srcopen'), open=h('a','btn sitebtn','Open this website'); open.target='_blank'; open.rel='noopener noreferrer';
-  var host=h('span','siteurl'); openRow.append(open,host); form.append(openRow);
+  var host=h('span','siteurl'); openRow.append(open,host); if(!q.noOpen) form.append(openRow);
   var title=field('title','Title of the page or article','For example: How Coral Reefs Are Formed');
   var by=field('by','Who published it (the organization or author)','For example: NOAA, National Ocean Service');
   var date=field('date','Date it was published or last updated (if you can find it)','For example: January 20, 2024, or “no date”');
@@ -2765,7 +2766,7 @@ function sourceField(id,q){
     var c=citation(st); cite.textContent=''; if(c&&!dup){ cite.append(h('b',null,'Your source: '),c); }
     cite.hidden=!c||dup;
     var d=srcDone(id); wrap.dataset.s=d?'ok':'idle';
-    if(d){ msg.dataset.s='ok'; msg.textContent='Saved. Open the website and take your notes.'; return; }
+    if(d){ msg.dataset.s='ok'; msg.textContent=q.noOpen?'Saved. Now take your notes.':'Saved. Open the website and take your notes.'; return; }
     msg.removeAttribute('data-s');
     if(!(st.url||'').trim()) msg.textContent='Paste the link to your website.';
     else if(!ok){ msg.dataset.s='bad'; msg.textContent='That doesn’t look like a full website link. It should start with https:// . Copy it again from the address bar.'; }
@@ -2803,7 +2804,7 @@ function notesField(id,q){
     if(s&&urlOk(s.url)){
       var p=h('p','inote'); p.append(h('b',null,'Notes on '+srcLabel(sid)+': '),(s.title||'').trim()||hostOf(s.url));
       var a=h('a','btn ghost small','Open the website'); a.href=s.url.trim(); a.target='_blank'; a.rel='noopener noreferrer';
-      if(q.site) head.append(p); else head.append(p,a);
+      if(q.site||q.noOpen) head.append(p); else head.append(p,a);
     } else if(sid) head.append(h('p','inote','Add your '+srcLabel(sid)+' link above first, so you can open the website while you take notes.'));
   }
   function row(r,i){
@@ -2908,6 +2909,7 @@ function pickField(id,q){
   PICKS.push(id); if(q.pin) PINS.push({id:id,label:q.pinLabel||'My research question'});
   ORDER.push({kind:'pick',id:id,q:CURQ,sub:'',other:q.other});
   var st=S.picks[id]||(S.picks[id]={v:'',other:''});
+  if(q.tiles&&(q.options||[]).some(function(o){return o&&o.heading;})) return pickTiles(id,q,st);
   var wrap=h('div','ctl'); mark(wrap); wrap.setAttribute('role','radiogroup'); wrap.setAttribute('aria-label','Choose one');
   /* options can include { heading: 'Topic' } lines that group the questions under it */
   var opts=(q.options||[]).filter(function(o){return typeof o==='string';}).map(function(o){return [o,o];});
@@ -2931,6 +2933,64 @@ function pickField(id,q){
     var d=pickDone(id); wrap.dataset.s=d?'ok':'idle';
     msg.dataset.s=d?'ok':''; if(!d) msg.removeAttribute('data-s');
     msg.textContent=d?'Saved. This is your research question.':st.v==='__other'?'Type your question in the box.':'Choose one question.';
+  }
+  paint();
+  return wrap;
+}
+
+/* tiles: true on a pick with { heading } lines: Step 1 is a tile per category ({ heading, icon }), Step 2 shows that
+   category's questions. Only one category is open at a time. The student's own question is a link under the box. */
+function pickTiles(id,q,st){
+  var groups=[], cur=null;
+  (q.options||[]).forEach(function(o){
+    if(o&&o.heading){ cur={name:o.heading,icon:o.icon||'',opts:[]}; groups.push(cur); }
+    else if(typeof o==='string'){ if(!cur){ cur={name:'More questions',icon:'',opts:[]}; groups.push(cur); } cur.opts.push(o); }
+  });
+  if(st.cat==null){ st.cat=st.v==='__other'?'__own':''; groups.forEach(function(g){ if(g.opts.indexOf(st.v)>=0) st.cat=g.name; }); }
+  var wrap=h('div','ctl picktiles'); mark(wrap);
+  var ask=h('p','pickstep',q.tilesAsk||'Step 1: What do you want to learn more about?'); ask.id='pa-'+id;
+  var grid=h('div','ptiles'); grid.setAttribute('role','group'); grid.setAttribute('aria-labelledby',ask.id);
+  wrap.append(ask,grid);
+  var radios=[], tiles=[], panels=[];
+  groups.forEach(function(g,gi){
+    var b=h('button','ptile'); b.type='button';
+    if(g.icon) b.append(h('span','pticon',g.icon));
+    b.append(h('b',null,g.name),h('span','ptcount',g.opts.length+(g.opts.length===1?' question':' questions')));
+    b.addEventListener('click',function(){ st.cat=st.cat===g.name?'':g.name; paint(); commit(); if(st.cat) { var f=panels[gi].querySelector('input'); if(f) f.focus({preventScroll:true}); panels[gi].scrollIntoView({block:'nearest'}); } });
+    grid.append(b); tiles.push(b);
+    var pn=h('div','ppanel'); pn.setAttribute('role','radiogroup');
+    var ph=h('p','pickstep',(q.tilesStep2||'Step 2: Choose a question about')+' '+g.name); ph.id='pp-'+id+'-'+gi; pn.setAttribute('aria-labelledby',ph.id);
+    pn.append(ph);
+    g.opts.forEach(function(o){
+      var lab=h('label','opt'), inp=document.createElement('input'); inp.type='radio'; inp.name='pick-'+id; inp.value=o; inp.checked=st.v===o;
+      var sp=h('span'); sp.append(itxt(o)); lab.append(inp,sp); pn.append(lab);
+      inp.addEventListener('change',function(){ if(inp.checked){ st.v=o; srcChanged(); paint(); commit(); } });
+      radios.push([lab,inp,o]);
+    });
+    wrap.append(pn); panels.push(pn);
+  });
+  var ob=h('div','pickown'), ol=h('label',null,q.otherLabel||'Type your own research question'); ol.htmlFor='f-'+id+'-own';
+  var own=h('input'); own.type='text'; own.id=ol.htmlFor; own.value=st.other||''; own.spellcheck=true;
+  if(q.other){
+    var link=h('button','linkbtn',q.otherLink||'Have your own question? Propose it to your teacher.'); link.type='button';
+    link.addEventListener('click',function(){ st.cat='__own'; st.v='__other'; srcChanged(); paint(); commit(); own.focus(); });
+    wrap.append(link);
+    ob.append(ol); if(q.otherNote) ob.append(h('p','inote',q.otherNote)); ob.append(own); wrap.append(ob);
+    own.addEventListener('input',function(){ st.other=own.value; st.v='__other'; srcChanged(); paint(); commit(); });
+  }
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite'); wrap.append(msg);
+  function paint(){
+    groups.forEach(function(g,gi){
+      var open=st.cat===g.name, has=g.opts.indexOf(st.v)>=0;
+      tiles[gi].setAttribute('aria-pressed',open?'true':'false'); tiles[gi].setAttribute('aria-expanded',open?'true':'false');
+      tiles[gi].dataset.s=has?'ok':'';
+      panels[gi].hidden=!open;
+    });
+    radios.forEach(function(r){ r[1].checked=st.v===r[2]; if(st.v===r[2]) r[0].dataset.s='ok'; else r[0].removeAttribute('data-s'); });
+    ob.hidden=st.cat!=='__own';
+    var d=pickDone(id); wrap.dataset.s=d?'ok':'idle';
+    msg.dataset.s=d?'ok':''; if(!d) msg.removeAttribute('data-s');
+    msg.textContent=d?'Saved. This is your research question.':st.v==='__other'?'Type your question in the box.':st.cat?'Choose one question.':'Choose a topic, then choose one question.';
   }
   paint();
   return wrap;
@@ -3492,9 +3552,10 @@ function ideaCheck(getText,getHl,items){ /* getHl returns the answer's highlight
 /* ------------------------------------------------------------------ */
 /* Section and question scaffolding                                    */
 /* ------------------------------------------------------------------ */
-var CURQ=null;
+var CURQ=null, QFIRST=null;
 function qEl(num,text){
   CURQ={num:num,text:text};
+  if(QFIRST!=null) CURQ.first=QFIRST;
   var q=h('article','q'); q.id='question-'+num;
   var hd=h('div','qhead');
   var qt=h('p','qtext'); qt.append(itxt(text));
@@ -3654,6 +3715,8 @@ function ideasFrom(list){
 
 function buildQuestion(q,s,tile){
   if(SUPPORT&&q.easy) q=Object.assign({},q,{text:q.easy});
+  /* pdfFirst: N puts this question near the top of the PDF and the text copy (lowest N first), right after Results */
+  QFIRST=typeof q.pdfFirst==='number'?q.pdfFirst:null;
   var num=++QN, id='q'+num, o=qEl(num,q.text), t=q.type, ids=[id];
   if(tile) CURQ.tile=tile;
   if(q.img){
@@ -4406,7 +4469,12 @@ function answerGroups(){
     }
     last.items.push(it);
   });
-  return groups;
+  /* questions marked pdfFirst come first (lowest number first); the rest keep their order */
+  return groups.map(function(g,i){return [g,i];}).sort(function(a,b){
+    var fa=a[0].q&&a[0].q.first, fb=b[0].q&&b[0].q.first;
+    fa=fa==null?1e9:fa; fb=fb==null?1e9:fb;
+    return fa-fb||a[1]-b[1];
+  }).map(function(p){return p[0];});
 }
 function summaryParts(){
   var sc=score(), board=[];

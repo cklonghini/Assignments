@@ -918,3 +918,19 @@ summary.wphead{cursor:pointer}
 .ready li[data-s="ok"] .rmark{color:var(--ok)}
 .ready li[data-s="todo"] .rmark{color:var(--bad)}
 .rtext{flex:1}
+/* pick with tiles: true — Step 1 category tiles, Step 2 that category's questions */
+.picktiles{max-width:72ch}
+.pickstep{margin:0 0 8px;font-weight:700}
+.ptiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin:0 0 14px}
+.ptile{font:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 10px;border:2px solid var(--line);border-radius:14px;
+  background:var(--surface);color:var(--ink);cursor:pointer;text-align:center;line-height:1.25}
+.ptile b{color:var(--primary);font-size:1rem}
+.pticon{font-size:1.9rem;line-height:1.1;margin-bottom:2px}
+.ptcount{font-size:.8rem;color:var(--muted)}
+.ptile[aria-pressed="true"]{border-color:var(--primary);background:var(--pin-bg);box-shadow:0 0 0 4px var(--pin-bg)}
+.ptile[data-s="ok"]::after{content:"\2713  chosen";font-size:.75rem;font-weight:700;color:var(--ok)}
+.ptile:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.ppanel{border:2px solid var(--primary);border-radius:14px;padding:12px 16px;background:var(--surface);margin:0 0 10px}
+.ppanel[hidden]{display:none}
+.ppanel .pickstep{color:var(--primary)}
+.linkbtn{font:inherit;font-weight:700;color:var(--primary);background:none;border:0;padding:4px 0;text-decoration:underline;cursor:pointer}

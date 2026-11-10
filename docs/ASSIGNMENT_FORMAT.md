@@ -569,6 +569,11 @@ in the `research` look it is a yellow sticky note), and as a small sticky note i
   otherNote: 'Send your question to your teacher, and wait for approval.' }   // optional
 ```
 
+`tiles: true` (with `{ heading: '...', icon: '🌊' }` lines) shows the list in two steps: Step 1 is a tile per category
+("What do you want to learn more about?", change it with `tilesAsk`), and selecting one opens Step 2, that category's
+questions. Only one category is open at a time. The student's own question is a link under the box. A list with no
+headings shows as a plain list.
+
 ### checks: a quick checklist and one sentence (teacher graded)
 
 Students check every item that applies (any number), then write one sentence. It is done when at least one box is
@@ -617,6 +622,8 @@ For a research project, such as the end-of-learning-period CER (example: `assign
 - `notesBeside: true` on a `highlight` question puts every note from every notes box in a "My research notes" panel
   next to the writing box (on a wide screen the question widens and the panel stays in view while the student
   scrolls; on a phone the panel sits folded above the box). Students write their CER from their notes.
+- `noOpen: true` on `source` and `notes` questions leaves out the "Open this website" buttons (students already have
+  the website open beside the page).
 - The PDF and the text fallback list each source (link, title, publisher, date, citation) and every note, and the
   Results add "Website sources" and "Research notes" lines.
 
@@ -732,6 +739,8 @@ board: {
 
 ## Extra question fields (any assignment)
 
+- `pdfFirst: 1` (2, 3, …) puts the question at the top of the PDF and the text copy, right after Results, lowest number
+  first. The other questions follow in page order. The research projects use it so the CER comes first.
 - `easy: 'Simpler wording of the same question.'` is shown instead of `text` in the supported version (see
   "Supported version" above). Write one for every question that is not already simple.
 
