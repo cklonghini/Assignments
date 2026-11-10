@@ -71,6 +71,9 @@ assignments; the school branding stays gold. Everything else is shared in `assig
 folder's `index.html` loads before `assignment.js`. For a new period, copy an LP3 folder, rename it (`cer-lp4-...`),
 and change the title, `storageKey`, `short`, and questions.
 
+The project has a step tracker under the title, the research question as a sticky note (at the top of each part and in
+the sticky progress bar), Cornell-style note cards with tags, a website card that folds into a slip, a "Can you
+trust it?" `checks` checklist for each source, and a "Ready to submit?" checklist before the PDF (`ready: true`).
 The project uses `pick` (choose the question), `source` (the website link is the only box where students can paste),
 `notes` (a fact typed from the site plus the student's own annotation; students split their screen to see the
 website beside this page, with the steps in Part 3's always-open `box`, and the teacher chose this over showing the

@@ -736,8 +736,6 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .notetop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
 .note>label{display:block;font-weight:700;font-size:.95rem;margin:8px 0 2px}
 .note textarea{min-height:64px}
-.noteuse{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:10px}
-.noteuse label{font-weight:700;font-size:.95rem}
 .notesbox>.row{margin-top:12px}
 .npbody{padding:4px 14px 12px;font-size:.93rem}
 .npbody .inote{color:var(--muted);margin:4px 0 8px}
@@ -845,3 +843,69 @@ summary.wphead{cursor:pointer}
 :root[data-look="research"] .pinq{border-color:var(--accent)}
 :root[data-look="research"] .wphead{background:var(--accent-tint)}
 @media (max-width:560px){:root[data-look="research"] header.top{padding:16px 16px 12px;background-size:120px auto;background-position:right 8px top 8px}}
+
+/* research: website card folded into a slip */
+.srcform[hidden],.srcslip[hidden]{display:none}
+.srcslip{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border:2px solid var(--ok);border-radius:10px;background:var(--surface)}
+.slck{width:26px;height:26px;border-radius:50%;background:var(--ok);color:var(--surface);display:grid;place-items:center;font-weight:800;flex:none}
+.sltitle{flex:1 1 220px;margin:0;overflow-wrap:anywhere}
+.slsub{display:block;font-size:.85rem;color:var(--muted)}
+.srcslip .btn{text-decoration:none}
+/* research: Cornell-style note cards (side by side on a wide screen) */
+.corn{display:grid;grid-template-columns:minmax(0,1fr);gap:4px 0}
+.ncol>label{display:block;font-weight:700;font-size:.95rem;margin:4px 0 2px}
+@media (min-width:700px){
+  .corn{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+  .corn>.ncol:first-child{padding-right:14px}
+  .corn>.ncol+.ncol{padding-left:14px;border-left:3px solid #e57373}
+}
+/* research: how a note will be used, as tags */
+.noteuse{display:block;margin-top:10px}
+.tagq{margin:0 0 6px;font-weight:700;font-size:.95rem}
+.notetags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font:inherit;font-weight:700;font-size:.9rem;border:2px solid var(--line);border-radius:99px;padding:4px 12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.tag[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.tag.tagev[aria-pressed="true"]{background:#ffe600;border-color:#c9b400;color:#1f2a33}
+.tag[aria-pressed="true"]::before{content:"\2713  "}
+.npbody li.npev{background:#fff7a8;color:#1f2a33;border-left:4px solid #e6c800;border-radius:3px;padding:4px 8px;margin-left:-6px}
+.npbody li.npev .npuse{color:#5c4f00}
+/* research: trust checklist */
+.checksbox{max-width:68ch}
+.checksbox .signlab{display:block;font-weight:700;font-size:.95rem;margin:12px 0 4px}
+/* the research question as a small sticky note in the sticky progress bar */
+.minipin{display:inline-block;max-width:100%;background:#fff59d;color:#1f2a33;font-weight:700;padding:2px 10px;box-shadow:0 2px 4px rgba(0,0,0,.15);transform:rotate(-.5deg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.minipin[hidden]{display:none}
+.minipin b{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#6b5d00;margin-right:6px}
+.statsrow #sSaved{margin-left:auto}
+@media (max-width:560px){.minipin{white-space:normal}}
+/* research look: the research question at the top of each part is a sticky note */
+:root[data-look="research"] .pinq{display:block;width:fit-content;max-width:min(100%,62ch);background:#fff59d;color:#1f2a33;border:0;border-radius:2px;
+  transform:rotate(-.6deg);box-shadow:0 4px 10px rgba(0,0,0,.18);padding:12px 18px;margin:4px 0 18px}
+:root[data-look="research"] .pinq[hidden]{display:none}
+:root[data-look="research"] .pinq .pinlab{color:#6b5d00}
+:root[data-look="research"] .pinq .pintext{color:#1f2a33}
+@media (prefers-reduced-motion:reduce){:root[data-look="research"] .pinq,.minipin{transform:none}}
+/* look.tracker: step circles under the title */
+.steps{display:flex;align-items:flex-start;margin:14px 0 0;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.sst{flex:0 0 auto;width:96px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;font-size:.8rem;font-weight:700;line-height:1.2;text-align:center;
+  color:var(--muted);background:none;border:0;padding:0;cursor:pointer}
+.sst:disabled{cursor:default;opacity:.8}
+.sst i{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);background:var(--surface);display:grid;place-items:center;font-style:normal;font-size:.85rem;color:var(--muted)}
+.sst[data-s="done"] i{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.sst[data-s="now"]{color:var(--primary)}
+.sst[data-s="now"] i{border-color:var(--primary);color:var(--primary);box-shadow:0 0 0 5px var(--pin-bg)}
+.sst:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:8px}
+.sln{flex:1 1 0;min-width:8px;height:3px;background:var(--line);margin-top:14px;border-radius:2px;overflow:hidden}
+.sln b{display:block;height:100%;width:0;background:var(--primary);transition:width .3s}
+@media (max-width:560px){.steps{padding:10px 6px}.sst{width:58px;font-size:.66rem}.sst i{width:26px;height:26px}}
+/* ready: true — the checklist before the PDF */
+.ready{border:2px solid var(--primary);border-radius:12px;padding:12px 16px;margin:0 0 18px;background:var(--surface);max-width:72ch}
+.ready[data-s="ok"]{border-color:var(--ok)}
+.readyh{margin:0;font-weight:800;font-size:1.15rem}
+.readynote{margin:2px 0 8px;color:var(--muted)}
+.ready ul{list-style:none;margin:0;padding:0}
+.ready li{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.rmark{font-weight:800;width:1.2em;text-align:center}
+.ready li[data-s="ok"] .rmark{color:var(--ok)}
+.ready li[data-s="todo"] .rmark{color:var(--bad)}
+.rtext{flex:1}

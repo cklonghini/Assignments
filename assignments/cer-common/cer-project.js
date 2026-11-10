@@ -17,7 +17,8 @@ window.CER_PROJECT = function (o) {
     course: o.course,
     storageKey: o.storageKey,
     short: o.short,
-    look: { style: 'research', accent: o.accent, kicker: o.kicker || 'Research and Report' },
+    look: { style: 'research', accent: o.accent, kicker: o.kicker || 'Research and Report', tracker: true },
+    ready: true,   // the "Ready to submit?" checklist before the PDF
     icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="10" y="8" width="44" height="56" rx="6" fill="var(--primary)"/><rect x="18" y="20" width="28" height="5" rx="2" fill="#00e5ff"/><rect x="18" y="32" width="28" height="5" rx="2" fill="#ffe600"/><rect x="18" y="44" width="20" height="5" rx="2" fill="#39e75f"/></svg>',
     startNote: 'You will open your websites in their own window and split your screen, so you can see the website and this page side by side. Keep this page open the whole time.',
 
@@ -35,6 +36,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Get ready: CER and reliable websites',
+        step: 'Get ready',
         intro: 'In this project you choose one research question, research it on two websites, and write a claim-evidence-reasoning (CER) response. First, review what a CER is and how to tell if a website is reliable.',
         read: '<p><b>What is a CER?</b> A CER is a short piece of writing that answers a question with proof.</p>'
           + '<ul><li><b>Claim:</b> your answer to the research question, in one clear sentence.</li>'
@@ -94,6 +96,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Choose your research question',
+        step: 'Choose a question',
         intro: 'Read through the research questions below. Choose ONE that sounds interesting to you and that you would like to learn more about. The question you choose will stay at the top of each part, so you can keep it in mind as you research and write.',
         questions: [
           {
@@ -112,6 +115,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Source 1: Research and take notes',
+        step: 'Source 1',
         intro: 'Find your first reliable website and paste its link below. Then split your screen so you can read the website and take notes at the same time.',
         box: '<p><b>See your website and your notes at the same time: split your screen</b></p>'
           + '<ol><li>Paste your website link below, then select <b>Open this website</b>. It opens in a new tab.</li>'
@@ -152,6 +156,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Source 2: Research and take notes',
+        step: 'Source 2',
         intro: 'Find a second reliable website, from a different organization than Source 1. A second source lets you check your facts and find new evidence. Split your screen again, the same way you did for Source 1.',
         read: '<p><b>Choosing your second website</b></p>'
           + '<ul><li>Use a different website than Source 1, from a different organization if you can.</li>'
@@ -180,6 +185,7 @@ window.CER_PROJECT = function (o) {
       /* -------------------------------------------------------------- */
       {
         title: 'Write your CER',
+        step: 'Write your CER',
         intro: 'Now answer your research question with a CER. Your notes from both websites are next to the writing box (above it on a small screen). Use evidence from both of your sources.',
         read: '<p><b>Plan before you write</b></p>'
           + '<ol><li><b>Claim:</b> read your notes again. What is your answer to your research question now? Write it in one clear sentence. It can be different from what you thought before you researched.</li>'
@@ -216,23 +222,23 @@ window.CER_PROJECT = function (o) {
   };
 
   /* "Why can you trust this website?" for Source 1 (kept in the supported version) and Source 2 (left out of it) */
+  /* "Can you trust this website?" as a quick checklist plus one sentence. Source 1's is kept in the supported
+     version; Source 2's is left out of it. */
   function trustQ(n, keep) {
     var q = {
-      type: 'written',
-      text: 'Why can you trust Source ' + n + '? Use the clues for a reliable website: who published it, when, and where its facts came from. (2 sentences)',
-      min: 50,
-      starters: ['I can trust this website because it was published by …', 'It was published or updated in …', 'The information on this website comes from …'],
-      ideas: [
-        { done: 'You told who published it.', q: 'Did you say who published it?', tip: 'Name the organization or author, and what kind of group it is (a government agency, a university, a museum, a science organization).',
-          re: /\b(gov|edu|org|government|agency|university|college|museum|hospital|clinic|scientists?|researchers?|experts?|doctors?|journal|nasa|noaa|usgs|nih|cdc|nps|smithsonian|national|institute|society|association|foundation|organization)\b/ },
-        { done: 'You told when it was published.', q: 'Did you say when it was published or updated?', tip: 'Look near the top or the bottom of the page for a date.',
-          re: /\b(19|20)\d\d\b|no date|not dated|(doesn.t|does not|didn.t|did not) (have|show|list|give) a date|\b(january|february|march|april|june|july|august|september|october|november|december)\b/ },
-        { done: 'You told where its facts came from.', q: 'Did you say where its information comes from?', tip: 'Does the page talk about studies, data, or experts? Does it list sources at the bottom?',
-          re: /\b(cites?|cited|sources?|references?|stud(y|ies)|research(ers)?|data|evidence|scientists|experts)\b/ },
-        { done: 'You wrote at least 2 sentences.', q: 'Did you write at least 2 sentences?', tip: 'Add a sentence for another clue.', sentences: 2 }
-      ]
+      type: 'checks',
+      text: 'Can you trust Source ' + n + '? Check every clue you found on the website.',
+      items: [
+        'It is published by a government agency (.gov), a university (.edu), a museum, or a science organization',
+        'It tells who wrote or published it',
+        'It shows when it was published or updated',
+        'It lists its sources, or talks about research, data, or experts'
+      ],
+      ask: 'In one sentence, why can you trust this website?',
+      placeholder: 'I can trust this website because …',
+      ready: 'Source ' + n + ': can you trust it?'
     };
-    if (keep) q.easy = 'Why can you trust Source ' + n + '? Tell who made it and when. (2 sentences)';
+    if (keep) q.easy = 'Can you trust Source ' + n + '? Check each clue you found.';
     else q.support = false;
     return q;
   }

@@ -37,8 +37,12 @@ function injectPage(){
     +'<span id="maskHint" class="tip" role="tooltip">Fades out everything except the section you are working on. Click a section, or scroll to it, to bring it into focus.</span></span></div>'
     +'<div class="ttsrow" id="ttsrow" hidden><span>Use the Listen buttons on this page if you would like to have the content read to you.</span>'
     +'<span class="pair"><label for="ttsRate">Speed</label><select id="ttsRate"><option value="0.8">Slow</option><option value="0.95">Normal</option><option value="1.15">Fast</option></select></span></div></header>'
+    /* look.tracker: a row of steps under the title (one per part) that fills in as the student works */
+    +(LOOK&&LOOK.tracker&&!A2.board?'<nav class="steps" id="steps" aria-label="Your steps">'+(A2.parts||[]).map(function(p,i){
+        return (i?'<span class="sln"><b></b></span>':'')+'<button type="button" class="sst" data-n="'+(i+1)+'"><i>'+(i+1)+'</i><span>'+esc(p.step||p.title)+'</span></button>';
+      }).join('')+'</nav>':'')
     +'<div class="bar" aria-label="Your progress"><div class="tracks">'+tracks+'</div>'
-    +'<div class="statsrow"><span id="sSaved"></span></div></div>'
+    +'<div class="statsrow"><span class="minipin" id="miniPin" hidden></span><span id="sSaved"></span></div></div>'
     +'<section class="task startstep" id="start"><h2 class="display">Start here</h2>'
     +'<p class="intro">Do these things before you begin. The rest of the assignment opens when you finish.</p>'
     +'<div class="namerow"><label for="first">First name</label><input type="text" id="first" autocomplete="given-name" placeholder="First name">'
@@ -382,6 +386,10 @@ function updateBar(){
     q.dataset.s= ok===c.length?'done':(bad?'bad':(ok>0?'partial':'idle'));
   });
   NPANELS.forEach(function(p){p.paint();});
+  var mp=$('#miniPin'), mt=PINS.length?pickText(PINS[0].id):'';
+  mp.hidden=!mt;
+  if(mt&&mp.dataset.t!==mt){ mp.dataset.t=mt; mp.textContent=''; mp.append(h('b',null,'My question'),itxt(mt)); }
+  paintSteps(); paintReady();
   document.querySelectorAll('.pinq').forEach(function(b){ var t=pickText(b.dataset.pin); b.hidden=!t; var pt=b.querySelector('.pintext'); if(pt.textContent!==t){ pt.textContent=''; pt.append(itxt(t)); } });
   if(BOARD) paintBoard(); else applyGate();
   var sv=$('#sSaved');
@@ -2694,25 +2702,41 @@ function sourceField(id,q){
   ORDER.push({kind:'source',id:id,q:CURQ,sub:''});
   var st=S.sources[id]||(S.sources[id]={url:'',title:'',by:'',date:'',at:''});
   var wrap=h('div','ctl srccard'); mark(wrap); wrap.dataset.s='idle';
+  /* once it is filled in, the card folds into a one-line slip (Open website, Edit) so the notes have room */
+  var form=h('div','srcform'), slip=h('div','srcslip');
+  var sltxt=h('p','sltitle'), slsub=h('span','slsub'), slopen=h('a','btn small','Open website ↗'), sledit=h('button','btn ghost small','Edit');
+  slopen.target='_blank'; slopen.rel='noopener noreferrer'; sledit.type='button';
+  slip.append(h('span','slck','✓'),sltxt,slopen,sledit);
+  wrap.append(form,slip);
+  var folded=srcDone(id);
   function field(key,lab,ph,help){
     var row=h('div','srcrow'), l=h('label',null,lab); l.htmlFor='f-'+id+'-'+key;
     var inp=h('input'); inp.type='text'; inp.id=l.htmlFor; inp.value=st[key]||''; inp.setAttribute('placeholder',ph); inp.spellcheck=key!=='url';
     row.append(l);
     if(help) row.append(h('p','inote',help));
-    row.append(inp); wrap.append(row);
+    row.append(inp); form.append(row);
     return inp;
   }
   var url=field('url','Website link (paste it here)','https://...','Copy the link from your browser’s address bar and paste it here. This is the only box on the page where you can paste.');
   url.setAttribute('data-paste',''); url.inputMode='url'; url.autocomplete='off'; url.autocapitalize='off';
   var openRow=h('div','row srcopen'), open=h('a','btn sitebtn','Open this website'); open.target='_blank'; open.rel='noopener noreferrer';
-  var host=h('span','siteurl'); openRow.append(open,host); wrap.append(openRow);
+  var host=h('span','siteurl'); openRow.append(open,host); form.append(openRow);
   var title=field('title','Title of the page or article','For example: How Coral Reefs Are Formed');
   var by=field('by','Who published it (the organization or author)','For example: NOAA, National Ocean Service');
   var date=field('date','Date it was published or last updated (if you can find it)','For example: January 20, 2024, or “no date”');
   var cite=h('p','srccite'), msg=h('p','msg'); msg.setAttribute('aria-live','polite');
-  wrap.append(cite,msg);
+  form.append(cite,msg);
+  sledit.addEventListener('click',function(){ folded=false; paint(); url.focus(); });
+  wrap.addEventListener('focusout',function(){ setTimeout(function(){ if(!wrap.contains(document.activeElement)&&srcDone(id)&&!folded){ folded=true; paint(); } },0); });
   function paint(){
     var ok=urlOk(st.url), dup=ok&&srcDup(id);
+    var fold=folded&&srcDone(id);
+    form.hidden=fold; slip.hidden=!fold;
+    if(fold){
+      sltxt.textContent=''; sltxt.append(h('b',null,((st.by||'').trim()||hostOf(st.url))+': '),(st.title||'').trim());
+      slsub.textContent=hostOf(st.url)+((st.date||'').trim()?' · '+st.date.trim():''); sltxt.append(slsub);
+      slopen.href=st.url.trim();
+    }
     openRow.hidden=!ok; if(ok){ open.href=st.url.trim(); host.textContent=hostOf(st.url); }
     var c=citation(st); cite.textContent=''; if(c&&!dup){ cite.append(h('b',null,'Your source: '),c); }
     cite.hidden=!c||dup;
@@ -2767,22 +2791,31 @@ function notesField(id,q){
       top.append(del);
     }
     li.append(top);
+    /* Cornell-style: what the website says on the left, the student's annotation on the right (stacked on a phone) */
+    var corn=h('div','corn'); li.append(corn);
     function box(key,lab,help,ph){
       var l=h('label',null,lab); l.htmlFor='f-'+id+'-'+i+'-'+key;
       var ta=h('textarea'); ta.id=l.htmlFor; ta.rows=2; ta.value=r[key]||''; ta.spellcheck=true; ta.setAttribute('placeholder',ph);
-      li.append(l,h('p','inote',help),ta,talkRow(ta));
+      var col=h('div','ncol'); col.append(l,h('p','inote',help),ta,talkRow(ta)); corn.append(col);
       function grow(){ta.style.height='auto';ta.style.height=Math.max(ta.scrollHeight+2,64)+'px';}
       ta.addEventListener('input',function(){ r[key]=ta.value; grow(); li.dataset.s=noteDone(r)?'ok':''; srcChanged(); sync(); commit(); });
       setTimeout(grow,0);
     }
     box('from','From the website','Type a fact, a number, or a short quote from the website. Put “quotation marks” around exact words.','What does the website say?');
     box('mine','My annotation','In your own words: what does this mean, and how does it help answer your research question?','What does this mean? Why does it matter?');
-    var ul=h('label',null,'How will I use this note?'); ul.htmlFor='f-'+id+'-'+i+'-use';
-    var sel=h('select'); sel.id=ul.htmlFor;
-    [''].concat(uses).forEach(function(u){ var o=h('option',null,u||'Choose one (optional)'); o.value=u; sel.append(o); });
-    sel.value=r.use||'';
-    sel.addEventListener('change',function(){ r.use=sel.value; srcChanged(); commit(); });
-    var ur=h('div','noteuse'); ur.append(ul,sel); li.append(ur);
+    /* how the student will use the note: one tap on a tag (tap again to clear). The first tag is evidence (yellow). */
+    var tq=h('p','tagq','How will I use this note? (optional)'), tg=h('div','notetags'); tq.id='tq-'+id+'-'+i;
+    tg.setAttribute('role','group'); tg.setAttribute('aria-labelledby',tq.id);
+    uses.forEach(function(u,k){
+      var b=h('button','tag'+(k===0?' tagev':''),u); b.type='button'; b.setAttribute('aria-pressed',r.use===u?'true':'false');
+      b.addEventListener('click',function(){
+        r.use=r.use===u?'':u;
+        [].forEach.call(tg.children,function(x,j){ x.setAttribute('aria-pressed',uses[j]===r.use?'true':'false'); });
+        srcChanged(); commit();
+      });
+      tg.append(b);
+    });
+    var ur=h('div','noteuse'); ur.append(tq,tg); li.append(ur);
     return li;
   }
   function sync(){
@@ -2879,6 +2912,109 @@ function pickField(id,q){
   return wrap;
 }
 
+/* checks: check every clue that applies (any number), then one sentence. Saved like an agree question. */
+var CHECKS={};
+function checksDone(id){ var st=S.agree[id], c=CHECKS[id]; return !!(st&&c&&(st.on||[]).some(Boolean)&&words(st.sign)>=c.minWords); }
+function checksField(id,q){
+  var items=q.items||[], mw=q.minWords||6;
+  CHECKS[id]={minWords:mw,ready:q.ready||''};
+  ORDER.push({kind:'checks',id:id,q:CURQ,sub:'',items:items,ask:q.ask||'Why?'});
+  var st=S.agree[id]||(S.agree[id]={on:[],sign:'',at:''});
+  if(!Array.isArray(st.on)) st.on=[];
+  var wrap=h('div','ctl checksbox'); mark(wrap);
+  var boxes=items.map(function(t,i){
+    var lab=h('label','opt'), inp=document.createElement('input'); inp.type='checkbox'; inp.checked=!!st.on[i];
+    var sp=h('span'); sp.append(itxt(t)); lab.append(inp,sp); wrap.append(lab);
+    inp.addEventListener('change',function(){ st.on[i]=inp.checked; paint(); commit(); });
+    return lab;
+  });
+  var l=h('label','signlab',q.ask||'In one sentence, why?'); l.htmlFor='f-'+id;
+  var ta=h('textarea'); ta.id=l.htmlFor; ta.rows=2; ta.value=st.sign||''; ta.spellcheck=true; ta.setAttribute('placeholder',q.placeholder||'Type your sentence here');
+  var msg=h('p','msg'); msg.setAttribute('aria-live','polite');
+  wrap.append(l,ta,talkRow(ta),msg);
+  ta.addEventListener('input',function(){ st.sign=ta.value; paint(); commit(); });
+  function paint(){
+    boxes.forEach(function(lab,i){ if(st.on[i]) lab.dataset.s='ok'; else lab.removeAttribute('data-s'); });
+    var d=checksDone(id), any=(st.on||[]).some(Boolean); wrap.dataset.s=d?'ok':'idle';
+    st.at=d?(st.at||new Date().toISOString()):'';
+    msg.dataset.s=d?'ok':''; if(!d) msg.removeAttribute('data-s');
+    msg.textContent=d?'Saved.':!any?'Check every clue you found.':'Now write your sentence.';
+  }
+  paint();
+  return wrap;
+}
+
+/* "Ready to submit?" (ready: true): every graded piece, with a check mark or a Go to button for what is missing */
+var READY=null;
+function readyItems(){
+  var out=[];
+  function qn(id){ return id.slice(1); }
+  PICKS.forEach(function(id){ out.push({ok:pickDone(id),t:'You chose your research question',go:qn(id)}); });
+  SRCLIST.forEach(function(sid){
+    out.push({ok:srcDone(sid),t:srcLabel(sid)+': website link, title, and who published it',go:qn(sid)});
+    NOTELIST.filter(function(n){return NOTES[n].src===sid;}).forEach(function(n){
+      var k=notesDoneCount(n), m=NOTES[n].min;
+      out.push({ok:k>=m,t:srcLabel(sid)+': '+m+' finished notes'+(k<m?' ('+k+' so far)':''),go:qn(n)});
+    });
+  });
+  Object.keys(CHECKS).forEach(function(id){ out.push({ok:checksDone(id),t:CHECKS[id].ready||('Question '+qn(id)),go:qn(id)}); });
+  Object.keys(W).forEach(function(id){ out.push({ok:isWrittenDone(id),t:'Question '+qn(id)+': written answer',go:qn(id)}); });
+  Object.keys(R).forEach(function(id){
+    var segs=(S.rich[id]||{}).segs;
+    out.push({ok:isRichDone(id),t:R[id].cer?'Your CER is written':'Question '+qn(id)+': written answer',go:qn(id)});
+    if(R[id].cer) [['b','Your claim is highlighted in blue'],['y','Your evidence is highlighted in yellow'],['g','Your reasoning is highlighted in green']].forEach(function(c){
+      out.push({ok:segsHlWords(segs,c[0])>0,t:c[1],go:qn(id)});
+    });
+    else out.push({ok:segsHlWords(segs)>0,t:'Your transition words are highlighted',go:qn(id)});
+  });
+  /* in the order they are on the page */
+  return out.map(function(x,i){return [x,i];}).sort(function(a,b){return (+a[0].go)-(+b[0].go)||a[1]-b[1];}).map(function(p){return p[0];});
+}
+function goToQuestion(num){
+  var el=$('#question-'+num); if(!el) return;
+  var sec=el.closest('section.task[data-task]');
+  if(sec&&sec.classList.contains('closed')){ REOPEN[+sec.dataset.task]=true; applyGate(); }
+  el.scrollIntoView({block:'start'});
+  var hd=el.querySelector('.qtext'); if(hd){ hd.tabIndex=-1; hd.focus({preventScroll:true}); }
+}
+function paintReady(){
+  if(!READY) return;
+  var items=readyItems(), miss=items.filter(function(x){return !x.ok;}).length, key=JSON.stringify(items);
+  if(READY.dataset.k===key) return; READY.dataset.k=key;
+  READY.textContent='';
+  READY.append(h('p','readyh','Ready to submit?'));
+  READY.append(h('p','readynote',miss?'You have '+miss+(miss===1?' thing':' things')+' to finish. You can still download your PDF, but your teacher will see what is missing.':'Everything is ready. Download your PDF below.'));
+  var ul=h('ul');
+  items.forEach(function(x){
+    var li=h('li'); li.dataset.s=x.ok?'ok':'todo';
+    li.append(h('span','rmark',x.ok?'✓':'✗'),h('span','rtext',x.t));
+    if(!x.ok){ var b=h('button','btn ghost small','Go to it'); b.type='button'; b.addEventListener('click',function(){goToQuestion(x.go);}); li.append(b); }
+    ul.append(li);
+  });
+  READY.append(ul);
+  READY.dataset.s=miss?'todo':'ok';
+}
+/* look.tracker: the step row under the title */
+function paintSteps(){
+  var nav=$('#steps'); if(!nav) return;
+  [].forEach.call(nav.querySelectorAll('.sst'),function(b){
+    var n=+b.dataset.n, sec=$('#part'+n); if(!sec) return;
+    var sh=partShare(sec), done=GATED?n<S.onPart:sh>=1, now=GATED&&n===S.onPart, open=!sec.hidden;
+    b.dataset.s=done?'done':now?'now':'';
+    b.disabled=!open;
+    b.querySelector('i').textContent=done?'✓':String(n);
+    b.setAttribute('aria-label','Step '+n+': '+b.querySelector('span').textContent+(done?' (done)':now?' (you are here)':open?'':' (opens later)'));
+    if(now) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current');
+    var ln=b.previousElementSibling; if(ln&&ln.classList.contains('sln')){ var pv=$('#part'+(n-1)); ln.querySelector('b').style.width=(pv&&(GATED?n-1<S.onPart:partShare(pv)>=1)?100:0)+'%'; }
+  });
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('#steps .sst'); if(!b||b.disabled) return;
+  var n=+b.dataset.n, sec=$('#part'+n); if(!sec) return;
+  if(sec.classList.contains('closed')){ REOPEN[n]=true; applyGate(); }
+  sec.scrollIntoView({block:'start'}); var hd=sec.querySelector('h2'); if(hd){ hd.tabIndex=-1; hd.focus({preventScroll:true}); }
+});
+
 /* the student's notes, shown beside the writing box (notesBeside: true on a highlight question) */
 function notesPanel(){
   var d=h('details','wpanel notespanel'); d.open=!window.matchMedia||window.matchMedia('(min-width:1080px)').matches; /* folded on a phone, so the writing box is close */
@@ -2899,7 +3035,7 @@ function notesPanel(){
       var ol=h('ol');
       ((S.notes[nid]||{}).rows||[]).forEach(function(r){
         if(!(r.from||'').trim()&&!(r.mine||'').trim()) return;
-        var li=h('li');
+        var li=h('li'); if(/^evidence/i.test(r.use||'')) li.className='npev';
         if((r.from||'').trim()) li.append(h('span','npfrom',r.from.trim()));
         if((r.mine||'').trim()){ li.append(h('span','npmine',r.mine.trim())); }
         if(r.use) li.append(h('span','npuse',r.use));
@@ -3628,6 +3764,11 @@ function buildQuestion(q,s,tile){
   } else if(t==='source'){
     ids=[];
     o.body.append(sourceField(id,q));
+  } else if(t==='checks'){
+    ids=[];
+    if(q.starters&&q.starters.length) o.body.append(startersEl(id,q.starters));
+    o.body.append(checksField(id,q));
+    o.body.append(grammarCheck(function(){return (S.agree[id]||{}).sign;}));
   } else if(t==='pick'){
     ids=[];
     o.body.append(pickField(id,q));
@@ -4205,6 +4346,11 @@ function answerGroups(){
         'Published by: '+((sc0.by||'').trim()||'(not entered)'),'Date: '+((sc0.date||'').trim()||'(not entered)')];
       if(citation(sc0)) it.resp.push('Citation: '+citation(sc0));
       it.tag=srcDone(o.id)?'source complete':(srcDup(o.id)?'same website as an earlier source':'source not finished');
+    } else if(o.kind==='checks'){
+      var ck=S.agree[o.id]||{};
+      it.resp=o.items.map(function(x,i){return ((ck.on||[])[i]?'[x] ':'[ ] ')+plain(x);});
+      it.resp.push(plain(o.ask)+' '+(((ck.sign||'').trim())||'(not answered)'));
+      it.tag=(ck.on||[]).filter(Boolean).length+' of '+o.items.length+' checked';
     } else if(o.kind==='pick'){
       var pk=S.picks[o.id]||{};
       it.resp=[pickText(o.id)||'(not chosen)'];
@@ -4524,6 +4670,8 @@ function decodeState(code){
 function finishEl(){
   var s=h('section','task finish'); s.id='finish';
   s.append(h('h2','display','Finish and submit to Canvas'));
+  /* ready: true in assignment.js: a checklist that checks itself before the PDF */
+  if(A.ready){ READY=h('div','ready'); READY.setAttribute('aria-live','polite'); s.append(READY); }
   var ol=h('ol');
   ['Check that your first and last name are entered in “Start here” at the top of the page.',
    'Select “Download my PDF.” If your browser asks, choose to save the file.',
@@ -4889,6 +5037,7 @@ function render(){
   Object.keys(REC).forEach(function(k){delete REC[k];});
   Object.keys(SRC).forEach(function(k){delete SRC[k];}); Object.keys(NOTES).forEach(function(k){delete NOTES[k];});
   SRCLIST.length=0; NOTELIST.length=0; NPANELS.length=0; PICKS.length=0; PINS.length=0;
+  Object.keys(CHECKS).forEach(function(k){delete CHECKS[k];});
   QN=0;
   if(DLG&&DLG.d.open) DLG.d.close();
   TILES.length=0;

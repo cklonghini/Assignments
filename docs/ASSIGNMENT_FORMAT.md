@@ -25,7 +25,8 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `essential` | no | The goal box at the top of the supported version: `{ question: '...', goals: ['...', ...] }` (see "Supported version") |
 | `courses` | no | For one assignment that every class uses: a list of class names, for example `['Biology A', 'Marine Science A']`. Start here then has a "Which class is this for?" drop-down that students must fill in before they start, and their choice replaces `course` under the title and on the PDF. Example: `assignments/welcome-to-class/` |
 | `support` | no | Set `support: false` when the assignment is the same for every student: `?support=eagle` then changes nothing |
-| `look` | no | A different style for one kind of assignment: `{ style: 'research', accent: 'biology', kicker: 'Research and Report' }`. `research` gives serif headings, a header card with a subject pattern, and tinted part banners, all in the class color: `accent` is `'biology'` (green), `'anatomy'` (red), or `'marine'` (blue). The school branding stays gold. Used by the CER research projects |
+| `look` | no | A different style for one kind of assignment: `{ style: 'research', accent: 'biology', kicker: 'Research and Report', tracker: true }`. `tracker: true` adds a row of step circles under the title, one per part (named by each part's `step`, or its title), that fill in with a check mark as parts are finished; students can select a step to go to it. `research` gives serif headings, a header card with a subject pattern, and tinted part banners, all in the class color: `accent` is `'biology'` (green), `'anatomy'` (red), or `'marine'` (blue). The school branding stays gold. Used by the CER research projects |
+| `ready` | no | `ready: true` puts a "Ready to submit?" checklist at the top of Finish. It checks itself: the chosen question, each source and its notes, each `checks` question, each written answer, and (for a `cer` answer) each highlight color. Missing items have a "Go to it" button. Students can still download the PDF |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
@@ -110,6 +111,8 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 
 `box` (optional, HTML): short instructions students need right away, shown in an always-open green box under `intro`
 (with a Listen button), for example how to split the screen in a research project.
+
+A part can have `step: 'Source 1'`, its short name in the step tracker (`look.tracker`).
 
 Order on the page: `intro`, `box`, `link`, clips, images, `read`, `tableHtml`, questions. To put the reading box further down,
 between questions, give the question it should come right before `readBefore: true` (for example, so students answer
@@ -549,8 +552,8 @@ Students choose ONE item, for example the research question for a project. `othe
 text box for the student's own item. `{ heading: '...' }` lines group the items under a topic. It is done when a
 choice is made (and, for `other`, at least 4 words are typed). The PDF shows the choice, and marks an `other` answer
 "the student’s own question (needs teacher approval)". The chosen item also shows at the top of a `notesBeside` panel.
-`pin: true` keeps the chosen item in a gold "My research question" box at the top of every later part (`pinLabel`
-changes the label).
+`pin: true` keeps the chosen item at the top of every later part (`pinLabel` changes the label "My research question";
+in the `research` look it is a yellow sticky note), and as a small sticky note in the sticky progress bar.
 
 ```js
 { type: 'pick', text: 'Choose ONE question to research...',
@@ -558,6 +561,20 @@ changes the label).
   other: 'My own related question (my teacher must approve it)',
   otherLabel: 'Type your own research question',            // optional
   otherNote: 'Send your question to your teacher, and wait for approval.' }   // optional
+```
+
+### checks: a quick checklist and one sentence (teacher graded)
+
+Students check every item that applies (any number), then write one sentence. It is done when at least one box is
+checked and the sentence has `minWords` words (default 6). It has Speak my answer and Check my writing. The PDF lists
+each item with [x] or [ ] and the sentence. `ready` is its line in the "Ready to submit?" list. Example: "Can you trust
+Source 1?" in `assignments/cer-common/cer-project.js`.
+
+```js
+{ type: 'checks', text: 'Can you trust Source 1? Check every clue you found on the website.',
+  items: ['It is published by a government agency (.gov)...', 'It tells who wrote or published it'],
+  ask: 'In one sentence, why can you trust this website?', placeholder: 'I can trust this website because …',
+  ready: 'Source 1: can you trust it?' }
 ```
 
 ### source and notes: research on websites the student chooses (teacher graded)
@@ -578,11 +595,14 @@ For a research project, such as the end-of-learning-period CER (example: `assign
   on the page where students can paste** (copy and paste stay off everywhere else). Once the link looks like a real web
   address, an "Open this website" button opens it in a new tab, and the card shows a citation with the date the
   student added it. A link that repeats an earlier source is not accepted. It is done when the link, title, and
-  publisher are in.
-- A **notes** box is a list of note cards. Each card has "From the website" (a fact, number, or short quote the
-  student types) and "My annotation" (what it means, in their own words), each with Speak my answer, and an optional
-  "How will I use this note?" menu. Students can add and remove cards. A card is finished when "From the website" has
-  4 or more words and "My annotation" has 5 or more; the box is done when `min` cards are finished.
+  publisher are in. Then, when the student moves on, it folds into a one-line slip (publisher: title, with Open website
+  and Edit buttons).
+- A **notes** box is a list of Cornell-style note cards: "From the website" (a fact, number, or short quote the student
+  types) on the left and "My annotation" (what it means, in their own words) on the right, stacked on a phone, each
+  with Speak my answer. Under them, optional tags answer "How will I use this note?" (`uses`; the first one is
+  evidence and turns yellow, and evidence notes show in yellow in the `notesBeside` panel). Students can add and remove
+  cards. A card is finished when "From the website" has 4 or more words and "My annotation" has 5 or more; the box is
+  done when `min` cards are finished.
 - `site: true` on a `notes` question shows the source's website inside the page, beside the notes, so students read and
   take notes in one tab. Some websites do not allow being shown inside another page (the box stays blank or says it
   refused to connect) and the page cannot detect that, so an "Open in a new tab" button and a short note are always

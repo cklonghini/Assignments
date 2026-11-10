@@ -348,6 +348,9 @@ for (const dir of dirs) {
               if (it.highlight && it.highlight !== true && !['claim', 'evidence', 'expand'].includes(it.highlight)) E(w + ' idea ' + (i + 1) + ': highlight must be true, or claim, evidence or expand');
             });
             break;
+          case 'checks':
+            if (!(q.items || []).length) E(w + ' needs items (the clues to check)');
+            break;
           case 'pick':
             if (!(q.options || []).some(o => typeof o === 'string')) E(w + ' needs options (the questions to choose from)');
             if ((q.options || []).some(o => typeof o !== 'string' && !(o && o.heading))) E(w + ': each option must be text or { heading: \'...\' }');
