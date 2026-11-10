@@ -18,6 +18,7 @@ window.CER_PROJECT = function (o) {
     storageKey: o.storageKey,
     short: o.short,
     look: { style: 'research', accent: o.accent, kicker: o.kicker || 'Research and Report', tracker: true },
+    pdfNumbers: false,   // no question numbers in the PDF (it is in its own order: the CER first)
     ready: true,   // the "Ready to submit?" checklist before the PDF
     icon: '<svg viewBox="0 0 64 72" aria-hidden="true" focusable="false"><rect x="10" y="8" width="44" height="56" rx="6" fill="var(--primary)"/><rect x="18" y="20" width="28" height="5" rx="2" fill="#00e5ff"/><rect x="18" y="32" width="28" height="5" rx="2" fill="#ffe600"/><rect x="18" y="44" width="20" height="5" rx="2" fill="#39e75f"/></svg>',
     startNote: 'You will open your websites in their own window and split your screen, so you can see the website and this page side by side. Keep this page open the whole time.',

@@ -27,6 +27,7 @@ All other text is plain text. Use real curly quotes if you like; the file is sav
 | `support` | no | Set `support: false` when the assignment is the same for every student: `?support=eagle` then changes nothing |
 | `look` | no | A different style for one kind of assignment: `{ style: 'research', accent: 'biology', kicker: 'Research and Report', tracker: true }`. `tracker: true` adds a row of step circles under the title, one per part (named by each part's `step`, or its title), that fill in with a check mark as parts are finished; students can select a step to go to it. `research` gives serif headings, a header card with a subject pattern, and tinted part banners, all in the class color: `accent` is `'biology'` (green), `'anatomy'` (red), or `'marine'` (blue). The school branding stays gold. Used by the CER research projects |
 | `ready` | no | `ready: true` puts a "Ready to submit?" checklist at the top of Finish. It checks itself: the chosen question, each source and its notes, each `checks` question, each written answer, and (for a `cer` answer) each highlight color. Missing items have a "Go to it" button. Students can still download the PDF |
+| `pdfNumbers` | no | `pdfNumbers: false` leaves the question numbers out of the PDF and the text copy (the page keeps them). The research projects use it |
 | `gated` | no | Parts open one at a time (see "One part at a time" below). On by default. Set `gated: false` to show every part at once |
 
 ## video
@@ -606,7 +607,8 @@ For a research project, such as the end-of-learning-period CER (example: `assign
   on the page where students can paste** (copy and paste stay off everywhere else). Once the link looks like a real web
   address, an "Open this website" button opens it in a new tab, and the card shows a citation with the date the
   student added it. A link that repeats an earlier source is not accepted. It is done when the link, title, and
-  publisher are in. Then, when the student moves on, it folds into a one-line slip (publisher: title, with Open website
+  publisher are in. When all four boxes are filled (and the student presses Enter, leaves the last box, or stops typing
+  for 2.5 seconds), or when the student moves on after the first three, it folds into a one-line slip (publisher: title, with Open website
   and Edit buttons).
 - A **notes** box is a list of Cornell-style note cards: "From the website" (a fact, number, or short quote the student
   types) on the left and "My annotation" (what it means, in their own words) on the right, stacked on a phone, each

@@ -2751,7 +2751,7 @@ function sourceField(id,q){
   var date=field('date','Date it was published or last updated (if you can find it)','For example: January 20, 2024, or “no date”');
   var cite=h('p','srccite'), msg=h('p','msg'); msg.setAttribute('aria-live','polite');
   form.append(cite,msg);
-  sledit.addEventListener('click',function(){ folded=false; paint(); url.focus(); });
+  sledit.addEventListener('click',function(){ clearTimeout(foldT); folded=false; paint(); url.focus(); });
   wrap.addEventListener('focusout',function(){ setTimeout(function(){ if(!wrap.contains(document.activeElement)&&srcDone(id)&&!folded){ folded=true; paint(); } },0); });
   function paint(){
     var ok=urlOk(st.url), dup=ok&&srcDup(id);
@@ -2773,13 +2773,29 @@ function sourceField(id,q){
     else if(dup){ msg.dataset.s='bad'; msg.textContent='This is the same website as an earlier source. Use a different website.'; }
     else msg.textContent='Now type the title and who published it.';
   }
+  /* Once all four boxes are filled in, the card folds into its slip: when the student presses Enter, leaves the last
+     box, or stops typing for 2.5 seconds. Then the cursor goes to the first empty note, so they can move on. */
+  var foldT=0;
+  function allFour(){ return srcDone(id)&&words(st.date)>=1; }
+  function foldNow(){
+    clearTimeout(foldT);
+    if(folded||!allFour()) return;
+    folded=true; paint();
+    var qq=wrap.closest('.q'), nx=qq&&qq.nextElementSibling;
+    while(nx&&!nx.classList.contains('q')) nx=nx.nextElementSibling;
+    var t=nx&&[].filter.call(nx.querySelectorAll('textarea'),function(x){return !x.value.trim();})[0];
+    if(t){ t.focus({preventScroll:true}); t.scrollIntoView({block:'nearest'}); } else sledit.focus({preventScroll:true});
+  }
   [['url',url],['title',title],['by',by],['date',date]].forEach(function(p){
     p[1].addEventListener('input',function(){
       st[p[0]]=p[1].value;
       if(p[0]==='url'){ st.at=urlOk(st.url)?(st.at||new Date().toISOString()):''; }
       srcChanged(); paint(); commit();
+      clearTimeout(foldT); if(allFour()) foldT=setTimeout(foldNow,2500);
     });
+    p[1].addEventListener('keydown',function(e){ if(e.key==='Enter'&&allFour()){ e.preventDefault(); foldNow(); } });
   });
+  date.addEventListener('blur',function(){ setTimeout(function(){ if(allFour()&&!wrap.contains(document.activeElement)) foldNow(); },0); });
   paint();
   return wrap;
 }
@@ -4498,7 +4514,7 @@ function buildSummary(){
   if(anyCer) L.push('(In claim-evidence answers, [CLAIM: …] was highlighted blue, [EVIDENCE: …] yellow, and [REASONING/EXPAND: …] green.)');
   L.push('');
   p.groups.forEach(function(g){
-    L.push((g.num!==''?g.num+'. ':'')+plain(g.text));
+    L.push((g.num!==''&&A.pdfNumbers!==false?g.num+'. ':'')+plain(g.text));
     if(g.note) L.push('   ['+g.note+']');
     g.items.forEach(function(it){
       var pre=it.sub?'   '+plain(it.sub)+': ':'   ';
@@ -4707,7 +4723,7 @@ async function buildPdf(){
   p.groups.forEach(function(g){
     y+=6;
     room(40);
-    mixed((g.num!==''?g.num+'. ':'')+g.text,10.5,FB,FBI,0);
+    mixed((g.num!==''&&A.pdfNumbers!==false?g.num+'. ':'')+g.text,10.5,FB,FBI,0);
     if(g.note) text(g.note,9,F,0,MUTED);
     g.items.forEach(function(it){
       y+=2;
