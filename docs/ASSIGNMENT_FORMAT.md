@@ -648,6 +648,8 @@ For a research project, such as the end-of-learning-period CER (example: `assign
 - `noMinNote: true` on a `highlight` question leaves out the "Write at least a couple of sentences." line under the box
   (the question already says how much to write). In the research look, the "How to answer this question" and
   sentence-starters folds are smaller and quieter.
+  The "Want a quick check before you move on?" note about "Check my ideas" shows as a tip on that button (hover,
+  keyboard focus, or a tap) instead of a line above it.
 - `notesBeside: true` on a `highlight` question puts every note from every notes box in a "My research notes" panel
   next to the writing box (on a wide screen the question widens and the panel stays in view while the student
   scrolls; on a phone the panel sits folded above the box). Students write their CER from their notes. In the panel,

@@ -3769,13 +3769,24 @@ function grammarCheck(getText){
    separately, so writing two sentences never counts as a science idea. */
 function sentenceCount(t){return String(t||'').split(/[.!?]+/).filter(function(x){return words(x)>=3;}).length;}
 function sentencesOf(t){return String(t||'').split(/[.!?\n]+/).filter(function(x){return x.trim();});}
+var IDEATIP=0;
 function ideaCheck(getText,getHl,items){ /* getHl returns the answer's highlighted pieces (segs) */
   var wrap=h('div','ideas');
-  wrap.append(h('p','inote','Want a quick check before you move on? This looks for the key science ideas in your answer and checks your writing steps. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.'));
+  var about='Want a quick check before you move on? This looks for the key science ideas in your answer and checks your writing steps. It is not your grade, and it can miss good ideas written in different words. Your teacher reads your full response.';
   var btn=h('button','btn','Check my ideas'); btn.type='button';
   var note=h('p','msg'); note.setAttribute('aria-live','polite');
   var groups=h('div','igroups');
-  wrap.append(btn,note,groups);
+  /* the research projects show what the check is as a tip on the button (hover, keyboard focus, or a tap);
+     everywhere else it is a line above the button */
+  if(document.documentElement.dataset.look==='research'){
+    var tip=h('span','tip',about); tip.id='tip-ideas-'+(++IDEATIP); tip.setAttribute('role','tooltip'); btn.setAttribute('aria-describedby',tip.id);
+    var tw=h('span','tipwrap'); tw.append(btn,tip);
+    btn.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='mouse') return;
+      tw.classList.add('tipon'); clearTimeout(tw._t); tw._t=setTimeout(function(){tw.classList.remove('tipon');},4500);
+    });
+    wrap.append(tw,note,groups);
+  } else { wrap.append(h('p','inote',about),btn,note,groups); }
   var sci=items.filter(function(it){return !it.writing;}), wr=items.filter(function(it){return it.writing;});
   function group(title,list,t,hl){
     var found=0, ul=h('ul');
