@@ -14,8 +14,8 @@
 window.CER_PROJECT = function (o) {
   /* the reminder at the top of each notes box: the notes are the body of the paragraph (evidence yellow, reasoning green) */
   var remind = '<p><b>Reminder: you are building your paragraph right now.</b></p>'
-    + '<p>What you take <span class="hly">from the website</span> is your <b>evidence</b>. What you write in '
-    + '<span class="hlg">my annotation</span> (your thoughts about that evidence) is your <b>reasoning</b>. '
+    + '<p>What you take <span class="hly">from the website is your <b>evidence</b></span>. What you write in '
+    + '<span class="hlg">my annotation (your thoughts about that evidence) is your <b>reasoning</b></span>. '
     + 'Together, your evidence and your thinking become the body sentences of your CER paragraph.</p>';
   /* Part 1's practice CER and evidence example. Give each learning period its own (sample: and evidence: in that
      period's assignment.js), so students practice on a new topic every time. These are the LP3 ones. */

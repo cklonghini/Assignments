@@ -878,9 +878,10 @@ summary.wphead{cursor:pointer}
 .noteremind{margin:0 0 12px;padding:10px 14px;border:2px solid var(--gold);border-left:8px solid var(--gold);border-radius:10px;background:var(--pin-bg)}
 .noteremind p{margin:0 0 4px}
 .noteremind p:last-child{margin-bottom:0}
-.noteremind .hly,.noteremind .hlg{color:#16213a;border-radius:3px;padding:0 5px;font-weight:700}
-.noteremind .hly{background:#ffff00}
-.noteremind .hlg{background:#00ff00}
+/* underlined (not highlighted) in the CER colors, like the notes beside the writing box */
+.noteremind .hly,.noteremind .hlg{-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 1px}
+.noteremind .hly{background:linear-gradient(transparent 62%,#ffff00 62%)}
+.noteremind .hlg{background:linear-gradient(transparent 62%,#00ff00 62%)}
 @media (min-width:700px){
   .corn{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
   .corn>.ncol:first-child{padding-right:14px}
