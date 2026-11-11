@@ -247,6 +247,7 @@ window.CER_PROJECT = function (o) {
             pdfFirst: 2,
             cer: true,
             notesBeside: true,
+            noHow: true,          // the "How to plan and write your CER" reading already says how
             mapTips: {   // the supported version's thinking map: what each box is for
               claim: 'This is your answer to the question you researched.',
               evidence: 'This is the information you found on your websites when you researched your topic.',

@@ -685,6 +685,10 @@ details.fold[open]>summary{border-bottom:1px solid var(--learn-line)}
 details.fold>.learn{margin:0;border:0;border-radius:0 0 8px 8px;max-width:none}
 details.howfold{background:var(--surface);border-color:var(--line);border-left-width:2px}
 details.howfold[open]>summary{border-bottom-color:var(--line)}
+/* research look: the how-to and sentence-starter folds are quieter (smaller, plain, thin border) */
+:root[data-look="research"] details.howfold,:root[data-look="research"] details.starters{border-width:1px;border-left-width:1px;border-radius:8px;background:transparent}
+:root[data-look="research"] details.howfold>summary,:root[data-look="research"] details.starters>summary{font-size:.9rem;font-weight:600;color:var(--muted);padding:6px 12px}
+:root[data-look="research"] details.howfold[open]>summary,:root[data-look="research"] details.starters[open]>summary{color:var(--ink)}
 .howbox{padding:10px 16px 12px}
 .howbox p{margin:0 0 8px}
 .howbox p:last-child{margin:0}

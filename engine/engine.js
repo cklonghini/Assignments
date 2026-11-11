@@ -4098,7 +4098,9 @@ function buildQuestion(q,s,tile){
       h('p',null,'Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
       h('p',null,'Once you have finished, go back and highlight those transition words in yellow. Select the words, then press the yellow button.')
     ]).forEach(function(e){howin.append(e);});
-    var intro=[how];
+    /* noHow: true leaves out "How to answer this question" (the part's reading already says how). The supported
+       version's thinking map keeps it, since it explains how the map works. */
+    var intro=q.noHow&&!R[id].map?[]:[how];
     intro.forEach(function(e){o.body.append(e);});
     o.body.append(
       q.starters&&q.starters.length?startersEl(id,q.starters):'',

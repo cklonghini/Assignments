@@ -645,6 +645,9 @@ For a research project, such as the end-of-learning-period CER (example: `assign
   refused to connect) and the page cannot detect that, so an "Open in a new tab" button and a short note are always
   there. The frame is sandboxed: the website cannot take over the tab. A link that starts with http:// cannot show
   and says so.
+- `noHow: true` on a `highlight` question leaves out its "How to answer this question" fold (use it when the part's
+  reading already says how; the supported version's thinking map keeps it). In the research look, that fold and the
+  sentence-starters fold are smaller and quieter.
 - `notesBeside: true` on a `highlight` question puts every note from every notes box in a "My research notes" panel
   next to the writing box (on a wide screen the question widens and the panel stays in view while the student
   scrolls; on a phone the panel sits folded above the box). Students write their CER from their notes. In the panel,
