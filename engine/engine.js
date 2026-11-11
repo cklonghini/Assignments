@@ -3288,7 +3288,7 @@ function richField(id){
     var plain=segsPlain(st.segs), n=words(plain), hl=segsHlWords(st.segs), enough=plain.trim().length>=c.min;
     var all=c.cer?(segsHlWords(st.segs,'b')&&segsHlWords(st.segs,'y')&&segsHlWords(st.segs,'g')):hl;
     cnt.textContent=n+(n===1?' word':' words')+(c.map&&st.view==='map'?'':', '+hl+' highlighted');
-    msg.textContent=!enough?'Write at least a couple of sentences.'
+    msg.textContent=!enough?(c.noMinNote?'':'Write at least a couple of sentences.')
       :c.map&&st.view==='map'?'Saved. When every box has a complete sentence, press “Turn my thinking map into a paragraph.”'
       :all?'Saved. Your teacher grades this one.'
       :c.cer?'Saved. Remember to highlight your claim in blue, your evidence in yellow, and your reasoning (where you expand on your thoughts) in green.'
@@ -4076,7 +4076,7 @@ function buildQuestion(q,s,tile){
     if(q.ideas&&q.ideas.length) o.body.append(ideaCheck(function(){return (S.written[id]||{}).text;},null,ideasFrom(q.ideas)));
   } else if(t==='highlight'){
     ids=[];
-    R[id]={min:q.min||40,cer:!!q.cer,map:!!(SUPPORT&&q.cer&&q.map!==false)};
+    R[id]={min:q.min||40,cer:!!q.cer,map:!!(SUPPORT&&q.cer&&q.map!==false),noMinNote:!!q.noMinNote};
     /* what each thinking-map box is for, shown when the student points at (or taps) its label; mapTips changes them */
     if(R[id].map) R[id].tips=Object.assign({
       claim:'Your claim is your answer to the question.',
@@ -4098,9 +4098,7 @@ function buildQuestion(q,s,tile){
       h('p',null,'Make sure to provide evidence in your response, along with transition words that bring attention to that evidence. '+(q.examples||'Examples: “For example,” “According to the video,” “This shows that,” “One piece of evidence is,” or “Because.”')),
       h('p',null,'Once you have finished, go back and highlight those transition words in yellow. Select the words, then press the yellow button.')
     ]).forEach(function(e){howin.append(e);});
-    /* noHow: true leaves out "How to answer this question" (the part's reading already says how). The supported
-       version's thinking map keeps it, since it explains how the map works. */
-    var intro=q.noHow&&!R[id].map?[]:[how];
+    var intro=[how];
     intro.forEach(function(e){o.body.append(e);});
     o.body.append(
       q.starters&&q.starters.length?startersEl(id,q.starters):'',
