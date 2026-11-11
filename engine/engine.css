@@ -747,6 +747,11 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .note[data-s="ok"]{border-color:var(--ok)}
 .note[data-s="ok"] .notetop b::after{content:" \2713";color:var(--ok)}
 .notetop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.notex{border:0;background:none;color:var(--muted);font-size:1.25rem;line-height:1;width:28px;height:28px;border-radius:50%;cursor:pointer;padding:0;opacity:.6}
+.notex:hover,.notex:focus-visible{opacity:1;background:var(--line)}
+.noteask{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 8px;background:var(--bg,#fff)}
+.noteask p{margin:0 0 8px;font-size:.95rem}
+.noteask .row{gap:8px}
 .note>label{display:block;font-weight:700;font-size:.95rem;margin:8px 0 2px}
 .note textarea{min-height:64px}
 .notesbox>.row{margin-top:12px}

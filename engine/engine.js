@@ -2722,7 +2722,9 @@ function citation(st){
 /* a note is finished when both boxes have a full thought and the student chose how they will use it (a tag) */
 function noteDone(r){ return !!r&&words(r.from)>=4&&words(r.mine)>=5&&!!(r.use||'').trim(); }
 function notesDoneCount(id){ var st=S.notes[id]; return st?(st.rows||[]).filter(noteDone).length:0; }
-function notesDone(id){ return notesDoneCount(id)>=NOTES[id].min; }
+/* students may remove note boxes below min (down to 1) when a website has only one or two useful facts; st.cut keeps that */
+function notesNeed(id){ var st=S.notes[id], m=NOTES[id].min; return st&&st.cut?Math.max(1,Math.min(m,(st.rows||[]).length)):m; }
+function notesDone(id){ return notesDoneCount(id)>=notesNeed(id); }
 function srcChanged(){ NOTESVER++; }
 
 function sourceField(id,q){
@@ -2812,7 +2814,8 @@ function notesField(id,q){
   ORDER.push({kind:'notes',id:id,q:CURQ,sub:''});
   var st=S.notes[id]||(S.notes[id]={rows:[]});
   if(!Array.isArray(st.rows)) st.rows=[];
-  while(st.rows.length<min) st.rows.push({from:'',mine:'',use:''});
+  if(!st.cut) while(st.rows.length<min) st.rows.push({from:'',mine:'',use:''});
+  if(!st.rows.length) st.rows.push({from:'',mine:'',use:''});
   var wrap=h('div','ctl notesbox'); mark(wrap); wrap.dataset.s='idle';
   /* remind: an HTML note at the top of the notes box (the research projects: notes build the body of the paragraph) */
   if(q.remind){ var rm=h('div','noteremind'); rm.innerHTML=q.remind; wrap.append(rm); }
@@ -2833,12 +2836,19 @@ function notesField(id,q){
   function row(r,i){
     var li=h('li','note'); li.dataset.s=noteDone(r)?'ok':'';
     var top=h('div','notetop'); top.append(h('b',null,'Note '+(i+1)));
-    if(st.rows.length>min){
-      var del=h('button','btn ghost small','Remove this note'); del.type='button';
-      del.addEventListener('click',function(){ st.rows.splice(i,1); srcChanged(); paint(); commit(); add.focus(); });
-      top.append(del);
-    }
-    li.append(top);
+    if(st.rows.length>1){
+      /* a small X; below min it asks first, since the student is choosing to keep fewer notes on this website */
+      var del=h('button','notex','\u00d7'); del.type='button'; del.title='Remove this note'; del.setAttribute('aria-label','Remove note '+(i+1));
+      var ask=h('div','noteask'); ask.hidden=true; ask.setAttribute('role','alertdialog'); ask.setAttribute('aria-label','Remove this note?');
+      var aq=h('p',null,'Are you sure you don’t need any more pieces of evidence from this website?');
+      var yes=h('button','btn ghost small','Yes, remove this note'), no=h('button','btn small','Keep it'); yes.type=no.type='button';
+      var ab=h('div','row'); ab.append(no,yes); ask.append(aq,ab);
+      function drop(){ if(st.rows.length<=min) st.cut=true; st.rows.splice(i,1); srcChanged(); paint(); commit(); add.focus(); }
+      del.addEventListener('click',function(){ if(st.rows.length>min){ drop(); return; } ask.hidden=false; del.hidden=true; no.focus(); });
+      no.addEventListener('click',function(){ ask.hidden=true; del.hidden=false; del.focus(); });
+      yes.addEventListener('click',drop);
+      top.append(del); li.append(top,ask);
+    } else li.append(top);
     /* Cornell-style: what the website says on the left, the student's annotation on the right (stacked on a phone) */
     var corn=h('div','corn'); li.append(corn);
     function box(key,lab,help,ph){
@@ -2870,11 +2880,11 @@ function notesField(id,q){
     return li;
   }
   function sync(){
-    var n=notesDoneCount(id), d=n>=min;
+    var need=notesNeed(id), n=notesDoneCount(id), d=n>=need;
     wrap.dataset.s=d?'ok':'idle';
     add.hidden=st.rows.length>=max;
     msg.dataset.s=d?'ok':''; if(!d) msg.removeAttribute('data-s');
-    msg.textContent=(d?'Saved. ':'')+n+' of '+min+' notes finished'+(d?'. You can add more if you find more good information.':'. A note is finished when both boxes have a full thought and you choose how you will use it.');
+    msg.textContent=(d?'Saved. ':'')+n+' of '+need+' note'+(need===1?'':'s')+' finished'+(d?'. You can add more if you find more good information.':'. A note is finished when both boxes have a full thought and you choose how you will use it.');
   }
   function paint(){ list.textContent=''; st.rows.forEach(function(r,i){ list.append(row(r,i)); }); paintHead(); sync(); }
   add.addEventListener('click',function(){
@@ -3068,8 +3078,8 @@ function readyItems(){
   SRCLIST.forEach(function(sid){
     out.push({ok:srcDone(sid),t:srcLabel(sid)+': website link, title, and who published it',go:qn(sid)});
     NOTELIST.filter(function(n){return NOTES[n].src===sid;}).forEach(function(n){
-      var k=notesDoneCount(n), m=NOTES[n].min;
-      out.push({ok:k>=m,t:srcLabel(sid)+': '+m+' finished notes'+(k<m?' ('+k+' so far)':''),go:qn(n)});
+      var k=notesDoneCount(n), m=notesNeed(n);
+      out.push({ok:k>=m,t:srcLabel(sid)+': '+m+' finished note'+(m===1?'':'s')+(k<m?' ('+k+' so far)':''),go:qn(n)});
     });
   });
   Object.keys(CHECKS).forEach(function(id){ out.push({ok:checksDone(id),t:CHECKS[id].ready||('Question '+qn(id)),go:qn(id)}); });
@@ -4757,7 +4767,7 @@ function answerGroups(){
         it.resp.push('   My annotation: '+((r.mine||'').trim()||'(blank)'));
       });
       if(!it.resp.length) it.resp=['(no notes)'];
-      it.tag=notesDoneCount(o.id)+' finished notes ('+NOTES[o.id].min+' needed)';
+      it.tag=notesDoneCount(o.id)+' finished notes ('+notesNeed(o.id)+' needed'+(notesNeed(o.id)<NOTES[o.id].min?'; the student removed '+(NOTES[o.id].min-notesNeed(o.id))+' note box'+(NOTES[o.id].min-notesNeed(o.id)===1?'':'es'):'')+')';
     } else if(o.kind==='photo'){
       var ph=S.photos[o.id]||{}, cap=(ph.cap||'').trim();
       it.photo=ph.has?o.id:null; it.cap=!!cap;
@@ -4792,7 +4802,7 @@ function summaryParts(){
   }
   var res=videoRows().concat(board,[
     ['Auto-checked items',sc.a+' / '+TOTAL_A+' correct']
-  ].concat(TOTAL_W?[['Written responses',sc.w+' / '+TOTAL_W+' completed']]:[]).concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]).concat(SRCLIST.length?[['Website sources',SRCLIST.filter(srcDone).length+' / '+SRCLIST.length+' complete']]:[]).concat(NOTELIST.length?[['Research notes',NOTELIST.map(function(k){return srcLabel(NOTES[k].src)+': '+notesDoneCount(k)+' finished ('+NOTES[k].min+' needed)';}).join('; ')]]:[]).concat(Object.keys(REC).length?[['Video recordings',Object.keys(REC).filter(recDone).length+' / '+Object.keys(REC).length+' recorded with a transcript']]:[]));
+  ].concat(TOTAL_W?[['Written responses',sc.w+' / '+TOTAL_W+' completed']]:[]).concat(TOTAL_P?[['Photos added',sc.p+' / '+TOTAL_P]]:[]).concat(SRCLIST.length?[['Website sources',SRCLIST.filter(srcDone).length+' / '+SRCLIST.length+' complete']]:[]).concat(NOTELIST.length?[['Research notes',NOTELIST.map(function(k){return srcLabel(NOTES[k].src)+': '+notesDoneCount(k)+' finished ('+notesNeed(k)+' needed)';}).join('; ')]]:[]).concat(Object.keys(REC).length?[['Video recordings',Object.keys(REC).filter(recDone).length+' / '+Object.keys(REC).length+' recorded with a transcript']]:[]));
   return {date:fmtDate(new Date()),res:res,groups:answerGroups()};
 }
 function buildSummary(){
