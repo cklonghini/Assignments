@@ -17,6 +17,11 @@ window.CER_PROJECT = function (o) {
     + '<p>What you take <span class="hly">from the website is your <b>evidence</b></span>. What you write in '
     + '<span class="hlg">my annotation (your thoughts about that evidence) is your <b>reasoning</b></span>. '
     + 'Together, your evidence and your thinking become the body sentences of your CER paragraph.</p>';
+  /* the teacher's article reading coach (SchoolAI), offered in both Source parts. readingCoach: false in a period's
+     assignment.js hides it; readingCoach: 'https://...' uses a different link. */
+  var coachUrl = o.readingCoach === false ? '' : (o.readingCoach || 'https://student.schoolai.com/join?code=45BL-F2WC');
+  var coach = coachUrl ? [{ url: coachUrl, text: 'Open the article reading coach',
+    note: 'Need help reading your article? Open the article reading coach, paste your article there to get support, and then come back to this page to keep going.' }] : [];
   /* Part 1's practice CER and evidence example. Give each learning period its own (sample: and evidence: in that
      period's assignment.js), so students practice on a new topic every time. These are the LP3 ones. */
   var smp = o.sample || {
@@ -138,6 +143,7 @@ window.CER_PROJECT = function (o) {
         title: 'Source 1: Research and take notes',
         step: 'Source 1',
         intro: 'Find your first reliable website, and take notes on it as you read.',
+        links: coach,
         box: '<p><b>Before you start</b></p>'
           + '<ol><li><b>Do your research.</b> Find one reliable website that helps answer your research question.</li>'
           + '<li><b>Split your screen</b> so you can see your website and this page side by side. Then take your notes as you read.</li></ol>'
@@ -188,6 +194,7 @@ window.CER_PROJECT = function (o) {
         title: 'Source 2: Research and take notes',
         step: 'Source 2',
         intro: 'Find a second reliable website, from a different organization than Source 1. A second source lets you check your facts and find new evidence. Split your screen again, the same way you did for Source 1.',
+        links: coach,
         read: '<p><b>Choosing your second website</b></p>'
           + '<ul><li>Use a different website than Source 1, from a different organization if you can.</li>'
           + '<li>Look for facts that agree with Source 1, and for new evidence Source 1 did not have.</li>'
