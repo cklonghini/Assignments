@@ -179,7 +179,7 @@ differ), so a student should stay on one link. With nothing left out, both links
 ## Copy and paste are off
 
 So students do their own thinking, the page blocks copying (questions, readings, answers) and pasting or dragging text
-into any box, except the website-link box of a `source` question. A short message says copying or pasting is turned off and that students can reach out to their teacher if they need help. The Finish section still copies (the "Copy my
+into any box, except the website-link box of a `source` question and the "From the website" box of a `notes` card. A short message says copying or pasting is turned off and that students can reach out to their teacher if they need help. The Finish section still copies (the "Copy my
 answers as text" fallback and the backup code), and the restore box still takes a pasted code. Spell-check
 suggestions still work. This stops the easy shortcut, not a determined student (anyone can retype or take a picture
 of the screen). It can also block assistive tools that type by pasting; set `copyPaste: true` for an assignment if a
@@ -619,23 +619,27 @@ For a research project, such as the end-of-learning-period CER (example: `assign
   text: 'Paste the link to your first website. Then type its title, who published it, and the date.' },
 { type: 'notes', source: 1, min: 4,          // source: which source question (1 = the first); min: notes needed (default 4)
   max: 12,                                   // optional: most notes allowed (default 12)
-  uses: ['Evidence for my claim', '...'],    // optional: the "How will I use this note?" menu
+  uses: ['Evidence for my claim', '...'],    // optional: the "How will I use this note?" tags
+  remind: '<p>...</p>',                      // optional: a reminder box (HTML) at the top of the notes
   text: 'Take at least 4 notes on Source 1...' }
 ```
 
-- A **source** card has a website-link box, the title, who published it, and the date. **The link box is the only place
-  on the page where students can paste** (copy and paste stay off everywhere else). Once the link looks like a real web
+- A **source** card has a website-link box, the title, who published it, and the date. **The link box (and a note's "From the website"
+  box) are the only places on the page where students can paste** (copy and paste stay off everywhere else). Once the link looks like a real web
   address, an "Open this website" button opens it in a new tab, and the card shows a citation with the date the
   student added it. A link that repeats an earlier source is not accepted. It is done when the link, title, and
   publisher are in. When all four boxes are filled (and the student presses Enter, leaves the last box, or stops typing
   for 2.5 seconds), or when the student moves on after the first three, it folds into a one-line slip (publisher: title, with Open website
   and Edit buttons).
-- A **notes** box is a list of Cornell-style note cards: "From the website" (a fact, number, or short quote the student
-  types) on the left and "My annotation" (what it means, in their own words) on the right, stacked on a phone, each
-  with Speak my answer. Under them, optional tags answer "How will I use this note?" (`uses`; the first one is
-  evidence and turns yellow, and evidence notes show in yellow in the `notesBeside` panel). Students can add and remove
-  cards. A card is finished when "From the website" has 4 or more words and "My annotation" has 5 or more; the box is
-  done when `min` cards are finished.
+- A **notes** box is a list of Cornell-style note cards: "From the website (evidence)" (a fact, number, or short quote
+  the student types or pastes; outlined in the CER evidence yellow) on the left and "My annotation (reasoning)" (what it
+  means, in their own words; pasting is off; outlined in the reasoning green) on the right, stacked on a phone, each
+  with Speak my answer. Under them, required tags answer "How will I use this note? Choose one." (`uses`; the first one
+  is evidence and turns yellow, and evidence notes get a yellow edge in the `notesBeside` panel). Students can add and
+  remove cards. A card is finished when "From the website" has 4 or more words, "My annotation" has 5 or more, and a
+  tag is chosen; the box is done when `min` cards are finished. `remind` puts a gold reminder box at the top (the
+  research projects use it to say the evidence and annotations become the body sentences of the paragraph; the
+  classes `hly` and `hlg` mark words in yellow and green).
 - `site: true` on a `notes` question shows the source's website inside the page, beside the notes, so students read and
   take notes in one tab. Some websites do not allow being shown inside another page (the box stays blank or says it
   refused to connect) and the page cannot detect that, so an "Open in a new tab" button and a short note are always
@@ -643,7 +647,8 @@ For a research project, such as the end-of-learning-period CER (example: `assign
   and says so.
 - `notesBeside: true` on a `highlight` question puts every note from every notes box in a "My research notes" panel
   next to the writing box (on a wide screen the question widens and the panel stays in view while the student
-  scrolls; on a phone the panel sits folded above the box). Students write their CER from their notes.
+  scrolls; on a phone the panel sits folded above the box). Students write their CER from their notes. In the panel,
+  each note's website words are underlined in evidence yellow and the annotation in reasoning green, with a key.
 - `noOpen: true` on `source` and `notes` questions leaves out the "Open this website" buttons (students already have
   the website open beside the page).
 - The PDF and the text fallback list each source (link, title, publisher, date, citation) and every note, and the

@@ -2697,7 +2697,7 @@ function agreeField(id,q){
 /* Research: website sources and notes (for a research project, such  */
 /* as a claim-evidence-reasoning writing space)                        */
 /* ------------------------------------------------------------------ */
-/* A source card holds one website: its link (the only box on the page where students may paste), its title, who
+/* A source card holds one website: its link (students may paste here and in a note's "From the website" box), its title, who
    published it, and its date. A notes box holds the student's notes on one source: a fact, number, or short quote
    they type from the website, and their annotation (what it means, in their own words). A highlight question with
    notesBeside: true shows every note in a panel next to the writing box, so students draft from their notes. */
@@ -2719,7 +2719,8 @@ function citation(st){
   return (t?'“'+t.replace(/[.\s]+$/,'')+(/[?!]$/.test(t)?'':'.')+'” ':'')+(b?b.replace(/[.\s]+$/,'')+(d?', '+d.replace(/[.\s]+$/,''):'')+'. ':(d?d.replace(/[.\s]+$/,'')+'. ':''))
     +st.url.trim()+(st.at?' Accessed '+new Date(st.at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'.':'');
 }
-function noteDone(r){ return !!r&&words(r.from)>=4&&words(r.mine)>=5; }
+/* a note is finished when both boxes have a full thought and the student chose how they will use it (a tag) */
+function noteDone(r){ return !!r&&words(r.from)>=4&&words(r.mine)>=5&&!!(r.use||'').trim(); }
 function notesDoneCount(id){ var st=S.notes[id]; return st?(st.rows||[]).filter(noteDone).length:0; }
 function notesDone(id){ return notesDoneCount(id)>=NOTES[id].min; }
 function srcChanged(){ NOTESVER++; }
@@ -2745,7 +2746,7 @@ function sourceField(id,q){
     row.append(inp); form.append(row);
     return inp;
   }
-  var url=field('url','Website link (paste it here)','https://...','Copy the link from your browser’s address bar and paste it here. This is the only box on the page where you can paste.');
+  var url=field('url','Website link (paste it here)','https://...','Copy the link from your browser’s address bar and paste it here.');
   url.setAttribute('data-paste',''); url.inputMode='url'; url.autocomplete='off'; url.autocapitalize='off';
   /* noOpen: true (the research projects): no "Open this website" button, since students already have it open beside the page */
   var openRow=h('div','row srcopen'), open=h('a','btn sitebtn','Open this website'); open.target='_blank'; open.rel='noopener noreferrer';
@@ -2813,6 +2814,8 @@ function notesField(id,q){
   if(!Array.isArray(st.rows)) st.rows=[];
   while(st.rows.length<min) st.rows.push({from:'',mine:'',use:''});
   var wrap=h('div','ctl notesbox'); mark(wrap); wrap.dataset.s='idle';
+  /* remind: an HTML note at the top of the notes box (the research projects: notes build the body of the paragraph) */
+  if(q.remind){ var rm=h('div','noteremind'); rm.innerHTML=q.remind; wrap.append(rm); }
   var head=h('div','notehead'); wrap.append(head);
   var list=h('ol','notelist'); wrap.append(list);
   var foot=h('div','row'), add=h('button','btn ghost','Add another note'); add.type='button';
@@ -2841,22 +2844,25 @@ function notesField(id,q){
     function box(key,lab,help,ph){
       var l=h('label',null,lab); l.htmlFor='f-'+id+'-'+i+'-'+key;
       var ta=h('textarea'); ta.id=l.htmlFor; ta.rows=2; ta.value=r[key]||''; ta.spellcheck=true; ta.setAttribute('placeholder',ph);
-      var col=h('div','ncol'); col.append(l,h('p','inote',help),ta,talkRow(ta)); corn.append(col);
+      /* "From the website" (evidence, yellow) is the one note box students can paste into; the annotation (reasoning,
+         green) is their own words, so pasting stays off there */
+      if(key==='from') ta.setAttribute('data-paste','');
+      var col=h('div','ncol n'+key); col.append(l,h('p','inote',help),ta,talkRow(ta)); corn.append(col);
       function grow(){ta.style.height='auto';ta.style.height=Math.max(ta.scrollHeight+2,64)+'px';}
       ta.addEventListener('input',function(){ r[key]=ta.value; grow(); li.dataset.s=noteDone(r)?'ok':''; srcChanged(); sync(); commit(); });
       setTimeout(grow,0);
     }
-    box('from','From the website','Type a fact, a number, or a short quote from the website. Put “quotation marks” around exact words.','What does the website say?');
-    box('mine','My annotation','In your own words: what does this mean, and how does it help answer your research question?','What does this mean? Why does it matter?');
+    box('from','From the website (evidence)','Type or paste a fact, a number, or a short quote from the website. Put “quotation marks” around exact words.','What does the website say?');
+    box('mine','My annotation (reasoning)','Type this in your own words (pasting is off here): what does this mean, and how does it help answer your research question?','What does this mean? Why does it matter?');
     /* how the student will use the note: one tap on a tag (tap again to clear). The first tag is evidence (yellow). */
-    var tq=h('p','tagq','How will I use this note? (optional)'), tg=h('div','notetags'); tq.id='tq-'+id+'-'+i;
+    var tq=h('p','tagq','How will I use this note? Choose one.'), tg=h('div','notetags'); tq.id='tq-'+id+'-'+i;
     tg.setAttribute('role','group'); tg.setAttribute('aria-labelledby',tq.id);
     uses.forEach(function(u,k){
       var b=h('button','tag'+(k===0?' tagev':''),u); b.type='button'; b.setAttribute('aria-pressed',r.use===u?'true':'false');
       b.addEventListener('click',function(){
         r.use=r.use===u?'':u;
         [].forEach.call(tg.children,function(x,j){ x.setAttribute('aria-pressed',uses[j]===r.use?'true':'false'); });
-        srcChanged(); commit();
+        li.dataset.s=noteDone(r)?'ok':''; srcChanged(); sync(); commit();
       });
       tg.append(b);
     });
@@ -2868,7 +2874,7 @@ function notesField(id,q){
     wrap.dataset.s=d?'ok':'idle';
     add.hidden=st.rows.length>=max;
     msg.dataset.s=d?'ok':''; if(!d) msg.removeAttribute('data-s');
-    msg.textContent=(d?'Saved. ':'')+n+' of '+min+' notes finished'+(d?'. You can add more if you find more good information.':'. A note is finished when both boxes have a full thought.');
+    msg.textContent=(d?'Saved. ':'')+n+' of '+min+' notes finished'+(d?'. You can add more if you find more good information.':'. A note is finished when both boxes have a full thought and you choose how you will use it.');
   }
   function paint(){ list.textContent=''; st.rows.forEach(function(r,i){ list.append(row(r,i)); }); paintHead(); sync(); }
   add.addEventListener('click',function(){
@@ -3135,6 +3141,8 @@ function notesPanel(){
     var rq=PICKS.map(pickText).filter(Boolean)[0];
     if(rq){ var rp=h('p','nprq'); rp.append(h('b',null,'My research question: '),itxt(rq)); body.append(rp); }
     body.append(h('p','inote','Use these notes to write your response. Type your evidence in your own words, or put exact words in “quotation marks.”'));
+    var key=h('p','npkey'); key.append(h('span','npu npuy','Yellow'),' = from the website: your evidence. ',h('span','npu npug','Green'),' = your annotation: your reasoning.');
+    body.append(key);
     if(!NOTELIST.length) body.append(h('p','inote','You have no notes yet.'));
     NOTELIST.forEach(function(nid){
       var sid=NOTES[nid].src, s=sid&&S.sources[sid], sec=h('div','npsrc');
@@ -3145,8 +3153,9 @@ function notesPanel(){
       ((S.notes[nid]||{}).rows||[]).forEach(function(r){
         if(!(r.from||'').trim()&&!(r.mine||'').trim()) return;
         var li=h('li'); if(/^evidence/i.test(r.use||'')) li.className='npev';
-        if((r.from||'').trim()) li.append(h('span','npfrom',r.from.trim()));
-        if((r.mine||'').trim()){ li.append(h('span','npmine',r.mine.trim())); }
+        /* underlined in the CER colors: the website's words are evidence (yellow), the annotation is reasoning (green) */
+        if((r.from||'').trim()){ var f=h('span','npfrom'); f.append(h('span','npu npuy',r.from.trim())); li.append(f); }
+        if((r.mine||'').trim()){ var m=h('span','npmine'); m.append(h('span','npu npug',r.mine.trim())); li.append(m); }
         if(r.use) li.append(h('span','npuse',r.use));
         ol.append(li);
       });
@@ -5281,7 +5290,7 @@ function decorate(){
   app.querySelectorAll('.npbody').forEach(function(el){
     el.parentNode.querySelector('summary').after(listenBtn(function(){return el.innerText;}));
   });
-  app.querySelectorAll('.wfor,.learn,.howbox').forEach(function(el){
+  app.querySelectorAll('.wfor,.learn,.howbox,.noteremind').forEach(function(el){
     el.prepend(listenBtn(function(){return el.innerText;}));
   });
   /* pictures with their words: a Listen button right under the picture */

@@ -7,11 +7,16 @@
 
   Students choose ONE research question (or their own, with teacher approval), find two reliable websites, take notes
   on each one (a fact they type from the site plus their own annotation), and write a claim-evidence-reasoning
-  response with their notes beside the writing box. The two website-link boxes are the only places students can
-  paste. Questions differ by course, so the "Check my ideas" lists look for CER moves (naming a source, a specific
+  response with their notes beside the writing box. Students can paste only into the two website-link boxes and the
+  "From the website" box of each note (never into their annotation or their CER). Questions differ by course, so the "Check my ideas" lists look for CER moves (naming a source, a specific
   fact, reasoning words), not one topic's science.
 */
 window.CER_PROJECT = function (o) {
+  /* the reminder at the top of each notes box: the notes are the body of the paragraph (evidence yellow, reasoning green) */
+  var remind = '<p><b>Reminder: you are building your paragraph right now.</b></p>'
+    + '<p>What you take <span class="hly">from the website</span> is your <b>evidence</b>. What you write in '
+    + '<span class="hlg">my annotation</span> (your thoughts about that evidence) is your <b>reasoning</b>. '
+    + 'Together, your evidence and your thinking become the body sentences of your CER paragraph.</p>';
   /* Part 1's practice CER and evidence example. Give each learning period its own (sample: and evidence: in that
      period's assignment.js), so students practice on a new topic every time. These are the LP3 ones. */
   var smp = o.sample || {
@@ -150,10 +155,10 @@ window.CER_PROJECT = function (o) {
         confirm: 'I know how to find a reliable website for my research question, and how to split my screen so I can see my website and my notes side by side.',
         confirmNote: 'Check the box above to open the rest of Part 3.',
         read: '<p><b>How to take notes</b></p>'
-          + '<ul><li><b>From the website:</b> type one fact, number, or short quote that helps answer your research question. If you use the website’s exact words, put them in “quotation marks.”</li>'
-          + '<li><b>My annotation:</b> explain the note in your own words. What does it mean? How does it help answer your question? Is there a word you had to look up?</li>'
-          + '<li>Each note should be a different idea. Look for facts you can use as evidence for your claim.</li></ul>'
-          + '<p>You cannot paste into your notes. Typing the information yourself helps you understand and remember it.</p>',
+          + '<ul><li><b>From the website (evidence, yellow):</b> type or paste one fact, number, or short quote that helps answer your research question. If you use the website’s exact words, put them in “quotation marks.”</li>'
+          + '<li><b>My annotation (reasoning, green):</b> explain the note in your own words. What does it mean? How does it help answer your question? Is there a word you had to look up? You cannot paste here: this is your own thinking.</li>'
+          + '<li><b>How will I use this note?</b> Choose one tag for every note. A note is not finished until you choose.</li>'
+          + '<li>Each note should be a different idea. Look for facts you can use as evidence for your claim.</li></ul>',
         readLabel: 'How to take notes',
         questions: [
           {
@@ -170,6 +175,7 @@ window.CER_PROJECT = function (o) {
             pdfFirst: 4,
             source: 1,
             min: 3,
+            remind: remind,
             text: 'Take at least 3 notes on Source 1. For each note, type what the website says, then write your annotation in your own words.',
             easy: 'Take 3 notes on Source 1. In each note, type a fact from the website. Then say what it means in your own words.'
           },
@@ -186,7 +192,7 @@ window.CER_PROJECT = function (o) {
           + '<ul><li>Use a different website than Source 1, from a different organization if you can.</li>'
           + '<li>Look for facts that agree with Source 1, and for new evidence Source 1 did not have.</li>'
           + '<li>If two sources disagree, note it. That is something to think about in your reasoning.</li></ul>'
-          + '<p><b>Notes reminder:</b> type one fact, number, or short quote in “From the website” (exact words go in “quotation marks”), then explain it in your own words in “My annotation.”</p>',
+          + '<p><b>Notes reminder:</b> type or paste one fact, number, or short quote in “From the website” (exact words go in “quotation marks”), explain it in your own words in “My annotation,” and choose how you will use the note.</p>',
         readLabel: 'How to choose your second website',
         questions: [
           {
@@ -203,6 +209,7 @@ window.CER_PROJECT = function (o) {
             pdfFirst: 6,
             source: 2,
             min: 3,
+            remind: remind,
             text: 'Take at least 3 notes on Source 2. For each note, type what the website says, then write your annotation in your own words.',
             easy: 'Take 3 notes on Source 2. In each note, type a fact from the website. Then say what it means in your own words.'
           },

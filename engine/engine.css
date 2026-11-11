@@ -755,7 +755,13 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .npbody li{margin:0 0 8px}
 .npfrom,.npmine,.npuse{display:block}
 .npmine{font-style:italic}
-.npmine::before{content:"My note: ";font-style:normal;font-weight:700}
+.npmine::before{content:"My annotation: ";font-style:normal;font-weight:700}
+/* notes beside the writing box: the website's words underlined in evidence yellow, the annotation in reasoning green */
+.npu{color:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 1px}
+.npuy{background:linear-gradient(transparent 62%,#ffff00 62%)}
+.npug{background:linear-gradient(transparent 62%,#00ff00 62%)}
+.npkey{margin:0 0 8px;font-size:.88rem}
+.npkey .npu{font-weight:700}
 .npuse{font-size:.82rem;color:var(--muted)}
 .besidemain{min-width:0}
 @media (min-width:1080px){
@@ -863,6 +869,18 @@ summary.wphead{cursor:pointer}
 /* research: Cornell-style note cards (side by side on a wide screen) */
 .corn{display:grid;grid-template-columns:minmax(0,1fr);gap:4px 0}
 .ncol>label{display:block;font-weight:700;font-size:.95rem;margin:4px 0 2px}
+/* the note boxes are outlined in the CER colors: from the website = evidence (yellow), my annotation = reasoning (green) */
+.ncol.nfrom>label,.ncol.nmine>label{display:table;color:#16213a;border-radius:3px;padding:1px 8px}
+.ncol.nfrom>label{background:#ffff00}
+.ncol.nmine>label{background:#00ff00}
+.ncol.nfrom textarea{border:3px solid #ffff00;box-shadow:0 0 0 1px #c9b400}
+.ncol.nmine textarea{border:3px solid #00ff00;box-shadow:0 0 0 1px #00a800}
+.noteremind{margin:0 0 12px;padding:10px 14px;border:2px solid var(--gold);border-left:8px solid var(--gold);border-radius:10px;background:var(--pin-bg)}
+.noteremind p{margin:0 0 4px}
+.noteremind p:last-child{margin-bottom:0}
+.noteremind .hly,.noteremind .hlg{color:#16213a;border-radius:3px;padding:0 5px;font-weight:700}
+.noteremind .hly{background:#ffff00}
+.noteremind .hlg{background:#00ff00}
 @media (min-width:700px){
   .corn{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
   .corn>.ncol:first-child{padding-right:14px}
@@ -876,8 +894,8 @@ summary.wphead{cursor:pointer}
 .tag[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
 .tag.tagev[aria-pressed="true"]{background:#ffe600;border-color:#c9b400;color:#1f2a33}
 .tag[aria-pressed="true"]::before{content:"\2713  "}
-.npbody li.npev{background:#fff7a8;color:#1f2a33;border-left:4px solid #e6c800;border-radius:3px;padding:4px 8px;margin-left:-6px}
-.npbody li.npev .npuse{color:#5c4f00}
+.npbody li.npev{border-left:4px solid #e6c800;padding:2px 8px;margin-left:-6px}
+.npbody li.npev .npuse{font-weight:700}
 /* research: trust checklist */
 .checksbox{max-width:68ch}
 .checksbox .signlab{display:block;font-weight:700;font-size:.95rem;margin:12px 0 4px}
