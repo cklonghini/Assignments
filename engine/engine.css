@@ -724,6 +724,9 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 /* part link: a website students must open, always visible */
 .sitelink{margin:0 0 16px;padding:14px 16px;border:2px solid var(--primary);border-radius:10px;max-width:68ch}
 .sitenote{margin:0 0 10px;font-weight:700}
+.sitelink.quiet{border:1px dashed var(--line);padding:10px 14px;margin:4px 0 18px}
+.sitelink.quiet .sitenote{font-weight:400;font-size:.93rem;color:var(--muted);margin:0 0 8px}
+.btn.sitebtn.small{font-size:.92rem;padding:6px 14px}
 .btn.sitebtn{display:inline-block;text-decoration:none;font-size:1.08rem;padding:10px 20px}
 .btn.sitebtn::after{content:" \2197"}
 .siteurl{margin:8px 0 0;font-size:.88rem;word-break:break-all;opacity:.8}

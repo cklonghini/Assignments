@@ -113,6 +113,9 @@ Example: Step 1 of `assignments/sheep-brain-dissection/`.
 `box` (optional, HTML): short instructions students need right away, shown in an always-open green box under `intro`
 (with a Listen button), for example how to split the screen in a research project.
 
+A question can have `linksAfter: [{ url, text, note, quiet: true }]`: website buttons shown right under that question.
+`quiet: true` makes it a small, plain box for an optional helper (the Research and Report article reading coach).
+
 A part can have `step: 'Source 1'`, its short name in the step tracker (`look.tracker`).
 
 `confirm: 'I know how to …'` (with `box`) puts a checkbox at the bottom of the box. Everything after the box in that

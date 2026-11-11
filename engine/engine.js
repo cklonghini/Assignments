@@ -4203,15 +4203,7 @@ function buildPart(p,n){
     }
   }
   /* a website students must open, shown right away (not folded in the reading box) */
-  (p.links||(p.link?[p.link]:[])).forEach(function(L){
-    var box=h('div','sitelink');
-    if(L.note) box.append(h('p','sitenote',L.note));
-    var a=h('a','btn sitebtn',L.text||'Open the website');
-    a.href=L.url; a.target='_blank'; a.rel='noopener noreferrer';
-    box.append(a);
-    box.append(h('p','siteurl',L.url));
-    s.append(box);
-  });
+  (p.links||(p.link?[p.link]:[])).forEach(function(L){ s.append(siteLink(L)); });
   var first=null;
   (p.clips||[]).forEach(function(k){ if(VIDS[k]){ var b=videoBlock(k); s.append(b); if(!first) first=b; } });
   /* questions with "at" pop up inside the part's first video at that time (seconds into that video) */
@@ -4224,12 +4216,24 @@ function buildPart(p,n){
   (p.questions||[]).forEach(function(q){
     if(readLater&&q.readBefore){ s.append(readBox(p.read,p.readLabel)); readLater=false; }
     if(!(q.at!=null&&first)) buildQuestion(q,s);
+    /* linksAfter on a question: optional website links right under it (quiet: true for an optional helper) */
+    (q.linksAfter||[]).forEach(function(L){ s.append(siteLink(L)); });
   });
   if(readLater) s.append(readBox(p.read,p.readLabel));
   /* box with confirm: everything after the box waits until the student checks its box */
   if(hold){ var nx=hold.note.nextElementSibling; hold.els=[]; while(nx){ hold.els.push(nx); nx=nx.nextElementSibling; } HOLDS.push(hold); }
   if(GATED) gateEls(s,n);
   return s;
+}
+
+function siteLink(L){
+  var box=h('div','sitelink'+(L.quiet?' quiet':''));
+  if(L.note) box.append(h('p','sitenote',L.note));
+  var a=h('a','btn sitebtn'+(L.quiet?' ghost small':''),L.text||'Open the website');
+  a.href=L.url; a.target='_blank'; a.rel='noopener noreferrer';
+  box.append(a);
+  if(!L.quiet) box.append(h('p','siteurl',L.url));
+  return box;
 }
 
 /* Questions inside a video. At each question's time the video pauses and the question pops up over the player
