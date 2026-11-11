@@ -849,9 +849,13 @@ summary.wphead{cursor:pointer}
 :root[data-look="research"][data-accent="marine"] header.top{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 160' fill='none' stroke='%231565c0' stroke-opacity='.2' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M0 60 Q32 35 65 60 T130 60 T195 60 T260 60'/%3E%3Cpath d='M0 95 Q32 70 65 95 T130 95 T195 95 T260 95'/%3E%3Cpath d='M0 130 Q32 105 65 130 T130 130 T195 130 T260 130'/%3E%3C/svg%3E")}
 
 /* part banners: a tinted band with a thick class-color edge, instead of the black bar */
-:root[data-look="research"] .task{border-top:3px solid var(--accent)}
+/* part banners keep the school branding (black bar, gold words, gold line above), like the Explore assignments;
+   the header card and the page background keep the class color */
+:root[data-look="research"] .task{border-top:5px solid #c1a01e}
 :root[data-look="research"] .task::before{border-top-color:transparent}
-:root[data-look="research"] .task h2{background:var(--accent-tint);color:var(--accent-deep);border-left:12px solid var(--accent);border-radius:6px 16px 16px 6px;padding:14px 18px}
+:root[data-look="research"] .task h2{background:#2d2926;color:#dcbc3c;padding:14px 18px}
+@media (prefers-color-scheme:dark){ :root[data-look="research"]:not([data-theme="light"]) .task h2{background:#c1a01e;color:#1b1916} }
+:root[data-look="research"][data-theme="dark"] .task h2{background:#c1a01e;color:#1b1916}
 :root[data-look="research"] .startstep .warn h2{background:none;color:inherit;border:0;padding:0;border-radius:0}
 :root[data-look="research"] .qnum{background:var(--primary);color:var(--primary-ink)}
 :root[data-look="research"] .q{border-left-color:var(--accent-tint)}

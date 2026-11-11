@@ -80,7 +80,7 @@ period: `assignments/cer-lp2-marine-science/` (Natural Selection, Evolution, and
 `storageKey`, `short` link, the research `questions` (with `{ heading: '...' }` lines to group them), `sites` to
 suggest, a `searchExample`, and an `accent` (the class color: `'biology'` green, `'anatomy'` red,
 `'marine'` blue). The research projects have their own look (`look: { style: 'research' }`: serif headings, a
-header card with a subject pattern, tinted part banners in the class color) so they stand apart from the Explore
+header card with a subject pattern and page background in the class color; the part banners stay the school's black and gold) so they stand apart from the Explore
 assignments; the school branding stays gold. Everything else is shared in `assignments/cer-common/cer-project.js`, which the
 folder's `index.html` loads before `assignment.js`. For a new period, copy an LP3 folder, rename it (`cer-lp4-...`),
 and change the title, `storageKey`, `short`, and questions. **Give every new period its own `sample` (Part 1's practice CER:
