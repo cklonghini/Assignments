@@ -226,7 +226,7 @@ window.CER_PROJECT = function (o) {
           + (o.givenClaim
             ? '<ol><li><b>Claim:</b> your research question already gives you a claim. Restate it in your own words, in one clear sentence. Do not copy it word for word.</li>'
             : '<ol><li><b>Claim:</b> read your notes again. What is your answer to your research question now? Write it in one clear sentence. It can be different from what you thought before you researched.</li>')
-          + '<li><b>Evidence:</b> choose 2 to 4 of your best notes, with at least one from each website. Give each one in a sentence, and name where it came from: “According to …,” “The website … states that …,” or “Research from … shows that …”</li>'
+          + '<li><b>Evidence:</b> you do not need to use all of your notes. Choose only your 2 to 4 best pieces of evidence, with at least one from each website. Give each one in a sentence, and name where it came from: “According to …,” “The website … states that …,” or “Research from … shows that …”</li>'
           + '<li><b>Reasoning:</b> after your evidence, explain how it supports your claim. Use science ideas, and words like “This means that …,” “This happens because …,” or “Therefore …”</li>'
           + '<li><b>Highlight:</b> when you finish, highlight your claim in blue, your evidence in yellow, and your reasoning in green.</li></ol>'
           + '<p>Type everything yourself. If you use a website’s exact words, put them in “quotation marks” and name the website.</p>',

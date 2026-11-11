@@ -765,6 +765,7 @@ body.masking #app .mfocus{opacity:1;transition:opacity .2s;box-shadow:0 0 0 4px 
 .npuy{background:linear-gradient(transparent 62%,#ffff00 62%)}
 .npug{background:linear-gradient(transparent 62%,#00ff00 62%)}
 .npkey{margin:0 0 8px;font-size:.88rem}
+.npbest{margin:4px 0 8px;padding:8px 12px;border-left:5px solid var(--gold);background:var(--pin-bg);border-radius:0 8px 8px 0}
 .npkey .npu{font-weight:700}
 .npuse{font-size:.82rem;color:var(--muted)}
 .besidemain{min-width:0}

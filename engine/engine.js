@@ -3140,7 +3140,8 @@ function notesPanel(){
     body.textContent='';
     var rq=PICKS.map(pickText).filter(Boolean)[0];
     if(rq){ var rp=h('p','nprq'); rp.append(h('b',null,'My research question: '),itxt(rq)); body.append(rp); }
-    body.append(h('p','inote','Use these notes to write your response. Type your evidence in your own words, or put exact words in “quotation marks.”'));
+    var pick=h('p','npbest'); pick.append(h('b',null,'You do not need to use all of your notes. '),'Choose only your best pieces of evidence (2 to 4, with at least one from each website) for your response.');
+    body.append(pick,h('p','inote','Type your evidence in your own words, or put exact words in “quotation marks.”'));
     var key=h('p','npkey'); key.append(h('span','npu npuy','Yellow'),' = from the website: your evidence. ',h('span','npu npug','Green'),' = your annotation: your reasoning.');
     body.append(key);
     if(!NOTELIST.length) body.append(h('p','inote','You have no notes yet.'));
