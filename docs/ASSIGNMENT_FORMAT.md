@@ -303,6 +303,12 @@ line above the cards says "Card 3 of 19." The teacher view shows every card. Eac
 `img: { src: 'media/card-tendon.jpg', alt: '...' }`, shown between the word and the definition (`alt` is required).
 Example: Part 1 of `assignments/practice-support-and-motion/`.
 
+If the microphone is not working (3 tries in a row with no card turning green, on any card of the question), a
+"✕ Close the speaking cards" button appears under the cards. Pressing it closes the cards and shows a list of every word
+and its definition (with a Listen button) so the student can read them and move on; a "Try the microphone again" button
+brings the cards back. Skipped cards count as done for closing the part, but not as correct, and the PDF marks each one
+"skipped: the microphone was not working." This is built into the engine; there is nothing to set.
+
 If a student's microphone is blocked or missing, the card shows `micHelp` (a top-level field; leave it out for the
 default message telling students to contact IT). `node tools/validate.js` warns when a card's patterns do not match
 its own word and definition.

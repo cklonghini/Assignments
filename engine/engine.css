@@ -1053,3 +1053,12 @@ summary.wphead{cursor:pointer}
 .tmq{font:inherit;font-size:.8rem;font-weight:800;width:22px;height:22px;border-radius:50%;padding:0;cursor:help;
   background:var(--surface);color:var(--ink);border:2px solid var(--muted);line-height:1}
 .tmmelt .tmq{opacity:0;transition:opacity .5s}
+/* say it out loud: the way out when the microphone is not working */
+.sskip{margin-top:10px;padding:10px 14px;border:2px dashed var(--line);border-radius:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.sskip p{margin:0;flex:1 1 260px}
+.sskip[hidden],.svocab[hidden],.scards[hidden]{display:none}
+.svocab{margin-top:10px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:12px 14px}
+.svhead{margin:0 0 4px;font-family:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;font-weight:800;font-size:1.15rem}
+.svlist{margin:10px 0}
+.svlist dt{font-weight:800;margin-top:8px}
+.svlist dd{margin:2px 0 0}

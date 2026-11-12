@@ -352,7 +352,7 @@ function isRichDone(id){var st=S.rich[id]; return !!st&&segsPlain(st.segs).trim(
 function isPhotoDone(id){var st=S.photos[id]; return !!(st&&st.has);}
 function score(){
   var a=0,w=0,p=0;
-  Object.keys(AUTO).forEach(function(id){var r=S.auto[id]; if(r&&r.ok)a++;});
+  Object.keys(AUTO).forEach(function(id){var r=S.auto[id]; if(r&&r.ok&&r.how!=='skip')a++;});
   Object.keys(W).forEach(function(id){if(isWrittenDone(id))w++;});
   Object.keys(R).forEach(function(id){if(isRichDone(id))w++;});
   Object.keys(P).forEach(function(id){if(isPhotoDone(id))p++;});
@@ -598,7 +598,10 @@ function setAuto(id,v,ok,extra){
 /* ------------------------------------------------------------------ */
 /* Students say a word and its definition. Where the browser can turn speech into words (Chrome, Edge, Safari),
    the card checks that it heard the word and its key ideas. Elsewhere (Firefox) it checks that the student
-   spoke out loud for a few seconds, and the PDF says so. */
+   spoke out loud for a few seconds, and the PDF says so.
+   If the microphone is not working (3 tries in a row with no card turning green), a "Close the speaking cards"
+   button appears. It closes the cards, shows every word and its meaning to read instead, and lets the student
+   move on. Those cards count as done for the part, are not counted as correct, and the PDF says they were skipped. */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
 var soundOnly=!SR, micStop=null;
 var MIC_HELP=A.micHelp||'If your microphone isn’t working, reach out to IT to get it working. It’s so important for us to hear from you in our online school, so you’ll need a working microphone to finish this activity.';
@@ -610,7 +613,15 @@ function speechMatch(c,t){
   return {word:word,pass:word&&got===keys.length&&!wrongWay};
 }
 function speakQ(id,q){
-  var wrap=h('div','scards'), cards=[], cids=[], deck=!!q.deck&&!TEACHER, note=null, shown=-1;
+  var wrap=h('div','scards'), cards=[], cids=[], deck=!!q.deck&&!TEACHER, note=null, shown=-1, tries=0;
+  var offer=h('div','sskip'), vocab=h('div','svocab'), hint=null;
+  function skipped(){ return cids.some(function(k){ var r=S.auto[k]; return !!(r&&r.how==='skip'); }); }
+  function paintSkip(){
+    var off=skipped();
+    wrap.hidden=off; vocab.hidden=!off; if(note) note.hidden=off; if(hint) hint.hidden=off;
+    offer.hidden=off||TEACHER||tries<3||cids.every(function(k){ var r=S.auto[k]; return !!(r&&r.ok); });
+  }
+  function onTry(ok){ if(ok) tries=0; else tries++; paintSkip(); }
   /* deck: true shows one card at a time; the next card opens when this one turns green */
   function step(){
     if(!deck) return;
@@ -627,17 +638,48 @@ function speakQ(id,q){
     AUTO[cid]={sum:c.term};
     ORDER.push({kind:'auto',id:cid,label:c.term,q:CURQ,sub:c.term});
     cids.push(cid);
-    var el=speakCard(cid,c,!!q.memory,function(){ if(note) step(); });
+    var el=speakCard(cid,c,!!q.memory,function(){ if(note) step(); },onTry);
     cards.push(el); wrap.append(el);
   });
   var box=h('div');
-  if(soundOnly) box.append(h('p','whint','This browser can’t turn speech into words, so each card checks that you spoke out loud for a few seconds. Chrome or Edge works best for this part.'));
+  if(soundOnly){ hint=h('p','whint','This browser can’t turn speech into words, so each card checks that you spoke out loud for a few seconds. Chrome or Edge works best for this part.'); box.append(hint); }
   if(deck){ note=h('p','whint sdeck'); note.setAttribute('aria-live','polite'); box.append(note); }
-  box.append(wrap);
-  step();
+  /* the way out when the microphone is not working */
+  offer.setAttribute('role','status');
+  var close=h('button','btn ghost sclose','✕ Close the speaking cards'); close.type='button';
+  offer.append(h('p',null,'Is your microphone not working? You can close the speaking cards and read the words instead.'),close);
+  close.addEventListener('click',function(){
+    if(micStop) micStop();
+    ttsStop();
+    cids.forEach(function(k){ var r=S.auto[k]; if(!(r&&r.ok)) setAuto(k,'Skipped: the microphone was not working',true,{how:'skip',peek:!!(r&&r.peek)}); });
+    cards.forEach(function(el){ if(el._paint) el._paint(); });
+    commit(); step(); paintSkip();
+    if(vocab.scrollIntoView) vocab.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  vocab.append(h('p','svhead','Vocabulary words'),
+    h('p','whint','Your microphone wasn’t working, so read each word and its meaning carefully. Then go on to the next question.'));
+  var list=h('dl','svlist');
+  (q.cards||[]).forEach(function(c){
+    var dt=h('dt'); dt.append(itxt(c.term));
+    var dd=h('dd'); dd.append(itxt(c.def));
+    list.append(dt,dd);
+  });
+  vocab.append(list);
+  var row=h('div','row');
+  if(TTS) row.append(listenBtn(function(){ return (q.cards||[]).map(function(c){return plain(c.term)+'. '+plain(c.def);}).join(' '); }));
+  var again=h('button','btn ghost','Try the microphone again'); again.type='button';
+  again.addEventListener('click',function(){
+    cids.forEach(function(k){ var r=S.auto[k]; if(r&&r.how==='skip'){ if(r.peek) S.auto[k]={v:'',ok:false,miss:r.miss||0,peek:true}; else delete S.auto[k]; } });
+    tries=0; commit();
+    cards.forEach(function(el){ if(el._paint) el._paint(); });
+    step(); paintSkip();
+  });
+  row.append(again); vocab.append(row);
+  box.append(offer,vocab,wrap);
+  step(); paintSkip();
   return box;
 }
-function speakCard(cid,c,memory,onChange){
+function speakCard(cid,c,memory,onChange,onTry){
   var card=h('div','scard'); mark(card); card.dataset.s='idle';
   var def=h('p','sdef');
   var btn=h('button','btn mic'); btn.type='button'; btn.setAttribute('aria-pressed','false');
@@ -661,7 +703,7 @@ function speakCard(cid,c,memory,onChange){
     if(memory&&!done&&!showing){ def.className='sdef hidden'; def.textContent='Say the definition from memory.'; }
     else { def.className='sdef'; def.append(itxt(c.def)); }
     if(peek){ peek.hidden=done; peek.textContent=showing?'Hide the definition':'Peek'; }
-    if(done) tell('✓ '+(r.how==='sound'?'You said it out loud.':'I heard you say the word and its meaning.')+(r.peek?' (You peeked.)':''));
+    if(done) tell('✓ '+(r.how==='skip'?'Skipped. Read this word in the vocabulary list.':r.how==='sound'?'You said it out loud.':'I heard you say the word and its meaning.')+(r.peek?' (You peeked.)':''));
     if(onChange) onChange();
   }
   if(peek) peek.addEventListener('click',function(){
@@ -673,10 +715,11 @@ function speakCard(cid,c,memory,onChange){
     var r=rec(), extra={how:how,peek:!!(r&&r.peek)};
     text=String(text||'').trim();
     if(r&&r.ok){ tell(text?'Heard: “'+text+'”':''); return; }
-    if(!text){ tell('I didn’t hear anything. Check that your microphone is on, then press Say it again.',true); return; }
+    if(!text){ tell('I didn’t hear anything. Check that your microphone is on, then press Say it again.',true); if(onTry) onTry(false); return; }
     var m=speechMatch(c,text), v='Heard: “'+text+'”';
-    if(m.pass){ setAuto(cid,v,true,extra); paint(); commit(); return; }
+    if(m.pass){ setAuto(cid,v,true,extra); paint(); commit(); if(onTry) onTry(true); return; }
     var o=setAuto(cid,v,false,extra); o.miss++;
+    if(onTry) onTry(false);
     paint(); commit();
     tell('Heard: “'+text+'”. '+(!m.word?'I didn’t catch the word '+plain(c.term)+'. Say the word first, then its meaning.'
       :(memory?'I heard the word, but not all of its meaning. Try again, or press Peek.':'I heard the word, but not all of the definition. Read the whole definition out loud.')),true);
@@ -705,14 +748,14 @@ function speakCard(cid,c,memory,onChange){
     r.onerror=function(e){err=(e&&e.error)||'';};
     r.onend=function(){
       clearTimeout(quiet); micStop=null; listening(false);
-      if(err==='not-allowed'||err==='service-not-allowed'||err==='audio-capture'){ tell('I can’t hear your microphone. If your browser asks, choose Allow. '+MIC_HELP,true); return; }
-      if(err==='network'||err==='language-not-supported'){ soundOnly=true; tell('Word checking isn’t working right now. Press Say it and speak again. This time the card checks that you spoke out loud.',true); return; }
+      if(err==='not-allowed'||err==='service-not-allowed'||err==='audio-capture'){ tell('I can’t hear your microphone. If your browser asks, choose Allow. '+MIC_HELP,true); if(onTry) onTry(false); return; }
+      if(err==='network'||err==='language-not-supported'){ soundOnly=true; tell('Word checking isn’t working right now. Press Say it and speak again. This time the card checks that you spoke out loud.',true); if(onTry) onTry(false); return; }
       judge(speechMatch(c,alts).pass?alts:text,'words');
     };
     try{r.start();}catch(e){ micStop=null; listening(false); soundOnly=true; startSound(); }
   }
   function startSound(){
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ tell(MIC_HELP,true); return; }
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ tell(MIC_HELP,true); if(onTry) onTry(false); return; }
     navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
       var AC=window.AudioContext||window.webkitAudioContext, ctx=new AC(), an=ctx.createAnalyser();
       an.fftSize=1024; ctx.createMediaStreamSource(stream).connect(an);
@@ -722,8 +765,8 @@ function speakCard(cid,c,memory,onChange){
         if(done) return; done=true;
         cancelAnimationFrame(raf); stream.getTracks().forEach(function(t){t.stop();}); try{ctx.close();}catch(e){}
         micStop=null; listening(false); lvl.hidden=true;
-        if(voiced>=3){ var r=rec(); if(!(r&&r.ok)){ setAuto(cid,'Spoke out loud for '+Math.round(voiced)+' seconds',true,{how:'sound',peek:!!(r&&r.peek)}); paint(); commit(); } else tell('✓ You said it out loud again.'); }
-        else tell('That was short. Press Say it, say the word and its whole meaning, then press Done.',true);
+        if(voiced>=3){ var r=rec(); if(!(r&&r.ok)){ setAuto(cid,'Spoke out loud for '+Math.round(voiced)+' seconds',true,{how:'sound',peek:!!(r&&r.peek)}); paint(); commit(); if(onTry) onTry(true); } else tell('✓ You said it out loud again.'); }
+        else { tell('That was short. Press Say it, say the word and its whole meaning, then press Done.',true); if(onTry) onTry(false); }
       }
       micStop=stop; micStop.card=cid; listening(true); lvl.hidden=false;
       tell('Listening… Say the word and its meaning, then press Done.');
@@ -737,7 +780,7 @@ function speakCard(cid,c,memory,onChange){
         raf=requestAnimationFrame(tick);
       }
       raf=requestAnimationFrame(tick);
-    },function(){ tell('I can’t hear your microphone. If your browser asks, choose Allow. '+MIC_HELP,true); });
+    },function(){ tell('I can’t hear your microphone. If your browser asks, choose Allow. '+MIC_HELP,true); if(onTry) onTry(false); });
   }
   btn.addEventListener('click',function(){
     if(micStop){ var mine=micStop.card===cid; micStop(); if(mine) return; }
@@ -745,6 +788,7 @@ function speakCard(cid,c,memory,onChange){
     if(soundOnly) startSound(); else startWords();
   });
   paint();
+  card._paint=function(){ heard.textContent=''; heard.removeAttribute('data-s'); paint(); };
   return card;
 }
 
@@ -4736,6 +4780,7 @@ function answerGroups(){
       } else if(!r||!r.v){it.resp=['(no answer)']; if(r&&r.miss) it.tag=r.miss+(r.miss===1?' wrong try':' wrong tries');}
       else if(r.pend){ it.resp=[plain(r.v)]; it.tag='not checked yet'+(r.miss?' • '+r.miss+(r.miss===1?' wrong try':' wrong tries'):''); }
       else{ it.resp=[plain(r.v)]; it.tag=(r.ok?'correct':'incorrect')+(r.miss?' • '+r.miss+(r.miss===1?' wrong try':' wrong tries'):''); }
+      if(r&&r.how==='skip') it.tag='skipped: the microphone was not working, so the student read the vocabulary list instead';
       if(r&&r.how==='sound') it.tag+=(it.tag?' • ':'')+'sound check only (this browser could not recognize words)';
       if(r&&r.peek) it.tag+=(it.tag?' • ':'')+'peeked at the definition';
     } else if(o.kind==='rich'){
